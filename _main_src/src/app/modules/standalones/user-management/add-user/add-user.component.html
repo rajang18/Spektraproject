@@ -1,0 +1,143 @@
+<!-- Add Users Starts -->
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-semibold btn-light-primary" (click)="backToList()">
+            <i class="ki-outline ki-to-left fs-2" ></i> <span translate="TRANSLATE.USERS_ADD_OR_EDIT_BUTTON_TEXT_BACK_TO_USERS"></span>
+        </button>
+    </div>
+  </ng-template>
+  <div class="add-customer-container">
+    <div class="card custom-card">
+        <div class="card-body">
+            <form [formGroup]="userform">
+                <div class="form-group row">
+                    <div class="form-group row mt-5">
+                      <div class="col-md-2 col-form-label text-right text-sm-left text-md-left text-lg-right">
+                        <label class="fw-semibold fs-6 mb-2" translate="TRANSLATE.USERS_ADD_OR_EDIT_TEXT_BOX_LABEL_FIRST_NAME"></label>
+                    </div>
+                    <div class="col-md-5 mt-2">
+                        <input type="text" class="form-control form-control-sm" formControlName="firstName" />
+                    </div>
+                    </div>
+                    <div class="form-group row">
+                      <div class="col-md-2 col-form-label text-right text-sm-left text-md-left text-lg-right">
+                        <span translate="TRANSLATE.USERS_ADD_OR_EDIT_TEXT_BOX_LABEL_LAST_NAME"></span>
+                    </div>
+                    <div class="col-md-5 mt-2">
+                        <input type="text" class="form-control form-control-sm" formControlName="lastName" />
+                    </div>
+                    </div>
+
+                    <div class="form-group row mt-2">
+                      <div class="required col-md-2 col-form-label text-right text-sm-left text-md-left text-lg-right">
+                        <span translate="TRANSLATE.USERS_ADD_OR_EDIT_TEXT_BOX_LABEL_EMAIL"></span>
+                    </div>
+                    <div class="col-md-5 mt-2">
+                        <input type="text" class="form-control form-control-sm" formControlName="emailAdderss" />
+                        @if(userform.get('emailAdderss')?.errors?.required &&
+                            userform.get('emailAdderss')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                        }
+                        @if(userform.get('emailAdderss')?.errors?.invalidEmail &&
+                            userform.get('emailAdderss')?.touched && 
+                            userform.get('emailAdderss')?.value){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_PLEASE_ENTER_A_VALID_EMAIL"></span>
+                        }
+                    </div>
+                    </div>
+                    @if(EntityName == 'Customer' || EntityName == 'Site'){
+                    <div class="form-group row" >
+                      <div class="required col-md-2 col-form-label text-right text-sm-left text-md-left text-lg-right">
+                        <span translate="TRANSLATE.CUSTOMER_USERS_FORM_LABEL_ROLE_TYPE"></span>
+                    </div>
+                    <div class="col-md-5 mt-2">
+                      <ng-select 
+                           formControlName="roleTypeID" (change)="changeInUserRoleType($event)"> 
+                           @for(roleType of this.roleTypes; track $index){
+                           <ng-option [value]="roleType.ID">{{'TRANSLATE.'+roleType.Description | translate}}</ng-option>
+                           }    
+                      </ng-select>
+                        @if(userform.get('roleTypeID')?.errors?.required &&
+                            userform.get('roleTypeID')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                        }
+                    </div>
+                    </div>
+                    }
+                    @if(EntityName == 'Customer' && EntityNameForRoles != 'Customer' && userform.get('roleTypeID').value != ''){
+                    <div class="form-group row">
+                      <div class="required col-md-2 col-form-label text-right text-sm-left text-md-left text-lg-right">
+                        <span translate="TRANSLATE.CUSTOMER_USERS_FORM_LABEL_SITE"></span>
+                    </div>
+                    <div class="col-md-5 mt-2">
+                      <ng-select
+                                formControlName="C3SiteID" (change)="getDepartment()"> 
+                                @for(site of sites; track $index){
+                                <ng-option [value]="site.C3SiteID">{{site.Name}}</ng-option>
+                                }
+                      </ng-select>
+                        @if(userform.get('C3SiteID')?.errors?.required &&
+                            userform.get('C3SiteID')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                        }
+                    </div>
+                    </div>
+                    }
+                    @if((EntityName == 'Customer' || EntityName == 'Site') && EntityNameForRoles !='Customer' && EntityNameForRoles !='Site' && userform.get('roleTypeID').value != ''){
+                    <div class="form-group row">
+                      <div class="required col-md-2 col-form-label text-right text-sm-left text-md-left text-lg-right">
+                        <span translate="TRANSLATE.CUSTOMER_USERS_FORM_LABEL_DEPARTMENT"></span>
+                    </div>
+                    <div class="col-md-5 mt-2">
+                      <ng-select
+                           formControlName="C3DepartmentSitesID"> 
+                           @for(department of department; track  department.C3DepartmentSitesID){
+                           <ng-option [value]="department.C3DepartmentSitesID">{{department.Name}}</ng-option>
+                          }
+                      </ng-select>
+                        @if(userform.get('C3DepartmentSitesID')?.errors?.required &&
+                            userform.get('C3DepartmentSitesID')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                        }
+                    </div>
+                    </div>
+                   }
+                    <div class="form-group row">
+                      <div class="required col-md-2 col-form-label text-right text-sm-left text-md-left text-lg-right">
+                        <span translate="TRANSLATE.CUSTOMER_USERS_FORM_LABEL_ROLE"></span>
+                    </div>
+                    <div class="col-md-5 mt-2">
+                      <div class="margin-bottom-15">
+                        @for (roles of this.Roles; track roles.ID; let index = $index) {
+                            <div class="mt-2">
+                                    <div class="form-check pb-1">
+                                      <input class="radiobtn me-4 form-check-input" type="radio" [value]="roles.Name" formControlName="roleName"  >
+                                        <!-- <input class="form-check-input" [value]=""  type="checkbox" [(ngModel)]="roles.IsChecked" formControlName="roleName" > -->
+                                        <label class="" >{{('TRANSLATE.' + roles.Description )| translate}}</label> 
+                                         
+                                         <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" ngbTooltip="{{('TRANSLATE.' + roles.Description + '_DESCRIPTION') | translate}}">
+                                          <span class="path1"></span>
+                                          <span class="path2"></span>
+                                          <span class="path3"></span>
+                                      </i>
+                                    </div>
+                            </div>
+                        }
+                    </div>
+                        @if(userform.get('roleName')?.errors?.required &&
+                            userform.get('roleName')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                        }
+                    </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3">
+            <button type="button" class="btn btn-primary btn-sm" (click)="onCreateUser()" *ngIf="this.userform.dirty" appBusyLoader>
+                {{ 'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate }}
+            </button>
+        </div>
+    </div>
+</div>
+  <!-- Ad users ends -->

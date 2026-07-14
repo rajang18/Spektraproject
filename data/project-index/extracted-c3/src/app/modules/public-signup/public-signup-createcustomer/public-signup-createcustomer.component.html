@@ -1,0 +1,541 @@
+<div class="container-fluid customer-container margin-top-80">
+    <div class="row pb-5">
+        <div class="col col-12 col-lg-9 pt-5">
+            <div class="card product-description-card m-auto">
+                <div class="card-header shop-item-title flex-nowrap ps-10 pe-10">
+                    <div class="card-title">
+                        <h4 class="font-dark font-weight-bold mb-0">
+                            <i class="fa fa-arrow-left font-dark text-primary" (click)="goToPlanDetails()"></i>&nbsp;
+                            <span class="font-dark sbold uppercase"><span translate="TRANSLATE.PUBLIC_SIGNUP_BASIC_DETAILS_PORTLET_HEADER"></span></span>
+                        </h4>
+                    </div>
+                </div>
+                <div *ngIf="!IsExistingMsTenant">
+                    <form class="form" role="form" [formGroup]="frmCustomerPublicSignUp">
+                        <div class="card-body ps-10 pe-10">
+                            <div class="form-group row">
+                                <div class="col-md-6 mb-5">
+                                    <div class="form-group"
+                                        ng-class="{'has-error':vm.frmCustomerPublicSignUp.$submitted &amp;&amp; (vm.frmCustomerPublicSignUp.FirstName.$error.required || vm.frmCustomerPublicSignUp.FirstName.$error.maxlength)}">
+                                        <label class="required fw-semibold fs-6 mb-2">
+                                            <span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_LABEL_TEXT_FIRST_NAME"></span>
+                                        </label>
+                                        <input type="text" formControlName="firstName" class="form-control form-control-sm" ng-maxlength="50" name="FirstName" ng-required="true" />
+                                        @if(frmCustomerPublicSignUp.get('firstName')?.errors?.required && frmCustomerPublicSignUp.get('firstName')?.touched) {
+                                        <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                                        }
+                                        @if(frmCustomerPublicSignUp.get('firstName')?.errors?.maxlength && frmCustomerPublicSignUp.get('firstName')?.touched) {
+                                        <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_MAX_LENGTH_50"></span></span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-5">
+                                    <div class="form-group"
+                                        ng-class="{'has-error':vm.frmCustomerPublicSignUp.$submitted &amp;&amp; (vm.frmCustomerPublicSignUp.LastName.$error.required || vm.frmCustomerPublicSignUp.LastName.$error.maxlength)}">
+                                        <label class="required fw-semibold fs-6 mb-2">
+                                            <span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_LABEL_TEXT_LAST_NAME"></span>
+                                        </label>
+                                        <input type="text" formControlName="lastName" class="form-control form-control-sm" ng-maxlength="50" name="LastName" ng-required="true" />
+                                        @if(frmCustomerPublicSignUp.get('lastName')?.errors?.required && frmCustomerPublicSignUp.get('lastName')?.touched) {
+                                        <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                                        }
+                                        @if(frmCustomerPublicSignUp.get('lastName')?.errors?.maxlength && frmCustomerPublicSignUp.get('lastName')?.touched) {
+                                        <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_MAX_LENGTH_50"></span></span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-5">
+                                    <div class="form-group">
+                                        <label class="fw-semibold fs-6 mb-2">
+                                            <span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_LABEL_TEXT_COMPANY_NAME"></span> <span class="text-danger"></span>
+                                        </label>
+                                        <input type="text" formControlName="companyName" class="form-control form-control-sm" ng-maxlength="50" name="CompanyName" />
+                                        @if(frmCustomerPublicSignUp.get('companyName')?.errors?.maxlength && frmCustomerPublicSignUp.get('companyName')?.touched) {
+                                        <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_MAX_LENGTH_50"></span></span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-5">
+                                    <div class="form-group">
+                                        <label class="required fw-semibold fs-6 mb-2">
+                                            <span><span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_LABEL_TEXT_PHONE_NUMBER"></span></span>
+                                        </label>
+                                        <input type="text" formControlName="phoneNumber" class="form-control form-control-sm" name="PhoneNumber"/>
+                                        @if (frmCustomerPublicSignUp.get('phoneNumber')?.errors?.pattern && frmCustomerPublicSignUp.get('phoneNumber')?.touched) {
+                                        <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_ENTER_VALID_PHONE_NUMBER"></span></span>
+                                        }
+                                        @if (frmCustomerPublicSignUp.get('phoneNumber')?.errors?.required && frmCustomerPublicSignUp.get('phoneNumber')?.touched) {
+                                            <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-5">
+                                    <div class="form-group"
+                                        ng-class="{'has-error':vm.frmCustomerPublicSignUp.$submitted &amp;&amp; (vm.frmCustomerPublicSignUp.Email.$error.required || vm.frmCustomerPublicSignUp.Email.$error.email) || (vm.frmCustomerPublicSignUp.Email.$invalid && !vm.frmCustomerPublicSignUp.Email.$pristine)}">
+                                        <label class="required fw-semibold fs-6 mb-2">
+                                            <span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_LABEL_TEXT_EMAIL"></span> <span class="text-danger"></span>
+                                        </label>
+                                        <input type="email" formControlName="email" (blur)="onEmailAddressChange()" class="form-control form-control-sm" name="Email" ng-required="true" />
+                                        @if (thisEmailAddressAlreadyExistsMessage?.length > 0) {
+                                        <div class="text-danger" *ngIf="thisEmailAddressAlreadyExistsMessage.length > 0">
+                                            {{ thisEmailAddressAlreadyExistsMessage }}
+                                        </div>
+                                        }
+
+                                        @if (frmCustomerPublicSignUp.get('email')?.errors?.required && frmCustomerPublicSignUp.get('email')?.touched) {
+                                        <span ng-show="vm.frmCustomerDetails.$submitted &amp;&amp; vm.frmCustomerDetails.onboardCustomerModel_Email.$error.required" class="text-danger"><span
+                                                translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                                        }
+
+                                        @if(frmCustomerPublicSignUp.get('email')?.hasError('email') && frmCustomerPublicSignUp.get('email')?.touched) {
+                                        <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_PLEASE_ENTER_A_VALID_EMAIL"></span></span>
+                                        }
+                                        <div class="form-group pt-3">
+                                            <span> <span class="text-success" translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_LABEL_TEXT_PRIMARY_EMAIL_LOGIN_ACCESS"></span></span>
+                                        </div>
+                                        <div class="col-md-6 mb-5 d-flex align-items-center">
+                                            <div class="input-group-with-checkbox mt-5">
+                                                <label class="form-check form-check-inline form-check me-5">
+                                                    <input type="checkbox" id="NotifyCustomer" formControlName="notifyCustomer" name="NotifyCustomer" class="form-check-input">
+                                                    <span class="fw-semibold fs-6 text-nowrap">
+                                                        <span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_LABEL_TEXT_SEND_INVITATION_TO_ACCESS_THE_APPLICATION"></span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-5">
+                                    <div class="form-group" ng-class="{'has-error':vm.frmCustomerPublicSignUp.$submitted &amp;&amp; vm.frmCustomerPublicSignUp.AddressLine1.$error.required}">
+                                        <label class="required fw-semibold fs-6 mb-2">
+                                            <span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_LABEL_TEXT_ADDRESS_1"></span>
+                                        </label>
+                                        <input type="text" formControlName="line1" class="form-control form-control-sm" name="AddressLine1" ng-required="true" />
+                                        @if(frmCustomerPublicSignUp.get('line1')?.errors?.required && frmCustomerPublicSignUp.get('line1')?.touched) {
+                                        <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                                        }
+                                        @if(frmCustomerPublicSignUp.get('line1')?.errors?.maxlength && frmCustomerPublicSignUp.get('line1')?.touched){
+                                             <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_CUSTOMER_ADDRESS_1_MAX_LENGTH_256"></span> 
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-5">
+                                    <div class="form-group">
+                                        <label class="fw-semibold fs-6 mb-2">
+                                            <span><span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_LABEL_TEXT_ADDRESS_2"></span></span>
+                                        </label>
+                                        <input type="text" formControlName="line2" class="form-control form-control-sm" />
+                                         @if(frmCustomerPublicSignUp.get('line2')?.errors?.maxlength && frmCustomerPublicSignUp.get('line2')?.touched){
+                                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_CUSTOMER_ADDRESS_2_MAX_LENGTH_256"></span> 
+                                         }
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-5">
+                                    <div class="form-group" ng-class="{'has-error':vm.frmCustomerPublicSignUp.$submitted &amp;&amp; vm.frmCustomerPublicSignUp.City.$error.required}">
+                                        <label class="required fw-semibold fs-6 mb-2">
+                                            <span><span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_LABEL_TEXT_CITY"></span> <span
+                                                    ng-if="vm.countryValidationRules.IsCityRequired"></span></span>
+                                        </label>
+                                        <input type="text" formControlName="city" class="form-control form-control-sm" name="City" ng-required="vm.countryValidationRules.IsCityRequired" />
+                                        @if(frmCustomerPublicSignUp.get('city')?.errors?.required && frmCustomerPublicSignUp.get('city')?.touched) {
+                                       <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                                    }
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-5">
+                                    <div class="form-group" ng-class="{'has-error':vm.frmCustomerPublicSignUp.$submitted &amp;&amp; vm.frmCustomerPublicSignUp.State.$error.required}">
+                                        <label class="required fw-semibold fs-6 mb-2">
+                                            <span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_LABEL_TEXT_STATE"></span> <span
+                                                *ngIf="countryValidationRules?.IsStateRequired && !(stateProvinces == null || stateProvinces == undefined) "></span>
+                                        </label>
+                                        @if(frmCustomerPublicSignUp.get('country')?.value === ''|| stateProvinces == null || stateProvinces == undefined || stateProvinces?.length == 0){
+                                            <input type="text" placeholder="{{'TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_LABEL_TEXT_STATE' | translate}}"
+                                                class="form-control form-control-sm " formControlName="state">
+                                            }
+                                        @else if(stateProvinces?.length > 0) {
+                                        <ng-select formControlName="state"
+                                            placeholder="{{'TRANSLATE.ADD_CUSTOMER_PLEASE_SELECT_A_CURRENCY_CODE' |translate}}">
+                                            <ng-option value="" translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_STATE_DROPDOWN_DEFAULT_OPTION"></ng-option>
+                                            @for (item of stateProvinces; track $index) {
+                                            <ng-option [value]="item.StateCode">{{item?.Name}}</ng-option>
+                                            }
+                                        </ng-select>
+                                        }
+                                        @if(frmCustomerPublicSignUp.get('state')?.errors?.required && frmCustomerPublicSignUp.get('state')?.touched) {
+                                        <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                                          }
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-5">
+                                    <div class="form-group" ng-class="{'has-error':vm.frmCustomerPublicSignUp.$submitted &amp;&amp; vm.frmCustomerPublicSignUp.Zip.$error.required}">
+                                        <label class="required fw-semibold fs-6 mb-2">
+                                            <span><span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_LABEL_TEXT_ZIP"></span> <span *ngIf="countryValidationRules?.IsPostalCodeRequired"
+                                                    class="text-danger"></span></span>
+                                        </label>
+                                        <input type="text" formControlName="zip" class="form-control form-control-sm" name="Zip" ng-required="vm.countryValidationRules.IsPostalCodeRequired"
+                                            ng-pattern="vm.countryValidationRules.PostalCodeRegex" />
+                                        @if(frmCustomerPublicSignUp.get('zip')?.errors?.required && frmCustomerPublicSignUp.get('zip')?.touched) {
+                                    <span class="text-danger" ><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                                    }
+                                    
+                                    @if(frmCustomerPublicSignUp.get('zip')?.errors?.pattern && frmCustomerPublicSignUp.get('zip')?.touched) {
+                                    <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_FOR_VALID_ZIP_CODE"></span></span>
+                                    }
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-5">
+                                    <div class="form-group">
+                                        <label class="required fw-semibold fs-6 mb-2">
+                                            <span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_LABEL_TEXT_COUNTRY"></span> <span class="text-danger"></span>
+                                        </label>
+                                        <ng-select formControlName="country" (change)="onCountryChange()"
+                                            placeholder="{{'TRANSLATE.ADD_CUSTOMER_PLEASE_SELECT_A_CURRENCY_CODE' |translate}}">
+                                            <ng-option value="" translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_COUNTRY_DROPDOWN_DEFAULT_OPTION"></ng-option>
+                                            @for (countryOption of countries; track $index) {
+                                            <ng-option [value]="countryOption.Code">{{countryOption?.Name}}</ng-option>
+                                            }
+                                        </ng-select>
+                                        @if(frmCustomerPublicSignUp.get('country')?.errors?.required && frmCustomerPublicSignUp.get('country')?.touched) {
+                                        <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-5">
+                                    <div class="form-group"
+                                        ng-class="{'has-error':vm.frmCustomerPublicSignUp.$submitted &amp;&amp; (vm.frmCustomerPublicSignUp.OrganizationRegistrationNumber.$error.required || vm.frmCustomerPublicSignUp.OrganizationRegistrationNumber.$error.maxlength)}">
+                                        <label class="fw-semibold fs-6 mb-2">
+                                            <span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_LABEL_TEXT_ORGANIZATION_REGISTRATION_NUMBER"></span> <span
+                                                *ngIf="(isOrganizationRegistrationNumberRequired && isMicrosoftProductAvailable)" class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" formControlName="organizationRegistrationNumber" class="form-control form-control-sm" ng-maxlength="50"
+                                            name="OrganizationRegistrationNumber"/>
+                                        @if(isOrganizationRegistrationNumberRequired && isMicrosoftProductAvailable && frmCustomerPublicSignUp.get('organizationRegistrationNumber')?.errors?.required && frmCustomerPublicSignUp.get('organizationRegistrationNumber')?.touched) {
+                                            <span class="text-danger" ><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @if(isMicrosoftProductAvailable) {
+                            <div class="card product-description-card mt-4 ps-5 pe-10">
+                                <div class="card-header shop-item-title flex-nowrap">
+                                    <div class="card-title">
+                                        <div class="text">
+                                            {{'TRANSLATE.LABEL_TEXT_CREATE_MICROSOFT_ACCOUNT' | translate}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="divider m-0">
+                                <div class="card-body ps-5 pe-10">
+                                    <div class="form-group row">
+                                        <div class="col-md-6 mb-5">
+                                            <label class="required fw-semibold fs-6 mb-2"><span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_LABEL_TEXT_PRIMARY_DOMAIN_NAME"></span></label>
+                                            <div class="input-group input-group-sm mb-3">
+                                                <input type="text" class="form-control" formControlName="domain" (blur)="checkDomainAvialbility()" name="Domain" required ng-maxlength="27" maxlength="27"
+                                                    ng-minlength="1" ng-pattern="/^[a-zA-Z0-9]*$/" aria-describedby="basic-addon2">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" id="basic-addon2">.onmicrosoft.com</span>
+                                                </div>
+                                            </div>
+                                            @if(isMicrosoftProductAvailable && frmCustomerPublicSignUp?.get('domain')?.errors?.required && frmCustomerPublicSignUp?.get('domain')?.touched) {
+                                            <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                                            }
+                                            <span *ngIf="isCheckingDomainAvailability && customerPublicSignUpModel?.Domain && customerPublicSignUpModel?.Domain !== ''" class="text-info">
+                                                <span class="spinner-border text-info fs-3" role="status">
+                                                  <span class="visually-hidden">{{'TRANSLATE.LOADING_MESSAGE' | translate}}</span>
+                                                </span>
+                                                &nbsp;
+                                                <span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_MESSAGE_VALIDATING_DOMAN"></span>
+                                            </span>
+                                            <span class="text-danger col-6 mt-4" *ngIf="isDomainValid && isDomainAvailble === false && Domain.length > 0">{{Domain}}.onmicrosoft.com <span
+                                                    translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_MESSAGE_IS_NOT_AVAILABLE"></span></span>
+                                            <span class="text-success col-6 mt-4" *ngIf="isDomainValid && isDomainAvailble === true && Domain.length > 0">{{Domain}}.onmicrosoft.com <span
+                                                    translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_MESSAGE_IS_AVAILABLE"></span></span>
+                                            <span class="text-danger col-6 mt-4" *ngIf="!isDomainValid"><span
+                                                translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_MESSAGE_DOMAIN_IS_INVALID"></span>
+                                            </span>
+                                        </div>
+                                        <div class="col-md-6 mb-5" *ngIf="considerNewMicrosoftCustomerAgreement =='No'">
+                                             <label class="required fw-semibold fs-6 mb-5">
+                                                <span translate="TRANSLATE.REGISTER_HEADER_TEXT_MICROSOFT_CLOUD_AGREEMENT"></span>
+                                            </label> 
+                                            <div class="input-group-with-checkbox">
+                                                <label class="form-check form-check-inline form-check me-5">
+                                                    <input type="checkbox" formControlName="isCustomerConsentAcceptanceProvided" (change)="onCustomerConsentIsAcceptedChange()" class="form-check-input">
+                                                    <span class="fw-semibold fs-6">
+                                                        <span translate="TRANSLATE.PUBLIC_SIGNUP_CUSTOMER_CONSENT_CHECK_BOX_LBL_TEXT"></span>&nbsp;
+                                                        <a (click)="customerConsentClick()"><span class="text-primary" translate="TRANSLATE.REGISTER_CUSTOMER_CONSENT_BTN_TEXT_MICROSOFT_CLOUD_AGREEMENT"></span></a>
+                                                    </span>
+                                                    @if(isMicrosoftProductAvailable && frmCustomerPublicSignUp?.get('isCustomerConsentAcceptanceProvided')?.errors?.required && frmCustomerPublicSignUp?.get('isCustomerConsentAcceptanceProvided')?.touched) {
+                                                        <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                                                    }
+                                                </label>
+                                            </div>
+                                        </div> 
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6 mt-8" *ngIf="considerNewMicrosoftCustomerAgreement =='Yes'">
+                            <div class="row m-heading-1 border-green m-bordered p-0">
+                                <div>
+                                    <strong>{{
+                                        'TRANSLATE.PROVIDER_CUSTOMER_ATTESTATION_AND_AGREEMENT_CREATION_PUBLIC_SIGNUP_INSTRUCTIONS_HEADING' |
+                                        translate }}</strong>
+                                    <ul class="ps-10 pt-4">
+                                        <li>
+                                            {{ 'TRANSLATE.PROVIDER_CUSTOMER_ATTESTATION_AND_AGREEMENT_CREATION_PUBLIC_SIGNUP_INSTRUCTIONS_1' |
+                                            translate }}
+                                        </li>
+                                        <li>
+                                            {{
+                                            'TRANSLATE.PROVIDER_CUSTOMER_ATTESTATION_AND_AGREEMENT_CREATION_PUBLIC_SIGNUP_INSTRUCTIONS_2'
+                                            | translate }}
+                                        </li>
+                                        <li>
+                                            {{
+                                            'TRANSLATE.PROVIDER_CUSTOMER_ATTESTATION_AND_AGREEMENT_CREATION_PUBLIC_SIGNUP_INSTRUCTIONS_3'
+                                            | translate }}
+                                        </li>
+                                        <li
+                                            [innerHTML]="'TRANSLATE.PROVIDER_CUSTOMER_ATTESTATION_AND_AGREEMENT_CREATION_PUBLIC_SIGNUP_INSTRUCTIONS_4' | translate">
+                                        </li>
+                                        <li
+                                            [innerHTML]="'TRANSLATE.PROVIDER_CUSTOMER_ATTESTATION_AND_AGREEMENT_CREATION_PUBLIC_SIGNUP_INSTRUCTIONS_5' | translate">
+                                        </li>
+                                        <li>
+                                            {{
+                                            'TRANSLATE.PROVIDER_CUSTOMER_ATTESTATION_AND_AGREEMENT_CREATION_PUBLIC_SIGNUP_INSTRUCTIONS_6'
+                                            | translate }}
+                                        </li>
+                                        <li>
+                                            {{
+                                            'TRANSLATE.PROVIDER_CUSTOMER_ATTESTATION_AND_AGREEMENT_CREATION_PUBLIC_SIGNUP_INSTRUCTIONS_7'
+                                            | translate }}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer d-flex justify-content-end">
+                            <a *ngIf="!isCheckingDomainAvailability&&!isCheckingEmailAvailability" class="btn btn-sm btn-primary" (click)="addCustomer()">
+                                <span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_BUTTON_TEXT_CUSTOMER_DETAILS"></span>
+                            </a>
+                            <button *ngIf="isCheckingDomainAvailability||isCheckingEmailAvailability" class="btn btn-sm btn-primary" [disabled]="true">
+                                <span>
+                                    <span class="spinner-border text-light fs-6" role="status">
+                                      <span class="visually-hidden">{{'TRANSLATE.LOADING_MESSAGE' | translate}}</span>
+                                      </span>&nbsp;&nbsp;
+                                    <span translate="TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT"></span>
+                                </span> 
+                            </button>
+                        </div>
+                    </form>
+                </div> 
+                <div *ngIf="IsExistingMsTenant">
+                    <form class="form" role="form" [formGroup]="frmExistingMsTenant">
+                        <div class="container-fluid customer-container">
+                            <div class="row pb-5">
+                                <div class="col col-12 col-lg-12 pt-5 ps-10 pe-10">
+                                    <div class="alert  border-primary-dashed alert-primary text-dark fw-semibold" role="alert">
+                                        <span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_INSTRUCTION_1"></span>
+                                    </div>
+                                    <div class="card product-description-card m-auto ">
+                                        <div class="card-body">
+                                            <div class="form-group row">
+                                                <!-- <div class="col-md-6 mb-5"><label class="required fw-semibold fs-6 mb-2">Tenant
+                                                        Id</label><input type="text" name="first_name" class="form-control form-control-sm">
+                                                </div> -->
+
+                                                <div class="col-md-6 mb-5">
+                                                    <div class="form-group"
+                                                        ng-class="{'has-error':vm.frmExistingMsTenant.$submitted &amp;&amp; (vm.frmExistingMsTenant.TenantId.$error.required || vm.frmExistingMsTenant.TenantId.$error.maxlength)}">
+                                                        <label class="required fw-semibold fs-6 mb-2">
+                                                            <i class="fas fa-info-circle text-default text-dark-50 me-2" tooltip-placement="right"
+                                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_TENANT_ID_TOOLTIP' | translate}}"></i>
+                                                            <span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_LABEL_TEXT_TENANT_ID"></span> <span
+                                                                class="text-danger  font-weight-900"></span>
+                                                        </label>
+                                                        <input type="text" formControlName="tenantId" class="form-control form-control-sm" ng-maxlength="50" name="TenantId" ng-required="true" />
+                                                        @if(frmExistingMsTenant.get('tenantId')?.errors?.required && frmExistingMsTenant.get('tenantId')?.touched) {
+                                                        <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                                                        }
+                                                        @if(frmExistingMsTenant.get('tenantId')?.errors?.maxlength && frmExistingMsTenant.get('tenantId')?.touched) {
+                                                        <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_MAX_LENGTH_50"></span></span>
+                                                        }
+                                                    </div>
+                                                </div>
+
+                                                <!-- <div class="col-md-6 mb-5 mb-3">
+                                                    <label class="required fw-semibold fs-6 mb-2"> Domain Name</label>
+                                                    <div class="input-group  input-group-sm mb-3">
+                                                        <input type="text" class="form-control">
+                                                        <span class="input-group-text" id="basic-addon2">.onmicrosoft.com</span>
+                                                    </div>
+                                                </div> -->
+
+                                                <div class="col-md-6 mb-5 mb-3">
+                                                    <div class="form-group" ng-class="{'has-error':vm.frmExistingMsTenant.$submitted && vm.frmExistingMsTenant.DomainName.$error.required}">
+                                                        <label class="required fw-semibold fs-6 mb-2">
+                                                            <i class="fas fa-info-circle text-default text-dark-50 me-2" tooltip-placement="right"
+                                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DOMAIN_NAME_TOOLTIP' | translate}}"></i>
+                                                            <span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_LABEL_TEXT_DOMAIN_NAME"></span><span
+                                                                class="text-danger font-weight-900"></span>
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <input type="text" formControlName="domain" class="form-control" (input)="checkDomainAvialbility()" name="Domain" required ng-maxlength="27"
+                                                                maxlength="27" ng-minlength="1" ng-pattern="/^[a-zA-Z0-9]*$/" />
+                                                            <div class="input-group-append">
+                                                                <span class="input-group-text">
+                                                                    .onmicrosoft.com
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        @if(frmExistingMsTenant?.get('domain')?.errors?.required && frmExistingMsTenant?.get('domain')?.touched) {
+                                                        <span class="text-danger" *ngIf="Domain.length === 0"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                                                        }
+                                                        <!--<div class="col-4"></div>-->
+                                                        <span class="text-danger" *ngIf="isDomainAvailble === true && Domain.length > 0">{{Domain}}.onmicrosoft.com <span
+                                                                translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_EXISTING_TENANT_FORM_MESSAGE_IS_NOT_EXIST"></span></span>
+                                                        <!--<div class="col-4"></div>-->
+                                                        <span class="text-success" *ngIf="isDomainAvailble === false && Domain.length > 0">{{Domain}}.onmicrosoft.com <span
+                                                                translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_EXISTING_TENANT_FORM_MESSAGE_IS_EXIST"></span></span>
+                                                    </div>
+                                                </div>
+
+                                                <!-- <div class="col-md-6 mb-5"><label class="required fw-semibold fs-6 mb-2">Global Admin email
+                                                        addrress</label><input type="email" class="form-control form-control-sm">
+                                                </div> -->
+
+                                                <div class="col-md-6 mb-5">
+                                                    <div class="form-group"
+                                                        ng-class="{'has-error':vm.frmExistingMsTenant.$submitted &amp;&amp; (vm.frmExistingMsTenant.Email.$error.required || vm.frmExistingMsTenant.Email.$error.email) || (vm.frmExistingMsTenant.Email.$invalid && !vm.frmExistingMsTenant.Email.$pristine)}">
+                                                        <label class="required fw-semibold fs-6 mb-2">
+                                                            <i class="fas fa-info-circle text-default text-dark-50 me-2" tooltip-placement="right"
+                                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_EMAIL_TOOLTIP' | translate}}"></i>
+                                                            <span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_FORM_LABEL_TEXT_GLOBAL_ADMINS"></span> <span
+                                                                class="text-danger font-weight-900"></span>
+                                                        </label>
+                                                        <input type="email" formControlName="email" (blur)="onEmailAddressChange()" class="form-control form-control-sm" name="Email"
+                                                            ng-required="true" />
+                                                        <div class="text-danger" *ngIf="thisEmailAddressAlreadyExistsMessage?.length > 0">
+                                                            {{thisEmailAddressAlreadyExistsMessage}}
+                                                        </div>
+                                                        @if (frmExistingMsTenant.get('email')?.errors?.required && frmExistingMsTenant.get('email')?.touched) {
+                                                        <span ng-show="vm.frmCustomerDetails.$submitted &amp;&amp; vm.frmCustomerDetails.onboardCustomerModel_Email.$error.required"
+                                                            class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                                                        }
+
+                                                        @if(frmExistingMsTenant.get('email')?.hasError('email') && frmExistingMsTenant.get('email')?.touched) {
+                                                        <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_PLEASE_ENTER_A_VALID_EMAIL"></span></span>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="alert  border-primary-dashed alert-primary mb-0 mt-5" role="alert">
+                                        <span class="text-dark fw-bold">
+                                            <span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_RESELLER_RELATIONSHIP_INSTRUCTION_0"></span><br>
+                                            <span class="text-dark fw-bold"> <span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_INSTRUCTION_RESELLER_RELATIONSHIP_HEADING"></span></span>
+                                            <ul style="list-style-type: disc; padding-left:1rem">
+                                                <li>
+                                                    <a class="fw-semibold hand-cursor-class" (click)="getResellerRelationshipURL()"><span
+                                                            translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_RESELLER_RELATIONSHIP_INSTRUCTION_1"></span></a>
+                                                    <span class="text-dark fw-semibold"><span translate="TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_RESELLER_RELATIONSHIP_INSTRUCTION_2"></span></span>
+                                                </li>
+                                                <li>
+                                                    <span class="text-dark fw-semibold">
+                                                        <span [innerHTML]="('TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_RESELLER_RELATIONSHIP_INSTRUCTION_3')| translate"></span>
+                                                    </span><br>
+                                                </li>
+                                            </ul>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer d-flex justify-content-end">
+                            <button class="btn btn-sm btn-primary" (click)="sumbitCustomerDetails()" appBusyLoader>
+                                {{'TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_DETAILS_BUTTON_TEXT_CUSTOMER_DETAILS' | translate}}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class=" col col-12 col-lg-3 pt-5">
+            <div class="card product-description-card m-auto" style="height:100%">
+                
+                <div class="card-header shop-item-title flex-nowrap">
+                    <div class="d-flex justify-content-between pb-3 w-100" *ngIf="payableAmount > 0 && payableAmount !== null && payableAmount !== undefined">
+                        <span class=""> 
+                            <a href="#" class="card-title font-weight-bolder text-dark fw-bold text-dark-75 font-size-h2 m-0 pt-1">
+                                <span translate="TRANSLATE.CUSTOMER_CART_PORTLET_TITLE_TEXT_PRICE_DETAILS"></span>
+                            </a>
+                            <span class="pl-9" *ngIf="_publicSignUpService.cartCount > 0">
+                                {{_publicSignUpService.cartCount}} items
+                            </span>
+                        </span>
+                        <span>
+                            <div class="card-toolbar">
+                                <a class="fw-bold cursor-pointer" (click)="checkOutCart()"><span translate="TRANSLATE.PUBLIC_SIGNUP_EDIT_TEXT"></span></a>
+                            </div>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- <div class="d-flex justify-content-between ps-5 pt-5 w-100"></div>
+                    <h4>
+                        <span class="pl-9 font-weight-bolder" *ngIf="_publicSignUpService.cartCount > 0">
+                            {{_publicSignUpService.cartCount}} items
+                        </span>
+                    </h4>
+                </div> -->
+
+                <hr class="divider m-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between pt-3 pb-3" *ngIf="_publicSignUpService.cartTotal">
+                        <span class="text-dark fw-bold"><span translate="TRANSLATE.CUSTOMER_CART_PARAGRAPH_TITLE_TEXT_TOTAL_COST"></span></span>
+                        <span>{{_publicSignUpService.cartTotal | CurrencyFilter : products[0].CurrencySymbol :
+                            products[0].CurrencyDecimalPlaces : products[0].CurrencyThousandSeperator :
+                            products[0].CurrencyDecimalSeperator}}</span>
+                    </div>
+                    <div class="d-flex justify-content-between pt-3 pb-3" *ngIf="_publicSignUpService?.billingInformationFormSubmitted">
+                        <span class="text-dark fw-bold">{{'TRANSLATE.SIGNUP_CART_COUPON_CODE' |
+                            translate}}</span>
+                        <div class="input-group mb-3">
+                            <input type="text" [(ngModel)]="couponCode" (change)="refreshCoupon()" class="form-control form-contol-sm" maxlength="50" name="CouponCode"
+                                placeholder="{{'TRANSLATE.PUBLIC_SINGUP_PLACEHOLDER_VOUCHER_CODE'| translate}}">
+                            <button class="btn btn-sm btn-light-primary" [disabled]="isCouponValidationInProgress" (click)="validateCoupon()">
+                                {{'TRANSLATE.SIGNUP_CART_COUPON_APPLY' | translate}}
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <button *ngIf="(validCouponCode !== null && validCouponCode !== '' && validCouponCode !== undefined && isDiscountApplied)" [disabled]="isCouponValidationInProgress"
+                            class="btn btn-sm btn-light-danger pt-3 pb-3" (click)="removeCouponApplied()">
+                            {{'TRANSLATE.SIGNUP_CART_REMOVE_APPLIED_COUPON' | translate}}
+                        </button>
+                    </div>
+                    <div class="d-flex justify-content-between pt-3 pb-3" *ngIf="cartDiscount > 0 && cartDiscount !== null && cartDiscount !== undefined">
+                        <span class="text-dark fw-bold">{{'TRANSLATE.CUSTOMER_CART_PARAGRAPH_TITLE_TEXT_TOTAL_DISCOUNT'
+                            |
+                            translate}}</span>
+                        <span>{{cartDiscount | CurrencyFilter : products[0].CurrencySymbol :
+                            products[0].CurrencyDecimalPlaces : products[0].CurrencyThousandSeperator :
+                            products[0].CurrencyDecimalSeperator}}</span>
+                    </div>
+                    <hr class="divider m-0">
+                    <div class="d-flex justify-content-between pt-3 pb-3" *ngIf="payableAmount > 0 && payableAmount !== null && payableAmount !== undefined">
+                        <span class="text-dark fw-bold"> <span translate="TRANSLATE.CUSTOMER_CART_PARAGRAPH_TITLE_TEXT_AMOUNT_PAYABLE"></span>
+                        </span>
+                        <span>{{payableAmount | CurrencyFilter : products[0].CurrencySymbol :
+                            products[0].CurrencyDecimalPlaces : products[0].CurrencyThousandSeperator :
+                            products[0].CurrencyDecimalSeperator}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,60 @@
+<div class="col-lg-12">
+    <div class="card card-custom">
+        <div class="card-header">
+            <div class="card-title">
+                <strong><span>{{'TRANSLATE.CUSTOMER_PROFILE_ACCOUNT_MANAGER_TAB_HEADER_TEXT' |
+                        translate}}</span></strong>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        @if(!!accountManagerDetails){
+            <div ngbAccordion>
+                <div ngbAccordionItem [collapsed]="false">
+                    <div ngbAccordionHeader class="text-primary">
+                        <button ngbAccordionButton class="text-primary">
+                            <span>
+                                <i class="fa fa-user font-dark"></i> {{accountManagerName}}
+                            </span>
+                        </button>
+                    </div>
+                    <div ngbAccordionCollapse>
+                        <div class="card card-custom">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12" style="padding-left: 30px">
+                                        <div class="row static-info">
+                                            <div class="col-md-4 name">
+                                                {{'TRANSLATE.CUSTOMER_PROFILE_ACCOUNT_MANAGER_DETAILS_LABEL_EMAIL' | translate}} </div>
+                                            <div class="col-md-8 font-weight-bold value"> {{accountManagerDetails.Email}} </div>
+                                        </div>
+                                        <div class="row static-info"
+                                            *ngIf="accountManagerDetails.PhoneNumber !== null && accountManagerDetails.PhoneNumber !== undefined && accountManagerDetails.PhoneNumber !== ''">
+                                            <div class="col-md-4 name">
+                                                {{'TRANSLATE.CUSTOMER_PROFILE_ACCOUNT_MANAGER_DETAILS_LABEL_PHONENUMBER'| translate}} </div>
+                                            <div class="col-md-8 font-weight-bold value">
+                                                {{accountManagerDetails.PhoneNumber}} </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        
+        <div class="row" *ngIf="!isLoading">
+            <div class="col-md-12" *ngIf="(entityName === 'Customer') && ( accountManagerDetails === null || accountManagerDetails === undefined || accountManagerDetails === '' )">
+                <div>
+                    <h4 translate="TRANSLATE.CUSTOMER_NOT_ASSIGNED_TO_ANY_ACCOUNT_MANAGER"></h4>
+                </div>
+            </div>
+            <div class="col-md-12" *ngIf="(entityName === 'Reseller') && ( accountManagerDetails === null || accountManagerDetails === undefined || accountManagerDetails === '' )">
+                <div>
+                    <h4 translate="TRANSLATE.RESELLER_NOT_ASSIGNED_TO_ANY_ACCOUNT_MANAGER"></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

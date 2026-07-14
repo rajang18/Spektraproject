@@ -1,0 +1,45 @@
+.addPlanBorderColorforGreaterprice {
+    border: 3px solid gold !important;
+}
+
+.table:not(.table-bordered) tbody tr.addPlanBorderColorforGreaterprice:last-child {
+    border-bottom: 3px solid gold !important;
+}
+
+.addPlanBorderColorforlessPrice {
+    border: 3px solid red !important;
+}
+
+.table:not(.table-bordered) tbody tr.addPlanBorderColorforlessPrice:last-child {
+    border-bottom: 3px solid red !important;
+}
+
+.highlight {
+    background-color: palegreen;
+}
+
+.addPlanBorderColorforOfferWithPromotion {
+    border: 2px solid blue !important;
+    border-top: 2px solid blue !important;
+
+}
+.addBorderColorToEditAndNewOfferForShowPurchasedOffer {
+    border: 2px solid gold !important;
+    border-top: 2px solid gold !important;
+}
+.toggle-wrapper {
+    visibility: hidden;
+  }
+  
+  .toggle-wrapper i {
+    visibility: visible;
+    cursor: pointer;
+  }
+
+  .editable.editable-click:focus {
+    outline: none; /* Remove default focus outline */
+    box-shadow: none; /* Remove any additional shadows */
+}
+.custom-col {
+    width: calc(100% / 12 * 1.3); 
+  }

@@ -1,0 +1,56 @@
+<div class="d-flex flex-column-fluid">
+    <div class="container-fluid p-0">
+        <div class="">
+            <div class="card-header mt-5 ps-3">
+                <div class="row pb-3" *ngIf="effectiveEntityName === 'Customer'">
+                    <h6 class="text-gray-800 fw-bold fs-4 mt-2 mb-2 me-5 ms-1 ps-2"> <span
+                            translate="TRANSLATE.PROFILE_HEADER_CUSTOMER_CONFIGURATION"></span></h6>
+                </div>
+                <div class="row pb-3" *ngIf="effectiveEntityName === 'Reseller'">
+                    <h6 class="text-gray-800 fw-bold fs-4 mt-2 mb-2 me-5 ms-6"> <span
+                            translate="TRANSLATE.PROFILE_HEADER_RESELLER_CONFIGURATION"></span></h6>
+                </div>
+            </div>
+            <div class="">
+                <div class="tab-content">
+                    <div class="tab-pane fade show active">
+                        <div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="table table-row-bordered">
+                                        <div>
+                                            <form [formGroup]="formGroup">
+                                                @for( row of tenantConfigurationsList;track $index){
+                                                <div *ngIf="row.IsShowOnScreen" class="border-top">
+                                                    <tenantconfig [data]="row" [form]="formGroup"
+                                                        [controlType]="row.ControlType" [frmControlName]="row.Name"
+                                                        (savetenantconfig)="saveTenantConfig($event)"
+                                                        (reverttenantconfig)="revertTenantConfig($event)"
+                                                        (canceltenantconfig)="cancelTenantConfig()"></tenantconfig>
+                                                </div>
+                                                }
+                                            </form>
+                                            <!-- <div *ngIf="tenantConfigurationsList.length === 0">
+                                                <div class="col-md-12">
+                                                    <h3 class="text-center">
+                                                        <img src="../../../../../assets/media/png/no-records-found4.png" width="150" height="180">
+                                                    </h3>
+                                                    <h4 class="font-weight-bold text-center">
+                                                        <span class="ng-scope">
+                                                            {{'TRANSLATE.CUSTOMER_PROFILE_PARTNR_NO_RECORDS_FOUD_TEXT'| translate}}
+                                                        </span> -->
+                                            <!-- end ngIf: !vm.NoDataMessage -->
+                                            <!-- </h4>
+                                                </div>
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

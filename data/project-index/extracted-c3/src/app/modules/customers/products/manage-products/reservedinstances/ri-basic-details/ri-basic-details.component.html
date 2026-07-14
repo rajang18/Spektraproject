@@ -1,0 +1,362 @@
+<ng-template #actionHeader>
+    <div class="d-flex align-items-center">
+        <!--<div class="fw-bold p-0 my-2 font-size-sm" *ngIf="TransactionAmountLimit>0">
+            <span style="margin-right: 10px; font-weight:600" translate="TRANSLATE.TRANSACTION_LIMIT_MESSAGE" translate-values="{ RemainingAmount: '{{RemainingLimit}}',TotalLimit:'{{TransactionAmountLimit}}' }" />
+        </div>-->
+        <a class="btn btn-light-primary btn-active-primary btn-sm  text-nowrap" *ngIf="true" busy=""
+            busy-add-classes="disabled" not-busy-remove-classes="disabled" (click)="goToProductsPage()">
+            <i class="ki-duotone ki-to-left"></i>
+            {{'TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_BUTTON_TEXT_BACK_TO_PRODUCTS' | translate }}
+            <!-- <busy-message>
+                <i class="fa fa-spinner fa-spin"></i> {{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}
+            </busy-message> -->
+        </a>
+    </div>
+</ng-template>
+
+@if (product) {
+<div class="d-flex flex-column-fluid">
+    <div class="col-12">
+        <div class="card card-custom gutter-b">
+            <div class="card-body">
+                <div style="width: 36px; height: 47px; position: absolute; top: 0px; left: 90%; padding-top: 15px; padding-left: 10px; background-color: #AC3934 !important"
+                    class="text-white" *ngIf="product.HasScheduleChanges">
+                    <span ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCTS_TITLE_SCHEDULED_RENEWAL' | translate}}"
+                        tooltip-placement="bottom"><i class="far fa-clock text-white "></i></span>
+                </div>
+                <!--begin::Top-->
+                <div class="d-flex container-fluid">
+                    <!--begin::Pic-->
+                    <div class="flex-shrink-0 ms-7">
+                        @if (product.ImageUrl) {
+                        <div class="symbol symbol-50 symbol-lg-120 symbol-light-danger text-center">
+                            <img [src]="product.ImageUrl" alt="product-image">
+                        </div>
+                        }
+                        @if (!product.ImageUrl) {
+                        <div class="ps-9 mb-2 symbol symbol-50 symbol-lg-120 symbol-circle symbol-dark">
+                            <span class="fs-2 symbol-label bg-dark text-white">
+                                {{product.ProductSubscriptionName | formatforinitials}}
+                            </span>
+                        </div>
+                        }
+
+                        <!-- Increase/Decrease is disabled for RI.-->
+                        <div class="text-center">
+                            <div class="input-group" style="width: 70%;">
+                                <div class="input-group-prepend">
+                                    <button class="input-group-text line-height-0 py-0 h-100" [disabled]="true">
+                                        <i class="ki-duotone ki-minus"></i>
+                                    </button>
+                                </div>
+                                <input class="form-control text-center" oninput="this.value = Math.abs(this.value)" (keyup)="hideDecimal()"
+                                    type="number" pattern="\d*" [(ngModel)]="product.Quantity"
+                                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_LABEL_QUANTITY' | translate}}: {{product.Quantity}}"
+                                    [disabled]="Permissions.HasAccessUserLicenseTrackingView === 'Allowed'" />
+                                <div class="input-group-append">
+                                    <button class="input-group-text line-height-0 py-0 h-100" [disabled]="true"
+                                        [ngClass]="{'disabled': true}">
+                                        <i class="ki-duotone ki-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--end::Pic-->
+                </div>
+                <div class="d-flex flex-wrap">
+                    <!--begin::Description-->
+                    <div class="flex-grow-1 fw-bold text-dark-50 py-2 py-lg-2 ms-5">
+                        <div class="table-scrollable table-scrollable-borderless table-borderless">
+                            <table class="table table-condensed table-hover table-cell-no-border">
+                                <tbody>
+                                  <tr style="background-color: unset !important;">
+                                    <!--hide the upgrade button if the subscription is shared between multiple entities -->
+                                    <td colspan="2">
+                                      @if (product.IsEdit != true) {
+                                      <span ngbTooltip="{{serviceType != null ? product.ProductSubscriptionName + ' - ' + serviceType : product.ProductSubscriptionName}}"
+                                            class="fs-5 fw-bold">
+                                        {{product.ProductSubscriptionName | limitLength:60}}
+                                        <span *ngIf="product.ProductSubscriptionName !=null && product.ProductSubscriptionName.length > 60">...</span>
+                                      </span>
+                                      }
+
+                                      @if (Permissions.HasSaveProductChanges ==='Allowed' &&
+                                      product.Status.toLowerCase() ===
+                                      cloudHubConstants.SUBSCRIPTION_STATUS_ACTIVE && !product.IsEdit ) {
+                                      <a class="btn btn-icon" (click)="product.IsEdit = true; setProductName()">
+                                        <i class="ki-outline fs-4 ki-pencil text-primary " aria-hidden="true"
+                                           data-toggle="tooltip" data-placement="top"
+                                           ngbTooltip="{{'TRANSLATE.TOOLTIP_TEXT_EDIT_NAME'|translate}}"></i>
+                                      </a>
+                                      }
+
+                                      @if (product.IsEdit === true && Permissions.HasSaveProductChanges
+                                      ==='Allowed') {
+                                      <div class="row">
+                                        <div class="col" *ngIf="Permissions.HasSaveProductChanges ==='Allowed'">
+                                          <input type="text" [(ngModel)]="product.ProductNameToUpdate"
+                                                 class="form-control">
+                                        </div>
+                                        <div class="btn-group col-md-1 p-0">
+                                          <a class="btn btn-icon"
+                                             *ngIf="product.IsEdit === true&&Permissions.HasSaveProductChanges ==='Allowed'"
+                                             (click)="updateProductName(product, 'Name', product.ProductSubscriptionName)">
+                                            <i class="ki-outline ki-check fs-1 text-success"></i>
+                                          </a>
+                                          <a class="btn btn-icon"
+                                             *ngIf="product.IsEdit === true && Permissions.HasSaveProductChanges ==='Allowed'"
+                                             (click)="product.IsEdit = false;product.ProductNameToUpdate=product.ProductSubscriptionName;">
+                                            <i class="ki-outline ki-cross fs-1 text-danger"></i>
+                                          </a>
+                                        </div>
+                                      </div>
+                                      }
+
+                                      <br />
+                                      <a *ngIf="product.IsEdit === true && Permissions.HasSaveProductChanges ==='Denied'">
+                                        <span [innerHTML]="product.ProductSubscriptionName | limitLength:80"></span>
+                                      </a>
+                                    </td>
+                                    @if (product.SubscriptionSharedBetweenMutiplePartners && product.Status !=
+                                    'Suspended' && product.Status != 'Deleted' &&
+                                    product.Status != 'Expired' && product.Status != 'Disabled' &&
+                                    Permissions.HasPermissionToViewUpgradeButton &&
+                                    product.CanUpgrade && product.EntityName ==='Customer') {
+<tr>
+                                        <td colspan="3">
+                                            <!--*ngIf="product.SubscriptionSharedBetweenSiteAndDepartment"-->
+                                            <div class="m-0 bs-callout bs-callout-info">
+                                                <span translate="TRANSLATE.SUBSCIRPION_UPGRADE_WARNING_MESSAGE"
+                                                    class="fw-bold"></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    }
+
+                                    <tr>
+                                        <td colspan="4">
+                                            <div class="d-flex align-items-center flex-wrap justify-content-between">
+                                                <!--begin::Description-->
+                                                <div class="flex-grow-1 fw-bold text-dark-50 description-color">
+                                                    @if (!showCompleteDescription) {
+                                                    <div>
+                                                        <span [innerHTML]="product.Description| limitLength:40"></span>
+                                                        <span
+                                                            *ngIf="product.Description !=null && product.Description.length > 40"></span>
+                                                        <a class="bold text-primary cursor-pointer ps-1"
+                                                            *ngIf="product.Description !=null && product.Description.length > 40"
+                                                            (click)="readMoreDescription()"><small>{{'TRANSLATE.PRODUCT_DETAILS_READ_MORE_LINK_TEXT'
+                                                                |
+                                                                translate}}</small></a>
+                                                    </div>
+                                                    }
+
+                                                    @if (showCompleteDescription) {
+                                                    <div>
+                                                        <span style="word-break: break-word" width="100"
+                                                            [innerHTML]="product.Description"></span>
+                                                        <a class="bold text-primary cursor-pointer ps-1"
+                                                            *ngIf="product.Description !=null && product.Description.length > 40"
+                                                            (click)="readLessDescription()"><small>{{'TRANSLATE.PRODUCT_DETAILS_READ_LESS_LINK_TEXT'
+                                                                |
+                                                                translate}}</small></a>
+                                                    </div>
+                                                    }
+
+                                                </div>
+                                                <!--end::Description-->
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="product.ReservationID != null">
+                                        <td>{{'TRANSLATE.CUSTOMER_PRODUCT_RESERVED_INSTANCES_LABEL_TEXT_RESERVATION_ID'
+                                            | translate}}</td>
+                                        <td><span>{{product.ReservationID}}</span></td>
+                                    </tr>
+                                    <tr *ngIf="product.ReservationOrderID != null">
+                                        <td>{{'TRANSLATE.CUSTOMER_PRODUCT_RESERVED_INSTANCES_LABEL_TEXT_RESERVATION_ORDER_ID'
+                                            | translate}}</td>
+                                        <td><span>{{product.ReservationOrderID}}</span></td>
+                                    </tr>
+                                    <tr *ngIf="product.ProviderProductId != null">
+                                        <td>{{'TRANSLATE.CUSTOMER_PRODUCT_RESERVED_INSTANCES_LABEL_TEXT_AZURE_SUBSCRIPTION_ID'
+                                            | translate}}</td>
+                                        <td><span>{{product.ProviderProductId}}</span></td>
+                                    </tr>
+                                    <tr *ngIf="product.ReservationRegion">
+                                        <td>{{'TRANSLATE.CUSTOMER_PRODUCT_RESERVED_INSTANCES_LABEL_TEXT_RESERVATION_REGION'
+                                            | translate}}</td>
+                                        <td>
+                                            <span *ngIf="product.ReservationRegion == 0">NA</span>
+                                            <span
+                                                *ngIf="product.ReservationRegion != 0">{{product.ReservationRegion}}</span>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="product.Scope != null">
+                                        <td>{{'TRANSLATE.CUSTOMER_PRODUCT_RESERVED_INSTANCES_LABEL_TEXT_SCOPE' |
+                                            translate}}</td>
+                                        <td><span>{{product.Scope}}</span></td>
+                                    </tr>
+                                    <tr
+                                        *ngIf="product.ProviderSettings && product.ProviderSettings.ProviderCategory !=null">
+                                        <td>{{'TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_LABEL_TEXT_CATEGORY' |
+                                            translate}}</td>
+                                        <td><span>{{product.ProviderSettings.ProviderCategory | translate}}</span></td>
+                                    </tr>
+                                    <tr *ngIf="product.DomainName">
+                                        <td>{{'TRANSLATE.CUSTOMER_PRODUCTS_LIST_TITLE_DOMAIN' | translate}}</td>
+                                        <td>
+                                            <span>{{product.DomainName}}</span>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="product.BillingCycleName">
+                                        <td>{{'TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_LABEL_TEXT_BILLING_CYCLE' |
+                                            translate}}</td>
+                                        <td>
+                                            <span>{{'TRANSLATE.' + product.BillingCycleDescription | translate}} &nbsp; <a class="bold font-green"></a></span>
+                                        </td>
+                                    </tr>
+                                    <tr
+                                        *ngIf="product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE">
+                                        <td>{{'TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_LABEL_TEXT_UNIT_PRICE' |
+                                            translate}}</td>
+                                        <td>
+                                            <span>
+                                                <span class=" ">{{product.FinalSalePrice | CurrencyFilter :
+                                                    product.CurrencySymbol :
+                                                    product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                                                    product.CurrencyDecimalSeperator}}</span>
+                                                <span *ngIf="product.Discount != null && product.Discount > 0">
+                                                    <span
+                                                        class="ng-binding mx-1 text-decoration-line-through text-danger">{{product.OriginlaSalePrice
+                                                        | CurrencyFilter
+                                                        : product.CurrencySymbol : product.CurrencyDecimalPlaces :
+                                                        product.CurrencyThousandSeperator
+                                                        : product.CurrencyDecimalSeperator}}</span>
+                                                </span>
+                                            </span>
+                                        </td>
+                                    </tr>
+
+                                    <tr
+                                        *ngIf="product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE && (product.Discount != null && product.Discount > 0)">
+                                        <td>{{'TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_LABEL_TEXT_DISCOUNT' |
+                                            translate}}</td>
+                                        <td>
+                                            <span>
+                                                <span
+                                                    *ngIf="product.DiscountType == 'Percentage'">{{product.Discount}}%</span>
+                                                <span *ngIf="product.DiscountType != 'Percentage'">{{product.Discount |
+                                                    CurrencyFilter :
+                                                    product.CurrencySymbol : product.CurrencyDecimalPlaces :
+                                                    product.CurrencyThousandSeperator :
+                                                    product.CurrencyDecimalSeperator }}</span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr
+                                        *ngIf="product.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_SUSPENDED || Permissions.HasAccessUserLicenseTrackingView === 'Allowed'">
+                                        <td>{{'TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_LABEL_QUANTITY' | translate}}
+                                        </td>
+                                        <td><span>{{product.Quantity}}</span></td>
+                                    </tr>
+                                    <tr *ngIf="(isInheritedPartnerRole === true || C3CustomBilling=='false')">
+                                        <td>{{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE_TERM' | translate }}</td>
+                                        <td class="font-red"><span>{{product.Validity}} {{(product.Validity == 1?
+                                                (product.ValidityType ===
+                                                'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') |
+                                                translate }} </span></td>
+                                    </tr>
+                                    <tr *ngIf="(isInheritedPartnerRole != true && C3CustomBilling=='true')">
+                                        <!--C3 Custom Billing-->
+                                        <td>{{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE_TERM' | translate }}</td>
+                                        <td class="font-red"><span>{{product.C3Validity}} {{(product.Validity == 1?
+                                                (product.ValidityType ===
+                                                'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') |
+                                                translate }} </span></td>
+                                    </tr>
+                                    <tr
+                                        *ngIf="product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE">
+                                        <td>{{'TRANSLATE.COUPON_OWNERSHIPS_PLAN_OFFERS_EFFECTIVE_PRICE' | translate}}
+                                        </td>
+                                        <td class="font-red"><span>{{product.Quantity * product.FinalSalePrice | CurrencyFilter :
+                                                product.CurrencySymbol : product.CurrencyDecimalPlaces :
+                                                product.CurrencyThousandSeperator :
+                                                product.CurrencyDecimalSeperator}}</span></td>
+                                    </tr>
+
+                                    <tr
+                                        *ngIf="Permissions.HasPermissionToChangeIsManagedByPartner &&  isInheritedPartnerRole === true">
+                                        <td>{{'TRANSLATE.IS_MANAGEABLE_ONLY_BY_PARTNER' | translate}}</td>
+                                        <td>
+                                            <span>
+                                                {{ isManagedByPartnerInPurchasedProducts &&
+                                                'TRANSLATE.MANAGE_CUSTOMER_PRODUCTS_INFO_TEXT_YES' ||
+                                                'TRANSLATE.MANAGE_CUSTOMER_PRODUCTS_INFO_TEXT_NO' | translate }}
+                                            </span>
+
+                                            <!--<a href="#" editable-checkbox="IsManagedByPartnerInPurchasedProducts" buttons="no">
+                                                                            {{ IsManagedByPartnerInPurchasedProducts && 'MANAGE_CUSTOMER_PRODUCTS_INFO_TEXT_YES' || 'MANAGE_CUSTOMER_PRODUCTS_INFO_TEXT_NO' | translate }}
+                                                                        </a>-->
+                                        </td>
+                                    </tr>
+
+                                    <tr *ngIf="product.IsAutoRenew != null">
+                                        <td>{{'TRANSLATE.CUSTOMER_PRODUCT_RESERVED_INSTANCES_AUTO_RENEW_LABEL' |
+                                            translate}}</td>
+                                        <td class="text-capitalize"><span>{{product.IsAutoRenew}}</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td *ngIf="product.IsAutoRenew  == false">
+                                            {{'TRANSLATE.CUSTOMER_PRODUCT_RESERVED_INSTANCES_EXPIRES_ON_LABEL' | translate}}</td>
+                                        <td *ngIf="product.IsAutoRenew  == true">
+                                            {{'TRANSLATE.CUSTOMER_PRODUCT_RESERVED_INSTANCES_RENEWS_ON_LABEL' | translate}}</td>
+                                        <td class="">
+                                            <span>
+                                                {{product.CommitmentEndDate | c3Date}}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr
+                                        *ngIf="Permissions.HasAutoReleasePermission && Permissions.HasManageProductAutoRelease === 'Allowed' && product.Status.toLowerCase() != cloudHubConstants.SUBSCRIPTION_STATUS_SUSPENDED && product.IsCustomerLevel && product.LinkedSubscriptionId==null">
+                                        <td>{{'TRANSLATE.MANAGE_CUSTOMER_PRODUCTS_IS_CONSIDER_IN_AUTO_RELEASE' | translate}}</td>
+                                        <td>
+                                            <span>
+                                                {{ product.IsAvailableForAutoRelease &&
+                                                'TRANSLATE.MANAGE_CUSTOMER_PRODUCTS_INFO_TEXT_YES' ||
+                                                'TRANSLATE.MANAGE_CUSTOMER_PRODUCTS_INFO_TEXT_NO' | translate }}
+                                            </span>
+                                            <!--<a href="#" editable-checkbox="product.IsAvailableForAutoRelease" buttons="no" onaftersave="ChangeIsAvailable(product)">
+                                                                            {{ product.IsAvailableForAutoRelease && 'MANAGE_CUSTOMER_PRODUCTS_INFO_TEXT_YES' || 'MANAGE_CUSTOMER_PRODUCTS_INFO_TEXT_NO' | translate }}
+                                                                        </a>-->
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="product.ProviderReferenceId">
+                                        <td class="col-4"> {{'TRANSLATE.MANAGE_SUBSCRIPTION_LABEL_TEXT_PRODUCT_ID' | translate}}
+                                            <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.MANAGE_SUBSCRIPTION_LABEL_TEXT_PRODUCT_ID' | translate}}">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i>
+                                        </td>
+                                        <td>
+                                            <span>
+                                                {{ product.ProviderReferenceId }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!--end::Description-->
+                </div>
+                <!--end::Top-->
+            </div>
+        </div>
+    </div>
+</div>
+}

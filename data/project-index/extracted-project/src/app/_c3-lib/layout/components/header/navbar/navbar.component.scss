@@ -1,0 +1,130 @@
+.profile-info {
+  i {
+    font-size: 18px;
+  }
+}
+
+.impersonation-icon {
+  display: none;
+}
+.btn.btn-outline-danger.impersonation-icon{
+  background-color: unset !important;
+  padding-bottom: 5px;
+}
+
+@media (max-width: 768px) {
+  .impersonate-text,
+  .user-detail {
+    display: none !important;
+  }
+  .impersonation-icon {
+    display: initial !important;
+  }
+}
+
+.badge {
+  font-size: 0.7rem;
+}
+
+.btn.btn-outline-danger {
+  color: #F64E60;
+  background-color: transparent;
+  border: 2px solid #F64E60 !important; /* Ensure the border is visible */
+}
+.btn.btn-outline-danger i {
+  color: #F64E60;
+}
+.btn.btn-outline-danger .svg-icon svg g [fill] {
+  -webkit-transition: fill 0.3s ease;
+  transition: fill 0.3s ease;
+  fill: #F64E60;
+}
+.btn.btn-outline-danger .svg-icon svg:hover g [fill] {
+  -webkit-transition: fill 0.3s ease;
+  transition: fill 0.3s ease;
+}
+.btn.btn-outline-danger.ki-duotone.ki-down:after {
+  color: #F64E60;
+}
+.btn.btn-outline-danger:hover:not(.btn-text):not(:disabled):not(.disabled), .btn.btn-outline-danger:focus:not(.btn-text), .btn.btn-outline-danger.focus:not(.btn-text) {
+  color: #ffffff;
+  background-color: #F64E60;
+  border-color: #F64E60;
+}
+.btn.btn-outline-danger:hover:not(.btn-text):not(:disabled):not(.disabled) i, .btn.btn-outline-danger:focus:not(.btn-text) i, .btn.btn-outline-danger.focus:not(.btn-text) i {
+  color: #ffffff;
+}
+.btn.btn-outline-danger:hover:not(.btn-text):not(:disabled):not(.disabled) .svg-icon svg g [fill], .btn.btn-outline-danger:focus:not(.btn-text) .svg-icon svg g [fill], .btn.btn-outline-danger.focus:not(.btn-text) .svg-icon svg g [fill] {
+  -webkit-transition: fill 0.3s ease;
+  transition: fill 0.3s ease;
+  fill: #ffffff;
+}
+.btn.btn-outline-danger:hover:not(.btn-text):not(:disabled):not(.disabled) .svg-icon svg:hover g [fill], .btn.btn-outline-danger:focus:not(.btn-text) .svg-icon svg:hover g [fill], .btn.btn-outline-danger.focus:not(.btn-text) .svg-icon svg:hover g [fill] {
+  -webkit-transition: fill 0.3s ease;
+  transition: fill 0.3s ease;
+}
+.btn.btn-outline-danger:hover:not(.btn-text):not(:disabled):not(.disabled).ki-duotone.ki-down:after, .btn.btn-outline-danger:focus:not(.btn-text).ki-duotone.ki-down:after, .btn.btn-outline-danger.focus:not(.btn-text).ki-duotone.ki-down:after {
+  color: #ffffff;
+}
+.btn.btn-outline-danger.disabled, .btn.btn-outline-danger:disabled {
+  color: #F64E60;
+  background-color: transparent;
+  border-color: #F64E60;
+}
+.btn.btn-outline-danger.disabled i, .btn.btn-outline-danger:disabled i {
+  color: #F64E60;
+}
+.btn.btn-outline-danger.disabled .svg-icon svg g [fill], .btn.btn-outline-danger:disabled .svg-icon svg g [fill] {
+  -webkit-transition: fill 0.3s ease;
+  transition: fill 0.3s ease;
+  fill: #F64E60;
+}
+.btn.btn-outline-danger.disabled .svg-icon svg:hover g [fill], .btn.btn-outline-danger:disabled .svg-icon svg:hover g [fill] {
+  -webkit-transition: fill 0.3s ease;
+  transition: fill 0.3s ease;
+}
+.btn.btn-outline-danger.disabled.ki-duotone.ki-down:after, .btn.btn-outline-danger:disabled.ki-duotone.ki-down:after {
+  color: #F64E60;
+}
+.btn.btn-outline-danger:not(:disabled):not(.disabled):active:not(.btn-text), .btn.btn-outline-danger:not(:disabled):not(.disabled).active,
+.show > .btn.btn-outline-danger.ki-duotone.ki-down,
+.show .btn.btn-outline-danger.btn-dropdown {
+  color: #ffffff;
+  background-color: #F64E60;
+  border-color: #F64E60;
+}
+.btn.btn-outline-danger:not(:disabled):not(.disabled):active:not(.btn-text) i, .btn.btn-outline-danger:not(:disabled):not(.disabled).active i,
+.show > .btn.btn-outline-danger.ki-duotone.ki-down i,
+.show .btn.btn-outline-danger.btn-dropdown i {
+  color: #ffffff;
+}
+.btn.btn-outline-danger:not(:disabled):not(.disabled):active:not(.btn-text) .svg-icon svg g [fill], .btn.btn-outline-danger:not(:disabled):not(.disabled).active .svg-icon svg g [fill],
+.show > .btn.btn-outline-danger.ki-duotone.ki-down .svg-icon svg g [fill],
+.show .btn.btn-outline-danger.btn-dropdown .svg-icon svg g [fill] {
+  -webkit-transition: fill 0.3s ease;
+  transition: fill 0.3s ease;
+  fill: #ffffff;
+}
+.btn.btn-outline-danger:not(:disabled):not(.disabled):active:not(.btn-text) .svg-icon svg:hover g [fill], .btn.btn-outline-danger:not(:disabled):not(.disabled).active .svg-icon svg:hover g [fill],
+.show > .btn.btn-outline-danger.ki-duotone.ki-down .svg-icon svg:hover g [fill],
+.show .btn.btn-outline-danger.btn-dropdown .svg-icon svg:hover g [fill] {
+  -webkit-transition: fill 0.3s ease;
+  transition: fill 0.3s ease;
+}
+.btn.btn-outline-danger:not(:disabled):not(.disabled):active:not(.btn-text).ki-duotone.ki-down:after, .btn.btn-outline-danger:not(:disabled):not(.disabled).active.ki-duotone.ki-down:after,
+.show > .btn.btn-outline-danger.ki-duotone.ki-down.ki-duotone.ki-down:after,
+.show .btn.btn-outline-danger.btn-dropdown.ki-duotone.ki-down:after {
+  color: #ffffff;
+}
+
+.w-300px{
+  width: 300px;
+}
+
+.scrollable-user-list {
+  max-height: 400px; /* Height as needed */
+  overflow-y: auto;
+  // overflow-x: hidden;
+  padding-right: 4px; /* optional: prevents scrollbar from overlapping text */
+  overscroll-behavior: contain; /* prevents body scroll when reaching end */
+}

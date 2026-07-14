@@ -1,0 +1,476 @@
+<ng-template #actionHeader>
+    <a class="btn btn-light-primary btn-sm fw-semibold" (click)="backToInvoices()">
+        <i class="ki-outline ki-to-left fs-2"></i> {{ 'TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_BACK_TO_INVOICES' | translate }}
+    </a>
+</ng-template>
+
+<div class="d-flex flex-column-fluid">
+    <!--begin::Container-->
+    <div class="container-fluid">
+        <!--begin::Card-->
+        <div class="card card-custom">
+            <div class="card-body form">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form class="form" role="form" [formGroup]="frmCustomerDetails" novalidate>
+                            <div class="form-body">
+                                <div class="row" style="padding-bottom: 15px;">
+                                    <div class="col-md-12">
+                                        <h5 class="mb-5 font-weight-bold text-dark ng-scope">
+                                            <span translate="TRANSLATE.PARTNER_ADDRESS_INVOICE_PROVIDER_DETAILS" ></span>
+                                        </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                <span translate="TRANSLATE.PARTNER_ADDRESS_INVOICE_BILL_FROM" ></span> <span class="text-danger">*</span>
+                                            </label>
+                                            <select  class="form-select form-select-sm fw-bold mb-4" required="true"
+                                            name="partnerAddress" formControlName="partnerAddress" (change)="onBillFromAddressIdChange()">
+                                            @for(address of this.partnerAddressDetails; track address.AddressId; let index = $index){
+                                                <option [value]="address.AddressId" [disabled]="address.ShouldDisable">
+                                                    {{ getFormattedAddress(address) }}
+                                                </option>
+                                            }
+                                        </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" style="padding-bottom: 15px;">
+                                    <div class="col-md-12">
+                                        <h5 class="mb-5 font-weight-bold text-dark ng-scope">
+                                            <span translate="TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_HEADER_TEXT_CUSTOMER_DETAILS" ></span>
+                                        </h5>
+                                    </div>
+                                </div>
+                                <!--Customer Name and operational entity-->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                <span translate="TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_LABEL_TEXT_CUSTOMER_NAME" ></span>
+                                            </label>
+                                            <input type="text" [disabled]="true" ng-model="vm.customerName" formControlName="customerName" class="form-control form-control-sm" name="customerInvoiceOnDemandModel_CustomerName">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group" ng-if="(vm.operationalEntities != null && vm.operationalEntities.length > 1)" ng-class="{'has-error':vm.frmCustomerDetails.$submitted &amp;&amp; vm.frmCustomerDetails.customerInvoiceOnDemandModel_EntityName.$error.required}">
+                                            <label class="control-label">
+                                                <span translate="TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_LABEL_TEXT_OPERATIONAL_ENTITY" ></span> <span class="text-danger">*</span>
+                                            </label>
+                                            <ng-select *ngIf="(invoiceId === null)" ng-model="vm.selectedCustomerName" formControlName="selectedCustomerName" name="customerInvoiceOnDemandModel_EntityName" [required]="true"
+                                                    ng-options="entity.FriendlyRecordName as entity.FriendlyRecordName for entity in vm.operationalEntities" (change)="operationalEntitySelected()">
+                                                @for (item of operationalEntities; track $index) {
+                                                <ng-option [value]="item.FriendlyRecordName">{{item.FriendlyRecordName}}</ng-option>
+                                                }
+                                            </ng-select>
+                                            <!--<span ng-if="(vm.operationalEntities.length === 1 && vm.invoiceId === null)">
+                                        <input class="form-control" type="text" ng-disabled="true" ng-model="vm.customerInvoiceOnDemandModel.EntityName" name="customerInvoiceOnDemandModel_EntityName" required />
+                                    </span>-->
+                                            @if (invoiceId !== null) {
+                                                <span ng-if="(vm.invoiceId !== null)">
+                                                    <input class="form-control form-control-sm" type="text" [disabled]="true" formControlName="selectedCustomerName" ng-model="vm.customerInvoiceOnDemandModel.EntityName" name="customerInvoiceOnDemandModel_EntityName" required >
+                                                </span>
+                                            }
+                                            
+                                            @if (frmCustomerDetails.get('selectedCustomerName')?.errors?.required && frmCustomerDetails.get('selectedCustomerName')?.touched) {
+                                                <span class="text-danger">
+                                                    <span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED" ></span>
+                                                </span>
+                                            }
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--Address and Country-->
+                                <div class="row mt-5">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                <span translate="TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_LABEL_TEXT_ADDRESS" ></span>
+                                            </label>
+                                            <input type="text" ng-disabled="true" ng-model="vm.customerAddressDetails.AddressLine1" formControlName="addressLine1" class="form-control form-control-sm" name="customerInvoiceOnDemandModel_Address" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                <span translate="TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_LABEL_TEXT_COUNTRY" ></span>
+                                            </label>
+                                            <input type="text" [disabled]="true" ng-model="vm.customerAddressDetails.Country" formControlName="country" class="form-control form-control-sm" name="customerInvoiceOnDemandModel_Country" >
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--City, State, Zip-->
+                                <div class="row mt-5">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                <span translate="TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_LABEL_TEXT_CITY" ></span>
+                                            </label>
+                                            <input type="text" [disabled]="true" ng-model="vm.customerAddressDetails.City" formControlName="city" class="form-control form-control-sm" name="customerInvoiceOnDemandModel_City" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                <span translate="TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_LABEL_TEXT_STATE" ></span>
+                                            </label>
+                                            <input class="form-control form-control-sm" type="text" [disabled]="true" ng-model="vm.customerAddressDetails.State" formControlName="state" name="customerInvoiceOnDemandModel_StateProvince" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                <span translate="TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_LABEL_TEXT_ZIP" ></span>
+                                            </label>
+                                            <input type="text" [disabled]="true" ng-model="vm.customerAddressDetails.Zip" formControlName="zip" class="form-control form-control-sm" name="customerInvoiceOnDemandModel_PostalCode" >
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-7" style="padding-top: 10px; padding-bottom: 15px;">
+                                    <div class="col-md-12">
+                                        <h5 class="mb-10 font-weight-bold text-dark ng-scope">
+                                            <span translate="TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_HEADER_TEXT_INVOICE_SUMMARY" ></span>
+                                        </h5>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="body-alignment-normal col-md-6" header-class="'header-alignment-normal'">
+                                        <div class="control-label font-dark">
+                                            <span translate="TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_INVOICE_SUMMARY_LABEL_TEXT_BILLING_PERIOD"></span>
+                                        </div>
+                                        <span class="control-label">
+                                            <strong>
+                                                {{billingStartDate | c3Date}} - {{billingEndDate | c3Date}}
+                                            </strong>
+                                        </span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group" ng-class="{'has-error':vm.frmCustomerDetails.$submitted &amp;&amp; vm.frmCustomerDetails.customerInvoiceOnDemandModel_InvoiceNumber.$error.required}">
+                                            <label class="control-label">
+                                                <span translate="TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_INVOICE_SUMMARY_LABEL_TEXT_INVOICE_NUMBER"></span> <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="text" ng-model="vm.customerInvoiceOnDemandModel.InvoiceNumber" formControlName="invoiceNumber" class="form-control form-control-sm" name="customerInvoiceOnDemandModel_InvoiceNumber" required />
+
+                                            @if (frmCustomerDetails.get('invoiceNumber')?.errors?.required && frmCustomerDetails.get('invoiceNumber')?.touched) {
+                                                <span class="text-danger">
+                                                    <span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED" ></span>
+                                                </span>
+                                            }
+                                            <!-- <span ng-show="vm.frmCustomerDetails.$submitted &amp;&amp; vm.frmCustomerDetails.customerInvoiceOnDemandModel_InvoiceNumber.$error.required" class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-5">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                <span translate="TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_INVOICE_SUMMARY_LABEL_TEXT_INVOICE_DATE"></span><span class="text-danger"> *</span>
+                                            </label>
+                                            <!-- <div ng-controller="DatepickerUIController">
+                                                <div class="input-group">
+                                                    <input type="text"  is-open="opened" close-text="Close" class="form-control" ng-model="vm.customerInvoiceOnDemandModel.InvoiceDate" ng-init="vm.customerInvoiceOnDemandModel.InvoiceDate" name="customerInvoiceOnDemandModel_InvoiceDate" readonly required />
+                                                    <span class="input-group-append">
+                                                        <button type="button" ng-click="open($event)" class="btn btn-default">
+                                                            <em class="fa fa-calendar"></em>
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </div> -->
+                                            <div class="input-group">
+                                                <input class="form-control form-control-sm mb-lg-0" [readOnly]="true" name="customerInvoiceOnDemandModel_InvoiceDate" formControlName="invoiceDate" ngbDatepicker #invoiceDate="ngbDatepicker" />
+                                                <button class="btn btn-light-primary btn-sm" (click)="invoiceDate.toggle()" type="button"> <i class="ki-outline ki-calendar"></i></button>
+                                            </div>
+                                            @if (frmCustomerDetails.get('invoiceDate')?.errors?.required && frmCustomerDetails.get('invoiceDate')?.touched) {
+                                                <span class="text-danger">
+                                                    <span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED" ></span>
+                                                </span>
+                                            }
+                                            <!-- <span ng-show="vm.frmCustomerDetails.$submitted &amp;&amp; vm.frmCustomerDetails.customerInvoiceOnDemandModel_InvoiceDate.$error.required" class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span> -->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">
+                                                <span translate="TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_INVOICE_SUMMARY_LABEL_TEXT_INVOICE_DUE_DATE"></span><span class="text-danger"> *</span>
+                                            </label>
+                                            <!-- <div ng-controller="DatepickerUIController">
+                                                <div class="input-group">
+                                                    <input type="text" is-open="opened" close-text="Close" class="form-control" ng-model="vm.customerInvoiceOnDemandModel.InvoiceDueDate" ng-init="vm.customerInvoiceOnDemandModel.InvoiceDueDate" name="customerInvoiceOnDemandModel_InvoiceDueDate" readonly required />
+                                                    <span class="input-group-append">
+                                                        <button type="button" ng-click="open($event)" class="btn btn-default">
+                                                            <em class="fa fa-calendar"></em>
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </div> -->
+                                            <div class="input-group">
+                                                <input class="form-control form-control-sm mb-lg-0" [readOnly]="true"  name="customerInvoiceOnDemandModel_InvoiceDueDate" formControlName="invoiceDueDate" ngbDatepicker #invoiceDueDate="ngbDatepicker"/>
+                                                <button class="btn btn-light-primary btn-sm" (click)="invoiceDueDate.toggle()" type="button"> <i class="ki-outline ki-calendar"></i></button>
+                                            </div>
+
+                                            @if (frmCustomerDetails.get('invoiceDueDate')?.errors?.required && frmCustomerDetails.get('invoiceDueDate')?.touched) {
+                                                <span class="text-danger">
+                                                    <span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED" ></span>
+                                                </span>
+                                            }
+                                            <!-- <span ng-show="vm.frmCustomerDetails.$submitted &amp;&amp; vm.frmCustomerDetails.customerInvoiceOnDemandModel_InvoiceDueDate.$error.required" class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-5">
+                                    <div class="col-md-6">
+                                        <div class="form-group" ng-class="{'has-error':( vm.frmCustomerDetails.$submitted || vm.frmCustomerDetails.customerInvoiceOnDemandModel_CurrencyCode.$dirty) &amp;&amp; vm.frmCustomerDetails.customerInvoiceOnDemandModel_CurrencyCode.$error.required}">
+                                            <label class="control-label">
+                                                <span translate="TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_INVOICE_SUMMARY_LABEL_TEXT_CURRENCY_CODE"></span>
+                                            </label>
+                                            <ng-select ng-model="vm.customerInvoiceOnDemandModel.CurrencyCode" formControlName="currencyCode" name="customerInvoiceOnDemandModel_CurrencyCode" *ngIf="invoiceId === null" ng-required=true
+                                                    ng-options="option.CurrencyCode as option.CurrencyCode for option in vm.CurrencyCodes" (change)="currencyCodeSelected()">
+                                                @for (option of currencyCodes; track $index) {
+                                                <ng-option [value]="option.CurrencyCode">{{option.CurrencyCode}}</ng-option>
+                                                }
+                                            </ng-select>
+                                            <span *ngIf="(invoiceId !== null)">
+                                                <input class="form-control form-control-sm" type="text" formControlName="currencyCode" [disabled]="true" ng-model="vm.customerInvoiceOnDemandModel.CurrencyCode" name="customerInvoiceOnDemandModel_CurrencyCode" required />
+                                            </span>
+                                            @if (frmCustomerDetails.get('currencyCode')?.errors?.required && frmCustomerDetails.get('currencyCode')?.touched) {
+                                                <span class="text-danger">
+                                                    <span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED" ></span>
+                                                </span>
+                                            }
+                                            <!-- <span ng-show="( vm.frmCustomerDetails.$submitted || vm.frmCustomerDetails.customerInvoiceOnDemandModel_CurrencyCode.$dirty) &amp;&amp; vm.frmCustomerDetails.customerInvoiceOnDemandModel_CurrencyCode.$error.required" class="text-danger"><span>{{'TRANSLATE.REQUIRED_FIELD_TEXT' | translate}}</span></span> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+
+                <div class="form-group row">
+                    <!--Begin: LineItems NgTable-->
+                    <div class="col-md-6 col-form-label text-start">
+                        <h4><strong><span translate="TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_HEADER_TEXT_LINEITEMS"></span></strong></h4>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <div class="col-lg-12 col-md-12 col-sm-12">
+                            <button type="button" class="btn btn-primary btn-sm me-2" *ngIf="!(isEditOrAddLineItemEnabled > 0) && isLineItemEditing === false" (click)="addLineItem()"><i class="fa fa-plus"></i> <span translate="TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_BUTTON_TEXT_ADD_LINEITEM"></span></button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="form-group" [formGroup]="frmInvoiceLineItems">
+                    <div class="table table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl" formArrayName="lineItemArray">
+                        <table ng-table="vm.lineItemDetailsDataSource" class="table editable-table fsaTable">
+                            <thead>
+                                <tr>
+                                    <th class="header-alignment-normal col-md-1 fw-bold">{{'TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_TABLE_HEADER_TEXT_ITEM_NAME' | translate}}</th>
+                                    <th class="header-alignment-normal col-md-2 fw-bold">{{'TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_TABLE_HEADER_TEXT_DESCRIPTION' | translate}}</th>
+                                    <th class="header-price-alignment col-md-1 fw-bold">{{'TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_TABLE_HEADER_TEXT_QUANTITY' | translate}}</th>
+                                    <th class="header-price-alignment col-md-1 fw-bold">{{'TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_TABLE_HEADER_TEXT_UNIT_PRICE' | translate}}</th>
+                                    <th class="header-price-alignment col-md-1 fw-bold">{{'TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_TABLE_HEADER_TEXT_LINE_AMOUNT'| translate}}</th>
+                                    <th class="header-alignment-normal col-md-1 fw-bold">{{'TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_TABLE_HEADER_TEXT_IS_TAXABLE' | translate}}</th>
+                                    <th class="header-alignment-normal col-md-1 fw-bold">{{'TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_TABLE_HEADER_TEXT_SALE_TYPE' | translate}}</th>
+                                    <th class="header-alignment-normal col-md-1 fw-bold">{{'TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_TABLE_HEADER_TEXT_CHARGE_START_DATE' | translate}}</th>
+                                    <th class="header-alignment-normal col-md-1 fw-bold">{{'TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_TABLE_HEADER_TEXT_CHARGE_END_DATE' | translate}}</th>
+                                    <th class="header-price-alignment col-md-2 fw-bold">{{'TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_TABLE_HEADER_TEXT_ACTIONS' | translate}}</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @for (row of lineItemArray.controls; track row; let i=$index) {
+                                <tr [formGroupName]="i" ng-repeat="row in $data" ng-form="rowForm_LineItem" fsa-tracked-table-row="row">
+                                    <td [ngbTooltip]="'CUSTOMER_INVOICE_ON_DEMAND_TABLE_HEADER_TEXT_ITEM_NAME'|translate" ng-switch="row.isEditing" ng-form="ItemName" fsa-tracked-table-cell class="body-alignment-normal col-md-1" header-class="'header-alignment-normal col-md-1'">
+                                        <span *ngIf="!getFormControlValue(row,'isEditing')" style="word-break:break-word fw-semibold">
+                                            <!-- {{row.ItemName}} -->
+                                             {{getFormControlValue(row,'itemName')}}
+                                        </span>
+                                        <div *ngIf="getFormControlValue(row,'isEditing')" ng-class="{'has-error' : (rowForm_LineItem.$submitted || rowForm_LineItem.ItemName.$dirty) &amp;&amp; rowForm_LineItem.ItemName.$error.required}" ng-switch-when="true">
+                                            <input type="text" name="ItemName" formControlName="itemName" ng-model="row.ItemName" class="editable-input form-control form-control-sm input-sm" ng-required="true" />
+                                        </div>
+                                    </td>
+                                
+                                    <td [ngbTooltip]="'CUSTOMER_INVOICE_ON_DEMAND_TABLE_HEADER_TEXT_DESCRIPTION'|translate" ng-switch="row.isEditing" ng-form="Description" fsa-tracked-table-cell class="body-alignment-normal col-md-2" header-class="'header-alignment-normal col-md-2'">
+                                        <span *ngIf="!getFormControlValue(row,'isEditing')" ng-switch-default style="word-break:break-word">
+                                            <!-- {{row.Description}} -->
+                                            {{getFormControlValue(row,'description')}}
+                                        </span>
+                                        <div *ngIf="getFormControlValue(row,'isEditing')" ng-class="{'has-error' : (rowForm_LineItem.$submitted || rowForm_LineItem.Description.$dirty) &amp;&amp; rowForm_LineItem.Description.$error.required}" ng-switch-when="true">
+                                            <input type="text" name="Description" ng-model="row.Description" formControlName="description" class="editable-input form-control form-control-sm input-sm" ng-required="true" />
+                                        </div>
+                                    </td>
+                                
+                                
+                                    <td [ngbTooltip]="'CUSTOMER_INVOICE_ON_DEMAND_TABLE_HEADER_TEXT_QUANTITY'|translate" ng-switch="row.isEditing" ng-form="Quantity" fsa-tracked-table-cell class="body-price-alignment col-md-1" header-class="'header-price-alignment col-md-1'">
+                                        <span *ngIf="!getFormControlValue(row,'isEditing')" ng-switch-default style="word-break:break-word">
+                                            <!-- {{row.Quantity}} -->
+                                            {{getFormControlValue(row,'quantity')}}
+                                        </span>
+                                        <div *ngIf="getFormControlValue(row,'isEditing')" ng-class="{'has-error' : (rowForm_LineItem.$submitted || rowForm_LineItem.Quantity.$dirty) &amp;&amp; rowForm_LineItem.Quantity.$error.required}" ng-switch-when="true">
+                                            <input type="number" min="0" step="1" name="Quantity" formControlName="quantity" ng-model="row.Quantity" class="editable-input form-control form-control-sm input-sm" ng-required="true" />
+                                        </div>
+                                    </td>
+                                
+                                
+                                    <td [ngbTooltip]="'CUSTOMER_INVOICE_ON_DEMAND_TABLE_HEADER_TEXT_UNIT_PRICE'|translate" ng-switch="row.isEditing" ng-form="UnitPrice" fsa-tracked-table-cell class="body-price-alignment col-md-1" header-class="'header-price-alignment col-md-1'">
+                                        <span *ngIf="!getFormControlValue(row,'isEditing')" ng-switch-default style="word-break:break-word">
+                                            <!-- {{row.UnitPrice}} -->
+                                            {{getFormControlValue(row,'unitPrice')}}
+                                        </span>
+                                        <div *ngIf="getFormControlValue(row,'isEditing')" ng-class="{'has-error' : (rowForm_LineItem.$submitted || rowForm_LineItem.UnitPrice.$dirty) &amp;&amp; rowForm_LineItem.UnitPrice.$error.required}" ng-switch-when="true">
+                                            <input type="number" step="0.01" name="UnitPrice" formControlName="unitPrice" ng-model="row.UnitPrice" class="editable-input form-control form-control-sm input-sm" ng-required="true" />
+                                        </div>
+                                    </td>
+                                
+                                
+                                    <td [ngbTooltip]="'CUSTOMER_INVOICE_ON_DEMAND_TABLE_HEADER_TEXT_LINE_AMOUNT'|translate" ng-switch="row.isEditing" ng-form="LineAmount" fsa-tracked-table-cell class="body-price-alignment col-md-1" header-class="'header-price-alignment col-md-1'">
+                                        <span  style="word-break:break-word">
+                                            {{(getFormControlValue(row,'quantity')*getFormControlValue(row,'unitPrice')) | CurrencyFilter : currencySymbol : currencyDecimalPlaces : currencyThousandSeperator : currencyDecimalSeperator}}
+                                            <!-- {{(row.Quantity * row.UnitPrice) | currencyfilter : vm.currencySymbol : vm.currencyDecimalPlaces : vm.currencyThousandSeperator : vm.currencyDecimalSeperator}} -->
+                                        </span>
+                                    </td>
+                                
+                                
+                                    <td [ngbTooltip]="'CUSTOMER_INVOICE_ON_DEMAND_TABLE_HEADER_TEXT_IS_TAXABLE'|translate" ng-switch="row.isEditing" ng-form="IsTaxable" fsa-tracked-table-cell class="body-alignment-normal col-md-1" header-class="'body-icon-alignment col-md-1'">
+                                        <div *ngIf="!getFormControlValue(row,'isEditing')" ng-switch-default class="header-icon-alignment">
+                                            <input type="checkbox" class="form-check-input" [disabled]="true" formControlName="isTaxable" ng-model="row.IsTaxable">
+                                        </div>
+                                        <div *ngIf="getFormControlValue(row,'isEditing')" ng-switch-when="true" class="header-icon-alignment">
+                                            <input type="checkbox" class="form-check-input" formControlName="isTaxable" [disabled]="false" ng-model="row.IsTaxable" ng-required="false">
+                                        </div>
+                                    </td>
+                                
+                                
+                                    <td [ngbTooltip]="'TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_TABLE_HEADER_TEXT_SALE_TYPE' | translate" ng-switch="row.isEditing" ng-form="SaleType" fsa-tracked-table-cell class="body-alignment-normal col-md-1" header-class="'header-alignment-normal col-md-1'">
+                                        <span *ngIf="!getFormControlValue(row,'isEditing')" ng-switch-default style="word-break:break-word">
+                                            <!-- {{row.SaleTypeName}} -->
+                                            {{getFormControlValue(row,'saleTypeName')}}
+                                        </span>
+                                        <div *ngIf="getFormControlValue(row,'isEditing')" ng-switch-when="true">
+                                            <ng-select placeholder="Select" ng-model="row.SaleType" formControlName="saleType" name="SaleType" ng-required="false">
+                                                <ng-option [value]="null" translate="TRANSLATE.SELECT_DEFAULT_OPTION_SELECT"></ng-option>
+                                                @for (option of saleTypes; track $index) {
+                                                    <ng-option [value]="option.ID">{{option.Name}}</ng-option>
+                                                }
+                                            </ng-select>
+                                        </div>
+                                    </td>
+                                
+                                
+                                    <td [ngbTooltip]="'TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_TABLE_HEADER_TEXT_CHARGE_START_DATE' | translate" ng-switch="row.isEditing" ng-form="StartDate" fsa-tracked-table-cell class="body-alignment-normal custom-col" header-class="'header-alignment-normal custom-col'">
+                                        <span *ngIf="!getFormControlValue(row,'isEditing')" ng-switch-default style="word-break:break-word">
+                                            <!-- {{row.StartDate | date}} -->
+                                            {{convertToDateFormat(this.getFormControlValue(row, 'startDate'))}}
+                                        </span>
+                                        <!-- <div ng-class="{'has-error' : (rowForm_LineItem.$submitted || rowForm_LineItem.StartDate.$dirty) &amp;&amp; rowForm_LineItem.StartDate.$error.required}" ng-switch-when="true">
+                                                                                    <div ng-controller="DatepickerUIController">
+                                                                                        <div class="input-group">
+                                                                                            <input type="text" is-open="opened" close-text="Close" class="form-control" ng-model="row.StartDate" ng-init="row.StartDate" name="StartDate" readonly required />
+                                                                                            <span class="input-group-btn">
+                                                                                                <button type="button" ng-click="open($event)" class="btn btn-default">
+                                                                                                    <em class="fa fa-calendar"></em>
+                                                                                                </button>
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div> -->
+                                        <div *ngIf="getFormControlValue(row,'isEditing')" class="input-group">
+                                            <input class="form-control form-control-sm mb-lg-0" [readOnly]="true" formControlName="startDate" name="startDate" formControlName="startDate" ngbDatepicker #startDate="ngbDatepicker" />
+                                            <button class="btn btn-light-primary btn-sm" (click)="startDate.toggle()" type="button"> <i class="ki-outline ki-calendar"></i></button>
+                                        </div>
+                                    </td>
+                                
+                                
+                                    <td [ngbTooltip]="'TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_TABLE_HEADER_TEXT_CHARGE_END_DATE' | translate" ng-switch="row.isEditing" ng-form="EndDate" fsa-tracked-table-cell class="body-alignment-normal custom-col" header-class="'header-alignment-normal custom-col'">
+                                        <span *ngIf="!getFormControlValue(row,'isEditing')" ng-switch-default style="word-break:break-word">
+                                            <!-- {{row.EndDate | dateFilter}} -->
+                                            {{convertToDateFormat(this.getFormControlValue(row, 'endDate'))}}
+                                        </span>
+                                        <!-- <div ng-class="{'has-error' : (rowForm_LineItem.$submitted || rowForm_LineItem.EndDate.$dirty) &amp;&amp; rowForm_LineItem.EndDate.$error.required}" ng-switch-when="true">
+                                                                                    <div ng-controller="DatepickerUIController">
+                                                                                        <div class="input-group">
+                                                                                            <input type="text" is-open="opened" close-text="Close" class="form-control" ng-model="row.EndDate" ng-init="row.EndDate" name="EndDate" readonly required />
+                                                                                            <span class="input-group-btn">
+                                                                                                <button type="button" ng-click="open($event)" class="btn btn-default">
+                                                                                                    <em class="fa fa-calendar"></em>
+                                                                                                </button>
+                                                                                            </span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div> -->
+                                        <div *ngIf="getFormControlValue(row,'isEditing')" class="input-group">
+                                            <input class="form-control form-control-sm mb-lg-0" [readOnly]="true" name="EndDate" formControlName="endDate" ngbDatepicker #endDate="ngbDatepicker" />
+                                            <button class="btn btn-light-primary btn-sm" (click)="endDate.toggle()" type="button"><i class="ki-outline ki-calendar p-0"></i></button>
+                                        </div>
+                                    </td>
+                                
+                                
+                                    <td data-title="'CUSTOMER_INVOICE_ON_DEMAND_TABLE_HEADER_TEXT_ACTIONS'|translate" class="body-price-alignment col-md-2">
+                                        <button class="btn btn-light-primary btn-sm tooltips me-2" ngbTooltip="{{'TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_TABLE_BUTTON_TOOLTIP_TEXT_SAVE' | translate}}" (click)="saveLineItem(row, i)"
+                                                *ngIf="row.get('isEditing')?.value" [disabled]="row.pristine || row.invalid"><span class="ki-outline ki-save-2"></span></button>
+                                        <button class="btn btn-light-primary btn-sm tooltips" ngbTooltip="{{'TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_TABLE_BUTTON_TOOLTIP_TEXT_CANCEL' | translate}}" (click)="cancelChanges(row, i)"
+                                                *ngIf="row.get('isEditing')?.value"><span class="ki-outline ki-cross fs-1"></span></button>
+                                        <button class="btn btn-light-primary btn-sm tooltips me-2" ngbTooltip="{{'TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_TABLE_BUTTON_TOOLTIP_TEXT_EDIT' | translate}}" (click)="editLineItem(row, i)"
+                                                *ngIf="!row.get('isEditing')?.value && isLineItemEditing === false"><span class="ki-outline ki-pencil"></span></button>
+                                        <button class="btn btn-light-danger btn-sm tooltips" ngbTooltip="{{'TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_TABLE_BUTTON_TOOLTIP_TEXT_DELETE' | translate}}" (click)="deleteLineItem(row, i)"
+                                                *ngIf="!row.get('isEditing')?.value && isLineItemEditing === false"><i class="ki-outline ki-trash"></i></button>
+                                    </td>
+                                
+                                </tr>
+                                }
+                                
+
+                                <tr *ngIf="lineItemArray.controls.length === 0">
+
+                                    <td colspan="10" class="text-left" header-class="'text-start'">
+                                        <div class="col-md-12">
+                                           <app-common-no-record></app-common-no-record>
+                                        </div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <!--End: Addresses NgTable-->
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col-md-12">
+                        <div class="col-md-6 float-end">
+                            <div class="bs-callout bs-callout-info border border-dashed rounded border-primary bg-light-primary">
+                                <p translate="TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_HELP_TEXT_FOR_TAX_CALCULATION"> </p>
+                            </div>
+                            <div class="well">
+                                <div class="row">
+                                    <div class="col-md-8 "><strong><span>{{'TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_INVOICE_SUMMARY_LABEL_TEXT_INVOICE_SUB_TOTAL' | translate}}:</span></strong></div>
+                                    <div class="col-md-3  text-end"><strong>
+                                        {{customerInvoiceOnDemandModel.InvoiceAmount | CurrencyFilter : currencySymbol : currencyDecimalPlaces : currencyThousandSeperator : currencyDecimalSeperator}}
+                                    </strong></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div  class="form-group row mt-5 float-end">
+                    <div>
+                        <button *ngIf="permissions.HasCreateInvoice === 'Allowed' && !isLineItemEditing" class="btn btn-primary btn-sm me-2" (click)="createInvoice()">
+                            <!-- <busy-message><i class="fa fa-refresh fa-spin"></i>{{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}</busy-message> -->
+                            <span translate="TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_BUTTON_TEXT_SAVE_INVOICE" ></span>
+                        </button>
+                        <button ng-if="vm.isGridDataLoading === false" class="btn btn-secondary btn-sm me-2" (click)="cancelInvoiceCreation()">
+                            <!-- <busy-message><i class="fa fa-refresh fa-spin"></i>{{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}</busy-message> -->
+                            <span translate="TRANSLATE.CUSTOMER_INVOICE_ON_DEMAND_BUTTON_TEXT_CANCEL_INVOICE_CREATION" ></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,64 @@
+<ng-template #actionHeader>
+  <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+    <button type="button" class="btn btn-sm fw-bold btn-light-primary"
+      [appPermission]="'BTN_EXPORT_USER_ROLE_ASSIGNMENT_REPORT'" (click)="exportUserAssignmentReport()">
+      <i class="ki-outline ki-exit-down fs-2">
+      </i>
+      <span class="ps-1" translate="TRANSLATE.USER_MANAGEMENT_EXPORT_USER_ASSIGNMENT_REPORT_BUTTON"></span>
+    </button>
+    <button type="button" class="btn btn-sm fw-bold btn-primary" [appPermission]="'ADD_USER'" (click)="CreateUser()" appBusyLoader>
+      <i class="ki-outline ki-plus fs-2"></i> <span translate="TRANSLATE.VIEWS_HOME_BUTTONS_TEXT_ADD_USER"></span>
+    </button>
+  </div>
+</ng-template>
+
+<div class="card">
+  <div class="card-body overflow-auto">
+    <ng-template #description let-data="adtData">
+      <div class="d-flex justify-content-start">
+        <span>{{'TRANSLATE.' + data.RoleDescription | translate}}</span>
+        @if (data.EntityName.toLowerCase() === cloudHubConstants.ENTITY_SITE || data.EntityName.toLowerCase() === cloudHubConstants.ENTITY_SITEDEPARTMENT) {
+        <span>&nbsp;({{data.OperatingEntityName}})</span>
+        }
+      </div>
+    </ng-template>
+    <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+      <div class="d-flex justify-content-end">
+        <div class="d-flex align-items-end">
+          <div class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto" [ngClass]="toolbarButtonHeightClass"
+               [appPermission]="'ADD_USER'" (click)="editUser(data)" placement="top"
+               ngbTooltip="{{'TRANSLATE.VIEWS_HOME_USERS_BUTTONS_TOOLTIPS_TEXT_EDIT_ROLES' | translate}}">
+            <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg me-md-2 h-20px w-20px">
+              <i class="ki-outline ki-pencil fs-3 text-primary"></i>
+            </span>
+          </div>
+        </div>
+        <div class="d-flex align-items-end">
+          <div class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto" [appPermission]="'DELETE_USER'"
+               [ngClass]="toolbarButtonHeightClass" (click)="deleteUser(data)" placement="top"
+               ngbTooltip="{{'TRANSLATE.VIEWS_HOME_BUTTONS_TOOLTIPS_TEXT_DELETE_USERS' | translate}}">
+            <span>
+              <i class="ki-outline ki-cross text-primary fs-1">
+              </i>
+            </span>
+          </div>
+        </div>
+        <div class="d-flex align-items-end">
+          @if(data.RoleDescription === 'ROLE_NAME_HELP_DESK'){
+          <div class="btn btn-icon btn-active-light-primary btn-lg w-auto" [ngClass]="toolbarButtonHeightClass" (click)="tagDetails(data)"
+               ngbTooltip="{{'TRANSLATE.VIEWS_HOME_USERS_BUTTONS_TOOLTIPS_TEXT_ASSIGN_TAGS' | translate}}">
+            <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg me-md-2 h-20px w-20px">
+              <i class="ki-outline ki-price-tag fs-2 text-primary"></i>
+            </span>
+          </div>
+          }
+        </div>
+      </div>
+    </ng-template>
+
+    @if (!!datatableConfig) {
+    <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+    </app-c3-table>
+    }
+  </div>
+  </div>

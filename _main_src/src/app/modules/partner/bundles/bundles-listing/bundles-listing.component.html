@@ -1,0 +1,256 @@
+<ng-template #actionHeader>
+  <div class="header-actions d-flex align-items-center gap-1 gap-lg-1"*ngIf= "this.permissions.hasDownloadBundle === 'Allowed'">
+    <a class="btn btn-sm fw-bold btn-light-primary me-1" ngbTooltip="{{'TRANSLATE.PARTNER_BUNDLES_BUTTON_TEXT_DOWNLOAD_BUNDLE' | translate}}" (click)="GetBundleProductReportExportCSV()">
+      <i class="ki-outline ki-exit-down fs-2 p-0"></i>
+    </a>
+  </div>
+</ng-template>
+<div class="card">
+  <div class="card-body pt-0 overflow-auto">
+    @if (shouldShowFilter) {
+    <div class="mb-5">
+      <form class="form">
+        <div class="card mt-8">
+          <div class="card-body">
+            <div class="form-group row pt-4">
+              <div class="col-6 col-sm-6 col-md-2 col-lg-2">
+                <label class="form-label mb-2">
+                  {{'TRANSLATE.PARTNER_BUNDLE_LABEL_TEXT_VALIDITY_TYPE'|translate}}
+                </label>
+                <ng-select [(ngModel)]="selectedValidityType" name="selectedPlan" #selectElement
+                  (change)="onSelectedPlanChange()"
+                  placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_VALIDITY_TYPE_INPUT_DROPDOWN' |translate}}">
+                  @for (item of validityTypes; track $index) {
+                  <ng-option [value]="item">
+                    {{item == 'Year(s)' ? ('TRANSLATE.VALIDITY_TYPE_DESC_YEARS' | translate) : ('TRANSLATE.VALIDITY_TYPE_DESC_MONTHS' | translate)}}
+                  </ng-option>
+                  }
+
+                </ng-select>
+              </div>
+              <div class="col-6 col-sm-6 col-md-2 col-lg-2">
+                <label class="form-label mb-2">
+                  {{'TRANSLATE.VALIDITY_TEXT_FROM'|translate}}
+                </label>
+                <input type="number" [(ngModel)]="minValidity" name="minValidity" class="form-control form-control-sm "
+                  placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_MIN_VALIDITY' | translate}}" [min]="0">
+                <span class="text-danger" *ngIf="minValidity<0">
+                  {{'TRANSLATE.PARTNER_OFFER_FILTERS_WARNING_TEXT_ENTER_POSITIVE_VALUE' | translate}}
+                </span>
+              </div>
+              <div class="col-6 col-sm-6 col-md-2 col-lg-2">
+                <label class="form-label mb-2">
+                  {{'TRANSLATE.VALIDITY_TEXT_TO'|translate}}
+                </label>
+                <input type="number" [(ngModel)]="maxValidity" name="maxValidity" class="form-control form-control-sm "
+                  placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_MAX_VALIDITY' | translate}}" [min]="0">
+                <span class="text-danger" *ngIf="maxValidity<0">
+                  {{'TRANSLATE.PARTNER_OFFER_FILTERS_WARNING_TEXT_ENTER_POSITIVE_VALUE' | translate}}
+                </span>
+              </div>
+              <div class="col-6 col-sm-6 col-md-2 col-lg-2">
+                <label class="form-label mb-2">
+                  {{'TRANSLATE.PARTNER_BUNDLE_LABEL_TEXT_COST_PRICE_FROM'|translate}}
+                </label>
+                <input type="number" [(ngModel)]="minCostPrice" name="minCostPrice"
+                  class="form-control form-control-sm "
+                  placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_MIN_COST_PRICE' | translate}}" [min]="0">
+                <span class="text-danger" *ngIf="minCostPrice<0">
+                  {{'TRANSLATE.PARTNER_OFFER_FILTERS_WARNING_TEXT_ENTER_POSITIVE_VALUE' | translate}}
+                </span>
+              </div>
+              <div class="col-6 col-sm-6 col-md-2 col-lg-2">
+                <label class="form-label mb-2">
+                  {{'TRANSLATE.PARTNER_BUNDLE_LABEL_TEXT_COST_PRICE_TO'|translate}}
+                </label>
+                <input type="number" [(ngModel)]="maxCostPrice" name="maxCostPrice"
+                  class="form-control form-control-sm "
+                  placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_MAX_COST_PRICE' | translate}}" [min]="0">
+                <span class="text-danger" *ngIf="maxCostPrice<0">
+                  {{'TRANSLATE.PARTNER_OFFER_FILTERS_WARNING_TEXT_ENTER_POSITIVE_VALUE' | translate}}
+                </span>
+              </div>
+              <div class="col-6 col-sm-6 col-md-2 col-lg-2">
+                <label class="form-label mb-2">
+                  {{'TRANSLATE.PARTNER_BUNDLE_LABEL_TEXT_SALE_PRICE_FROM'|translate}}
+                </label>
+                <input type="number" [(ngModel)]="minSalePrice" name="minSalePrice"
+                  class="form-control form-control-sm "
+                  placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_MIN_SALE_PRICE' | translate}}" [min]="0">
+                <span class="text-danger" *ngIf="minSalePrice<0">
+                  {{'TRANSLATE.PARTNER_OFFER_FILTERS_WARNING_TEXT_ENTER_POSITIVE_VALUE' | translate}}
+                </span>
+              </div>
+            </div>
+            <div class="form-group row pt-4">
+              <div class="col-6 col-sm-6 col-md-3 col-lg-3">
+                <label class="form-label mb-2">
+                  {{'TRANSLATE.PARTNER_BUNDLE_LABEL_TEXT_SALE_PRICE_TO'|translate}}
+                </label>
+                <input type="number" [(ngModel)]="maxSalePrice" name="maxSalePrice"
+                  class="form-control form-control-sm "
+                  placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_MAX_SALE_PRICE' | translate}}" [min]="0">
+                <span class="text-danger" *ngIf="maxSalePrice<0">
+                  {{'TRANSLATE.PARTNER_OFFER_FILTERS_WARNING_TEXT_ENTER_POSITIVE_VALUE' | translate}}
+                </span>
+              </div>
+              <div class="col-6 col-sm-6 col-md-3 col-lg-3">
+                <label class="form-label mb-2">
+                  <span translate="TRANSLATE.PARTNER_BUNDLE_LABEL_TEXT_BILLING_CYCLES"></span>
+                </label>
+                <ng-select name="tagValues1" [multiple]="true" [disabled]="false" #selectElement1
+                  [(ngModel)]="selectedBillingCyclesForTopLevelFilters"
+                  placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_BILLING_CYCLE_DROPDOWN'|translate}}">
+                  @for (item of (billingCyclesHardCoded | uniqueList : 'BillingCycleId'); track $index) {
+                  <ng-option [disabled]="false"
+                    [value]="item?.BillingCycleId">{{'TRANSLATE.'+item?.BillingCycleDescription |
+                    translate}}</ng-option>
+                  }
+                </ng-select>
+              </div>
+              <div class="col-6 col-sm-6 col-md-3 col-lg-3">
+                <label class="form-label mb-2">
+                  <span translate="TRANSLATE.PARTNER_BUNDLE_LABEL_TEXT_BILLING_TYPES"></span>
+                </label>
+                <ng-select name="tagValues2" [multiple]="true" [disabled]="false" #selectElement2
+                  [(ngModel)]="selectedBillingTypesForTopLevelFilters"
+                  placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_BILLING_TYPE_DROPDOWN'|translate}}">
+                  @for (item of (billingTypesHardCoded| uniqueList : 'BillingTypeId'); track $index) {
+                  <ng-option [disabled]="false"
+                    [value]="item?.BillingTypeId">{{'TRANSLATE.'+item?.BillingTypeDescription |
+                    translate}}</ng-option>
+                  }
+                </ng-select>
+              </div>
+              <div class="col-6 col-sm-6 col-md-3 col-lg-3">
+                <label class="form-label mb-2">
+                  <span translate="TRANSLATE.PARTNER_BUNDLE_LABEL_TEXT_CONSUMPTION_TYPES"></span>
+                </label>
+                <ng-select name="tagValues3" [multiple]="true" [disabled]="false" #selectElement3
+                  [(ngModel)]="selectedConsumptionTypesForTopLevelFilters"
+                  placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_CONSUMPTION_TYPE_DROPDOWN'|translate}}">
+                  @for (item of (consumptionTypes| ignoreFromList:'Name':['Contract', 'Service', 'Usage']); track
+                  $index) {
+                  <ng-option [disabled]="false" [value]="item?.ID">{{'TRANSLATE.'+item?.Description |
+                    translate}}</ng-option>
+                  }
+                </ng-select>
+              </div>
+            </div>
+            <div class="form-group row pt-4">
+              <div class="col-6 col-sm-6 col-md-3 col-lg-3 mt-4 ">
+                <div class="form-group form-check ps-0">
+                  <div>
+                    <label class="form-label mb-2">
+                      {{'TRANSLATE.PARTNER_BUNDLE_SEARCH_CONSIDER_DELETED_BUNDLES'|translate}}
+                      <br />
+                    </label>
+                    <br />
+                    <input class="form-check-input ms-0" type="checkbox" [(ngModel)]="considerDeleted"
+                      name="considerDeleted" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer row">
+            <div class="col-sm-12 col-md-12 col-xs-12 col-12 col-lg-12 text-lg-end">
+              <button class="btn btn-light-primary btn-sm  me-md-2 me-lg-2 me-sm-2 me-xl-2 me-xxl-2"
+                (click)="searchBundles()" appBusyLoader>
+                {{'TRANSLATE.PARTNER_BUNDLE_BUTTON_TEXT_SEARCH' | translate}}
+              </button>
+              <button class="btn btn-light-primary btn-sm  me-md-2 me-lg-2 me-sm-2 me-xl-2 me-xxl-2"
+                (click)="resetSearchCriteria()" appBusyLoader>{{'TRANSLATE.PARTNER_BUNDLE_BUTTON_TEXT_RESET' | translate}}</button>
+              <button class="btn btn-light-primary btn-sm me-md-2 me-lg-2 me-sm-2 me-xl-2 me-xxl-2"
+                (click)="shouldShowFilter = false;" appBusyLoader>{{'TRANSLATE.CUSTOMER_SEARCH_CLOSE_OPTION' | translate}}</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    }
+    <!-- enable name field -->
+    <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+      <div class="d-flex justify-content-end">
+        <div class="d-flex align-items-center">
+          <button ngbTooltip="{{'TRANSLATE.PARTNER_BUNDLES_TABLE_TD_BUTTON_TOOLTIP_TEXT_VIEW' | translate}}" class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto" [appPermission]="'GET_PARTNER_BUNDLES'"
+            [ngClass]="toolbarButtonHeightClass" (click)="editBundleDetails(data,'edit')" placement="top">
+            <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+              <i class="ki-outline  ki-eye text-primary">
+                <span class="path1"></span>
+                <span class="path2"></span>
+                <span class="path3"></span>
+              </i>
+            </span>
+          </button>
+        </div>
+        <div *ngIf="data.IsActive"  class="d-flex align-items-center">
+          <button ngbTooltip="{{'TRANSLATE.DELETE_PARTNER_BUNDLE_TOOLTIP' | translate}}" class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+            [ngClass]="toolbarButtonHeightClass" (click)="deleteBundle(data)" [appPermission]="'ADD_PARTNER_BUNDLES'" placement="top-end">
+            <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px" >
+              <i class="ki-outline ki-trash text-primary">
+                <span class="path1"></span>
+                <span class="path2"></span>
+                <span class="path3"></span>
+                <span class="path4"></span>
+                <span class="path5"></span>
+              </i>
+            </span>
+          </button>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template #nameTemplate let-data="adtData" let-row="userData">
+      <app-edit-column [data]="data" [field]="row?.field" (enableEdit)="enableEditField($event)"></app-edit-column>
+    </ng-template>
+
+    <ng-template #billingcycle let-data="adtData" let-emitter="captureEvents">
+      {{'TRANSLATE.'+ data.BillingCycleDescription | translate}}
+    </ng-template>
+
+    <ng-template #name let-data="adtData" let-emitter="captureEvents">
+      <span class="fw-semibold"> {{data?.Name}} <small class="text-danger" *ngIf="!data?.IsActive">{{"TRANSLATE.CUSTOM_OFFERS_TEXT_INFO_DELETED" | translate}}</small></span>
+    </ng-template>
+
+    <ng-template #costprice let-data="adtData" let-emitter="captureEvents">
+      {{data.PriceforPartner | CurrencyFilter : data.CurrencySymbol : data.CurrencyDecimalPlaces :
+      data.CurrencyThousandSeperator : data.CurrencyDecimalSeperator }}
+    </ng-template>
+    
+    <ng-template #saleprice let-data="adtData" let-emitter="captureEvents">
+      {{data.ProviderSellingPrice | CurrencyFilter : data.CurrencySymbol : data.CurrencyDecimalPlaces :
+      data.CurrencyThousandSeperator : data.CurrencyDecimalSeperator }}
+    </ng-template>
+
+
+    <ng-template #validity let-data="adtData" let-emitter="captureEvents">
+      {{data.Validity}}
+      {{(data.Validity === 1? data.ValidityType === 'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+      'TRANSLATE.TERM_DURATION_DESC_YEAR' : 'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+    </ng-template>
+
+
+    <div class="d-flex justify-content-between mt-4 me-0">
+      <div class="d-flex align-items-center position-relative my-1">
+        <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5"><span class="custom-path1"></span><span
+            class="custom-path2"></span></i> <input type="text" data-field="Name" data-action="filter"
+          class="header-input-field form-control form-control-solid w-200px ps-12" placeholder="{{'TRANSLATE.CUSTOMER_SEARCH_SEARCH_OPTION'| translate}} {{'TRANSLATE.CUSTOMER_SEARCH_CUSTOMER_name'| translate}}">
+        <!--begin::Card title-->
+      </div>
+
+      <div>
+        <a class="btn btn-sm btn-lg btn-md btn-xs text-nowrap fw-bold btn-secondary" (click)="displayFilter()">
+          <i class="ki-outline ki-filter fs-2"></i>&nbsp;<span translate="TRANSLATE.BTN_TEXT_FILTER"></span>
+        </a>&nbsp;&nbsp;
+        <button type="button" class="btn btn-sm fw-bold btn-primary" [appPermission]="'ADD_PARTNER_BUNDLES'" (click)="newBundle('add')"  appBusyLoader>
+          {{'TRANSLATE.PARTNER_BUNDLES_BUTTON_TEXT_ADD_BUNDLE' | translate}}
+        </button>
+      </div>
+    </div>
+    @if (!!datatableConfig) {
+    <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+    </app-c3-table>
+    }
+  </div>
+</div>

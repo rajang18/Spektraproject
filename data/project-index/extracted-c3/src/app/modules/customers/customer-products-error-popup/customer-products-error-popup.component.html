@@ -1,0 +1,60 @@
+<div class="modal-dialog m-0 modal-dialog m-0-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>{{'TRANSLATE.CUSTOMER_PRODUCT_ERROR_POPUP_HEADER_TEXT_ERROR_DETAILS' | translate}}</h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModal()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+            </div>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <div class="container-fluid">
+                @for (error of errorDetails; track $index) {
+                    <div>
+                        <ul class="list-unstyled">
+                            <li class="text-danger">
+                                <span class="fw-bold">{{error.ProductName}}</span>
+                                <div class="d-flex justify-content-center fs-sm mt-1">
+                                    @if(!error.isValidJson){
+                                        <span>
+                                              {{error.ProviderError| translate}}
+                                        </span>
+                                    }
+                                    @else{
+                                        <ul>
+                                           @for(productError of error.ProviderError.FailedProducts | keyvalue;track $index){
+                                            <li>{{(productError.key+'') | translate}}</li>
+                                            <ul>
+                                            @for(val of productError?.value || [];track val){
+                                             <li>{{val}}</li>       
+                                            }
+                                            </ul>
+                                           }
+                                           @if(error.ProviderError.SucceededProducts && error.ProviderError.SucceededProducts.length> 0){
+                                            <li  class="text-success">
+                                               <span translate="ERROR_FAILED_TO_REVERT_OPERATION_ON_SUBSCRIPTION"></span>
+                                               <ul>
+                                               @for(item of error.ProviderError.SucceededProducts;track $index){
+                                                  <li>{{item}}</li>
+                                               }
+                                             </ul>
+                                           </li>
+                                             }
+                                        </ul>
+                                    }
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="modal-footer">
+            @if (CanIgnoreError === true) {
+            <button class="btn btn-primary" (click)="ignore()">{{'TRANSLATE.CUSTOMER_PRODUCT_ERROR_POPUP_BUTTON_TEXT_IGNORE' | translate}}</button>
+            }
+            @if (CanIgnoreError === false) {
+            <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTION_ERROR_POPUP_SUPPORT_TEXT_CONTACT_SUPPORT"></span>
+            }
+        </div>
+    </div>
+</div>

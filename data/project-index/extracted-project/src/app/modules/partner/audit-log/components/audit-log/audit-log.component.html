@@ -1,0 +1,187 @@
+<ng-template #actionHeader>
+    <a class="btn btn-sm btn-lg btn-md btn-xs fw-semibold btn-light-primary text-nowrap" (click)="exportAuditLogData()" [appPermission]="'EXPORT_EVENT_AUDIT_LOGS'">
+        <i class="ki-outline ki-exit-down fs-2e"></i>{{'TRANSLATE.AUDITLOG_BUTTON_LABEL_AUDIT_LOG' | translate}}
+    </a>
+</ng-template>
+
+<div class="" ng-scope>
+    <div class="">
+        <div class="card">
+            <div class="card-body">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-group row mt-4">
+                            <div class="col-sm-8 col-lg-5">
+                                <div class="form-group row">
+                                    <div class="col-md-6">
+                                        <div>
+                                            <label class="control-label fw-semibold">
+                                                <span translate="TRANSLATE.AUDITLOG_TEXT_FROM"></span>
+                                            </label>
+                                            <div class="input-group input-group-sm">
+                                                <input class="form-control form-control-sm  mb-lg-0" placeholder="{{'TRANSLATE.AUDITLOG_TEXT_EFFECTIVE_FROM'|translate}}" name="startDate" [maxDate]="todayDate" [(ngModel)]="auditLogEffectiveFrom" ngbDatepicker
+                                                [readOnly]="true"  onkeydown="return false" #sd="ngbDatepicker" />
+                                                <button class="btn btn-light-primary btn-sm" (click)="sd.toggle()" type="button"> <i class="ki-outline ki-calendar fs-3 pe-0"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div>
+                                            <div>
+                                                <label class="control-label fw-semibold">
+                                                    <span translate="TRANSLATE.AUDITLOG_TEXT_TO"></span>
+                                                </label>
+                                                <div class="input-group">
+                                                    <input class="form-control form-control-sm mb-lg-0" placeholder="{{'TRANSLATE.AUDITLOG_TEXT_EFFECTIVE_TO'|translate}}" [minDate]="auditLogEffectiveFrom" [maxDate]="todayDate" name="EndDate" [(ngModel)]="auditLogEffectiveTo"
+                                                    [readOnly]="true"     ngbDatepicker #ed="ngbDatepicker" />
+                                                    <button class="btn btn-light-primary btn-sm" (click)="ed.toggle()" type="button"> <i class="ki-outline ki-calendar fs-3 pe-0"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+        
+                            <div class="col-md-3">
+                                <label>
+                                    <span class="fw-semibold" translate="TRANSLATE.AUDITLOG_TEXT_CUSTOMER_NAME"></span>
+                                </label>
+                                <ng-select [(ngModel)]="auditLogCustomer" name="auditLogCustomer" placeholder="{{'TRANSLATE.SEARCH_AUDITLOG_TEXT_CUSTOMER_NAME' |translate}}" (change)="onCustomerChange()">
+                                    @for (item of customerDetails; track $index) {
+                                    <ng-option [value]="item">{{item.Name}} </ng-option>
+                                    }
+                                </ng-select>
+                            </div>
+        
+                            <div class="col-md-4">
+                                <label>
+                                    <span class="fw-semibold" translate="TRANSLATE.AUDITLOG_TEXT_ACTION_NAME"></span>
+                                </label>
+                                <ng-select [(ngModel)]="auditLogEvent" name="auditLogCustomer" placeholder="{{'TRANSLATE.SEARCH_AUDITLOG_TEXT_CUSTOMER_NAME' |translate}}">
+                                    @for (item of eventDetails; track $index) {
+                                    <ng-option [value]="item">{{'TRANSLATE.'+item.Description | translate}}</ng-option>
+                                    }
+                                </ng-select>
+                            </div>
+                        </div>
+        
+                        @if (auditLogCustomer && auditLogCustomer?.C3Id && auditLogCustomer?.C3Id !== '') {
+                            <div class="form-group row mt-5 mb-4">
+                                <div class="col-md-3">
+                                    <label class="control-label fw-semibold">
+                                        <span translate="TRANSLATE.AUDITLOG_TEXT_SERVICE_PROVIDER_CUSTOMER_DOMAIN"></span>
+                                    </label>
+                                    <ng-select [(ngModel)]="auditLogCustomerRef" name="auditLogCustomer" placeholder="{{'TRANSLATE.SEARCH_AUDITLOG_TEXT_CUSTOMER_NAME' |translate}}">
+                                        @for (item of serviceProviderustomerDetails; track $index) {
+                                        <ng-option [value]="item">{{item.DomainName}}</ng-option>
+                                        }
+                                    </ng-select>
+                                </div>
+                                <div class="col-md-6 mt-6" [appPermission]="'VIEW_HIDDEN_AUDIT_LOGS'">
+                                    <div class="h-100 d-flex align-items-center">
+                                        <div class="checkbox-inline form-check">
+                                            <label class="checkbox checkbox-outline checkbox-outline-2x control-label">
+                                                <input type="checkbox" id="AddEmailAsCustomerAdmin" class="form-check-input" [(ngModel)]="showHiddenAuditLog" name="show_hidden_audit_log">
+                                                <span></span>
+                                                <span class="fw-semibold">{{ 'TRANSLATE.AUDITLOG_TEXT_SHOW_HIDDEN_AUDIT_LOG' | translate}}</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-end mt-3" [ngClass]="{'col-md-3': permissions.HasHiddenAuditLogChangeOption === 'Allowed', 'col-md-9': permissions.HasHiddenAuditLogChangeOption !== 'Allowed' }">
+                                    <a class="btn btn-light-primary btn-sm" [appPermission]="'GET_AUDIT_LOGS'" (click)="getLogDetails()">
+                                        <!-- <busy-message><i class="fa fa-refresh fa-spin"></i>{{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}} </busy-message> -->
+                                        <!-- <i class="fas fa-search"></i> -->
+                                        {{'TRANSLATE.AUDITLOG_BUTTON_LABEL_SEARCH' | translate}}
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="card-footer py-0">
+                        @if (!auditLogCustomer?.C3Id || auditLogCustomer?.C3Id === '' ) {
+                        <div class="form-group row mb-7 pb-0">
+        
+                            <div class="col-md-6" [appPermission]="'VIEW_HIDDEN_AUDIT_LOGS'">
+                                <div class="h-100 d-flex align-items-center">
+                                    <div class="checkbox-inline">
+                                        <label class="checkbox checkbox-outline checkbox-outline-2x control-label form-check">
+                                            <input type="checkbox" class="form-check-input" id="AddEmailAsCustomerAdmin" [(ngModel)]="showHiddenAuditLog" name="show_hidden_audit_log" />
+                                            <span></span>&nbsp;
+                                            <span class="fw-semibold">{{'TRANSLATE.AUDITLOG_TEXT_SHOW_HIDDEN_AUDIT_LOG' | translate}}</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="float-end" [ngClass]="{'col-md-6': permissions.HasHiddenAuditLogChangeOption === 'Allowed', 'col-md-12': permissions.HasHiddenAuditLogChangeOption !== 'Allowed'}">
+                                <a class="float-end btn btn-sm btn-light-primary btn-sm" [appPermission]="'GET_AUDIT_LOGS'" (click)="getLogDetails()">
+                                    <!-- <busy-message><i class="fa fa-refresh fa-spin"></i>{{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}} </busy-message> -->
+                                    <!-- <i class="fas fa-search"></i> -->
+                                    {{'TRANSLATE.AUDITLOG_BUTTON_LABEL_SEARCH' | translate}}
+                                </a>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    <div class="alert alert-primary d-flex align-items-center w-100 py-5 ps-8 mb-5 border-0 rounded-2">
+                             <i class="fas fa-info-circle fa-sm me-1" style="color: #F0AD4E;"></i>
+                            <span class="text-dark fw-semibold">
+                                    {{'TRANSLATE.AUDIT_LOG_UTCDATE_INFORMATION' | translate}}
+                             </span>
+                     </div>
+                </div>
+                
+                <!-- </form> -->
+                <ng-template #createCol let-data="adtData">
+                    <span class="fw-semibold">{{data.CreatedDate | date: dateTimeFormat}}</span>
+                </ng-template>
+
+
+                <ng-template #actionCol let-data="adtData">
+                    {{'TRANSLATE.'+data.Action | translate}}
+                </ng-template>
+
+                <ng-template #viewCol let-row="adtData">
+                    <div class="text-end">
+
+                        <div class="btn-group" *ngIf="row.isCollapsed">
+                            <div class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto  w-auto w-30px h-30px w-md-40px h-md-40px" (click)="viewDetails(row)"
+                             ngbTooltip="{{'TRANSLATE.AUDITLOG_TEXT_TABLE_HEADER_VIEW_DETAILS' | translate}}">
+                              <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+                                  <i class="ki-outline ki-eye text-primary" >
+                                   <!-- <span class="path1"></span>
+                                   <span class="path2"></span> -->
+                                  </i>
+                              </span>
+                            </div>
+                        </div>
+                        <div class="btn-group" *ngIf="!row.isCollapsed">
+                            <div class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto  w-auto w-30px h-30px w-md-40px h-md-40px">
+                              <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+                                  <i class="ki-outline ki-eye-slash text-primary">
+                                   <!-- <span class="path1"></span>
+                                   <span class="path2"></span> -->
+                                  </i>
+                              </span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </ng-template>
+
+                <ng-template #statusCol let-row="adtData">
+                    <span class="p-1 badge" [ngClass]="{' badge-light-success':setHeaderStyle(row.Action),' badge-light-danger':!setHeaderStyle(row.Action)}">
+                        {{setHeaderStyle(row.Action)?"Success":"Failure"}}
+                    </span>
+                </ng-template>
+
+                @if (!!datatableConfig) {
+                <ng-container>
+                    <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" [searchFilter]="false"></app-c3-table>
+                </ng-container>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>

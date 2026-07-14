@@ -1,0 +1,43 @@
+<div class="modal-dialog m-0">
+  <div class="modal-content">
+    <div class="modal-header">
+        <h2>
+          <span translate="TRANSLATE.AZURE_ESTIMATE_TAGS"></span>
+        </h2>
+        <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="dismissModal()" data-bs-dismiss="modal">
+          <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+        </div>
+      </div>
+      <div class="modal-body">
+          <div class="form-group row">
+              <label class="my-auto col-md-3" style="text-align:right">
+                  <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.AZURE_ESTIMATE_TAGS_TOOLTIP' | translate}}">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                </i>
+                  <span translate="TRANSLATE.AZURE_ESTIMATE_TAGS"></span>
+                  <span class="text-danger">*</span>
+              </label>
+              <div class="col-9">
+                  <ng-select name="selectedCountryList" 
+                             [multiple]="true" 
+                             [(ngModel)]="tagKeys"
+                             placeholder="{{'TRANSLATE.CUSTOMER_MARKET_CODE_PLACEHOLDER'|translate}}">
+                  @for (item of tagDataSource; track $index) {
+                  <ng-option [value]="item.TagKey">{{item.TagKey}}</ng-option>
+                  }
+                </ng-select>
+              </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary text-white" data-bs-dismiss="modal" (click)="closeModal()">
+          <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+        </button>
+        <button type="button" class="btn btn-sm btn-light btn-active-light-primary" (click)="dismissModal()">
+          <span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span>
+        </button>
+      </div>
+  </div>
+</div>

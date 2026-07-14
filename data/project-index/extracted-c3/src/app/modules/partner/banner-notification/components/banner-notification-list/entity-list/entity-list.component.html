@@ -1,0 +1,30 @@
+<div class="modal-dialog m-0 modal-dialog m-0-centered">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modal-title">
+          <span>{{'TRANSLATE.BANNER_MODAL_ENTITIES_INVOLVED_MODAL_HEADER'|translate}}</span>
+      </h2>
+      <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModal()" data-bs-dismiss="modal">
+        <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+      </div>
+    </div>
+    <div class="modal-body adjustable-height">
+      <ng-template #name let-data="adtData" let-emitter="captureEvents">
+          <div class="d-flex justify-content-between">
+            <span>
+              {{data.Name}}
+            </span>
+            @if (data.Role != undefined && data.Role != null && data.Role != '') {
+            <span class="badge badge-primary ml-auto ">
+              {{data.Role}}
+            </span>
+          }
+          </div>
+          </ng-template>
+      @if (!!datatableConfig) {
+          <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+          </app-c3-table>
+          }
+  </div>
+  </div>
+</div>

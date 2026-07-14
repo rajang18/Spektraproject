@@ -1,0 +1,60 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+      <button type="button" class="btn btn-sm btn-light-primary" (click)="backToCustomers()">
+        <i class="ki-outline ki-to-left fs-2"></i>&nbsp;<span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_BUTTON_TEXT_BACK_TO_CUSTOMERS"></span>
+      </button> 
+      <button type="button" class="btn btn-sm btn-light-primary" (click)="backToTags()">
+        <i class="ki-outline ki-to-left fs-2"></i> <span translate="TRANSLATE.TAGS_ACTIONS_TEXT_BACK_TO_TAGS"></span>
+      </button>
+    </div>
+  </ng-template>
+<div class="add-customer-container">
+    <div class="card custom-card">
+        <div class="card-body">
+            <div class="m-heading-1 border-green m-bordered mb-3">
+                <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+                  <div class="row m-heading-1 border-green m-bordered">
+                    <p [innerHTML]="'TRANSLATE.CUSTOMER_TAGS_EXAMPLE' | translate" class="bold"></p>
+                  </div>
+                </div>
+              </div>
+            <form [formGroup]="addtagform">
+                <div class="form-group row mt-7">
+                    <div class="form-group row mt-7">
+                        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="required fw-semibold fs-6"
+                                translate="TRANSLATE.CUSTOMER_TAGS_LABLE_TEXT_NAME"></label>
+                        </div> 
+                        <div class="col-md-5">
+                        <input type="text"
+                            class="form-control form-control-sm fw-bold" formControlName="tagName">
+                            @if(addtagform.get('tagName')?.errors?.required &&
+                            addtagform.get('tagName')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                        }
+                        </div>
+                    </div>  
+                    <div class="form-group row mt-7">
+                        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="required fw-semibold fs-6"
+                                translate="TRANSLATE.CUSTOMER_TAGS_LABLE_TEXT_VALUE"></label>
+                        </div> 
+                        <div class="col-md-5">
+                        <input type="text"
+                            class="form-control form-control-sm fw-bold" formControlName="tagvalue">
+                            @if(addtagform.get('tagvalue')?.errors?.required &&
+                            addtagform.get('tagvalue')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                        }
+                        </div>
+                    </div>   
+                </div>
+            </form>
+        </div>
+        <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3">
+            <button type="button" class="btn btn-sm btn-primary" (click)="saveCustomerTag()">
+                {{ 'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate }}
+            </button>
+        </div>
+    </div>
+</div>

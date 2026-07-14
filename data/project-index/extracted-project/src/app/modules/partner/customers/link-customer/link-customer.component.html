@@ -1,0 +1,84 @@
+<ng-template #actionHeader>
+    <a class="btn btn-light-primary btn-sm fw-semibold me-3" (click)="backToCustomers()" >
+        <i class="ki-outline ki-to-left fs-2"></i>
+        {{ 'TRANSLATE.BACK_TO_SERVICE_PROVIDER_TENANT' | translate }}
+    </a>
+</ng-template>
+
+<div class="">
+    <!--begin::Container-->
+    <div class="container-fluid">
+        <div class="card card-custom">
+            <div class="card-body">
+                <div class="form">
+                    <form [formGroup]="formGroup">
+                    @if (!loadingProvidersData) {
+                        <div class="form-group row mb-5">
+                            <label class="fw-semibold col-md-2 text-md-start text-lg-start text-start text-sm-start">
+                                <span>
+                                    <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_PROVIDER"></span><span class="text-danger"> *</span>
+                                </span>
+                                <i class="ki-duotone ki-information-2 me-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_PROVIDER_TOOLTIP' | translate}}">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <span class="path3"></span>
+                                </i>
+                            </label>
+                            <div class="col-md-5">
+                                <select class="form-control form-select form-select-sm" formControlName="providerId" name="onboardCustomerModel_ProviderId" (change)="onProviderChange()">
+                                    <option value="">
+                                        {{'TRANSLATE.CUSTOMER_SEARCH_DEFAULT_OPTION'|translate}}
+                                    </option>
+                                    @for (item of providers; track $index) {
+                                    <option [value]="item.ID" ng-selected="provider.ID == vm.providerId">{{item.Name}}</option>
+                                    }
+                                
+                                </select>
+                            </div>
+                        </div>
+                        @if (providerName !== 'MicrosoftNonCSP') {
+                            <div class="form-group row">
+                                <label class="fw-semibold col-md-2 text-md-start text-lg-start text-start text-sm-start">
+                                   
+                                    <span translate="TRANSLATE.LINK_CUSTOMER_LBL_TEXT_CUSTOMER_TYPE" ></span><span class="text-danger"> *</span>
+                                    <i class="ki-duotone ki-information-2 me-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.LINK_CUSTOMER_LBL_TOOL_TIP_TEXT_CUSTOMER_TYPE' | translate}}">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                        <span class="path3"></span>
+                                    </i>
+                                </label>
+                                <div class="col-md-5">
+                                    <select class="form-control form-select form-select-sm" formControlName="selectedCustomerType" (change)="onCutomerTypeChange()" ng-required="true" name="CutomerType">
+                                        <option value="">
+                                            {{'TRANSLATE.CUSTOMER_SEARCH_DEFAULT_OPTION'|translate}}
+                                        </option>
+                                        @for (item of cutomerTypes; track $index) {
+                                        <option [value]="item">{{'TRANSLATE.'+item | translate}}</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        }
+                       
+                    }
+                    </form>
+                </div>
+
+
+                <!--route-->
+
+                <!-- <div class="row">
+                    <div ui-view ng-if="vm.providerId != null && vm.selectedCustomerType != null" class="col-md-12"></div>
+                </div> -->
+
+                @if(providerId !== null && selectedCustomerType !== null){
+                    <div class="row">
+                        <router-outlet></router-outlet>
+                    </div>
+                    
+                }
+
+            </div>
+        </div>
+    </div>
+</div>

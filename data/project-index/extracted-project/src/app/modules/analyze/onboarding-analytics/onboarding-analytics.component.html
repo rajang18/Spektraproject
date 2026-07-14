@@ -1,0 +1,194 @@
+<ng-template #actionHeader>
+   
+</ng-template>
+<div class="form m-5">
+    <div class="form-group row">
+        <div class="card">
+            <form [formGroup]="frmGetOnboardedCustomersCount" *ngIf="isGFilterExpand">
+                <div class="card m-4">
+                    <div class="card-body">
+                        <div class="form-group row m-5">
+                            <div class="col-md-3 control-label">
+                                <label>
+                                    {{'TRANSLATE.ONBOARDING_ANALYTICS_SEARCH_UNIT_OF_DURATION'|translate}}
+                                </label>
+                                <select formControlName="DurationUnitGraph"
+                                    class="form-select form-select-sm ">
+                                    <option *ngFor="let option of unitsOfDuration" [value]="option.Value">
+                                        {{option.Name}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 control-label"
+                                *ngIf="isPartnerLevel && permissions.HasResellers.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED">
+                                <label>
+                                    {{'TRANSLATE.ONBOARDING_ANALYTICS_SEARCH_TYPE_OF_CUSTOMER'|translate}}
+                                </label>
+                                <select formControlName="TypeofCustomersGraph"
+                                    class="form-select form-select-sm"
+                                    (change)="onTypeOfCustomerChange2($event)">
+                                    <option *ngFor="let option of typesOfCustomers" [value]="option.Value">
+                                        {{option.Name}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 control-label"
+                                *ngIf="shouldShowResellerDiv2 && isPartnerLevel && permissions.HasResellers.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED">
+                                <label class="required">
+                                    {{'TRANSLATE.ONBOARDING_ANALYTICS_SEARCH_PLACEHOLDER_SELECT_RESELLERS'|translate}}
+                                </label>
+                                <select formControlName="ResellerGraph"
+                                    [ngClass]="{'has-error': frmGetOnboardedCustomersCount.get('ResellerGraph')?.errors?.required &&  frmGetOnboardedCustomersCount.get('ResellerGraph')?.touched}"
+                                    class="form-select form-select-sm">
+                                    <option *ngFor="let option of resellers" [ngValue]="option">
+                                        {{option.Name}}
+                                    </option>
+                                </select>
+                                @if(frmGetOnboardedCustomersCount.get('ResellerGraph')?.errors?.required &&
+                                frmGetOnboardedCustomersCount.get('ResellerGraph')?.touched){
+                                <span class="text-danger" translate="TRANSLATE.WEBHOOK_THIS_FIELD_IS_REQUIRED"></span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="form-group row">
+                            <div class=" col-md-12 text-lg-end control-label">
+                                <a class="btn btn-light-primary btn-sm m-2" (click)="GetOnboardedCustomersAfterFilter()">
+                                    {{'TRANSLATE.ONBOARDING_ANALYTICS_SEARCH_SUBMIT' | translate}}
+                                </a>
+                                <a class="btn btn-light-primary btn-sm m-2"
+                                    (click)="onResetGraphFilter()">{{'TRANSLATE.ONBOARDING_ANALYTICS_SEARCH_RESET_OPTION'
+                                    | translate}}</a>
+                                <a class="btn btn-light-primary btn-sm m-2"
+                                    (click)="graphFilterExpand()">{{'TRANSLATE.ONBOARDING_ANALYTICS_SEARCH_CLOSE_OPTION'
+                                    | translate}}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="d-flex align-items-end justify-content-end m-4">
+                <button type="button" (click)="graphFilterExpand()"
+                    class="btn btn-secondary fw-bold btn-sm btn-xs btn-md btn-lg mr-10 text-nowrap ng-binding ng-scope ng-isolate-scope">
+                    <i class="ki-outline ki-filter fs-2" ngbTooltip="{{'TRANSLATE.BTN_TEXT_SHOW_FILTERS' | translate}}"></i>&nbsp;<span ngbTooltip="{{'TRANSLATE.BTN_TEXT_SHOW_FILTERS' | translate}}" translate="TRANSLATE.BTN_TEXT_FILTER"></span>
+                </button>
+            </div>
+            <div class="panel-body" *ngIf="barOptions!= null && barOptions != '' && barOptions != undefined">
+                <!-- <h1>Graph View</h1> -->
+                <!-- <flot dataset="barStackeData" options="barOptions" height="300px"></flot> -->
+                <apx-chart [series]="barOptions?.series" [chart]="barOptions?.chart" [xaxis]="barOptions?.xaxis"
+                    [yaxis]="barOptions?.yaxis" [responsive]="barOptions?.responsive" [legend]="barOptions?.legend"
+                    [plotOptions]="barOptions?.plotOptions" [fill]="barOptions?.fill" [dataLabels]="barOptions?.dataLabels">
+                </apx-chart>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row mt-6">
+        <div class="card">
+            <div class="card m-4">
+                <form [formGroup]="frmGetOnboardedCustomers" *ngIf="isLFilterExpand">
+                    <div class="card-body">
+                        <div class="form-group row m-5">
+                            <div class="col-md-3 control-label">
+                                <label>
+                                    {{'TRANSLATE.ONBOARDING_ANALYTICS_SEARCH_UNIT_OF_DURATION'|translate}}
+                                </label>
+                                <select formControlName="DurationUnitList"
+                                    class="form-select form-select-sm">
+                                    <option *ngFor="let option of unitsOfDuration" [value]="option.Value">
+                                        {{option.Name}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 control-label"
+                                *ngIf="isPartnerLevel && permissions.HasResellers.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED">
+                                <label>
+                                    {{'TRANSLATE.ONBOARDING_ANALYTICS_SEARCH_TYPE_OF_CUSTOMER'|translate}}
+                                </label>
+                                <select formControlName="TypeofCustomersList"
+                                    class="form-select form-select-sm"
+                                    (change)="onTypeOfCustomerChange($event)">
+                                    <option *ngFor="let option of typesOfCustomers" [value]="option.Value">
+                                        {{option.Name}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 control-label" *ngIf="shouldShowResellerDiv && isPartnerLevel && permissions.HasResellers.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED">
+                                <label class="required">
+                                    {{'TRANSLATE.ONBOARDING_ANALYTICS_SEARCH_PLACEHOLDER_SELECT_RESELLERS'|translate}}
+                                </label>
+                                <select formControlName="ResellerList"
+                                    class="form-select form-select-sm">
+                                    <option *ngFor="let option of resellers" [ngValue]="option">
+                                        {{option.Name}}
+                                    </option>
+                                </select>
+                                @if(frmGetOnboardedCustomers.get('ResellerList')?.errors?.required &&
+                                frmGetOnboardedCustomers.get('ResellerList')?.touched){
+                                <span class="text-danger" translate="TRANSLATE.WEBHOOK_THIS_FIELD_IS_REQUIRED"></span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="form-group row">
+                            <div class=" col-md-12 text-lg-end control-label">
+                                <a class="btn btn-light-primary btn-sm m-2" (click)="onSubmit()">
+                                    {{'TRANSLATE.ONBOARDING_ANALYTICS_SEARCH_SUBMIT' | translate}}
+                                </a>
+                                <a class="btn btn-light-primary btn-sm m-2"
+                                    (click)="onResetListFilter()">{{'TRANSLATE.ONBOARDING_ANALYTICS_SEARCH_RESET_OPTION'
+                                    | translate}}</a>
+                                <a class="btn btn-light-primary btn-sm m-2"
+                                    (click)="listFilterExpand()">{{'TRANSLATE.ONBOARDING_ANALYTICS_SEARCH_CLOSE_OPTION'
+                                    | translate}}</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-12 mt-4">
+                <div class="ms-10">
+                    <h5 class="bold uppercase"><span translate="TRANSLATE.GRAPH_CUSTOMERS_ONBOARDED"></span></h5>
+                </div>
+                <div class="col-md-12 d-flex justify-content-between my-1">
+
+                    <div class="d-flex align-items-center position-relative my-1 ms-7">
+                        <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5"><span class="custom-path1"></span><span
+                            class="custom-path2"></span></i> <input type="text" data-field="Name" data-action="filter"
+                          class="header-input-field form-control form-control-solid w-200px ps-12" placeholder="{{'TRANSLATE.CUSTOMER_SEARCH_SEARCH_OPTION'| translate}} {{'TRANSLATE.CUSTOMERS_ONBOARDED_BY_DURATION_TABLE_HEADER_NAME'| translate}}">
+                        <!--begin::Card title-->
+
+                        <div class="d-flex align-items-center position-relative my-1 ms-2">
+                            <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5"><span class="custom-path1"></span><span
+                                class="custom-path2"></span></i> <input type="text" data-field="Email" data-action="filter"
+                              class="header-input-field form-control form-control-solid w-200px ps-12" placeholder="{{'TRANSLATE.CUSTOMER_SEARCH_SEARCH_OPTION'| translate}} {{'TRANSLATE.CONTACT_LABEL_TEXT_EMAIL'| translate}}">
+                            <!--begin::Card title-->
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class=" col-md-12 text-lg-end control-label">
+                            <button type="button" (click)="listFilterExpand()"
+                            class="btn btn-secondary btn-sm btn-xs btn-md btn-lg mr-10 text-nowrap ng-binding ng-scope ng-isolate-scope">
+                            <i class="ki-outline ki-filter fs-2" ngbTooltip="{{'TRANSLATE.BTN_TEXT_SHOW_FILTERS' | translate}}"></i>&nbsp;<span ngbTooltip="{{'TRANSLATE.BTN_TEXT_SHOW_FILTERS' | translate}}" translate="TRANSLATE.BTN_TEXT_FILTER"></span>
+                        </button>&nbsp;
+                        <button type="button" (click)="GetOnboardedCustomersReport()" [appPermission]="'DOWNLOAD_ONBOARDED_CUSTOMERS_REPORT'"
+                            class="btn btn-light-primary btn-sm btn-xs btn-md btn-lg mr-10 text-nowrap ng-binding ng-scope ng-isolate-scope">
+                            <i class="ki-outline ki-exit-down fs-2"></i><span
+                                translate="TRANSLATE.ONBOARDING_ANALYTICS_DOWNLOAD_REPORT"></span>
+                        </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body pt-0 overflow-auto">
+                @if (!!datatableConfig) {
+                <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+                </app-c3-table>
+                }
+            </div>
+        </div>
+    </div>
+</div>

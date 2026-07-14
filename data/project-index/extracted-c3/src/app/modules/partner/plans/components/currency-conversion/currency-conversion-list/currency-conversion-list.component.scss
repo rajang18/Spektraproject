@@ -1,0 +1,19 @@
+.header-custom-title {
+    text-align: left;
+} 
+.col-text-colo{
+    color:#252f4a;
+}
+::ng-deep{
+    app-currency-conversion-list{
+        table.dataTable > thead .dt-ordering-asc:after{
+            display: none !important;
+        }
+        .hide-paginaion{
+            .position-relative.top-70px{
+                display: none !important;
+            }
+        }
+    }
+}
+  

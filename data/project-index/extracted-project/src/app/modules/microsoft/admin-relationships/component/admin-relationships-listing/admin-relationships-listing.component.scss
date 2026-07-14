@@ -1,0 +1,12 @@
+::ng-deep {
+    app-admin-relationships-listing {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+
+        input[type="checkbox"]:disabled{
+            pointer-events: auto !important;
+            cursor: not-allowed !important;
+        }
+    }
+}

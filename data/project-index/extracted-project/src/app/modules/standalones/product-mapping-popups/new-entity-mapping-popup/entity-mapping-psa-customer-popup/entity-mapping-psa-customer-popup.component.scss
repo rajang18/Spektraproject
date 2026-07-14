@@ -1,0 +1,25 @@
+.custom-height {
+    height: 300px;
+}
+
+::ng-deep {
+    app-entity-mapping-psa-customer-popup{
+        .dt-container.dt-bootstrap5.dt-empty-footer {
+            .row:nth-child(1)  {
+                .col-sm-12 {
+                    height: 260px;
+                    overflow: auto;
+                }
+            }
+        }
+        .custom-height.no-height{
+            .dt-container.dt-bootstrap5.dt-empty-footer {
+                .row:nth-child(1) {
+                    .col-sm-12.p-0{
+                        height: 0px !important;
+                    }
+                }
+            }
+        }
+    }
+}

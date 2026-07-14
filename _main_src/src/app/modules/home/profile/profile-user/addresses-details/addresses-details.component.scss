@@ -1,0 +1,10 @@
+::ng-deep{
+    app-addresses-details1{
+        .overflow-x-hidden{
+            overflow-x: auto !important;
+        }
+        .overflow-y-hidden{
+            overflow-y: auto !important;
+        }
+    }
+}

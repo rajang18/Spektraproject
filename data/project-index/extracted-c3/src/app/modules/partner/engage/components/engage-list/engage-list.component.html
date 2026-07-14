@@ -1,0 +1,114 @@
+<ng-template #actionHeader>
+  <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+    <button type="button" class="btn btn-sm btn-primary remove-caret" [routerLink]="['/partner/engage/add']"
+      appBusyLoader>
+      <i class="ki-duotone ki-plus fs-2">
+      </i> <span translate="TRANSLATE.ENGAGE_HEADER_ACTIONS_ADD"></span>
+    </button>
+  </div>
+</ng-template>
+<div class="card">
+  <div class="card-body overflow-auto">
+    <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+      <div class="d-flex">
+        <div class="d-flex align-items-end">
+          <div class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto"
+            ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_EDIT' | translate}}" [ngClass]="toolbarButtonHeightClass"
+            (click)="editEngageDetails(data)">
+            <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+              <i class="ki-outline ki-pencil fs-3 text-primary">
+                <!-- <span class="path1"></span>
+                      <span class="path2"></span> -->
+              </i>
+            </span>
+          </div>
+        </div>
+        <div class="d-flex align-items-end">
+          <div class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto"
+            ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_DELETE' | translate}}" [ngClass]="toolbarButtonHeightClass"
+            (click)="deleteEngageNotification(data)">
+            <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+              <i class="ki-outline ki-trash fs-2 text-primary">
+                <!-- <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                    <span class="path4"></span>
+                    <span class="path5"></span>
+                    <span class="path6"></span>
+                    <span class="path7"></span>
+                    <span class="path8"></span>
+                    <span class="path9"></span>
+                    <span class="path10"></span> -->
+              </i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template #nameTemplate let-data="adtData" let-row="userData">
+      <span *ngIf="data.PageName.indexOf('Partner') >= 0; else entities">
+        Partner
+      </span>
+      <ng-template #entities>
+        <div *ngIf="data.Entities && data.Entities.length > 0">
+          <div *ngIf="data.Entities.length < 200">
+            <span>{{ data.Entities }}</span>
+          </div>
+          <div *ngIf="data.Entities.length > 200 && !isShowMoreEntities[data.ID]">
+            <span>{{ getEntities(data, 200) }}</span>
+            <span class="text-primary d-block cursor-pointer"
+              (click)="showMoreEntities(data.ID)">{{'TRANSLATE.PARTNER_OFFER_HYPERLINK_READ_MORE' |
+              translate}}</span>
+          </div>
+          <div *ngIf="data.Entities.length > 200 && isShowMoreEntities[data.ID]">
+            <span>{{ data.Entities }}</span>
+            <span class="text-primary d-block cursor-pointer"
+              (click)="showMoreEntities(data.ID)">{{'TRANSLATE.PARTNER_OFFER_HYPERLINK_READ_LESS' |
+              translate}}</span>
+          </div>
+        </div>
+      </ng-template>
+    </ng-template>
+    <ng-template #name let-data="adtData" let-row="userData">
+      <span class="fw-semibold">
+        {{'TRANSLATE.' + data.Description | translate}}
+      </span>
+    </ng-template>
+    <ng-template #body let-data="adtData" let-emitter="captureEvents">
+      <div>
+        <div *ngIf="data.Body && data.Body.length > 0">
+          <div *ngIf="data.Body.length < 200">
+            <span [innerHTML]="data.Body"></span>
+          </div>
+          <div *ngIf="data.Body.length > 200 && !isShowMore[data.ID]">
+            <span>{{ getPlainTextTruncatedDescription(data, 200) }}</span>
+            <span class="text-primary d-block cursor-pointer"
+              (click)="showMore(data.ID)">{{'TRANSLATE.PARTNER_OFFER_HYPERLINK_READ_MORE' |
+              translate}}</span>
+          </div>
+          <div *ngIf="data.Body.length > 200 && isShowMore[data.ID]">
+            <span [innerHTML]="data.Body"></span>
+            <span class="text-primary d-block cursor-pointer"
+              (click)="showMore(data.ID)">{{'TRANSLATE.PARTNER_OFFER_HYPERLINK_READ_LESS' |
+              translate}}</span>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template #expiresOn let-data="adtData" let-row="userData">
+      <span>
+        {{data.EndDate | dateTimeFilter : globalDateFormat}}
+      </span>
+    </ng-template>
+    <ng-template #effectiveFrom let-data="adtData" let-row="userData">
+      <span>
+        {{data.StartDate | dateTimeFilter : globalDateFormat}}
+      </span>
+    </ng-template>
+    @if (!!datatableConfig) {
+    <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+    </app-c3-table>
+    }
+  </div>
+</div>

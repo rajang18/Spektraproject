@@ -1,0 +1,43 @@
+<ng-template #addonsList let-addon="addon">
+    <div class="row mt-2">
+        <div class="col-md-12">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="addon.IsChecked" (change)="ToggleSelectAllAddons(addon)">
+               &nbsp;
+                <span class="form-check-label fw-semibold">
+                    {{addon.Name}}
+                    <span></span>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="addon.Addons && addon.Addons.length && (addon.IsChecked || SelectAllAddons)" style="padding-left:15px">
+        <div *ngFor="let addon of addon.Addons" [ngTemplateOutlet]="addonsList" [ngTemplateOutletContext]="{addon: addon}"></div>
+    </div>
+</ng-template>
+<div class="modal-dialog m-0 modal-dialog m-0-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><span translate="TRANSLATE.PARTNER_ADD_PLAN_ADDONS_POPUP_HEADER_TEXT_ADDON_LIST" ></span></h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="cancel()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+            </div>
+        </div>      
+        <div class="modal-body" id="modal-body" *ngIf="product.Addons && product.Addons.length">
+            <h5>
+                <label class="form-check fw-semibold">
+                    <input class="form-check-input" type="checkbox" [(ngModel)]="SelectAllAddons" (change)="SetIsCheckedForAddons()">
+                    <span></span> <strong class="font-blue ms-2"><span translate="TRANSLATE.PARTNER_ADD_PLAN_ADDONS_POPUP_CHECKBOX_TEXT_SELECT_ALL" ></span></strong>
+                </label>
+            </h5>
+            <li *ngFor="let addon of product.Addons" [ngTemplateOutlet]="addonsList" [ngTemplateOutletContext]="{addon: addon}"></li>
+        </div>
+        <div class="modal-body" *ngIf="!product.Addons || product.Addons.length <= 0">
+            <span translate="TRANSLATE.PARTNER_ADD_PLAN_ADDONS_POPUP_MESSAGE_NO_ADDONS_WERE_FOUND" ></span>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-sm btn-light btn-active-light-primary cursor-pointer" (click)="cancel()"><span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span></button>
+            <button type="button" class="btn btn-sm btn-primary cursor-pointer" data-dismiss="modal" (click)="Submit()">{{'TRANSLATE.PARTNER_BUNDLE_ADDONS_POPUP_BUTTON_TEXT_ADD' | translate}}</button>
+        </div>
+    </div>
+</div>

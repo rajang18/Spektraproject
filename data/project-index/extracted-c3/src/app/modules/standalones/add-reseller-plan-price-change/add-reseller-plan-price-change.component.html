@@ -1,0 +1,215 @@
+<div class="">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title"><span
+                    translate="TRANSLATE.PLAN_OFFER_PRICE_CHANGE_HEDER_CHANGE_PLAN_OFFER_PRICE"></span><span>{{planProductName}}</span>
+            </h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="cancel()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+            </div>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <form [formGroup]="resellerPriceChangeFormGroup">
+                <div class="form-body">
+                    <div class="form-group row mb-5">
+                        <div class="col-md-5">
+                            <label class="col-form-label text-right">
+                                <span
+                                    translate="TRANSLATE.PLAN_OFFER_PRICE_CHANGE_LABEL_EFFECTIVENESS_TYPE"></span><span
+                                    class="text-danger">*</span>
+                            </label>
+                        </div>
+                        <div class="col-md-7">
+                            <select class="form-select form-select-sm" [required]="true" formControlName="priceChangeEffectivenessType">
+                                <option value="''" disabled></option>
+                                @if(priceChangeEffectivenessType){
+                                @for (PriceChangeEffectiveness of priceChangeEffectivenessType; track $index) {
+                                <option [value]="PriceChangeEffectiveness.ID"
+                                    translate="TRANSLATE.{{PriceChangeEffectiveness.Description}}">
+                                </option>
+                                }
+                                }
+                            </select>
+                            @if(resellerPriceChangeFormGroup.get('priceChangeEffectivenessType')?.errors?.required &&
+                            resellerPriceChangeFormGroup.get('priceChangeEffectivenessType')?.touched){
+                            <span class="text-danger">{{'TRANSLATE.REQUIRED_FIELD_TEXT' | translate}}</span>
+                            }
+                        </div>
+                    </div>
+                    <!-- Hiding the selection of macro from the line item because we could have two Azure plan offers with different billing types ('Percentage', 'MSCostPercentage'). -->
+                    <!-- <div class="row pb-3 mb-5"
+                        *ngIf="selectedConsumptionType === 'usage' && categoryName === 'AzurePlan' && HasResellerUsagePlanMacro === 'Allowed'">
+                        <div class="col-md-5">
+                            <label class="col-form-label text-right">
+                                <span translate="TRANSLATE.SELECT_RESELLER_AZURE_SALE_PRICE_TYPE"></span><span
+                                    class="text-danger">*</span>
+                            </label>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="form-md-radios ng-scope col-md-6">
+                                <div class="radio-list">
+                                    <input type="radio" id="PriceSalePrice" class="ng-pristine ng-untouched ng-empty"
+                                        formControlName="salePriceOption" (click)="onSalePriceOptionClick('price')"
+                                        name="salePriceOption" value="price">
+                                    <label for="PriceSalePrice" class="ng-binding">
+                                        <span translate="TRANSLATE.RESELLER_AZURE_MACRO_PRICE_TYPE"
+                                            style="position: inherit;"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-md-radios ng-scope col-md-6">
+                                <div class="radio-outline-2x">
+                                    <div>
+                                        <input type="radio" id="MacroSalePrice"
+                                            class="ng-pristine ng-untouched ng-empty" formControlName="salePriceOption"
+                                            (click)="onSalePriceOptionClick('macro')" name="salePriceOption"
+                                            value="macro">
+                                        <label for="MacroSalePrice" class="ng-binding">
+                                            <span translate="TRANSLATE.RESELLER_AZURE_MACRO_MACRO_TYPE"
+                                                style="position: inherit;"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+                    @if(selectedSalePriceOption === 'price'){
+                    <table
+                        class="table table-bordered table-striped table-responsive-md table-responsive-lg table-responsive-sm table-responsive-xl table-responsive-xxl">
+                        <thead>
+                            <tr>
+                                <td class="fw-bold">
+                                    <span translate="TRANSLATE.PRICE_CHANGE_CURRENCY"></span>
+                                </td>
+                                <td class="d-flex justify-content-end fw-bold">
+                                    <span translate="TRANSLATE.PRICE_CHANGE_OLD_PRICE"></span>
+                                </td>
+                                <td class="fw-bold">
+                                    <span translate="TRANSLATE.PRICE_CHANGE_NEW_PRICE"></span>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (row of offerPriceListData; track $index) {
+                            <tr>
+                                <td class="fw-semibold">
+                                    {{row.CurrencyCode}}
+                                </td>
+                                <td class="d-flex justify-content-end">
+                                    {{row.SalePrice}}
+                                    <!-- <span
+                                        *ngIf="billingTypeName.toLowerCase() !== cloudHubConstants.BILLING_TYPE_PRICE && billingTypeName.toLowerCase() !== cloudHubConstants.BILLING_TYPE_UNIT"
+                                        class="fw-bold">(%)</span> -->
+                                </td>
+                                <td>
+                                    <div class="input-group pull-right"
+                                        [ngClass]="{'has-error':(row.NewPrice === null || row.NewPrice === undefined || row.NewPrice === '')}">
+                                        <input
+                                            *ngIf="billingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE ||billingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_UNIT"
+                                            name="salePrice" type="number" step="0.0001"
+                                            class="form-control form-control-sm"
+                                            placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_PRICE' | translate}}"
+                                            [value]="row.NewPrice" (input)="onChangeInput(row, $event)"
+                                            [(ngModel)]="row.NewPrice" [ngModelOptions]="{standalone: true}">
+                                        <input *ngIf=" billingTypeName.toLowerCase()
+                                            !==cloudHubConstants.BILLING_TYPE_PRICE && billingTypeName.toLowerCase()
+                                            !==cloudHubConstants.BILLING_TYPE_UNIT" name="salePrice" type="number"
+                                            step="0.01" class="form-control form-control-sm"
+                                            placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_PRICE' | translate}}"
+                                            [value]="row.NewPrice" (input)="onChangeInput(row,$event)"
+                                            [(ngModel)]="row.NewPrice" [ngModelOptions]="{standalone: true}">
+                                        <!-- <span *ngIf=" billingTypeName.toLowerCase()
+                                            !==cloudHubConstants.BILLING_TYPE_PRICE && billingTypeName.toLowerCase()
+                                            !==cloudHubConstants.BILLING_TYPE_UNIT"
+                                            class="input-group-addon d-flex align-items-center fw-bold">(%)</span> -->
+                                    </div>
+                                    <div class="mt-2">
+                                        @if(row.NewPrice == null || row.NewPrice == undefined || row.NewPrice === ''){
+                                        <span class="text-danger">{{'TRANSLATE.REQUIRED_FIELD_TEXT' | translate}}</span>
+                                        }
+                                    </div>
+                                    <div class="mt-2">
+                                        <span class="text-warning"
+                                            *ngIf="shouldShowPriceLockWarningkMessage && ((!canPriceLag && row.NewPrice < minPrice) || (!canPriceLead && row.NewPrice > maxPrice))"
+                                            translate="TRANSLATE.PRICE_CHANGE_MODAL_VALIDATION_WARNING_MESSAGE"></span>
+                                    </div>
+                                </td>
+
+                            </tr>
+                            }
+                            <tr
+                                *ngIf="offerPriceListData && offerPriceListData.length === 0 && isGridDataLoading === false">
+                                <td colspan="5">
+                                    <span translate="TRANSLATE.MESSAGE_NO_RECORDS_FOUND"></span>
+                                </td>
+                            </tr>
+                            <tr *ngIf="isGridDataLoading === true">
+                                <td colspan="5">
+                                    <h3><strong>{{'TRANSLATE.CUSTOMER_ONLINE_SERVICE_NCE_GRID_LOADING_TEXT' |
+                                            translate}}</strong></h3>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    }
+                    @if(selectedSalePriceOption === 'macro' && selectedConsumptionType === 'usage' && categoryName === 'AzurePlan')
+                    {
+                    <div class="form-group row mb-5">
+                        <div class="col-md-5">
+                            <label class="col-form-label text-right">
+                                <span translate="TRANSLATE.SELECT_RESELLER_AZURE_MACRO_TYPE"> </span><span class="text-danger">*</span>
+                            </label>
+                        </div>
+                        <div class="col-md-7">
+                            <!-- [required]="true"  -->
+                            <select class="form-select form-select-sm" name="macroType" formControlName="macroType"
+                                (change)="onSelectMacro()">
+                                @if(macros){
+                                @for (macro of macros; track $index) {
+                                <option [ngValue]="macro" (change)="macroValue = 0"
+                                    *ngIf="(macro.Description !== 'Apply X% Margin on Partner Price' &&  macro.Description !== 'Apply X% ERP on List Price')"
+                                    [selected]="macroTypeId === macro.ID" translate="{{macro.Description}}">
+                                </option>
+                                }
+                                }
+                            </select>
+                            @if(resellerPriceChangeFormGroup.get('macroType')?.errors?.required &&
+                            resellerPriceChangeFormGroup.get('macroType')?.touched){
+                            <span class="text-danger">{{'TRANSLATE.REQUIRED_FIELD_TEXT' | translate}}</span>
+                            }
+                        </div>
+                    </div>
+                    }
+                    @if(selectedSalePriceOption === 'macro' && selectedConsumptionType === 'usage' && categoryName ===
+                    'AzurePlan' && macroTypeId?.NeedsPercent === true){
+                    <div class="form-group row mb-5">
+                        <div class="col-md-5">
+                            <label class="col-form-label col-md-5 text-right">
+                                <span translate="TRANSLATE.RESELLER_AZURE_MACRO_VALUE"></span><span
+                                    class="text-danger">*</span>
+                            </label>
+                        </div>
+                        <div class="col-md-7">
+                            <input name="macroValue" type="number" step="1" class="form-control form-control-sm"
+                                placeholder=" " formControlName="macroValue">
+                            @if(resellerPriceChangeFormGroup.get('macroValue')?.errors?.required &&
+                            resellerPriceChangeFormGroup.get('macroValue')?.touched){
+                            <span class="text-danger">{{'TRANSLATE.REQUIRED_FIELD_TEXT' | translate}}</span>
+                            }
+                        </div>
+                    </div>
+                    }
+                </div>
+            </form>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary btn-active-secondary" type="submit" (click)="cancel()"><span
+                translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span> 
+            </button>
+            <button class="btn btn-light-primary btn-active-primary" type="submit" [appPermission]="'SAVE_PLAN'"
+                (click)="ok()"><span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+            </button>
+        </div>
+    </div>
+</div>

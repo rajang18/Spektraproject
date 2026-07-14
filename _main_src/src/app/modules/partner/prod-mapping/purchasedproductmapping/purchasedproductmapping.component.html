@@ -1,0 +1,675 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="back()">
+            <i class="ki-outline ki-to-left fs-2"></i> <span
+                translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_BTN_TEXT_BACK_TO_SUBSCRIPTION_HISTORY"></span></button>
+    </div>
+</ng-template>
+@if (activeServiceDetail) {
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group row mb-5">
+                    <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                        <label class="fw-semibold fs-6 mb-2 mt-2">
+                            <span translate="">{{'TRANSLATE.CUSTOMER_PURCHASED_PRODUCT_MAPPING_TEXT_CUSTOMER_NAME' |
+                                translate }}</span><span class="text-danger">*</span>
+                        </label>
+                    </div>
+                    <div class="col-md-5">
+                        <input class="form-control form-control-sm" type="text" 
+                            [class]="themeMode.mode.getValue() == 'light' && purchasedProductMapping.CustomerName != null ? 'text-dark' : 'custom'"
+                            [(ngModel)]="purchasedProductMapping.CustomerName" [disabled]="true"
+                            placeholder="{{'TRANSLATE.PSA_PRODUCT_MAPPING_SELECT_CUSTOMER'| translate}}" />
+                    </div>
+                    <div class="col-md-2">
+                        <a class="btn btn-light-primary btn-sm btn-xs mr-2"
+                            (click)="getActiveC3Customers()">{{'TRANSLATE.SELECT_DEFAULT_OPTION_SELECT' |
+                            translate}}</a>
+                    </div>
+                </div>
+                <div class="form-group row mb-5"
+                    *ngIf="purchasedProductMapping.C3Id !== undefined && purchasedProductMapping.C3Id !== null">
+                    <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                        <label class="fw-semibold fs-6 mb-2 mt-2">
+                            <span translate="">{{'TRANSLATE.CUSTOMER_PURCHASED_PRODUCT_MAPPING_TEXT_EXTERNAL_CUSTOMER_NAME'
+                                | translate }}</span><span class="text-danger">*</span>
+                        </label>
+                    </div>
+                  
+                    <div class="col-md-5">
+                        <input class="form-control form-control-sm" type="text"
+                            [class]="themeMode.mode.getValue() == 'light' && purchasedProductMapping.ExternalCustomerName != null ? 'text-dark' : 'custom'"
+                            [(ngModel)]="purchasedProductMapping.ExternalCustomerName" [disabled]="true"
+                            placeholder="{{'TRANSLATE.PSA_PRODUCT_MAPPING_SELECT_EXTERNAL_CUSTOMER'| translate}}" />
+                    </div>
+                    <div class="col-md-2">
+                        <a class="btn btn-light-primary btn-sm btn-xs mr-2"
+                            *ngIf="mappedEntity.ExternalCustomerId == undefined && mappedEntity.ExternalCustomerId == null"
+                            (click)="getActiveEntites()">{{'TRANSLATE.SELECT_DEFAULT_OPTION_SELECT' |
+                            translate}}</a>
+                        <a class="btn btn-light-danger btn-sm btn-xs mr-2"
+                            *ngIf="mappedEntity.ExternalCustomerId !== undefined && mappedEntity.ExternalCustomerId !== null"
+                            (click)="unMappExternalService(mappedEntity.ExternalCustomerId, null, null, null)">{{'TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_BTN_TEXT_RELEASE' | translate}}</a>
+                    </div>
+                </div>
+                <div class="form-group row mb-5"
+                    *ngIf="purchasedProductMapping.ExternalCustomerId !== undefined && purchasedProductMapping.ExternalCustomerId !== null">
+                    <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                        <label class="fw-semibold fs-6 mb-2 mt-2">
+                            <span *ngIf="activeServiceDetail.Name?.toLowerCase() === cloudHubConstants.PSA_NAME_CONNECTWISE"
+                                translate="TRANSLATE.CUSTOMER_PURCHASED_PRODUCT_MAPPING_TEXT_AGREEMENT"></span>
+                            <span *ngIf="activeServiceDetail.Name?.toLowerCase() === cloudHubConstants.PSA_NAME_AUTOTASK"
+                                translate="TRANSLATE.CUSTOMER_PURCHASED_PRODUCT_MAPPING_TEXT_CONTRACT"></span><span
+                                class="text-danger">*</span>
+                        </label>
+                    </div>
+                    <div class="col-md-5">
+                        <input class="form-control form-control-sm" type="text"
+                            [class]="themeMode.mode.getValue() == 'light' && purchasedProductMapping.AgreementName != null ? 'text-dark' : 'custom'"
+                            [(ngModel)]="purchasedProductMapping.AgreementName" [disabled]="true"
+                            [placeholder]="((activeServiceDetail.Name.toLowerCase() === cloudHubConstants.PSA_NAME_CONNECTWISE) ? 'TRANSLATE.PSA_PRODUCT_MAPPING_SELECT_AGREEMENT' : 'TRANSLATE.PSA_PRODUCT_MAPPING_SELECT_CONTRACT') | translate" />
+                    </div>
+                    <div class="col-md-5">
+                        <a class="btn btn-light-primary btn-xs btn-sm mr-5"
+                            (click)="getActiveContracts()">{{'TRANSLATE.SELECT_DEFAULT_OPTION_SELECT' |
+                            translate}}</a>
+                        <button type="button" class="btn btn-light-danger ms-2 btn-sm btn-xs mr-2"
+                            *ngIf="activeServiceDetail.Name?.toLowerCase() === cloudHubConstants.PSA_NAME_CONNECTWISE && mappedEntity.ExternalCustomerId !== undefined && mappedEntity.ExternalCustomerId !== null && mappedEntity.AgreementId !== undefined && mappedEntity.AgreementId !== null"
+                            busy busy-add-classes="disabled" not-busy-remove-classes="disabled"
+                            (click)="unMappExternalService(mappedEntity.ExternalCustomerId,mappedEntity.AgreementId,null, null)">
+                            {{'TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_BTN_TEXT_RELEASE' | translate}}
+                            <!-- <busy-message>
+                                    <i class="fa fa-spinner fa-spin"></i> {{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}
+                                </busy-message> -->
+                        </button>
+                        <button type="button" class="btn btn-light-danger  ms-2 btn-xs btn-sm mr-5"
+                            *ngIf="activeServiceDetail.Name?.toLowerCase() === cloudHubConstants.PSA_NAME_AUTOTASK && mappedEntity.ExternalCustomerId !== undefined && mappedEntity.ExternalCustomerId !== null && mappedEntity.AgreementId !== undefined && mappedEntity.AgreementId !== null"
+                            busy busy-add-classes="disabled" not-busy-remove-classes="disabled"
+                            (click)="unMappExternalService(mappedEntity.ExternalCustomerId, mappedEntity.AgreementId,null, null)">
+                            {{'TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_BTN_TEXT_RELEASE' | translate}}
+                            <!-- <busy-message>
+                                    <i class="fa fa-spinner fa-spin"></i> {{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}
+                                </busy-message> -->
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group row mb-5"
+                    *ngIf="purchasedProductMapping.AgreementId !== undefined && purchasedProductMapping.AgreementId !== null && purchasedProductMapping.ExternalCustomerId !== undefined && purchasedProductMapping.ExternalCustomerId !== null">
+                    <label class="col-form-label text-lg-right text-sm-left col-md-2">
+                        <span translate="TRANSLATE.CUSTOMER_PURCHASED_PRODUCT_MAPPING_TEXT_BILLING_CYCLE"></span><span
+                            class="text-danger">*</span>
+                    </label>
+                    <div class="col-md-5">
+                        <input class="form-control form-control-sm" type="text" [(ngModel)]="selectedContractBillingCycle" disabled
+                            placeholder="{{'TRANSLATE.CUSTOMER_PURCHASED_PRODUCT_MAPPING_TEXT_BILLING_CYCLE'|translate}}" />
+                    </div>
+                </div>
+
+                <div class="form-group row mb-5"
+                    *ngIf="activeServiceDetail.Name?.toLowerCase() === cloudHubConstants.PSA_NAME_AUTOTASK && purchasedProductMapping.AgreementId !== undefined && purchasedProductMapping.AgreementId !== null && purchasedProductMapping.ExternalCustomerId !== undefined && purchasedProductMapping.ExternalCustomerId !== null">
+                    <!-- *ngIf="SelectedResellerSettings.AutotaskContractMappingType === 'CONSTANT_MANUAL_MAPPING_WITH_SERVICE_CREATION' && activeServiceDetail.Name.toLowerCase() === cloudHubConstants.PSA_NAME_AUTOTASK && purchasedProductMapping.AgreementId !== undefined && purchasedProductMapping.AgreementId !== null && purchasedProductMapping.ExternalCustomerId !== undefined && purchasedProductMapping.ExternalCustomerId !== null"> -->
+                    <label class="col-form-label text-lg-right text-sm-left col-md-2">
+                        <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PURCHASED_PRODUCT_MAPPING_TEXT_IS_DEFAULT_HELP_TEXT' | translate}}">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                        </i>
+                        <span translate="TRANSLATE.CUSTOMER_PURCHASED_PRODUCT_MAPPING_TEXT_IS_DEFAULT"></span>
+                    </label>
+                    <div class="col-md-5">
+                        <div class="checkbox-list mt-2 form-check">
+                            <label class="checkbox checkbox-outline checkbox-outline-2x control-label">
+                                <input class="form-check-input" type="checkbox" value=""
+                                    [(ngModel)]="purchasedProductMapping.IsDefault">
+                            </label>
+                            <label class="checkbox" style="display: none"></label>
+                        </div>
+                        <!-- <label class="pb-6 checkbox checkbox-outline checkbox-outline-2x control-label">
+                            <input type="checkbox" class="checkbox" name="form_isDefault"
+                                [(ngModel)]="purchasedProductMapping.IsDefault">
+                            <span></span>
+                        </label> -->
+                    </div>
+                </div>
+                <div class="form-group row mb-5"
+                    *ngIf="activeServiceDetail.Name?.toLowerCase() === cloudHubConstants.PSA_NAME_AUTOTASK && purchasedProductMapping.AgreementId !== undefined && purchasedProductMapping.AgreementId !== null && purchasedProductMapping.ExternalCustomerId !== undefined && purchasedProductMapping.ExternalCustomerId !== null">
+                    <div class="col-md-12 callout callout-info bg-light-primary rounded border-primary border border-dashed">
+                        <span translate="TRANSLATE.CUSTOMER_PURCHASED_PRODUCT_MAPPING_TEXT_HELP_TEXT_LINE_1"></span>
+                    </div>
+                    <label class="col-form-label text-lg-right text-sm-left col-md-2">
+                        <span translate="TRANSLATE.CUSTOMER_PURCHASED_PRODUCT_MAPPING_TEXT_CATEGORY_NAME"></span>
+                    </label>
+                    <div class="col-md-10">
+                        <ng-select [(ngModel)]="selectedCategory" (change)="onCategoryChange()"
+                            placeholder="{{'TRANSLATE.PSA_PRODUCT_MAPPING_SELECT_CATEGORY' |translate}}">
+                            @for (option of categories; track $index) {
+                            <ng-option [value]="option">
+                                {{'TRANSLATE.'+option.CategoryDescriptionKey | translate}}
+                                <div ng-bind-html="x.Description | highlight"></div>
+                            </ng-option>
+                            }
+                        </ng-select>
+                    </div>
+                </div>
+                <div class="form-group row mb-5"
+                    *ngIf="providerTenants.length > 0 && activeServiceDetail.Name?.toLowerCase() === cloudHubConstants.PSA_NAME_AUTOTASK && purchasedProductMapping.AgreementId !== undefined && purchasedProductMapping.AgreementId !== null && purchasedProductMapping.ExternalCustomerId !== undefined && purchasedProductMapping.ExternalCustomerId !== null">
+                    <label class="col-form-label text-lg-right text-sm-left col-md-2">
+                        <span
+                            translate="TRANSLATE.CUSTOMER_PURCHASED_PRODUCT_MAPPING_TEXT_SERVICE_PROVIDER_CUSTOMER"></span>
+                    </label>
+                    <div class="col-md-10">
+                        <ng-select [(ngModel)]="selectedServiceProviderCustomer" (change)="onServiceProviderCustomerChange()"
+                            placeholder="{{'TRANSLATE.PSA_PRODUCT_MAPPING_SELECT_SERVICE_PROVIDER_CUSTOMER' |translate}}">
+                            @for (option of providerTenants; track $index) {
+                            <ng-option [value]="option" >{{option.CustomerName}}
+                                <div ng-bind-html="x.CustomerName | highlight"></div>
+                            </ng-option>
+                            }
+                        </ng-select>
+                    </div>
+                </div>
+                @if(purchasedProductMapping.AgreementId !== undefined && purchasedProductMapping.AgreementId !== null &&
+                purchasedProductMapping.ExternalCustomerId !== undefined && purchasedProductMapping.ExternalCustomerId
+                !== null){
+                <ng-template #textBox let-data="adtData" let-emitter="captureEvents">
+                    <div>
+                        <input type="text" class="form-control form-control-sm" disabled="true"
+                            *ngIf="activeServiceDetail.Name?.toLowerCase() === cloudHubConstants.PSA_NAME_CONNECTWISE"
+                            [class]="themeMode.mode.getValue() == 'light' && data.ContractServiceName != null ? 'text-dark' : 'custom'"
+                            [(ngModel)]="data.ContractServiceName"
+                            placeholder="{{'TRANSLATE.PSA_PRODUCT_MAPPING_SELECT_SERVICE'|translate}}" name="textBox">
+
+                        <input type="text" class="form-control form-control-sm" disabled="true"
+                            *ngIf="activeServiceDetail.Name?.toLowerCase() === cloudHubConstants.PSA_NAME_AUTOTASK"
+                            [class]="themeMode.mode.getValue() == 'light' && data.ContractServiceName != null ? 'text-dark' : 'custom'"
+                            [(ngModel)]="data.ContractServiceName"
+                            placeholder="{{'TRANSLATE.PSA_PRODUCT_MAPPING_SELECT_PRODUCT'|translate}}" name="textBox">
+                        <!-- <input type="radio" [(ngModel)]="data.IsSelected" [value]="true" name="radio" (change)="updateSelectedList(data)" required> -->
+                    </div>
+                </ng-template>
+                <div>
+                    <ng-template #propertiespills let-data="adtData" let-emitter="captureEvents">
+                        <div>
+                            <div>
+                                {{data.ProductSubscriptionName}}
+                                <sup *ngIf="data.ProductForTrial != null && data.ProductForTrial != undefined && data.ProductForTrial != ''"
+                                    class="text-warning fw-normal">
+                                    <span translate="TRANSLATE.PLAN_MANAGE_TRAIL_OFFER_SYMBOL_TRAIL_OFFER"></span></sup>
+                            </div>
+                            <span>
+                                <div>
+                                    <div class="d-flex flex-wrap gap-2 pl-3 align-items-center">
+                                        @if(data.CategoryName.toLowerCase() ==
+                                        cloudHubConstants.CATEGORY_ONLINE_SERVICES_NEW_COMMERCE_EXPERIENCE){
+                                            <span
+                                                class="label label-warning fw-bold label-inline text-white badge bg-warning"
+                                                aria-hidden="true" *ngIf="data.ValidityType === 'Month(s)'"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                {{ data.Validity }}
+                                                {{ (data.Validity == 1 ? (data.ValidityType === 'Month(s)' ?
+                                                'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                                            </span>
+                                            <span
+                                                class="label label-warning fw-bold label-inline text-white badge bg-warning"
+                                                *ngIf="data.ValidityType === 'Year(s)' || data.ValidityType === 'Year'"
+                                                [ngClass]="{'labelcolor': data.BillingCycleName === 'Monthly', 'TermLabelColor': data.BillingCycleName === 'Annual'}"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                {{ data.Validity }}
+                                                {{ (data.Validity == 1 ? (data.ValidityType === 'Month(s)' ?
+                                                'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                                            </span>
+                                            <span *ngIf="data.BillingCycleName !== null && data.BillingCycleName !== ''"
+                                                class="label fw-bold label-inline text-white badge"
+                                                [ngClass]="{
+                                                    'bg-warning': data.BillingCycleName?.toLowerCase() === 'monthly',
+                                                    'bg-success': data.BillingCycleName?.toLowerCase() === 'annual',
+                                                    'bg-dark': data.BillingCycleName?.toLowerCase() === 'triennial',
+                                                    'bg-info': data.BillingCycleName?.toLowerCase() === 'onetime'
+                                                }" aria-hidden="true" 
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCTS_BILLING_CYCLE' | translate}}"
+                                                placement="top">
+                                                {{'TRANSLATE.' + data.BillingCycleDescriptionKey | translate}}
+                                            </span>
+                                            <span class="label label-light-info fw-bold label-inline badge"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CATEGORY' | translate}}"
+                                                title="{{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE' | translate}}">
+                                                {{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE' | translate}}
+                                            </span>
+                                        }
+
+                                        @if(data.CategoryName.toLowerCase() ==
+                                        cloudHubConstants.CATEGORY_SOFTWARE_SUBSCRIPTIONS){
+                                            <span
+                                                class="label label-warning fw-bold label-inline text-white badge bg-warning"
+                                                aria-hidden="true" *ngIf="data.ValidityType === 'Month(s)'"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                {{ data.Validity }}
+                                                {{ (data.Validity == 1 ? (data.ValidityType === 'Month(s)' ?
+                                                'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                                            </span>
+                                            <span
+                                                class="label label-warning fw-bold label-inline text-white badge bg-warning"
+                                                *ngIf="data.ValidityType === 'Year(s)' || data.ValidityType === 'Year'"
+                                                [ngClass]="{'labelcolor': data.BillingCycleName === 'Monthly', 'TermLabelColor': data.BillingCycleName === 'Annual'}"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                {{ data.Validity }}
+                                                {{ (data.Validity == 1 ? (data.ValidityType === 'Month(s)' ?
+                                                'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                                            </span>
+                                            <span *ngIf="data.BillingCycleName !== null && data.BillingCycleName !== ''"
+                                                class="label fw-bold label-inline text-white badge "
+                                                [ngClass]="{
+                                                    'bg-warning': data.BillingCycleName?.toLowerCase() === 'monthly',
+                                                    'bg-success': data.BillingCycleName?.toLowerCase() === 'annual',
+                                                    'bg-dark': data.BillingCycleName?.toLowerCase() === 'triennial',
+                                                    'bg-info': data.BillingCycleName?.toLowerCase() === 'onetime'
+                                                }" aria-hidden="true" 
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCTS_BILLING_CYCLE' | translate}}"
+                                                tooltip-placement="top">
+                                                {{'TRANSLATE.' + data.BillingCycleDescriptionKey | translate}}
+                                            </span>
+                                            <span class="label label-light-info fw-bold label-inline badge"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CATEGORY' | translate}}"
+                                                title="{{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE_SOFTWARE_SUBSCRIPTIONS' | translate}}">{{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE_SOFTWARE_SUBSCRIPTIONS'
+                                                | translate}}
+                                            </span>
+                                        }
+
+                                        @if(data.CategoryName.toLowerCase() ==
+                                        cloudHubConstants.CATEGORY_DISTRIBUTOR_OFFERS &&
+                                        activeServiceDetail.Name.toLowerCase() === cloudHubConstants.PSA_NAME_AUTOTASK){
+                                            <span
+                                                class="label label-warning fw-bold label-inline text-white badge bg-warning"
+                                                aria-hidden="true" *ngIf="data.ValidityType === 'Month(s)'"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                {{ data.Validity }}
+                                                {{ (data.Validity == 1 ? (data.ValidityType === 'Month(s)' ?
+                                                'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                                            </span>
+                                            <span
+                                                class="label label-warning fw-bold label-inline text-white badge bg-warning"
+                                                *ngIf="data.ValidityType === 'Year(s)' || data.ValidityType === 'Year'"
+                                                [ngClass]="{'labelcolor': data.BillingCycleName === 'Monthly', 'TermLabelColor': data.BillingCycleName === 'Annual'}"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                {{ data.Validity }}
+                                                {{ (data.Validity == 1 ? (data.ValidityType === 'Month(s)' ?
+                                                'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                                            </span>
+                                            <span *ngIf="data.BillingCycleName !== null && data.BillingCycleName !== ''"
+                                                class="label fw-bold label-inline text-white badge"
+                                                [ngClass]="{
+                                                    'bg-warning': data.BillingCycleName?.toLowerCase() === 'monthly',
+                                                    'bg-success': data.BillingCycleName?.toLowerCase() === 'annual',
+                                                    'bg-dark': data.BillingCycleName?.toLowerCase() === 'triennial',
+                                                    'bg-info': data.BillingCycleName?.toLowerCase() === 'onetime'
+                                                }" aria-hidden="true" 
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCTS_BILLING_CYCLE' | translate}}"
+                                                tooltip-placement="top">
+                                                {{'TRANSLATE.' + data.BillingCycleDescriptionKey | translate}}
+                                            </span>
+                                            <span class="label label-light-info fw-bold label-inline badge"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CATEGORY' | translate}}"
+                                                title="{{'TRANSLATE.LABEL_TEXT_DISTRIBUTER_OFFER' | translate}}">{{'TRANSLATE.LABEL_TEXT_DISTRIBUTER_OFFER'
+                                                | translate}}
+                                            </span>
+                                        }
+
+                                        @if(data.CategoryName.toLowerCase() == cloudHubConstants.CATEGORY_CUSTOM &&
+                                        activeServiceDetail.Name.toLowerCase() === cloudHubConstants.PSA_NAME_AUTOTASK){
+                                            <span
+                                                class="label label-warning fw-bold label-inline text-white badge bg-warning"
+                                                aria-hidden="true"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}"
+                                                *ngIf="data.ProductForTrial == null"
+                                                [ngClass]="{'labelcolor':data.BillingCycleName == 'Monthly','TermLabelColor': data.BillingCycleName == 'Annual'}">
+                                                {{data.Validity}}
+                                                {{ (data.Validity == 1 ? (data.ValidityType === 'Month(s)' ?
+                                                'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                                            </span>
+                                            <span *ngIf="data.BillingCycleName !== null && data.BillingCycleName !== ''"
+                                                class="label fw-bold label-inline text-white badge"
+                                                [ngClass]="{
+                                                    'bg-warning': data.BillingCycleName?.toLowerCase() === 'monthly',
+                                                    'bg-success': data.BillingCycleName?.toLowerCase() === 'annual',
+                                                    'bg-dark': data.BillingCycleName?.toLowerCase() === 'triennial',
+                                                    'bg-info': data.BillingCycleName?.toLowerCase() === 'onetime'
+                                                }" aria-hidden="true" 
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCTS_BILLING_CYCLE' | translate}}"
+                                                tooltip-placement="top">{{'TRANSLATE.' + data.BillingCycleDescriptionKey
+                                                | translate}}</span>
+                                            <span
+                                                class="label label-warning fw-bold text-white label-inline badge bg-warning"
+                                                aria-hidden="true"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TRIAL_PERIOD' | translate}}"
+                                                *ngIf="data.ProductForTrial != null">{{data.Validity}} {{
+                                                data.ValidityType | translate }} </span>
+                                        }
+                                        @if(data.CategoryName.toLowerCase() == cloudHubConstants.CATEGORY_CUSTOM &&
+                                        activeServiceDetail.Name.toLowerCase() ===
+                                        cloudHubConstants.PSA_NAME_CONNECTWISE){
+                                            <span
+                                                *ngIf="data.ProductForTrial == null && data.Validity !== null && data.Validity !== '' && data.ValidityType == 'Month(s)'"
+                                                class="label label-warning fw-bold label-inline text-white badge bg-warning"
+                                                aria-hidden="true"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                {{data.Validity}}
+                                                {{ (data.Validity == 1 ? (data.ValidityType === 'Month(s)' ?
+                                                'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                                            </span>
+                                            <span
+                                                class="label label-warning fw-bold label-inline text-white badge bg-warning"
+                                                aria-hidden="true"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}"
+                                                *ngIf="data.ProductForTrial == null && data.ValidityType === 'Year(s)' || data.ValidityType === 'Year'"
+                                                [ngClass]="{'labelcolor':data.BillingCycleName == 'Monthly','TermLabelColor': data.BillingCycleName == 'Annual'}">
+                                                {{data.Validity}}
+                                                {{ (data.Validity == 1 ? (data.ValidityType === 'Month(s)' ?
+                                                'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                                            </span>
+                                            <span *ngIf="data.BillingCycleName !== null && data.BillingCycleName !== ''"
+                                                class="label fw-bold label-inline text-white badge"
+                                                [ngClass]="{
+                                                    'bg-warning': data.BillingCycleName?.toLowerCase() === 'monthly',
+                                                    'bg-success': data.BillingCycleName?.toLowerCase() === 'annual',
+                                                    'bg-dark': data.BillingCycleName?.toLowerCase() === 'triennial',
+                                                    'bg-info': data.BillingCycleName?.toLowerCase() === 'onetime'
+                                                }" aria-hidden="true" 
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCTS_BILLING_CYCLE' | translate}}"
+                                                tooltip-placement="top">{{'TRANSLATE.' + data.BillingCycleDescriptionKey
+                                                | translate}}</span>
+                                            <span
+                                                class="label label-warning fw-bold text-white label-inline badge bg-warning"
+                                                aria-hidden="true"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TRIAL_PERIOD' | translate}}"
+                                                *ngIf="data.ProductForTrial != null">{{data.Validity}}
+                                                {{data.ValidityType | translate }} </span>
+                                            <span class="label label-light-info fw-bold label-inline badge"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CATEGORY' | translate}}"
+                                                title="{{'TRANSLATE.CATEGORY_DESC_CUSTOM' | translate}}">{{'TRANSLATE.CATEGORY_DESC_CUSTOM'
+                                                | translate}}</span>
+                                        }
+
+                                        @if(data.CategoryName.toLowerCase() ==
+                                        cloudHubConstants.CATEGORY_PERPETUAL_SOFTWARE){
+                                            <span
+                                                class="label label-warning fw-bold label-inline text-white badge bg-warning"
+                                                aria-hidden="true" *ngIf="data.ValidityType === 'Month(s)'"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                {{ data.Validity }}
+                                                {{ (data.Validity == 1 ? (data.ValidityType === 'Month(s)' ?
+                                                'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                                            </span>
+                                            <span
+                                                class="label label-warning fw-bold label-inline text-white badge bg-warning"
+                                                *ngIf="data.ValidityType === 'Year(s)' || data.ValidityType === 'Year'"
+                                                [ngClass]="{'labelcolor': data.BillingCycleName === 'Monthly', 'TermLabelColor': data.BillingCycleName === 'Annual'}"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                {{ data.Validity }}
+                                                {{ (data.Validity == 1 ? (data.ValidityType === 'Month(s)' ?
+                                                'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                                            </span>
+                                            <span *ngIf="data.BillingCycleName !== null && data.BillingCycleName !== ''"
+                                                class="label fw-bold label-inline text-white badge"
+                                                [ngClass]="{
+                                                    'bg-warning': data.BillingCycleName?.toLowerCase() === 'monthly',
+                                                    'bg-success': data.BillingCycleName?.toLowerCase() === 'annual',
+                                                    'bg-dark': data.BillingCycleName?.toLowerCase() === 'triennial',
+                                                    'bg-info': data.BillingCycleName?.toLowerCase() === 'onetime'
+                                                }" aria-hidden="true" 
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCTS_BILLING_CYCLE' | translate}}"
+                                                placement="top">{{'TRANSLATE.' + data.BillingCycleDescriptionKey |
+                                                translate}}</span>
+                                            <span class="label label-light-info fw-bold label-inline badge"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CATEGORY' | translate}}"
+                                                title="{{'TRANSLATE.CATEGORY_DESCRIPTION_PERPETUAL_SOFTWARE' | translate}}">{{'TRANSLATE.CATEGORY_DESCRIPTION_PERPETUAL_SOFTWARE'
+                                                | translate}}</span>
+                                        }
+
+                                        @if(data.CategoryName.toLowerCase() == cloudHubConstants.RESERVED_INSTANCES){
+                                            <span
+                                                class="label label-warning fw-bold label-inline text-white badge bg-warning"
+                                                aria-hidden="true" *ngIf="data.ValidityType == 'Month(s)'"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                {{data.Validity}} {{(data.Validity == 1? (data.ValidityType ===
+                                                'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                                            </span>
+                                            <span
+                                                class="label label-warning fw-bold label-inline text-white badge bg-warning"
+                                                *ngIf="data.ValidityType === 'Year(s)' || data.ValidityType === 'Year'"
+                                                [ngClass]="{'labelcolor':data.BillingCycleName == 'Monthly','TermLabelColor': data.BillingCycleName == 'Annual'}"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                {{data.Validity}} {{(data.Validity == 1? (data.ValidityType ===
+                                                'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                                            </span>
+                                            <span *ngIf="data.BillingCycleName !== null && data.BillingCycleName !== ''"
+                                                class="label fw-bold label-inline text-white badge"
+                                                [ngClass]="{
+                                                    'bg-warning': data.BillingCycleName?.toLowerCase() === 'monthly',
+                                                    'bg-success': data.BillingCycleName?.toLowerCase() === 'annual',
+                                                    'bg-dark': data.BillingCycleName?.toLowerCase() === 'triennial',
+                                                    'bg-info': data.BillingCycleName?.toLowerCase() === 'onetime'
+                                                }" aria-hidden="true" 
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCTS_BILLING_CYCLE' | translate}}"
+                                                tooltip-placement="top">{{'TRANSLATE.' + data.BillingCycleDescriptionKey
+                                                |
+                                                translate}}</span>
+                                            <span class="label label-light-info fw-bold label-inline badge"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CATEGORY' | translate}}"
+                                                title="{{'TRANSLATE.CATEGORY_DESCRIPTION_RESERVED_INSTANCE' | translate}}">{{'TRANSLATE.CATEGORY_DESCRIPTION_RESERVED_INSTANCE'|
+                                                translate}}</span>
+                                        }
+
+                                        @if(data.CategoryName.toLowerCase() ==
+                                        cloudHubConstants.CATEGORY_LICENSE_SUPPORTED){
+                                            <span
+                                                class="label label-warning fw-bold label-inline text-white badge bg-warning"
+                                                aria-hidden="true" *ngIf="data.ValidityType == 'Month(s)'"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                {{data.Validity}} {{(data.Validity == 1? (data.ValidityType ===
+                                                'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                                            </span>
+                                            <span
+                                                class="label label-warning fw-bold label-inline text-white badge bg-warning"
+                                                *ngIf="data.ValidityType === 'Year(s)' || data.ValidityType === 'Year'"
+                                                [ngClass]="{'labelcolor':data.BillingCycleName == 'Monthly','TermLabelColor': data.BillingCycleName == 'Annual'}"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                {{data.Validity}} {{(data.Validity == 1? (data.ValidityType ===
+                                                'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                                            </span>
+                                            <span *ngIf="data.BillingCycleName !== null && data.BillingCycleName !== ''"
+                                                class="label fw-bold label-inline text-white badge"
+                                                [ngClass]="{
+                                                    'bg-warning': data.BillingCycleName?.toLowerCase() === 'monthly',
+                                                    'bg-success': data.BillingCycleName?.toLowerCase() === 'annual',
+                                                    'bg-dark': data.BillingCycleName?.toLowerCase() === 'triennial',
+                                                    'bg-info': data.BillingCycleName?.toLowerCase() === 'onetime'
+                                                }" aria-hidden="true" 
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCTS_BILLING_CYCLE' | translate}}"
+                                                placement="top">{{'TRANSLATE.' + data.BillingCycleDescriptionKey |
+                                                translate}}
+                                            </span>
+                                            <span class="label label-light-info fw-bold label-inline badge"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CATEGORY' | translate}}"
+                                                title="{{'TRANSLATE.CATEGORY_DESCRIPTION_LICENSE_SUPPORTED' | translate}}">{{'TRANSLATE.CATEGORY_DESCRIPTION_LICENSE_SUPPORTED'
+                                                | translate}}</span>
+                                        }
+
+                                        @if(data.CategoryName.toLowerCase() == cloudHubConstants.CATEGORY_BUNDLES){
+                                            <span
+                                                class="label label-warning fw-bold label-inline text-white badge bg-warning"
+                                                aria-hidden="true" *ngIf="data.ValidityType == 'Month(s)'"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                {{data.Validity}} {{(data.Validity == 1? (data.ValidityType ===
+                                                'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }} </span>
+                                            <span
+                                                class="label label-warning fw-bold label-inline text-white badge bg-warning"
+                                                *ngIf="data.ValidityType === 'Year(s)' || data.ValidityType === 'Year'"
+                                                [ngClass]="{'labelcolor':data.BillingCycleName == 'Monthly','TermLabelColor': data.BillingCycleName == 'Annual'}"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                {{data.Validity}} {{(data.Validity == 1? (data.ValidityType ===
+                                                'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }} </span>
+                                            <span *ngIf="data.BillingCycleName !== null && data.BillingCycleName !== ''"
+                                                class="label fw-bold label-inline text-white badge"
+                                                [ngClass]="{
+                                                    'bg-warning': data.BillingCycleName?.toLowerCase() === 'monthly',
+                                                    'bg-success': data.BillingCycleName?.toLowerCase() === 'annual',
+                                                    'bg-dark': data.BillingCycleName?.toLowerCase() === 'triennial',
+                                                    'bg-info': data.BillingCycleName?.toLowerCase() === 'onetime'
+                                                }" aria-hidden="true" 
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCTS_BILLING_CYCLE' | translate}}"
+                                                placement="top">{{data.BillingCycleDescriptionKey |
+                                                translate}}</span>
+                                            <span class="label label-light-info fw-bold label-inline badge"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CATEGORY' | translate}}"
+                                                title="{{'TRANSLATE.CATEGORY_DESC_BUNDLES' | translate}}">{{'TRANSLATE.CATEGORY_DESC_BUNDLES'|
+                                                translate}}</span>
+                                        }
+
+                                        @if(data.CategoryName.toLowerCase() ==
+                                        cloudHubConstants.CATEGORY_DISTRIBUTOR_OFFERS &&
+                                        activeServiceDetail.Name.toLowerCase() ===
+                                        cloudHubConstants.PSA_NAME_CONNECTWISE){
+
+                                            <span
+                                                *ngIf="data.ProductForTrial == null && data.Validity !== null && data.Validity !== '' && data.ValidityType == 'Month(s)'"
+                                                class="label label-warning fw-bold label-inline text-white badge bg-warning"
+                                                aria-hidden="true"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                {{data.Validity}} {{(data.Validity == 1? (data.ValidityType ===
+                                                'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }} </span>
+                                            <span
+                                                class="label label-warning fw-bold label-inline text-white badge bg-warning"
+                                                aria-hidden="true"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}"
+                                                *ngIf="data.ProductForTrial == null && data.ValidityType === 'Year(s)' || data.ValidityType === 'Year'"
+                                                [ngClass]="{'labelcolor':data.BillingCycleName == 'Monthly','TermLabelColor': data.BillingCycleName == 'Annual'}">{{data.Validity}}
+                                                {{(data.Validity == 1? (data.ValidityType ===
+                                                'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }} </span>
+                                            <span *ngIf="data.BillingCycleName !== null && data.BillingCycleName !== ''"
+                                                class="label fw-bold label-inline text-white badge"
+                                                [ngClass]="{
+                                                    'bg-warning': data.BillingCycleName?.toLowerCase() === 'monthly',
+                                                    'bg-success': data.BillingCycleName?.toLowerCase() === 'annual',
+                                                    'bg-dark': data.BillingCycleName?.toLowerCase() === 'triennial',
+                                                    'bg-info': data.BillingCycleName?.toLowerCase() === 'onetime'
+                                                }" aria-hidden="true" 
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCTS_BILLING_CYCLE' | translate}}"
+                                                tooltip-placement="top">{{data.BillingCycleDescriptionKey |
+                                                translate}}</span>
+                                            <span class="label label-light-info fw-bold label-inline badge"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CATEGORY' | translate}}"
+                                                title="{{'TRANSLATE.LABEL_TEXT_DISTRIBUTER_OFFER' | translate}}">{{'TRANSLATE.LABEL_TEXT_DISTRIBUTER_OFFER'| translate}}</span>
+                                        }
+                                        @if(data.MarketCode){
+                                            <span class="badge badge-info min-content" ngbTooltip="{{data.MarketRegion}}">{{data.MarketCode}}</span>
+                                            <span class="label label-light-warning text-danger label-inline badge min-content" *ngIf="data.IsActive == false"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCTS_IN_ACTIVE' | translate}}">{{(data.IsActive == 0 ?
+                                                ("TRANSLATE.EXTERNAL_SERVICE_IN_ACTIVE") : '') | translate }}
+                                            </span>
+                                        }
+                                        @if(data.IsEST){
+                                                <span class="badge EST-Pill-styling text-white" ngbTooltip="{{'TRANSLATE.CATEGORY_PILL_EST_TOOLTIP' | translate }}" >{{ 'TRANSLATE.CATEGORY_PILL_NAME_EST' | translate}}</span>
+                                        }
+                                        @if((data.EntityName === 'Site' || data.EntityName === 'SiteDepartment' ) && data.NameOfEntity !== null){
+                                            <span class="label label-light-primary font-weight-bold label-inline badge"
+                                                title="{{'TRANSLATE.LABEL_TEXT_OWNER_NAME' | translate}}">{{data.EntityName}}-{{data.NameOfEntity}}
+                                            </span>
+                                        }
+                                        @if(data.ServiceProviderCustomerName){
+                                            <span class="label label-light-success fw-bold label-inline badge"
+                                                title="{{'TRANSLATE.LABEL_TEXT_TENANT_NAME' | translate}}">{{data.ServiceProviderCustomerName}}</span>
+                                        }
+
+                                        @if(data.CategoryName == 'AzurePlan'){
+                                            @if(!data.IsChildProduct){
+                                                <span class="label label-light-info fw-bold label-inline badge" ngbTooltip="{{'TRANSLATE.LABEL_TEXT_CATEGORY' | translate}}">
+                                                    {{'TRANSLATE.LABEL_TEXT_AZURE_PLAN' | translate}}
+                                                </span>
+                                            }
+                                            @if(data.IsChildProduct){
+                                                <span class="label label-light-info fw-bold label-inline badge" ngbTooltip="{{'TRANSLATE.LABEL_TEXT_CATEGORY' | translate}}">
+                                                    {{'TRANSLATE.LABEL_TEXT_AZURE_PLAN_ENTITLEMENT' | translate}}
+                                                </span>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </span>
+                        </div>
+
+                    </ng-template>
+                    <ng-container *ngIf="activeProductsDatatableConfig">
+                        <app-c3-table [datatableConfig]="activeProductsDatatableConfig" [reload]="reloadEvent" [searchFilter]=false>
+                        </app-c3-table>
+                    </ng-container>
+                </div>
+
+                <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+                    <div class="text-center">
+                        <a class="btn btn-light-primary btn-sm btn-lg btn-xs mr-2"
+                            *ngIf="data.MappedExternalProductId == undefined && data.MappedExternalProductId == null"
+                            (click)="getExternalProductsForMapping(data)">
+                            <span translate="TRANSLATE.SELECT_DEFAULT_OPTION_SELECT"></span>
+                        </a>
+                        <a class="btn btn-light-danger btn-sm btn-lg btn-xs mr-2"
+                            *ngIf="mappedEntity.ExternalCustomerId !== undefined && mappedEntity.ExternalCustomerId !== null && mappedEntity.AgreementId !== undefined && mappedEntity.AgreementId !== null && data.MappedExternalProductId !== undefined && data.MappedExternalProductId !== null"
+                            (click)="unMappExternalService(mappedEntity.ExternalCustomerId,mappedEntity.AgreementId, data.MappedExternalProductId, data.ProductSubscriptionId)">
+                            <span translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_BTN_TEXT_RELEASE"></span>
+                        </a>
+                    </div>
+                </ng-template>
+                <div class=" text-end mt-5" [appPermission]="'MANAGE_ENTITY_AND_PRODUCT_MAPPING'"
+                    *ngIf="purchasedProductMapping.AgreementId !== undefined && purchasedProductMapping.AgreementId !== null && c3ProductsList.length > 0">
+                    <a class="btn btn-primary btn-xs mr-2"  (click)="Savemapping()" appBusyLoader>
+                        <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+                    </a>
+                    
+                </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+}

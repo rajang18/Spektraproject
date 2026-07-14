@@ -1,0 +1,167 @@
+<ng-template #actionHeader>
+  <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+    <a class="btn btn-sm btn-lg btn-md btn-xs fw-semibold btn-light-primary text-nowrap" (click)="downloadGridReport()" [appPermission]="'BTN_COUPONS_GRID_DOWNLOADABLE_REPORTS'"
+    placement="bottom" ngbTooltip="{{'TRANSLATE.GRID_DOWNLOAD_COUPON_GRID' | translate}}">
+  <i class="ki-outline ki-exit-down fs-2"></i>
+  </a> 
+    <div ngbDropdown class="d-flex align-items-center" autoClose="outside">
+        <button class="btn btn-outline-primary btn-sm mr-5 btn-light-primary" type="button" id="statusDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
+            <span translate="TRANSLATE.QUOTE_STATUS"></span>
+        </button>
+        <div ngbDropdownMenu aria-labelledby="statusDropdownButton">
+            <div class="row">
+                <div class="col ml-5 menu-item my-0 mt-3">
+                    @for (status of getCouponStatuses(); track $index) { 
+                      <div class='menu-item my-0 mt-3'>
+                        <label class="form-check form-check-inline ms-10" role="button"
+                        ng-init="status.selected = vm.allSelected">
+                        <input type="checkbox" class="form-check-input" [name]="status[1]" role="button" (click)="UpdateSelectedStatus(status[1], $event)" [checked]="checkedSelectedCouponList(status[1])">
+                        <span></span> {{'TRANSLATE.'+status[1] | translate}}
+                    </label>
+                      </div>                  
+                    }
+                </div>
+            </div><span></span><br />
+        </div>
+    </div>
+    <button type="button" class="btn btn-sm btn-primary remove-caret" [routerLink]="['/partner/coupon/addcoupon']" [appPermission]="'BTN_SAVE_COUPON_ASSIGNMENT'" appBusyLoader>
+      <i class="ki-duotone ki-plus fs-2"></i><span>{{"TRANSLATE.COUPON_CAPTION_TEXT_ADD" | translate}}</span>
+    </button>
+  </div>
+</ng-template>
+
+<!-- <div class="col-md-12 d-flex justify-content-between my-2 pb-1">
+  <div class="d-flex align-items-center position-relative my-1">
+    <div class="d-flex align-items-center position-relative my-1">
+      <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5"><span class="custom-path1"></span><span
+        class="custom-path2"></span></i> <input type="text" data-field="Name" data-action="filter"
+      class="header-input-field form-control form-control-solid w-200px ps-12" placeholder="{{'TRANSLATE.CUSTOMER_SEARCH_SEARCH_OPTION'| translate}} {{'TRANSLATE.CUSTOMER_SEARCH_CUSTOMER_name'| translate}}">
+    </div>
+
+    <div class="d-flex align-items-center position-relative my-1 ms-5">
+      <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5"><span class="custom-path1"></span><span
+        class="custom-path2"></span></i> <input type="text" data-field="PlanName" data-action="filter"
+      class="header-input-field form-control form-control-solid w-200px ps-12" placeholder="{{'TRANSLATE.CUSTOMER_SEARCH_SEARCH_OPTION'| translate}} {{'TRANSLATE.COUPON_TABLE_HEADER_TEXT_planname'| translate}}">
+    </div>
+
+    <div class="d-flex align-items-center position-relative my-1 ms-5">
+      <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5"><span class="custom-path1"></span><span
+        class="custom-path2"></span></i> <input type="text" data-field="Code" data-action="filter"
+      class="header-input-field form-control form-control-solid w-200px ps-12" placeholder="{{'TRANSLATE.CUSTOMER_SEARCH_SEARCH_OPTION'| translate}} {{'TRANSLATE.COUPON_TABLE_HEADER_TEXT_code'| translate}}">
+    </div>
+  </div>
+
+    
+
+  <div>
+    <button type="button" class="btn btn-sm btn-primary mt-3 remove-caret" [routerLink]="['/partner/coupon/addcoupon']" [appPermission]="'BTN_SAVE_COUPON_ASSIGNMENT'" appBusyLoader>
+      <i class="ki-duotone ki-plus fs-2"></i><span>{{"TRANSLATE.COUPON_CAPTION_TEXT_ADD" | translate}}</span>
+    </button> 
+  </div>
+</div> -->
+ 
+<div class="card border-0">
+  <div class="card-body pt-0 overflow-auto">
+    <!-- <div class="d-flex justify-content-end btn-group-toggle">
+      <a class="btn me-2 btn-sm" (click)="UpdateSelectedStatus(couponStatusConstants.ACTIVE,$event)"
+        [ngClass]="{'btn-light-primary':SelectedCouponList.indexOf(couponStatusConstants.ACTIVE)==-1, 'btn-primary active':SelectedCouponList.indexOf(couponStatusConstants.ACTIVE)!=-1}">
+        {{'TRANSLATE.COUPON_STATUS_FLAG_ACTIVE' |
+        translate}}
+
+      </a>
+      <a class="btn me-2 btn-sm" (click)="UpdateSelectedStatus(couponStatusConstants.INACTIVE,$event)"
+        [ngClass]="{'btn-light-primary':SelectedCouponList.indexOf(couponStatusConstants.INACTIVE)==-1, 'btn-primary  active':SelectedCouponList.indexOf(couponStatusConstants.INACTIVE)!=-1}">
+        {{'TRANSLATE.COUPON_STATUS_FLAG_INACTIVE' |
+        translate}}
+      </a>
+      <a class="btn me-2 btn-sm" (click)="UpdateSelectedStatus(couponStatusConstants.EXPIRED,$event)"
+        [ngClass]="{'btn-light-primary':SelectedCouponList.indexOf(couponStatusConstants.EXPIRED)==-1, 'btn-primary active':SelectedCouponList.indexOf(couponStatusConstants.EXPIRED)!=-1}">
+        {{'TRANSLATE.COUPON_STATUS_FLAG_EXPIRED' |
+        translate}}
+      </a>
+    </div>  -->
+
+    
+    <ng-template #name let-data="adtData" let-emitter="captureEvents">
+      <div [ngClass]="{'text-danger': !data.IsActive}">
+        <span class="fw-semibold">{{data.Name}}</span>
+      </div>
+    </ng-template>
+    <ng-template #planName let-data="adtData" let-emitter="captureEvents">
+      <div [ngClass]="{'text-danger': !data.IsActive}">
+        <span>{{data.PlanName}}</span>
+      </div>
+    </ng-template>
+    <ng-template #code let-data="adtData" let-emitter="captureEvents">
+      <div [ngClass]="{'text-danger': !data.IsActive}">
+        <span>{{data.Code}}</span>
+      </div>
+    </ng-template>
+    <ng-template #discount let-data="adtData" let-emitter="captureEvents">
+      <div [ngClass]="{'text-danger': !data.IsActive}">
+        <span>{{data.Discount}}%</span>
+      </div>
+    </ng-template>
+    <ng-template #noOfRecurrences let-data="adtData" let-emitter="captureEvents">
+      <div [ngClass]="{'text-danger': !data.IsActive}">
+        <span>{{data.NoOfRecurrences == 0 ? '' : data.NoOfRecurrences}}</span>
+      </div>
+    </ng-template>
+    <ng-template #createOn let-data="adtData" let-emitter="captureEvents">
+      <div [ngClass]="{'text-danger': !data.IsActive}">
+        <span>{{data.CreateOn | c3Date }}</span>
+      </div>
+    </ng-template>
+    <ng-template #ExpiresOn let-data="adtData" let-emitter="captureEvents">
+      <div [ngClass]="{'text-danger': !data.IsActive}">
+        <span>{{data.ExpiresOn | c3Date }}</span>
+      </div>
+    </ng-template>
+    <ng-template #ValidTill let-data="adtData" let-emitter="captureEvents">
+      <div [ngClass]="{'text-danger': !data.IsActive}">
+        <span>{{data.ValidTill | c3Date }}</span>
+      </div>
+    </ng-template>
+
+    <!-- enable name field -->
+    <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+      <div class="d-flex justify-content-end">
+        <div class="d-flex align-items-center">
+          <div ngbTooltip="{{'TRANSLATE.COUPON_CAPTION_TEXT_EDIT' | translate}}" class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto" *ngIf="data.IsActive" [appPermission]="'BTN_SAVE_COUPON_ASSIGNMENT'"
+            [ngClass]="toolbarButtonHeightClass" (click)="editcoupon(data,'edit')" placement="top">
+            <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+              <i class="ki-outline ki-pencil text-primary">
+                <!-- <span class="path1"></span>
+                <span class="path2"></span> -->
+              </i>
+            </span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center">
+          <div ngbTooltip="{{'TRANSLATE.COUPON_ENABLE_BUTTON' | translate}}" class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto" *ngIf="!data.IsActive" [appPermission]="'CHANGE_COUPON_STATUS'"
+            [ngClass]="toolbarButtonHeightClass" (click)="ChangeCouponStatus(data)">
+            <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+              <i class="ki-outline ki-check text-primary fs-1"></i>
+            </span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center">
+          <div ngbTooltip="{{'TRANSLATE.COUPON_DISABLE_BUTTON' | translate}}" class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto" *ngIf="data.IsActive" [appPermission]="'CHANGE_COUPON_STATUS'"
+            [ngClass]="toolbarButtonHeightClass" (click)="ChangeCouponStatus(data)" placement="top">
+            <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+              <i class="ki-outline ki-cross fs-1 text-primary">
+                <!-- <span class="path1"></span>
+                <span class="path2"></span> -->
+              </i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+ 
+    @if (!!datatableConfig) {
+    <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+    </app-c3-table>
+    }
+  </div>
+</div>

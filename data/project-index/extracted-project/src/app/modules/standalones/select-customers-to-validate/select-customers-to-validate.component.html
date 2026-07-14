@@ -1,0 +1,327 @@
+<ng-template #actionHeader>
+  <div class="actions col-md-12 text-lg-end text-sm-left pt-6">
+    <a class="btn btn-light-primary btn-sm btn-lg btn-md btn-xs mb-5 ms-md-2" ngbTooltip="{{'TRANSLATE.HEADER_TITLE_HELP_MENU' | translate}}"
+       (click)="ShowHelp()">
+      {{'TRANSLATE.HEADER_TITLE_HELP_MENU' | translate}}
+      <i class="ki-outline ki-question-2 fs-2">
+      </i>
+    </a>
+    <a class="btn btn-secondary btn-sm btn-lg btn-md btn-xs mb-5 ms-md-2"
+       *ngIf="activeServiceDetail?.Name?.toLowerCase() === cloudHubConstants.PSA_NAME_CONNECTWISE && IsFilterMendatory"
+       ngbTooltip="{{'TRANSLATE.BTN_TEXT_SHOW_FILTERS'|translate}}" (click)="filtersExpanded = !filtersExpanded">
+      <i class="ki-outline ki-filter fs-2"></i>&nbsp;<span translate="TRANSLATE.BTN_TEXT_FILTER"></span>
+    </a>
+
+    <a data-toggle="tooltip"
+       ngbTooltip="{{'TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_BTN_TEXT_BACK_TO_SUBSCRIPTION_HISTORY' | translate}}"
+       class="btn btn-light-primary btn-sm btn-lg btn-md btn-xs mb-5 ms-md-2"
+       [routerLink]="['/partner/business/subscriptionhistory']">
+      <i class="ki-outline ki-to-left fs-2"></i>
+      {{'TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_BTN_TEXT_BACK_TO_SUBSCRIPTION_HISTORY' | translate}}
+    </a>
+    <a class="btn btn-light-primary btn-sm btn-lg btn-md btn-xs mb-5 ms-md-2"
+       ngbTooltip="{{'TRANSLATE.BTN_TEXT_BEGIN_VALIDATE_DATA' | translate}}" (click)="ValidateDataToUpload()" appBusyLoader>
+      <i class="fas fa-upload"></i>
+      {{'TRANSLATE.BTN_TEXT_BEGIN_VALIDATE_DATA' | translate}}
+    </a>
+    <a class="btn btn-light-primary btn-sm btn-lg btn-md btn-xs mb-5 ms-md-2"
+       ngbTooltip="{{'TRANSLATE.BTN_TEXT_BEGIN_VALIDATE_DATA_VIEW_LOGS' | translate}}" (click)="moveToViewLogs()">
+      <i class="fas fa-history"></i>
+      {{'TRANSLATE.BTN_TEXT_BEGIN_VALIDATE_DATA_VIEW_LOGS' | translate}}
+    </a>
+  </div>
+</ng-template>
+<div class="card">
+  <div class="card-body overflow-auto">
+    <div class="m-heading-1 border-green m-bordered" *ngIf="isShowHelp">
+      <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+        <div class="card-title">
+          <h6><span class="m-5" translate="TRANSLATE.USERS_UPLOAD_FORM_INSTRUCTIONS"></span></h6>
+          <ol class="m-2">
+            <li>
+              <span [innerHTML]="'TRANSLATE.PSA_UPLOAD_INSTRUCTIONS_PART_1' | translate"></span>
+            </li>
+            <li>
+              <span [innerHTML]="'TRANSLATE.PSA_UPLOAD_INSTRUCTIONS_PART_2' | translate"></span>
+            </li>
+            <li>
+              <span translate="TRANSLATE.PSA_UPLOAD_INSTRUCTIONS_PART_3"></span>
+            </li>
+
+            <li *ngIf="activeServiceDetail?.Name?.toLowerCase() === 'autotask'">
+              <span [innerHTML]="'TRANSLATE.PSA_UPLOAD_INSTRUCTIONS_PART_4_AUTOTASK' | translate"></span>
+            </li>
+
+            <li *ngIf="activeServiceDetail?.Name?.toLowerCase() === 'connectwise'">
+              <span [innerHTML]="'TRANSLATE.PSA_UPLOAD_INSTRUCTIONS_PART_4_CONNECTWISE' | translate"></span>
+            </li>
+            <li *ngIf="activeServiceDetail?.Name?.toLowerCase() === 'autotask'">
+              <span translate="TRANSLATE.PSA_UPLOAD_INSTRUCTIONS_PART_5_AUTOTASK"></span>
+            </li>
+            <li *ngIf="activeServiceDetail?.Name?.toLowerCase() === 'connectwise'">
+              <span translate="TRANSLATE.PSA_UPLOAD_INSTRUCTIONS_PART_5_CONNECTWISE"></span>
+            </li>
+            <li>
+              <span translate="TRANSLATE.PSA_UPLOAD_INSTRUCTIONS_PART_7"></span>
+            </li>
+            <li>
+              <a class="btn btn-sm btn-primary" (click)="TestConnectivityToPSA()">
+                {{'TRANSLATE.EXTERNAL_SERVICE_PSA_BUTTON_TEXT_TEST_CONNECTIVITY' | translate}}
+              </a>
+              &nbsp;<span translate="TRANSLATE.PSA_UPLOAD_INSTRUCTIONS_PART_6"></span>
+            </li>
+            <li>
+              <span translate="TRANSLATE.PSA_UPLOAD_INSTRUCTIONS_PART_8"></span>
+            </li>
+            <li>
+              <span translate="TRANSLATE.PSA_UPLOAD_INSTRUCTIONS_PART_9"></span>
+            </li>
+          </ol>
+        </div>
+      </div>
+      <div class="callout callout-info notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6"
+           *ngIf="additionType === cloudHubConstants.INVOICE_LINE_ITEM_ADDITIONTYPE && activeServiceDetail?.Name?.toLowerCase() === cloudHubConstants.PSA_NAME_CONNECTWISE">
+        <div class="card-title">
+          <div >
+            <h6><span translate="TRANSLATE.PSA_UPLOAD_FILTER_INSTRUCTIONS_HEADER_NOTE"></span></h6>
+            <ol>
+              <li>
+                <span translate="TRANSLATE.PSA_UPLOAD_FILTER_INSTRUCTIONS_HEADER_NOTE_PART1"></span>
+              </li>
+              <li>
+                <span translate="TRANSLATE.PSA_UPLOAD_FILTER_INSTRUCTIONS_HEADER_NOTE_PART2"></span>
+              </li>
+              <li>
+                <span translate="TRANSLATE.PSA_UPLOAD_FILTER_INSTRUCTIONS_HEADER_NOTE_PART3"></span>
+              </li>
+              <li>
+                <span translate="TRANSLATE.PSA_UPLOAD_FILTER_INSTRUCTIONS_HEADER_NOTE_PART4"></span>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="activeServiceDetail.Name.toLowerCase() === cloudHubConstants.PSA_NAME_AUTOTASK">
+        <div class="callout callout-info notice bg-light-warning rounded border-warning border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+          <div class="col-md-12 ng-scope" ng-if="vm.pageMode === 'SelectCustomersToValidate'">
+            <h6><span translate="TRANSLATE.PSA_UPLOAD_FILTER_DATE_INSTRUCTIONS_HEADER_WARNING" class="m-5"></span></h6>
+            <ol class="m-2">
+              <li>
+                <span translate="TRANSLATE.PSA_UPLOAD_FILTER_DATE_INSTRUCTIONS_PART_1"></span>
+              </li>
+              <li>
+                <span translate="TRANSLATE.PSA_UPLOAD_INSTRUCTIONS_AUTOTASK_WARNING_PART_2"></span>
+              </li>
+              <li>
+                <span [innerHTML]="'TRANSLATE.PSA_UPLOAD_INSTRUCTIONS_AUTOTASK_WARNING_PART_3' | translate"></span>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div class="callout callout-info notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+          <div class="col-md-12 ng-scope" ng-if="vm.pageMode === 'SelectCustomersToValidate'">
+            <span translate="TRANSLATE.PSA_UPLOAD_INSTRUCTIONS_PART_11"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    @if(activeServiceDetail?.Name?.toLowerCase() === cloudHubConstants.PSA_NAME_AUTOTASK){
+    <div class="form-group row">
+      <div class="col-md-3 form-group">
+        <div class="portlet light pb0 pl0">
+          <label>
+            {{'TRANSLATE.UPLOAD_CUSTOMER_DETAILS_TO_PSA_ALIGN_WITH_CONTRACT_START_DATE'|translate}}
+          </label>
+          <div class="portlet-body mt-2">
+            <label class="form-check form-check-sm form-check-custom">
+              <input type="checkbox" class="form-check-input" (click)="isAlignWithContractStartDate()"
+                     [checked]="alignWithContractStartDate">
+              <span>
+              </span>
+              <span class="mt-1">
+                <i class="ki-duotone ki-information-2 fs-6 ms-2" aria-hidden="true"
+                   [ngbTooltip]="'TRANSLATE.UPLOAD_CUSTOMER_DETAILS_TO_PSA_ALIGN_WITH_CONTRACT_START_DATE_TOOLTIP' | translate"
+                   data-placement="right">
+                  <span class="path1"></span>
+                  <span class="path2"></span>
+                  <span class="path3"></span>
+                </i><br />
+              </span>
+
+            </label>
+            <label class="checkbox" style="display: none"></label>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 form-group">
+        <form [formGroup]="customerValidate">
+          <div ng-controller="DatepickerUIController">
+            <label class="control-label">
+              <span translate="TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_START_DATE"></span>
+            </label>
+            <div class="input-group">
+              <input class="form-control form-control-sm fw-bold" formControlName="startDate"
+                     name="addCoupon.ExpiresOn" ngbDatepicker
+                     [readOnly]="true"
+                     [placement]="['bottom-end', 'top-end', 'bottom-start', 'top-start' ]" #sd="ngbDatepicker"/>
+              <button class="btn btn-secondary btn-sm" (click)="sd.toggle()" type="button">
+                <i class="ki-outline ki-calendar fs-3 text-primary"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="col-md-3 form-group pt-6">
+        <button class="btn btn-light-primary btn-sm btn-lg btn-md btn-xs mb-5 ms-md-2"
+                (click)="ResetFilters()">
+          {{
+'TRANSLATE.SUBSCRIPTION_HISTORY_SEARCH_RESET_OPTION' |
+                    translate
+          }}
+        </button>
+      </div>
+
+    </div>
+    }
+    @else {
+    <div *ngIf="filtersExpanded">
+      <div class="mt-5">
+        <form [formGroup]="customerValidate">
+          @if(additionType !== cloudHubConstants.INVOICE_LINE_ITEM_ADDITIONTYPE &&
+          activeServiceDetail?.Name?.toLowerCase() === cloudHubConstants.PSA_NAME_CONNECTWISE){
+          <div class="form-group row">
+            <div class="col-md-4 ">
+              <div ng-controller="DatepickerUIController">
+                <label class="control-label">
+                  <span translate="TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_START_DATE"></span><span *ngIf="additionType != cloudHubConstants.INVOICE_LINE_ITEM_ADDITIONTYPE  &&  activeServiceDetail?.Name?.toLowerCase() === cloudHubConstants.PSA_NAME_CONNECTWISE && IsFilterMendatory === true"
+                                                                                                   class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <input class="form-control form-control-sm fw-bold" formControlName="startDate"
+                         [maxDate]="{year: currentDate.year, month: currentDate.month, day: currentDate.day}"
+                         name="addCoupon.ExpiresOn" ngbDatepicker
+                         [readOnly]="true"
+                         [placement]="['bottom-end', 'top-end', 'bottom-start', 'top-start' ]"
+                         #ed="ngbDatepicker" />
+                  <button class="btn btn-secondary btn-sm" (click)="ed.toggle()" type="button">
+                    <i class="ki-outline ki-calendar fs-3 text-primary"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 ">
+              <div ng-controller="DatepickerUIController1">
+                <label class="control-label">
+                  <span translate="TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_END_DATE"></span><span *ngIf="additionType != cloudHubConstants.INVOICE_LINE_ITEM_ADDITIONTYPE  &&  activeServiceDetail?.Name?.toLowerCase() === cloudHubConstants.PSA_NAME_CONNECTWISE && IsFilterMendatory === true"
+                                                                                                 class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <input class="form-control form-control-sm fw-bold" formControlName="endDate"
+                         [minDate]="customerValidate.get('startDate')?.value"
+                         [maxDate]="{year: currentDate.year, month: currentDate.month, day: currentDate.day}"
+                         name="endDate" ngbDatepicker
+                         [readOnly]="true"
+                         [placement]="['bottom-end', 'top-end', 'bottom-start', 'top-start' ]"
+                         #sd="ngbDatepicker" />
+                  <button class="btn btn-secondary btn-sm" (click)="sd.toggle()" type="button">
+                    <i class="ki-outline ki-calendar fs-3 text-primary"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 form-group pt-6">
+              <button class="btn btn-light-primary btn-sm btn-lg btn-md btn-xs mb-5 ms-md-2"
+                      (click)="ResetFilters()">
+                {{
+'TRANSLATE.SUBSCRIPTION_HISTORY_SEARCH_RESET_OPTION' |
+                                translate
+                }}
+              </button>
+            </div>
+          </div>
+          }
+          @else{
+          <div class="form-group row">
+            <div class="col-md-4 ">
+              <div>
+                <label class="control-label">
+                  <span translate="TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_START_DATE"></span><span *ngIf="additionType != cloudHubConstants.INVOICE_LINE_ITEM_ADDITIONTYPE  &&  activeServiceDetail?.Name?.toLowerCase() === cloudHubConstants.PSA_NAME_CONNECTWISE && IsFilterMendatory === true"
+                                                                                                   class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <input class="form-control form-control-sm fw-bold" formControlName="startDate"
+                         name="addCoupon.ExpiresOn" ngbDatepicker
+                         [readOnly]="true"
+                         [placement]="['bottom-end', 'top-end', 'bottom-start', 'top-start' ]"
+                         #sd="ngbDatepicker" />
+                  <button class="btn btn-secondary btn-sm" (click)="sd.toggle()" type="button">
+                    <i class="ki-outline ki-calendar fs-3 text-primary"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 ">
+              <div>
+                <label class="control-label">
+                  <span translate="TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_END_DATE"></span><span *ngIf="additionType != cloudHubConstants.INVOICE_LINE_ITEM_ADDITIONTYPE  &&  activeServiceDetail?.Name?.toLowerCase() === cloudHubConstants.PSA_NAME_CONNECTWISE && IsFilterMendatory === true"
+                                                                                                 class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <input class="form-control form-control-sm fw-bold" formControlName="endDate"
+                         name="endDate" ngbDatepicker
+                         [readOnly]="true"
+                         [placement]="['bottom-end', 'top-end', 'bottom-start', 'top-start' ]"
+                         #ed="ngbDatepicker" />
+                  <button class="btn btn-secondary btn-sm" (click)="ed.toggle()" type="button">
+                    <i class="ki-outline ki-calendar fs-3 text-primary"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 form-group pt-6">
+              <button class="btn btn-light-primary btn-sm btn-lg btn-md btn-xs mb-5 ms-md-2"
+                      (click)="ResetFilters()">
+                {{
+'TRANSLATE.SUBSCRIPTION_HISTORY_SEARCH_RESET_OPTION' |
+                                translate
+                }}
+              </button>
+            </div>
+          </div>
+          }
+        </form>
+      </div>
+    </div>
+    <div class="col-md-3 mb-5"
+         *ngIf="activeServiceDetail?.Name?.toLowerCase() === cloudHubConstants.PSA_NAME_CONNECTWISE && additionType === cloudHubConstants.INVOICE_LINE_ITEM_ADDITIONTYPE ">
+      <label class="control-label">
+        <span translate="TRANSLATE.SUBSCRIPTION_HISTORY_BILLING_PERIOD"></span><span *ngIf="activeServiceDetail?.Name?.toLowerCase() === cloudHubConstants.PSA_NAME_CONNECTWISE" class="text-danger">*</span>
+      </label>
+      <ng-select [(ngModel)]="selectedBillingPeriods" name="selectedBillingPeriods" (change)="ReloadTableData()">
+        @for(option of billingPeriods; track $index){
+        <ng-option [value]="option.BillingPeriodId">
+          {{option.BillingStartDate|c3Date}}-{{option.BillingEndDate|c3Date}} ({{option.BillingId}})
+        </ng-option>
+        }
+      </ng-select>
+    </div>
+    }
+    <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+      <div class="d-flex justify-content-end crd">
+        <button ngbTooltip="{{'TRANSLATE.TOOLTIP_TEXT_DELETE_PSA_LOG' | translate}}" class="btn btn-icon btn-active-light-primary btn-sm me-1 w-30px h-30px" (click)="deactivatePSALog(data)">
+          <span class="svg-icon svg-icon-primary  h-20px w-20px">
+            <i class="ki-outline ki-trash fs-1 text-primary"></i>
+          </span>
+        </button>
+      </div>
+    </ng-template>
+    <ng-container *ngIf="!!datatableConfig">
+      <div class="card-body">
+        <app-c3-table [reload]="reloadEvent" [searchFilter]="true" [datatableConfig]="datatableConfig" [selection]="true" (selectAllchecked)="getAllCustomers($event)"
+                      (onSelection)="handleSelection($event)" [checkboxWithTooltip]="true" [tooltipText]="tooltipText">
+        </app-c3-table>
+      </div>
+    </ng-container>
+  </div>
+</div>

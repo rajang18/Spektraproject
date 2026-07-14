@@ -1,0 +1,46 @@
+<div class="buissness-transacttion-details-wrapper w-100">
+  <table class="my_table w-100">
+    <thead class="border-bottom border-gray-200 fs-6 text-gray-600 fw-bold bg-light bg-opacity-75">
+      <tr>
+        <th class="col-md-1"><span translate="TRANSLATE.PAYMENTS_TABLE_HEADER_TRANSACTION_DATE"></span></th>
+        <th class="col-md-1 text-end"><span translate="TRANSLATE.INVOICE_LIST_TABLE_HEADER_TRANSACTION_AMOUNT"></span></th>
+        <th class="col-md-1"><span translate="TRANSLATE.PAYMENTS_TABLE_HEADER_STATUS"></span></th>
+        <th class="col-md-5"><span translate="TRANSLATE.PAYMENTS_TABLE_HEADER_REMARKS"></span></th>
+        <th class="col-md-1"><span translate="TRANSLATE.PAYMENTS_TABLE_HEADER_FAILURE_REASON"></span></th>
+      </tr>
+    </thead>
+    <tbody class="fw-semibold text-gray-600">
+      @for (payment of data; track payment) {
+      <tr>
+        <td>{{ payment?.PaidDate | c3Date }}</td>
+        <td class="text-end">${{ payment?.PaidAmont }}</td>
+        <td>
+          @if(payment.StatusName!=null){
+          <span class="label label-sm label-inline ng-binding label-success text-nowrap"
+                [ngClass]="{
+              'label-danger': payment.StatusName === 'PAYMENT_STATUS_DESC_FAILED',
+              'label-success': payment.StatusName === 'PAYMENT_STATUS_DESC_SUCCESS',
+              'label-info active': payment.StatusName === 'PAYMENT_STATUS_DESC_INPROGRESS'
+            }">
+            {{payment.StatusName | translate}}<br />
+          </span>
+          } @if(payment.StatusName==null){
+          <span class="label label-sm label-inline label-primary ng-scope ng-hide"
+                translate="TRANSALATE.STATUS_PENDING"></span>
+          }
+        </td>
+        <td>
+          @if(payment?.Remarks!= undefined && payment?.Remarks!= null && payment?.Remarks != "null"){
+          {{ payment?.Remarks | translate }}
+          }
+        </td>
+        <td>
+          @if(payment?.FailureReason!= undefined && payment?.FailureReason!= null && payment?.FailureReason != "null"){
+          {{ payment?.FailureReason | translate}}
+          }
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

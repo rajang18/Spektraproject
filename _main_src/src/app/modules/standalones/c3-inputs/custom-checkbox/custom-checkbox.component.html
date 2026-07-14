@@ -1,0 +1,106 @@
+@if (cc?.IsTenantConfiguration) {
+<div class="row">
+    <div class="col-md-5">
+        <div class="fs-6 mb-3 pt-3 align-items-center d-inline-flex text-start">
+            <span class="fw-semibold">{{'TRANSLATE.'+data.DisplayName | translate}}<span class="text-danger ms-1"
+                    *ngIf="data.IsRequired">*</span>
+                <i class="ki-duotone ki-information-2 fs-8 ms-1 mt-1 align-self-baseline"
+                    ngbTooltip="{{'TRANSLATE.'+data.Description | translate }}">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                </i></span>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div class="row" [formGroup]="form" *ngIf="pageMode === 'list'">
+            <div class="col-8 fs-6 mb-3 pt-3 d-flex align-items-center justify-content-start text-start">
+                {{form.get(this.frmControlName)?.value}}
+            </div>
+            <div class="col-4 text-end">
+
+                @if (cc.Permissions.HasSaveConfiguration === 'Allowed' ||
+                cc?.Permissions.HasSaveConfigurationManagedByCustomer === 'Allowed'||
+                cc?.Permissions.HasSaveConfigurationManagedByReseller === 'Allowed') {
+                <button class="btn btn-light-primary btn-sm btn-icon tooltips me-2 " (click)="Edit()"
+                    *ngIf="data.IsCustom === true && ( data.IsManagedByPartner || data.IsManagedByCustomer  || data.IsManagedByReseller)"
+                    ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_EDIT'|translate}}"><i
+                        class="ki-outline ki-pencil"></i></button>
+                }
+                @if(cc.Permissions.HasRevertConfiguration === 'Allowed'){
+                <button class="btn btn-light-primary btn-sm btn-icon tooltips me-2" (click)="revertTenantConfig(data)"
+                    *ngIf="data.IsCustom === true && (data.IsManagedByPartner || data.IsManagedByCustomer || data.IsManagedByReseller)"
+                    ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_REVERT'|translate}}"><i
+                        class="ki-outline ki-arrow-circle-left"></i></button>
+                }
+                @if (cc.Permissions.HasOverRideConfiguration === 'Allowed') {
+                <button class="btn btn-light-primary btn-sm btn-icon tooltips me-2"
+                    *ngIf="data.IsCustom === false && (data.IsManagedByPartner || data.IsManagedByCustomer || data.IsManagedByReseller)"
+                    (click)="Edit()" ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_OVERRIDE'|translate}}"><i
+                        class="ki-outline ki-arrow-circle-right"></i></button>
+                }
+
+            </div>
+        </div>
+        <div class="row" [formGroup]="form" *ngIf="pageMode === 'edit'">
+            <div class="col-8 fs-6 d-flex align-items-center justify-content-lg-start text-start">
+                <input type="checkbox" [disabled]="!data.IsManagedByPartner" class="form-check-input" #checkbox
+                    [checked]="getCheckedValue()" (change)="handleOnChange(checkbox.checked)"
+                    [ngClass]="{'input-disable': !data.IsManagedByPartner}">
+                <!-- <input type="text" class="form-control" [value]="data.Value" [formControlName]="frmControlName" #text (input)="onChange(text.value)" (blur)="onTouched()"> -->
+                <!-- <input type="checkbox" ng-if="datasource.Name != 'CreateProviderCustomerUnderLogicalReseller'" ng-model="datasource.Value" class="ng-pristine ng-untouched ng-valid ng-empty"> -->
+                @if(form.get(data.Name)?.touched && form.get(data.Name)?.errors?.required){
+                <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                }
+            </div>
+            <div class="col-4 text-end">
+                <button class="btn btn-light-primary btn-sm  btn-icon tooltips me-2" (click)="saveTenantConfig(data)"
+                    ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_SAVE'|translate}}"><i class="ki-outline ki-check"></i></button>
+                <button class="btn btn-light-danger btn-sm btn-icon tooltips me-2" (click)="cancelTenantConfig()"
+                    ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_CANCEL'|translate}}"><i
+                        class="ki-outline ki-cross"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+}
+@else {
+<div class="form-group mt-6 row" [formGroup]="form" *ngIf="data.IsShowOnScreen">
+    <label class="col-4 col-form-label">
+        <span>{{'TRANSLATE.'+data.DisplayName | translate}}</span>
+        <i class="ki-duotone ki-information-2 fs-8 ms-1 bottom-10"
+            ngbTooltip="{{'TRANSLATE.'+data.Description | translate }}">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+        </i>
+    </label>
+
+    <!-- remove form control to acheive angularjs -->
+    @if (data.Name !== 'ShowTermsAndConditionsAcceptanceLog' && data.Name !== 'HasLatestCustomerConsentAccepted' &&
+    data.Name !== 'HasLatestTermsAndConditionsAccepted' && data.IsShowOnScreen ) {
+    <div class="checkbox-inline  col-6">
+        <label class="checkbox checkbox-outline checkbox-outline-2x control-label checkbox-primary mb-5 form-check">
+            <input type="checkbox" [disabled]="!data.IsManagedByPartner" class=" form-check-input mt-3" #checkbox
+                [checked]="getCheckedValue()" (change)="handleOnChange(checkbox.checked)"
+                [ngClass]="{'input-disable': !data.IsManagedByPartner}">
+            <!-- <input type="checkbox" ng-model="datasource.Value" ng-disabled="!datasource.IsManagedByPartner" class="ng-pristine ng-untouched ng-valid ng-empty"> -->
+            <span></span>
+        </label>
+    </div>
+    }@else if ((data.Name === 'ShowTermsAndConditionsAcceptanceLog' || data.Name === 'HasLatestCustomerConsentAccepted'
+    || data.Name === 'HasLatestTermsAndConditionsAccepted') && data.ResellerInternalId == null && data.IsShowOnScreen){
+    <div class="checkbox-inline  col-6">
+        <label class="checkbox checkbox-outline checkbox-outline-2x control-label checkbox-primary mb-5 form-check">
+            <input type="checkbox" [disabled]="!data.IsManagedByPartner" class="form-check-input" #checkbox
+                [checked]="getCheckedValue()" (change)="handleOnChange(checkbox.checked)"
+                [ngClass]="{'input-disable': !data.IsManagedByPartner}">
+            <!-- <input type="checkbox" ng-model="datasource.Value" ng-disabled="!datasource.IsManagedByPartner" class="ng-pristine ng-untouched ng-valid ng-empty"> -->
+            <span></span>
+        </label>
+    </div>
+    }
+
+</div>
+
+}

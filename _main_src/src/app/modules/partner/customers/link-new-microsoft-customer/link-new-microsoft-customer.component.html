@@ -1,0 +1,382 @@
+@if(entityName.toLowerCase() === entityEnum.Partner.toLowerCase() || (entityName.toLowerCase() === entityEnum.Reseller.toLowerCase() && ((this.hasSupportForResellersWithMPNID === 'Yes' && this.canProceedForCreatingNewProviderTenant === true) || (this.canLogicalResellerProceedForCreatingNewProviderTenant === true)))){
+    <div class="row mt-5">
+        <div class="col-md-12">
+            @if ((entityName === 'Reseller' && this.canLogicalResellerProceedForCreatingNewProviderTenant === true)) {
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="note note-danger">
+                            <!-- <h4 class="block" translate="CREATING_NEW_MICROSOFT_CSP_TENANT_UNDER_LOGICAL_RESELLER"></h4>-->
+                            <p translate="TRANSLATE.CREATING_NEW_MICROSOFT_CSP_TENANT_UNDER_LOGICAL_RESELLER"> </p>
+                        </div>
+                    </div>
+                </div>
+            }
+            
+            <form class="form form-horizontal" role="form" [formGroup]="frmAddCustomer">
+                <div class="form-row row">
+                    <div class="form-group col-md-12">
+                        <h4 class="caption-subject bold font-blue uppercase ">
+                            <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_HEADER_TEXT_PRIMARY_CONTACT"></span>
+                        </h4>
+                        <br> <!-- Adding extra line breaks here -->
+                        <hr />
+                    </div>
+
+                  
+                    <div class="form-group col-md-4" ng-class="{'has-error':vm.frmAddCustomer.$submitted &amp;&amp; (vm.frmAddCustomer.FirstName.$error.required || vm.frmAddCustomer.FirstName.$error.maxlength)}">
+                        <label class="control-label fw-semibold mb-2">
+                            <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_FIRST_NAME"></span><span class="text-danger">*</span>
+                        </label>
+                        <input type="text" formControlName="firstName" class="form-control  form-control-sm" ng-maxlength="50" name="FirstName" [required]="true" />
+                        @if (frmAddCustomer.get('firstName')?.errors?.required && frmAddCustomer.get('firstName')?.touched){
+                            <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                        }
+                        
+                         @if (frmAddCustomer.get('firstName')?.errors?.maxlength && frmAddCustomer.get('firstName')?.touched) {
+                            <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_MAX_LENGTH_50"></span></span>
+                         }                        
+                    </div>
+
+
+                    <div class="form-group  col-md-4 " ng-class="{'has-error':vm.frmAddCustomer.$submitted &amp;&amp; (vm.frmAddCustomer.LastName.$error.required || vm.frmAddCustomer.LastName.$error.maxlength)}">
+                        <label class="control-label fw-semibold mb-2">
+                            <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_LAST_NAME"></span> <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" formControlName="lastName" class="form-control  form-control-sm" ng-maxlength="50" name="LastName"  />
+
+                        @if (frmAddCustomer.get('lastName')?.errors?.required && frmAddCustomer.get('lastName')?.touched ) {
+                        <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                        }
+                        
+                        @if (frmAddCustomer.get('lastName')?.errors?.maxlength && frmAddCustomer.get('lastName')?.touched) {
+                        <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_MAX_LENGTH_50"></span></span>
+                        }
+                    </div>
+
+
+                    <div class="col-md-4 form-group">
+                        <div class="form-group" ng-class="{'has-error':vm.frmAddCustomer.$submitted &amp;&amp; (vm.frmAddCustomer.MiddleName.$error.maxlength)}">
+                            <label class="control-label fw-semibold mb-2">
+                                <span translate="TRANSLATE.ADD_NEW_PROVIDER_CUSTOMER_LABEL_TEXT_MIDDLE_NAME"></span>
+                            </label>
+                            <input type="text" formControlName="middleName" class="form-control  form-control-sm" ng-maxlength="50" name="MiddleName" />
+                            @if (frmAddCustomer.get('middleName')?.errors?.maxlength && frmAddCustomer.get('middleName')?.touched) {
+                                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_MAX_LENGTH_50"></span></span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 form-group mt-8">
+                        <div class="form-group" ng-class="{'has-error':vm.frmAddCustomer.$submitted &amp;&amp; (vm.frmAddCustomer.OrganizationRegistrationNumber.$error.required)}">
+                            <label class="control-label fw-semibold mb-2">
+                                <span translate="TRANSLATE.ADD_NEW_PROVIDER_CUSTOMER_LABEL_TEXT_ORGANIZATION_REGISTRATION_NUMBER"></span>
+                                @if (isOrganizationRegistrationNumberRequired) {
+                                    <span class="text-danger">*</span>
+                                } 
+                                
+                            </label>
+                            <input type="text" formControlName="organizationRegistrationNumber" class="form-control  form-control-sm" name="OrganizationRegistrationNumber"/>
+                            @if (frmAddCustomer.get('organizationRegistrationNumber')?.errors?.required && frmAddCustomer.get('organizationRegistrationNumber')?.touched) {
+                                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                            }
+                            
+                        </div>
+                    </div>
+
+                  
+                    <div class="col-md-4 form-group mt-8">
+                        <div class="form-group" ng-class="{'has-error':vm.frmAddCustomer.$submitted &amp;&amp; (vm.frmAddCustomer.CompanyName.$error.required || vm.frmAddCustomer.CompanyName.$error.maxlength)}">
+                            <label class="control-label fw-semibold mb-2">
+                                <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_COMPANY_NAME"></span> <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" formControlName="companyName" class="form-control  form-control-sm" ng-maxlength="50" name="CompanyName"  />
+                            @if (frmAddCustomer.get('companyName')?.errors?.required && frmAddCustomer.get('companyName')?.touched) {
+                                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                            }
+                            
+                            @if (frmAddCustomer.get('companyName')?.errors?.maxlength && frmAddCustomer.get('companyName')?.touched){
+                                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_MAX_LENGTH_50"></span></span>
+                            }
+                            
+                        </div>
+                    </div>
+
+                    
+                    <div class="col-md-4 form-group mt-8">
+                        <div class="form-group" ng-class="{'has-error':vm.frmAddCustomer.$submitted &amp;&amp; vm.frmAddCustomer.Domain.$error.required}">
+                            <label class="control-label fw-semibold mb-2">
+                                <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_PRIMARY_DOMAIN_NAME"></span> <span class="text-danger">*</span>
+                            </label>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="text" formControlName="domain" class="form-control  form-control-sm" (blur)="checkDomainAvialbility()" name="Domain" required ng-maxlength="27" maxlength="27" ng-minlength="1" ng-pattern="/^[a-zA-Z0-9]*$/" />
+                                    <span class="input-group-addon mt-2">
+                                        .onmicrosoft.com
+                                    </span>
+                                </div>
+                                @if (frmAddCustomer.get('domain')?.errors?.required && frmAddCustomer.get('domain')?.touched )  {
+                                    <p class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></p>
+                                }
+                                
+                                @if(isChechingDomainAvailability){
+                                    <span class="text-info"><i class="fas fa-spinner fa-spin"></i>&nbsp;<span translate="TRANSLATE.LINKING_TENANT_INFO_MESSAGE_VALIDATING_DOMAN"></span></span>
+                                }
+                                
+                            </div>
+
+                            @if(this.isDomainAvailble === false && this.domain.length > 0){
+                                <div class="text-danger">
+                                    {{domain}}.onmicrosoft.com 
+                                    <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TEXT_IS_NOT_AVAILABLE"></span>
+                                </div>
+                            }
+                            
+                            @if (this.isDomainAvailble === true && this.domain.length > 0) {
+                                <div class="text-success">
+                                    {{domain}}.onmicrosoft.com 
+                                    <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TEXT_IS_AVAILABLE"></span>
+                                </div>
+                            }                            
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 form-group mt-8">
+                        <div class="form-group" ng-class="{'has-error':vm.frmAddCustomer.$submitted &amp;&amp; (vm.frmAddCustomer.Email.$error.required || vm.frmAddCustomer.Email.$error.email)}">
+                            <label class="control-label fw-semibold mb-2">
+                                <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_EMAIL"></span> <span class="text-danger">*</span>
+                            </label>
+                            <input type="email" formControlName="email" (blur)="onEmailAddressChange()" class="form-control  form-control-sm" name="Email"  />
+                            @if (thisEmailAddressIsAlredyExistMessage?.length > 0) {
+                                <div class="text-danger">
+                                    {{thisEmailAddressIsAlredyExistMessage}}
+                                </div>
+                            }
+                            
+                            @if (frmAddCustomer.get('email')?.errors?.required && frmAddCustomer.get('email')?.touched) {
+                                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                            }
+                            
+                            @if (frmAddCustomer.get('email')?.errors?.email && frmAddCustomer.get('email')?.touched ) {
+                                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_PLEASE_ENTER_A_VALID_EMAIL"></span></span>
+                            }
+                            
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-4 form-group mt-8" ng-class="{'has-error':vm.frmAddCustomer.$submitted &amp;&amp; vm.frmAddCustomer.PhoneNumber.$error.pattern}">
+                        <div class="form-group">
+                            <label class="control-label fw-semibold mb-2">
+                                <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_PHONE_NUMBER"></span>
+                            </label>
+                            <input type="text" formControlName="phoneNumber" class="form-control  form-control-sm" name="PhoneNumber" [pattern]="countryValidationRules?.PhoneNumberRegex" />
+                            @if (frmAddCustomer.get('phoneNumber')?.errors?.pattern && frmAddCustomer.get('phoneNumber')?.touched) {
+                                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_ENTER_VALID_PHONE_NUMBER"></span></span>
+                            }
+                            
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-4 form-group mt-8">
+                        <div class="form-group" ng-class="{'has-error':vm.frmAddCustomer.$submitted &amp;&amp; vm.frmAddCustomer.AddressLine1.$error.required}">
+                            <label class="control-label fw-semibold mb-2">
+                                <span translate="TRANSLATE.LABEL_TEXT_ADDRESS_1"></span> <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" formControlName="addressLine1" class="form-control  form-control-sm" name="AddressLine1"  />
+                            @if (frmAddCustomer.get('addressLine1')?.errors?.required && frmAddCustomer.get('addressLine1')?.touched) {
+                                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                            }
+                            
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 form-group mt-8">
+                        <div class="form-group">
+                            <label class="control-label fw-semibold mb-2">
+                                <span translate="TRANSLATE.LABEL_TEXT_ADDRESS_2"></span>
+                            </label>
+                            <input type="text" formControlName="addressLine2"  class="form-control  form-control-sm" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 form-group mt-8">
+                        <div class="form-group" ng-class="{'has-error':vm.frmAddCustomer.$submitted &amp;&amp; vm.frmAddCustomer.City.$error.required}">
+                            <label class="control-label fw-semibold mb-2">
+                                @if (countryValidationRules?.IsCityRequired) {}
+                                <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_CITY"></span> 
+                                @if (countryValidationRules?.IsCityRequired) {
+                                    <span ng-if="vm.countryValidationRules.IsCityRequired" class="text-danger">*</span>
+                                }
+                                
+                            </label>
+                            <input type="text" formControlName="addressCity" class="form-control  form-control-sm" name="City" [required]="countryValidationRules?.IsCityRequired" />
+                            @if (frmAddCustomer.get('addressCity')?.errors?.required && frmAddCustomer.get('addressCity')?.touched) {
+                                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                            }                            
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 form-group mt-8">
+                        <div class="form-group" ng-class="{'has-error':vm.frmAddCustomer.$submitted &amp;&amp; vm.frmAddCustomer.Country.$error.required}">
+                            <label class="control-label fw-semibold mb-2">
+                                <span translate="TRANSLATE.ADD_CUSTOMER_LABEL_TEXT_COUNTRY"></span> <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-control form-select form-select-sm" formControlName="addressCountry" (change)="onCountryChange()" name="Country" >
+                                <option value="" translate="TRANSLATE.SELECT_DEFAULT_OPTION_SELECT"></option>
+                                 @for (countryOption of this.countries; track $index) { 
+                                <option [ngValue]="countryOption.Code">
+                                        {{countryOption.Name}}
+                                </option>
+                                }
+                            </select>
+                            @if (frmAddCustomer.get('addressCountry')?.errors?.required && frmAddCustomer.get('addressCountry')?.touched) {
+                                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                            }
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-4 form-group mt-8">
+                        <div class="form-group" ng-class="{'has-error':vm.frmAddCustomer.$submitted &amp;&amp; vm.frmAddCustomer.State.$error.required}">
+                            <label class="control-label fw-semibold mb-2">
+                                <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_STATE"></span>
+                                @if (countryValidationRules?.IsStateRequired) {
+                                    <span class="text-danger">*</span>
+                                }
+                                
+                            </label>
+                            @if (stateProvinces !== null && stateProvinces?.length > 0) {
+                                <select formControlName="addressState" class="form-control form-select form-select-sm" name="State" [required]="countryValidationRules?.IsStateRequired">
+                                    <option value="" translate="TRANSLATE.SELECT_DEFAULT_OPTION_SELECT"></option>
+                                    @for (item of stateProvinces; track $index) {
+                                        <option [ngValue]="item.StateCode">
+                                            {{item.Name}}
+                                        </option>
+                                    }
+                                    
+                                </select>
+                            }
+                            @if (stateProvinces === null || stateProvinces?.length === 0) {
+                                <span>
+                                    <input class="form-control  form-control-sm" type="text" formControlName="addressState" name="State" [required]="countryValidationRules?.IsStateRequired" />
+                                </span>
+                            }
+                            
+                            @if (frmAddCustomer.get('addressState')?.errors?.required && frmAddCustomer.get('addressState')?.touched){
+                                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                            }
+                            
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-4 form-group mt-8">
+                        <div class="form-group" ng-class="{'has-error':vm.frmAddCustomer.$submitted &amp;&amp; (vm.frmAddCustomer.Zip.$error.required || vm.frmAddCustomer.Zip.$error.pattern)}">
+                            <label class="control-label fw-semibold mb-2">
+                                <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_ZIP"></span>
+                                @if (countryValidationRules?.IsPostalCodeRequired) {
+                                    <span class="text-danger">*</span>
+                                }
+                            </label>
+
+                            <input type="text" formControlName="addressZip" class="form-control  form-select-sm" name="Zip" [required]="countryValidationRules?.IsPostalCodeRequired" [pattern]="countryValidationRules?.PostalCodeRegex" />
+                            @if (frmAddCustomer.get('addressZip')?.errors?.required && frmAddCustomer.get('addressZip')?.touched) {
+                                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                            }
+                            
+                            @if (frmAddCustomer.get('addressZip')?.errors?.pattern && frmAddCustomer.get('addressZip')?.touched ) {
+                                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_FOR_VALID_ZIP_CODE"></span></span>
+                            }
+                            
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-12" *ngIf="considerNewMicrosoftCustomerAgreement =='No'">
+                        <div class="col-md-12" style="margin-top:30px;">
+                            <h5 class="caption-subject bold font-blue uppercase"><span translate="TRANSLATE.REGISTER_HEADER_TEXT_MICROSOFT_CLOUD_AGREEMENT"></span></h5>
+                            <hr />
+                        </div>
+                    </div>
+
+                    <!---------------------------Customer Consent start ---------------------------->
+                    
+                    <div class="form-group" ng-class="{'has-error':frmAddCustomer.$submitted &amp;&amp; frmAddCustomer.addCustomerModel_CustomerConsent_IsAccepted.$error.required} " *ngIf="considerNewMicrosoftCustomerAgreement =='No'">
+                        <label class="col-md-12 checkbox checkbox-outline checkbox-outline-2x control-label fw-semibold form-check mt-6">
+                            <input type="checkbox" class=" form-check-input" (click)="onCustomerConsentIsAcceptedChange()" formControlName="isCustomerConsentAcceptanceProvided" name="addCustomerModel_CustomerConsent_IsAccepted" />
+                            <span></span>
+                            
+                            <span class="control-label fw-semibold">
+                                {{'TRANSLATE.ADD_CUSTOMER_CONSENT_CHECK_BOX_LBL_TEXT' | translate}}
+                                <a (click)="customerConsentClick()"><span translate="TRANSLATE.REGISTER_CUSTOMER_CONSENT_BTN_TEXT_MICROSOFT_CLOUD_AGREEMENT"></span></a>
+                            </span>
+                         
+                        </label>
+                        @if (frmAddCustomer.hasError('required', 'isCustomerConsentAcceptanceProvided') && frmAddCustomer.get('isCustomerConsentAcceptanceProvided')?.touched ) {
+                            <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                        }
+                        
+                        <br />
+                    </div>
+
+                </div>
+
+                <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6 mt-8" *ngIf="considerNewMicrosoftCustomerAgreement =='Yes'">
+                    <div class="row m-heading-1 border-green m-bordered p-0">
+                        <div>
+                            <strong>{{
+                                'TRANSLATE.LINK_NEW_PROVIDER_CUSTOMER_CONSENT_VIEW_INSTRUCTIONS_HEADER_MCA' |
+                                translate }}</strong>
+                            <ul class="ps-10 pt-4">
+                                <li>
+                                    {{ 'TRANSLATE.LINK_NEW_PROVIDER_CUSTOMER_CONSENT_VIEW_INSTRUCTIONS_1_MCA' | translate }}
+                                </li>
+                                <li>
+                                    <span [innerHTML]="'TRANSLATE.LINK_NEW_PROVIDER_CUSTOMER_CONSENT_VIEW_INSTRUCTIONS_2_MCA' | translate"></span>
+                                </li>
+                                <li>
+                                    <span [innerHTML]="'TRANSLATE.LINK_NEW_PROVIDER_CUSTOMER_CONSENT_VIEW_INSTRUCTIONS_3_MCA' | translate"></span>
+                                </li>
+                                <li>
+                                    <span [innerHTML]="'TRANSLATE.LINK_NEW_PROVIDER_CUSTOMER_CONSENT_VIEW_INSTRUCTIONS_4_MCA' | translate"></span>
+                                </li>
+                                <li>
+                                    <span [innerHTML]="'TRANSLATE.LINK_NEW_PROVIDER_CUSTOMER_CONSENT_VIEW_INSTRUCTIONS_5_MCA' | translate"></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-8">
+                    <div class="col-md-12">
+                        <div class="form-actions float-end">
+                            @if (isChechingDomainAvailability || ( failedDomain!==null ? (failedDomain?.toLowerCase()!== addCustomerModel?.Domain?.toLowerCase() ? isDomainAvailble : true) : ((isDomainAvailble===undefined || isDomainAvailble===null )?true: isDomainAvailble))) {
+                                <a
+                                class="btn btn-sm btn-secondary btn-active-light-secondary me-2" (click)="cancelAddCustomer()">
+                                    <!-- <busy-message><i class="fas fa-spinner fa-spin"></i>{{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}</busy-message> -->
+                                    <span>{{'TRANSLATE.BUTTON_TEXT_CANCEL' | translate}}</span>
+                                </a>
+                            }
+                            
+                            <button type="button" class="btn btn-sm btn-primary" (click)="addCustomer()" translate="TRANSLATE.BUTTON_TEXT_SUBMIT" appBusyLoader></button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+}
+
+
+@if(entityName.toLowerCase() === entityEnum.Reseller.toLowerCase() && canProceedForCreatingNewProviderTenant === false && canLogicalResellerProceedForCreatingNewProviderTenant === false) {
+    <div class="row">
+        <div class="col-md-12">
+            <div class="note note-danger">
+                <h4 class="block" translate="TRANSLATE.CREATING_NEW_MICROSOFT_CSP_TENANT_IS_NOT_ALLOWED_FOR_RESELLER_WITH_NO_LINK_TITLE"></h4>
+                <p translate="TRANSLATE.CREATING_NEW_MICROSOFT_CSP_TENANT_IS_NOT_ALLOWED_FOR_RESELLER_WITH_NO_LINK_MESSAGE"> </p>
+            </div>
+        </div>
+    </div>
+}
+

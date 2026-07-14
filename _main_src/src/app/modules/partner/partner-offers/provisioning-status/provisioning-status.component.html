@@ -1,0 +1,31 @@
+<div class="card-body pt-0 overflow-auto">
+  <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+    <div>
+      <a class="btn btn-active-light-primary btn-sm btn-icon me-2 tooltips ng-scope ng-isolate-scope" [appPermission]="'UPDATE_PARTNER_OFFER_PROVISIONING_STATUS'"
+        ngbTooltip="{{'TRANSLATE.SUBSCRIPTION_PROVISIONING_TABLE_BUTTON_TOOLTIP_ACTIVATED' | translate}}"
+        (click)="updateSubscription(data.CartLineItemId, true)">
+        <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+          <i class="ki-outline ki-check text-primary"></i>
+        </span>
+      </a>
+      <a class="btn btn-active-light-danger btn-sm btn-icon me-2 tooltips ng-scope ng-isolate-scope" [appPermission]="'UPDATE_PARTNER_OFFER_PROVISIONING_STATUS'"
+        ngbTooltip="{{'TRANSLATE.CUSTOMER_TAGS_TABLE_BUTTON_TOOLTIP_DELETE' | translate}}"
+        (click)="updateSubscription(data.CartLineItemId, false)">
+        <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+          <i class="ki-outline ki-cross text-danger"></i>
+        </span>
+      </a>
+    </div>
+  </ng-template>
+  @if(isGridLoading) {
+  <div class="d-flex justify-content-center align-items-center col-md-12 mt-5">
+    <span class="spinner-border text-primary" role="status"></span>
+    <span class="text-muted fs-6 fw-semibold ms-5">{{'TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT' |
+      translate}}</span>
+  </div>
+  }
+  @if (!!datatableConfig) {
+  <app-c3-table [datatableConfig]="datatableConfig">
+  </app-c3-table>
+  }
+</div>

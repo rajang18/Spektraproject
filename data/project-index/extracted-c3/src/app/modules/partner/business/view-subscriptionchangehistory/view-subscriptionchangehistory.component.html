@@ -1,0 +1,485 @@
+
+
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-1 gap-lg-1">
+        <button class="btn btn-light-primary btn-sm btn-md btn-lg btn-xs me-1" *ngIf="PageMode !== 'HistoryByDate'" (click)="handleTableConfig()"><i class="ki-outline ki-calendar"></i><span translate="TRANSLATE.CUSTOMERS_BUTTON_TEXT_HISTORY_BY_DATE" ></span></button>
+        <button class="btn btn-light-primary btn-sm btn-sm btn-md btn-lg btn-xs me-1" *ngIf="PageMode !== 'History'" (click)="GetSubscriptionHistory(customerC3Id,currentCustomerName)"><i class="ki-outline ki-data"></i><span translate="TRANSLATE.CUSTOMERS_BUTTON_TEXT_HISTORY_BY_OFFER"></span></button>
+        <a class="btn btn-light-primary btn-sm btn-sm btn-md btn-lg btn-xs me-1" href="javascript:void(0)" (click)="ReturnToList()">
+            <i class="ki-outline ki-to-left fs-2"></i> <span translate="TRANSLATE.BUTTON_TEXT_BACK_TO_LIST"></span>
+        </a>
+    </div>
+</ng-template>
+<div class="card card-custom">
+    <div class="card-body">
+        <div class="form-group row">
+            <div class="col-md-6 text-left">
+                <h5><i class="fa fa-history font-dark me-1"></i>
+                <span class="font-weight-bolder" translate="TRANSLATE.CUSTOMERS_CAPTION_TEXT_SUBSCRIPTION_CHANGE_HISTORY_FOR"></span><span class="text-primary"> : {{currentCustomerName}}</span></h5>
+            </div>
+            <!-- <div class="col-md-6 text-sm-left" style="text-align: right;">
+                
+                <button class="btn btn-light-primary btn-sm btn-lg btn-xs popup-plans-filter ms-1" data-toggle="modal" data-target="#productsmobilefilter">
+                    <span translate="TRANSLATE.CUSTOMER_MANAGE_PLAN_FILTER_BUTTON_RESPONSIVE"></span>
+                </button>
+            </div> -->
+        </div>
+
+        <div class="container-fluid">
+            <div  *ngIf="PageMode === 'History'" class="row">
+                <div class="col-md-3 mt-9 offcanvas-mobile" style="overflow: hidden;">
+                        <h6><span  translate="TRANSLATE.PARTNER_BUSINESS_SUBSCRIPTIONCHANGE_HISTORY_SIDEBAR_FILTER_HEADER_QUICK_SEARCH"></span></h6>
+                            @if (providers?.length > 0) {
+                            <div class="providers">
+                                <label class="mb-6 text-gray-900 fw-bold fs-5 text-uppercase">
+                                    <span translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_PROVIDERS"></span></label>
+                                <div class="form-group row">
+                                    <div class="checkbox-list">
+                                        @for (provider of providers; track $index) {
+                                        <div class="input-group-with-checkbox">
+                                            <label class="form-check form-check-inline me-5">
+                                                <input type="checkbox" class="form-check-input mb-2" value="{{provider.Name}}"
+                                                    (click)="toggleProviderSelection(provider)"
+                                                    [checked]="providerSelection.indexOf(provider) > -1" [disabled]="false">
+                                                <span class="text-gray-900" translate="TRANSLATE.{{provider.Description}}"></span>
+                                            </label>
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            }
+                            @if (filteredCategories?.length > 0) {
+                                <div class="providers">
+                                    <label class="mb-6 mt-6 text-gray-900 fw-bold fs-5 text-uppercase">
+                                        <span translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_CATEGORY"></span></label>
+                                    <div class="form-group row">
+                                        <div class="checkbox-list">
+                                            @for (category of filteredCategories; track $index) {
+                                            <div class="input-group-with-checkbox">
+                                                <label class="form-check form-check-inline me-5">
+                                                    <input type="checkbox" class="form-check-input mb-2" value="{{category.Description}}"
+                                                        (click)="toggleCategorySelection(category)"
+                                                        [checked]="categorySelection.indexOf(category) > -1" [disabled]="false">
+                                                    <span class="text-gray-900">
+                                                        {{category.Name.toLowerCase() === 'onlineservicesnce' === true ?
+                                                        ('TRANSLATE.CATEGORY_FILTER_DESC_NCE'|translate) :
+                                                        ('TRANSLATE.'+category.CategoryDescriptionKey
+                                                        | translate)}}
+                                                    </span>
+                                                </label>
+                                            </div>
+                                            }
+                                           
+                                        </div>
+                                    </div>
+                                </div>
+                                }
+                                @if (filteredProviderCategories?.length > 0) {
+                                <div class="providers">
+                                    <label class="mb-6 mt-6 text-gray-900 fw-bold fs-5 text-uppercase">
+                                        <span translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_SERVICE_TYPES"></span></label>
+                                    <div class="form-group row">
+                                        <div class="checkbox-list">
+                                            @for (providerCategory of filteredProviderCategories; track $index) {
+                                            <div class="input-group-with-checkbox">
+                                                <label class="form-check form-check-inline me-5">
+                                                    <input type="checkbox" class="form-check-input mb-2" value="{{providerCategory.ProviderCategoryName}}"
+                                                        (click)="toggleProviderCategorySelection(providerCategory)"
+                                                        [checked]="providerCategorySelection.indexOf(providerCategory) > -1" [disabled]="false">
+                                                    <span class="text-gray-900">
+                                                        {{providerCategory.ProviderCategoryName.split('-').length > 0 ?
+                                                        providerCategory.ProviderCategoryName.split('-').join('- \n'):
+                                                        (providerCategory.ProviderCategoryName|translate)}}
+                                                    </span>
+                                                </label>
+                                            </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                }
+                                @if (historyBillingCycles?.length > 0){
+                                <div class="providers">
+                                    <label class="mb-6 mt-6 text-gray-900 fw-bold fs-5 text-uppercase">
+                                        <span translate="TRANSLATE.CUSTOMER_SHOP_ADDON_POPUP_LABEL_TEXT_BILLING_CYCLE"></span></label>
+                                    <div class="form-group row">
+                                        <div class="checkbox-list">
+                                            @for (billingCycle of historyBillingCycles; track $index) {
+                                            <div class="input-group-with-checkbox">
+                                                <label class="form-check form-check-inline me-5">
+                                                    <input type="checkbox" class="form-check-input mb-2" value="{{billingCycle.Name}}"
+                                                        (click)="toggleBillingCycleSelection(billingCycle)"
+                                                        [checked]="billingCycleSelection.indexOf(billingCycle) > -1" [disabled]="false">
+                                                    <span class="text-gray-900">
+                                                        {{'TRANSLATE.'+billingCycle.Description | translate}}
+                                                    </span>
+                                                </label>
+                                            </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                }
+                </div>
+                <div class="col-md-9">
+                    <div class="row pt-2">
+                        <div class="col-md-12 no-padding-right">
+                            <div class="input-group input-lg " style="margin-top: 9px;">
+                                <input type="text" class="form-control form-control-sm" placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_INPUT_FIELD_TO_SEARCH_A_SUBSCRIPTION' | translate}}" [(ngModel)]="search" ng-model-options="{debounce: 1000}" (change)="FilterProductsByKeyword()">
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-sm btn-primary" (click)="FilterProductsByKeyword()">
+                                        <!-- <i class="fa fa-search"></i> -->
+                                        <i class="ki-outline ki-magnifier fs-3"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="pt-5 col-md-12">
+                            <label>
+                                <span translate="TRANSLATE.PARTNER_BUSINESS_SUBSCRIPTIONCHANGE_HISTORY_SEARCH_LABEL_TEXT_SEARCH_APPLIED"></span> :
+                            </label> <strong>{{search}}</strong>
+                        </div>
+                        <div style="overflow: hidden;" class="clearfix">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div *ngIf="!IsProductsDataLoading && SubscriptionsHistory.length<=0" class="mt-5">
+                                        <!-- <label style="margin-left:30px;"><strong> No history found!</strong></label> -->
+                                        <app-common-no-record></app-common-no-record>
+                                    </div>
+                                    <div>
+                                            <div infinite-scroll="vm.LoadMoreProducts()" infinite-scroll-container='".constrained"' infinite-scroll-distance="10" infinite-scroll-parent="true">
+                                                @for (subscription of SubscriptionsHistory; track $index) {
+                                                <div class="table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl group" *ngIf="PageMode === 'History'">
+                                                    <table class="table table-striped table-bordered table-hover  order-column" id="sample_3">
+                                                        <thead>
+                                                            <tr>
+                                                                <th colspan="11" style="text-align:left;" class="col-md-2 caption-subject text-primary bold uppercase">
+                                                                    {{subscription.FriendlyName}}
+                                                                    <span *ngIf="subscription.IsAddOn"><sup class="text-warning"><span translate="TRANSLATE.PLAN_MANAGE_ADD_FORM_TABLE_1_HEADER_TEXT_OFFER_ADD_ON"></span></sup></span>
+                                                                </th>
+                                                            </tr>
+                                                            <tr>
+                                                                <th class="font-md"><span translate="TRANSLATE.CUSTOMERS_TABLE_HEADER_TEXT_CUSTOMER_NAME"></span></th>
+                                                                <th class="text-end font-md"><span translate="TRANSLATE.CUSTOMERS_TABLE_HEADER_TEXT_OLD_QUANTITY"></span></th>
+                                                                <th class="text-end font-md"><span translate="TRANSLATE.CUSTOMERS_TABLE_HEADER_TEXT_NEW_QUANTITY"></span></th>
+                                                                <th class="text-end font-md"><span translate="TRANSLATE.CUSTOMERS_TABLE_HEADER_TEXT_OLD_PRICE"></span></th>
+                                                                <th class="text-end font-md"><span translate="TRANSLATE.CUSTOMERS_TABLE_HEADER_TEXT_NEW_PRICE"></span></th>
+                                                                <th class="font-md"><span translate="TRANSLATE.CUSTOMERS_TABLE_HEADER_TEXT_OLD_STATUS"></span></th>
+                                                                <th class="font-md"><span translate="TRANSLATE.CUSTOMERS_TABLE_HEADER_TEXT_NEW_STATUS"></span></th>
+                                                                <th class="font-md"><span translate="TRANSLATE.CUSTOMERS_TABLE_HEADER_TEXT_DATE"></span></th>
+                                                                <th class="font-md"><span translate="TRANSLATE.CUSTOMERS_TABLE_HEADER_TEXT_USER"></span></th>
+                                                                <th *ngIf="hasSiteEnabled" class="font-md"><span translate="TRANSLATE.CUSTOMERS_TABLE_HEADER_TEXT_SITE_NAME"></span></th>
+                                                                <th *ngIf="hasSiteEnabled" class="font-md"><span translate="TRANSLATE.CUSTOMERS_TABLE_HEADER_TEXT_DEPARTMENT_NAME"></span></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr *ngIf="subscription.History!=null && subscription.History.length == 0">
+                                                                <td colspan="11">{{'TRANSLATE.CUSTOMERS_TABLE_NO_SUBSCRIPTIONS_ADDED_YET' | translate}}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                        <tbody>
+                                                            @for (row of subscription.History; track $index) {
+                                                            <tr>
+                                                                <td class="font-md">{{row.CustomerName}}</td>
+                                                                <td class="text-end font-md">{{row.OldQuantity}}</td>
+                                                                <td class="text-end font-md">{{row.NewQuantity}}</td>
+                                                                <td class="text-end font-md">{{row.CurrencySymbol}}{{row.OldPrice }}</td>
+                                                                <td class="text-end font-md">{{row.CurrencySymbol}}{{row.NewPrice}}</td>
+                                                                <td class="font-md">{{row.OldStatus}}</td>
+                                                                <td class="font-md">{{row.NewStatus}}</td>
+                                                                <td class="font-md">{{row.CreatedDate | c3Date }} </td>
+                                                                <td class="font-md">{{row.CreatedBy}}</td>
+                                                                <td *ngIf="hasSiteEnabled" class="font-md">{{row.SiteName}}</td>
+                                                                <td *ngIf="hasSiteEnabled" class="font-md">{{row.DepartmentName}}</td>
+                                                            </tr>
+                                                        }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            }
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="PageMode === 'HistoryByDate'" class="row">
+                <div class="col-md-2 portlet light bordered clearfix" style="overflow: hidden;">
+                    <div>
+                        <div class="portlet-body mt-9">
+                            <h6><strong><span
+                                translate="TRANSLATE.PARTNER_BUSINESS_SUBSCRIPTIONCHANGE_HISTORY_SIDEBAR_FILTER_HEADER_QUICK_SEARCH"></span></strong>
+                            </h6>
+                            @if (providers?.length > 0) {
+                            <div class="providers">
+                                <label class="mb-4 text-gray-900 fw-bold filter-title text-uppercase">
+                                    <span translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_PROVIDERS"></span></label>
+                                <div class="form-group row">
+                                    <div class="checkbox-list">
+                                        @for (provider of providers; track $index) {
+                                        <div class="input-group-with-checkbox">
+                                            <label class="form-check form-check-inline me-5">
+                                                <input type="checkbox" class="form-check-input mb-2" value="{{provider.Name}}"
+                                                    (click)="toggleProviderSelection(provider)" [checked]="providerSelection.indexOf(provider) > -1"
+                                                    [disabled]="false">
+                                                <span class="text-gray-900" translate="TRANSLATE.{{provider.Description}}"></span>
+                                            </label>
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            }
+                            @if (filteredCategories?.length > 0) {
+                            <div class="providers">
+                                <label class="mb-4 text-gray-900 fw-bold filter-title text-uppercase">
+                                    <span translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_CATEGORY"></span></label>
+                                <div class="form-group row">
+                                    <div class="checkbox-list">
+                                        @for (category of filteredCategories; track $index) {
+                                        <div class="input-group-with-checkbox">
+                                            <label class="form-check form-check-inline me-5">
+                                                <input type="checkbox" class="form-check-input mb-2" value="{{category.Description}}"
+                                                    (click)="toggleCategorySelection(category)"
+                                                    [checked]="categorySelection.indexOf(category) > -1" [disabled]="false">
+                                                <span class="text-gray-900">
+                                                    {{category.Name.toLowerCase() === 'onlineservicesnce' === true ?
+                                                    ('TRANSLATE.CATEGORY_FILTER_DESC_NCE'|translate) :
+                                                    ('TRANSLATE.'+category.CategoryDescriptionKey
+                                                    | translate)}}
+                                                </span>
+                                            </label>
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            }
+                            @if (filteredProviderCategories?.length > 0) {
+                            <div class="providers">
+                                <label class="mb-4 text-gray-900 fw-bold filter-title text-uppercase">
+                                    <span translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_SERVICE_TYPES"></span></label>
+                                <div class="form-group row">
+                                    <div class="checkbox-list">
+                                        @for (providerCategory of filteredProviderCategories; track $index) {
+                                        <div class="input-group-with-checkbox">
+                                            <label class="form-check form-check-inline me-5">
+                                                <input type="checkbox" class="form-check-input mb-2"
+                                                    value="{{providerCategory.ProviderCategoryName}}"
+                                                    (click)="toggleProviderCategorySelection(providerCategory)"
+                                                    [checked]="providerCategorySelection.indexOf(providerCategory) > -1"
+                                                    [disabled]="false">
+                                                <span class="text-gray-900">
+                                                    {{providerCategory.ProviderCategoryName.split('-').length > 0 ?
+                                                    providerCategory.ProviderCategoryName.split('-').join('- \n'):
+                                                    (providerCategory.ProviderCategoryName|translate)}}
+                                                </span>
+                                            </label>
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            }
+                            @if (historyBillingCycles?.length > 0){
+                            <div class="providers">
+                                <label class="mb-4 text-gray-900 fw-bold filter-title text-uppercase">
+                                    <span translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_BILLING_CYCLES"></span></label>
+                                <div class="form-group row">
+                                    <div class="checkbox-list">
+                                        @for (billingCycle of historyBillingCycles; track $index) {
+                                        <div class="input-group-with-checkbox">
+                                            <label class="form-check form-check-inline me-5">
+                                                <input type="checkbox" class="form-check-input mb-2" value="{{billingCycle.Name}}"
+                                                    (click)="toggleBillingCycleSelection(billingCycle)"
+                                                    [checked]="billingCycleSelection.indexOf(billingCycle) > -1" [disabled]="false">
+                                                <span class="text-gray-900">
+                                                    {{'TRANSLATE.'+billingCycle.Description | translate}}
+                                                </span>
+                                            </label>
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-10">
+                    <div>
+                        <div>
+                            <div class="col-md-12 no-padding-right">
+                                <div class="input-group input-lg " style="margin-top: 9px;">
+                                    <input type="text" class="form-control form-control-sm" placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_INPUT_FIELD_TO_SEARCH_A_SUBSCRIPTION' | translate}}" [(ngModel)]="search" ng-model-options="{debounce: 1000}" (change)="FilterProductsByKeyword()">
+                                    <span class="input-group-btn">
+                                        <button type="submit" class="btn btn-sm btn-primary" (click)="FilterProductsByKeyword()">
+                                            <i class="ki-outline ki-magnifier fs-3"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="pt-5">
+                                <label><span translate="TRANSLATE.PARTNER_BUSINESS_SUBSCRIPTIONCHANGE_HISTORY_SEARCH_LABEL_TEXT_SEARCH_APPLIED"></span> :</label> <strong>{{search}}</strong>
+                            </div>
+                        </div>
+                        <ng-template #offerName let-row="adtData">
+                            <div>
+                                {{row.FriendlyName}} <span *ngIf="row.IsAddOn"><sup class="text-warning">{{'TRANSLATE.PLAN_MANAGE_ADD_FORM_TABLE_1_HEADER_TEXT_OFFER_ADD_ON'|translate}}</sup></span>
+                            </div>
+                        </ng-template>
+                        <ng-template #oldPrice let-row="adtData">
+                            <div>
+                                {{row.CurrencySymbol}}{{row.NewPrice}}                        
+                                </div>
+                        </ng-template>
+                        <ng-template #newPrice let-row="adtData">
+                            <div>
+                                {{row.CurrencySymbol}}{{row.NewPrice}}                        
+                                </div>
+                        </ng-template>
+                        <ng-template #siteName let-row="adtData">
+                            <span *ngIf="hasSiteEnabled">
+                                <span>
+                                  {{row.SiteName}}
+                                </span>
+                            </span>
+                        </ng-template>
+                        <ng-template #DepartmentName let-row="adtData">
+                            <span>
+                                <span *ngIf="hasSiteEnabled">
+                                  {{row.DepartmentName }}
+                                </span>
+                              </span>
+                        </ng-template>
+
+                        <ng-template #createdDate let-data="adtData" let-emitter="captureEvents">
+                            <span>{{data.CreatedDate | c3Date}}</span>
+                        </ng-template>
+
+                        <ng-container *ngIf="datatableConfig">
+                            <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+                            </app-c3-table>
+                        </ng-container>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="productsmobilefilter" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">{{'TRANSLATE.CUSTOMER_PRODUCT_TAB_FILTER_LABEL_TEXT' | translate}}</h5>
+            </div>
+            <div class="modal-body">
+                <div class="card card-custom gutter-b">
+                    <div class="card-body">
+                        @if (providers?.length > 0) {
+                            <div class="providers">
+                                <label class="mb-4 text-gray-900 fw-bold filter-title text-uppercase">
+                                    <span translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_PROVIDERS"></span></label>
+                                <div class="form-group row">
+                                    <div class="checkbox-list">
+                                        @for (provider of providers; track $index) {
+                                        <div class="input-group-with-checkbox">
+                                            <label class="form-check form-check-inline me-5">
+                                                <input type="checkbox" class="form-check-input" value="{{provider.Name}}"
+                                                    (click)="toggleProviderSelection(provider)"
+                                                    [checked]="providerSelection.indexOf(provider) > -1" [disabled]="false">
+                                                <span class="text-gray-900" translate="TRANSLATE.{{provider.Description}}"></span>
+                                            </label>
+                                        </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            }
+                            @if (filteredCategories?.length > 0) {
+                                <div class="providers">
+                                    <label class="mb-4 text-gray-900 fw-bold filter-title text-uppercase">
+                                        <span translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_CATEGORY"></span></label>
+                                    <div class="form-group row">
+                                        <div class="checkbox-list">
+                                            @for (category of filteredCategories; track $index) {
+                                            <div class="input-group-with-checkbox">
+                                                <label class="form-check form-check-inline me-5">
+                                                    <input type="checkbox" class="form-check-input" value="{{category.Description}}"
+                                                        (click)="toggleCategorySelection(category)"
+                                                        [checked]="categorySelection.indexOf(category) > -1" [disabled]="false">
+                                                    <span class="text-gray-900">
+                                                        {{category.Name.toLowerCase() === 'onlineservicesnce' === true ?
+                                                        ('TRANSLATE.CATEGORY_FILTER_DESC_NCE'|translate) :
+                                                        ('TRANSLATE.'+category.CategoryDescriptionKey
+                                                        | translate)}}
+                                                    </span>
+                                                </label>
+                                            </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                }
+                            @if (filteredProviderCategories?.length > 0) {
+                                <div class="providers">
+                                    <label class="mb-4 text-gray-900 fw-bold filter-title text-uppercase">
+                                        <span translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_SERVICE_TYPES"></span></label>
+                                    <div class="form-group row">
+                                        <div class="checkbox-list">
+                                            @for (providerCategory of filteredProviderCategories; track $index) {
+                                            <div class="input-group-with-checkbox">
+                                                <label class="form-check form-check-inline me-5">
+                                                    <input type="checkbox" class="form-check-input"
+                                                        value="{{providerCategory.ProviderCategoryName}}"
+                                                        (click)="toggleProviderCategorySelection(providerCategory)"
+                                                        [checked]="providerCategorySelection.indexOf(providerCategory) > -1"
+                                                        [disabled]="false">
+                                                    <span class="text-gray-900">
+                                                        {{providerCategory.ProviderCategoryName.split('-').length > 0 ?
+                                                        providerCategory.ProviderCategoryName.split('-').join('- \n'):
+                                                        (providerCategory.ProviderCategoryName|translate)}}
+                                                    </span>
+                                                </label>
+                                            </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                }
+                            @if (historyBillingCycles?.length > 0){
+                                <div class="providers">
+                                    <label class="mb-4 text-gray-900 fw-bold filter-title text-uppercase">
+                                        <span translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_BILLING_CYCLES"></span></label>
+                                    <div class="form-group row">
+                                        <div class="checkbox-list">
+                                            @for (billingCycle of historyBillingCycles; track $index) {
+                                            <div class="input-group-with-checkbox">
+                                                <label class="form-check form-check-inline me-5">
+                                                    <input type="checkbox" class="form-check-input" value="{{billingCycle.Name}}"
+                                                        (click)="toggleBillingCycleSelection(billingCycle)"
+                                                        [checked]="billingCycleSelection.indexOf(billingCycle) > -1" [disabled]="false">
+                                                    <span class="text-gray-900">
+                                                        {{'TRANSLATE.'+billingCycle.Description | translate}}
+                                                    </span>
+                                                </label>
+                                            </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                             }
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

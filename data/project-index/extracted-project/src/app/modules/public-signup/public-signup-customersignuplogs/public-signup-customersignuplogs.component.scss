@@ -1,0 +1,115 @@
+// .header-top {
+//     .custom-nav {
+//       margin: 0;
+//       padding: 10px 0;
+//       display: flex;
+//       align-items: center;
+//       justify-content: end;
+//       gap: 10px;
+//       background-color: #0052cc;
+//     }
+  
+//     .search-header-section {
+//       background-color: #0052cc;
+//       @media (min-width:992px) {
+//         padding:0 6rem;
+//       }
+//       .row {
+//         display: flex;
+//         justify-content: space-between;
+//         .ki-magnifier .path1:before {
+//           left: 0 !important;
+//           right: 100% !important;
+//         }
+//         .ki-magnifier .path2:before {
+//           left: 0 !important;
+//           right: 100% !important;
+//         }
+//         .header-description{
+//           @media (max-width:991px) {
+//               justify-content: center;
+//           }
+//         }
+//         .dashboard-logo{
+//           display: flex;
+//           justify-content: end;
+//           @media (max-width:991px) {
+//               justify-content: center;
+//           }
+//         }
+//       }
+//     }
+//   }
+  .customer-container {
+    background-color: #f3f3f5;
+    height: 100vh;
+    @media (min-width:992px) {
+      padding:0 6rem;
+    }
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      .w-170px{
+        width: 170px;
+      }
+    }
+    .card {
+      display: flex;
+      width:100%;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0px 3px 4px 0px rgba(0, 0, 0, 0.05);
+      .card-body {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        justify-content: flex-end;
+      }
+    }
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 10;
+    }
+  
+    .card:hover .overlay {
+      opacity: 1;
+    }
+  }
+//   .custom-button{
+//     width: fit-content !important;
+//     padding: 5px !important;
+//     color: #fff;
+//     .dashboard-goto-btn, i, .cart-text {
+//       color:#fff;
+//     }
+//     &:hover {
+//       color:#0052cc;
+//       .dashboard-goto-btn, i, .cart-text {
+//         color:#010101
+//       }
+//     }
+//   }
+//   .product-wrapper {
+//     position: relative;
+//     height: calc(120vh - (var(--bs-app-footer-height) + var(--bs-app-header-height) + var(--bs-app-toolbar-height) + 100px));
+//     overflow-y: auto;
+//     overflow-x: hidden;
+//     padding: 0 10px;
+//     margin:10px 0px;
+//     }
+
+.text-decoration-underline:hover{
+    text-decoration: underline !important;
+}

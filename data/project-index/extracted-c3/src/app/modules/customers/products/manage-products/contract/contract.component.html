@@ -1,0 +1,153 @@
+<div class="d-flex flex-column-fluid">
+    <div class="container-fluid">
+        <div *ngIf="product">
+            <div class="card-body">
+                <div class="container-fluid" style="padding:0 10px 0 10px">
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            <img *ngIf="product.ImageUrl" class="logo-default" [src]="product.ImageUrl" width="96"
+                                height="96" />
+                            <div class="margin-top-20" *ngIf="!product.ImageUrl">
+                                <i class="fa fa-gift logo-default text-dark" style="font-size: 60px;"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="table-scrollable table-scrollable-borderless table-borderless">
+                                <table class="table table-condensed table-hover table-cell-no-border">
+                                    <tr>
+                                        <td colspan="4">
+                                            <span *ngIf="product.IsEdit != true"
+                                                ngbTooltip="{{product.ProductSubscriptionName}}"
+                                                class="fs-3 fw-bolder text-gray-800">{{product.ProductSubscriptionName |
+                                                limitLength:60}}
+                                                <span
+                                                    *ngIf="product.ProductSubscriptionName !=null && product.ProductSubscriptionName.length > 60">...</span>
+                                            </span>
+                                            <a class="btn btn-icon"
+                                                *ngIf="permissions.HasSaveProductChanges ==='Allowed' && product.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_ACTIVE && product.IsEdit != true"
+                                                (click)="product.IsEdit = true;setProductName()">
+                                                <i class="ki-outline fs-2 text-primary ki-pencil text-primary"
+                                                    aria-hidden="true" data-toggle="tooltip" data-placement="top"
+                                                    ngbTooltip="{{'TRANSLATE.TOOLTIP_TEXT_EDIT_NAME'|translate}}">
+                                                    <span class="path1"></span>
+                                                    <span class="path2"></span>
+                                                </i> </a>
+                                            <div class="row"
+                                                *ngIf="product.IsEdit === true && permissions.HasSaveProductChanges ==='Allowed'">
+                                                <div class="col-md-3"
+                                                    *ngIf="permissions.HasSaveProductChanges ==='Allowed'">
+                                                    <input type="text" [(ngModel)]="product.ProductNameToUpdate"
+                                                        class="form-control">
+                                                </div>
+                                                <div class="btn-group col-md-1 p-0">
+                                                    <a class="btn btn-icon"
+                                                        [(ngModel)]="product.ProductSubscriptionName"
+                                                        (click)="updateProductName(product, 'Name', product.ProductSubscriptionName)"
+                                                        *ngIf="product.IsEdit === true && permissions.HasSaveProductChanges ==='Allowed'">
+                                                        <i class="ki-outline ki-check fs-1 text-success"></i>
+                                                    </a>
+                                                    <a class="btn btn-icon" (click)="product.IsEdit = false"
+                                                        *ngIf="product.IsEdit === true && permissions.HasSaveProductChanges ==='Allowed'">
+                                                        <i class="ki-outline ki-cross fs-1 text-danger"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <!-- <a *ngIf="permissions.HasSaveProductChanges ==='Denied'">
+                                                <span [innerHtml]="product.ProductSubscriptionName | limitLength:80"></span>
+                                            </a> -->
+                                        </td>
+                                    </tr>
+
+                                    <tr *ngIf="!showCompleteDescription">
+                                        <td colspan="4">
+                                            <div
+                                                class="flex-grow-1 font-weight-bold text-dark-50 py-2 py-lg-2 mr-5 mt-5">
+                                                <span [innerHtml]="product.Description| limitLength:40"></span>
+                                                <span class="text-muted"
+                                                    *ngIf="product.Description !=null && product.Description.length > 40"><small>
+                                                        ...</small></span>
+                                                <a class="text-muted"
+                                                    *ngIf="product.Description !=null && product.Description.length > 40"
+                                                    (click)="readMoreDescription()"><small>{{'TRANSLATE.PRODUCT_DETAILS_READ_MORE_LINK_TEXT'
+                                                        | translate}}</small></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="showCompleteDescription">
+
+                                        <td colspan="4" class="pt-0 mt-0 pb-0 mb-0">
+                                            <div
+                                                class="flex-grow-1 font-weight-bold text-dark-50 py-2 py-lg-2 mr-5 mt-5">
+                                                <span style="word-break: break-word" width="100"
+                                                    [innerHtml]="product.Description"></span>
+                                                <a class="text-muted"
+                                                    *ngIf="product.Description !=null && product.Description.length > 40"
+                                                    (click)="readLessDescription()"><small>{{'TRANSLATE.PRODUCT_DETAILS_READ_LESS_LINK_TEXT'
+                                                        | translate}}</small></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="product.ProviderSettings && product.ProviderSettings.ProviderCategory">
+                                        <td class="text-left ps-3 fw-bold fs-6 pt-5 text-gray-800">
+                                            {{'TRANSLATE.CUSTOMER_PRODUCT_PARTNER_MANAGED_PRODUCT_CONTRACT__LABEL_TEXT_CATEGORY'
+                                            | translate}}</td>
+                                        <td class="pt-5"> {{'TRANSLATE.'+product.ProviderSettings.ProviderCategory |
+                                            translate}} </td>
+                                    </tr>
+                                    <tr *ngIf="product.BillingCycleName">
+                                        <td class="text-left col-1 ps-3 fw-bold fs-6 pt-5 text-gray-800">
+                                            {{'TRANSLATE.CUSTOMER_PRODUCT_PARTNER_MANAGED_PRODUCT_CONTRACT_LABEL_TEXT_BILLING_CYCLE'
+                                            | translate}}</td>
+                                        <td class="col-md-5 text-muted pt-5"> {{product.BillingCycleName}} </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="clearfix margin-top-20"></div>
+                        <div class="col-md-12">
+                            
+                            <ng-template #salePrice let-row="adtData">
+                                <div class="d-flex justify-content-end">
+                                    <span *ngIf="row.BillingTypeName === 'Price'">{{row.SalePrice | CurrencyFilter :
+                                        product.CurrencySymbol : product.CurrencyDecimalPlaces :
+                                        product.CurrencyThousandSeparator :
+                                        product.CurrencyDecimalSeparator}}
+                                    </span>
+                                    <span *ngIf="row.BillingTypeName === 'Percentage'">{{row.SalePrice}}%</span>
+                                </div>
+                            </ng-template>
+                            <div class="fs-4 fw-bold text-gray-800">
+                                {{'TRANSLATE.PLANS_MANAGE_CONTRACT_DETAILS_POPUP_TABLE_HEADER_SLABDATA'|translate}}
+                            </div>
+                            @if(!!pricingSlabsDatatableConfig) {
+                            <app-c3-table [datatableConfig]="pricingSlabsDatatableConfig" [searchFilter]=false>
+                            </app-c3-table>
+                            }
+                            <span *ngIf="!pricingSlabsDatatableConfig"><i>{{'TRANSLATE.PLANS_MANAGE_CONTRACT_DETAILS_INFO_TEXT_NO_RECORDS_FOUND'
+                                    | translate}}</i></span>
+                            <div class="clearfix margin-top-20"></div>
+                            <hr>
+                            <div class="fs-4 fw-bold text-gray-800 mt-4">
+                                {{'TRANSLATE.PLANS_MANAGE_CONTRACT_DETAILS_TABLE_HEADER_AVAILABILITY' | translate}}
+                            </div>
+                            @if(!!slabProductsDatatableConfig) {
+                            <app-c3-table [datatableConfig]="slabProductsDatatableConfig" [searchFilter]=false>
+                            </app-c3-table>
+                            }
+                            <span *ngIf="!slabProductsDatatableConfig"><i>{{'TRANSLATE.PLANS_MANAGE_CONTRACT_DETAILS_INFO_TEXT_APPLICABILITY_ALL'
+                                    | translate}}</i></span>
+                        </div>
+                        <div class="clearfix margin-top-20 portlet-footer"></div>
+                        <div class="col-md-12 mt-4">
+                            <button [appPermission]="'BTN_DEACTIVATE_CUSTOMER_PRODUCT'"
+                                class="btn btn-danger btn-xs form-control" [disabled]="!readyToComplete"
+                                (click)="updateContractOfferStatus(product);" appBusyLoader><span
+                                    translate="TRANSLATE.PARTNER_MANAGED_CONTACT_BUTTON_TEXT_REMOVE_OFFER"></span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

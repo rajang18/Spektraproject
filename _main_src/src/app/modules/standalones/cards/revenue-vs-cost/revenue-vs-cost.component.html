@@ -1,0 +1,114 @@
+
+<div class="col card card-custom  d-flex " >
+    
+    <ng-container #content *ngIf="chartUtilities.isloadingstart">
+
+        <div class="loader-indicater btn btn-sm btn-light-primary">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    
+            <span> {{'TRANSLATE.MESSAGE_TEXT_PLEASE_WAIT' | translate}}</span>
+        </div>
+      </ng-container>
+    <div id="site_statistics">
+        <div class="card-header pt-5"  [ngClass]="chartUtilities.isloadingstart ? 'opacity-8' : ''">
+            <div class="dashboard-filter-wrapper d-flex justify-content-between w-100">
+                <div class="card-title align-items-start flex-column dashboard-tile-title">
+                    <span class="card-label fw-semibold" ><span class="d-flex w-auto gap-1"
+                            translate="TRANSLATE.PARTNER_DASHBOARD_REVENUE_VS_COST_TILE_HEADER"></span>
+                    </span>
+                </div>
+                <div class="card-toolbar-container d-flex  align-items-center gap-3" style="flex-wrap: wrap;">
+                    <div ngbDropdown class="d-flex align-items-center" placement="bottom-right">
+                        <button class="btn btn-icon btn-light-primary btn-active-primary btn-dropdown btn-sm"
+                            style="padding: 10px; width: auto;" id="dropdownBasic1" ngbDropdownToggle>
+                            {{'TRANSLATE.'+selectedBillingPeriod | translate}}
+                        </button>
+                        <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+                            class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base">
+                            @for(billingPeriod of billingPeriods; track $index)
+                            {
+                            <div class='menu-item my-0' ngbDropdownItem (click)="selectedBilling(billingPeriod)">
+                                <a class="menu-link px-3 py-2 d-flex align-items-center gap-3 text-wrap">
+                                    {{'TRANSLATE.'+billingPeriod | translate}}
+                                </a>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    <div ngbDropdown class="d-flex align-items-center" placement="bottom-right">
+                        <button class="btn btn-icon btn-light-primary btn-active-primary btn-dropdown btn-sm"
+                            style="padding: 10px; width: auto;" id="dropdownBasic1" ngbDropdownToggle>
+                            {{'TRANSLATE.'+selectedPartner | translate}}
+                        </button>
+                        <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+                            class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base">
+                            @for(partner of partners; track $index)
+                            {
+                            <div class='menu-item my-0' ngbDropdownItem (click)="setProvider(partner)">
+                                <a class="menu-link px-3 py-2 d-flex align-items-center gap-3 text-wrap">
+                                    {{'TRANSLATE.'+partner | translate}}
+                                </a>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    <div ngbDropdown #dropdown="ngbDropdown"class="d-flex align-items-center" placement="bottom-right">
+                        <button class="btn btn-sm btn-icon btn-color-primary btn-active-light-primary remove-caret d-flex flex-column"
+                        style="padding: 10px; width: auto;" id="dropdownToggle" ngbDropdownToggle>
+                            <app-keenicon name="category" class="fs-2" style="display: contents;"><span
+                                    class="fs-2 ki-category ki-duotone"><span class="path1"></span><span
+                                        class="path2"></span><span class="path3"></span><span
+                                        class="path4"></span><!----></span><!----><!----></app-keenicon> </button>
+                        <div ngbDropdownMenu aria-labelledby="dropdownToggle"
+                            class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base">
+                            <div class='menu-item my-0' ngbDropdownItem>
+                                <div class="apexcharts-menu-item" (click)="generatePNG(dropdown)">
+                                    <span translate="TRANSLATE.DASHBOARD_CARD_ACTIONS_OPTION_TEXT_DOWNLOAD_PNG"></span>  
+                                </div>
+                            </div>
+                            <div class='menu-item my-0' ngbDropdownItem>
+                                <div class="apexcharts-menu-item" (click)="generateSVG(dropdown)"><span
+                                        translate="TRANSLATE.DASHBOARD_CARD_ACTIONS_OPTION_TEXT_DOWNLOAD_SVG"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="card-body p-0 cursor-pointer" style="height:auto" (click)="navigateToRevenue()">
+            @if(!!isLoading){
+            <app-loader></app-loader>
+            }
+            @else if (!!revenueVsCostData && revenueVsCostData.Data && revenueVsCostData.Data.length>0){
+            <div class="chart min-h-auto w-100 ps-4 pe-6" >
+                <!-- <apx-chart [series]="chartOptions?.series" [chart]="chartOptions?.chart" [xaxis]="chartOptions?.xaxis"
+                    [tooltip]="chartOptions?.tooltip" [yaxis]="chartOptions?.yaxis" [stroke]="chartOptions?.stroke"
+                    [dataLabels]="chartOptions?.dataLabels" [grid]="chartOptions?.grid"
+                    [plotOptions]="chartOptions?.plotOptions">
+                </apx-chart> -->
+                <apx-chart
+                    [series]="chartOptions?.series"
+                    [chart]="chartOptions?.chart"
+                    [dataLabels]="chartOptions?.dataLabels"
+                    [plotOptions]="chartOptions?.plotOptions"
+                    [yaxis]="chartOptions?.yaxis"
+                    [stroke]="chartOptions?.stroke"
+                    [tooltip]="chartOptions?.tooltip"
+                    [xaxis]="chartOptions?.xaxis"
+                    [grid]="chartOptions?.grid"
+                ></apx-chart>
+            </div>
+            }
+            @else if(!revenueVsCostData && !isLoading){
+            <div class="d-flex align-items-center justify-content-center" style="height: 100%;">
+                <div class="row">
+                    <div class="col-md-12">
+                        <app-common-no-record></app-common-no-record>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>

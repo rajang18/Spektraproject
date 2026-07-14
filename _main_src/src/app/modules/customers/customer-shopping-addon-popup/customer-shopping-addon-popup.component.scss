@@ -1,0 +1,16 @@
+img.custom-height{
+    max-width: 75px;
+    max-height: 75px;
+}
+
+/* For Chrome, Edge, and Safari */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* For Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+}

@@ -1,0 +1,319 @@
+<div class="modal-dialog m-0">
+    <div class="modal-content">
+        <div class="modal-body">
+            <div class="row mb-10 mt-5">
+                <div class="col-1">
+                    <!--begin::Image-->
+                    <div class="d-flex align-items-center">
+                        <img class="custom-height" *ngIf="product.ImageUrl" [src]="product.ImageUrl"/>
+                        <div class="margin-top-20" *ngIf="!product.ImageUrl">
+                            <i class="ki-outline ki-gift" style="font-size: 75px;"></i>
+                        </div>
+                    </div>
+                    <!--end::Image-->
+                </div>
+                <div class="col-10 ms-7">
+                    <h3 class="font-weight-bolder  mb-2 font-size-h3">
+                        <span style="margin-right: 10px">
+                            {{ product.Name }}
+                            <small>
+                                <sup *ngIf="product.ProductForTrial" class="text-warning font-weight-bold">
+                                    <span translate="TRANSLATE.PLAN_MANAGE_TRAIL_OFFER_SYMBOL_TRAIL_OFFER"></span>
+                                </sup>
+                            </small>
+                            <span class="font-size-h5">
+                                <span *ngIf="product.ProviderSettings?.EnforceAttestation === 'TRUE'" ngbTooltip="{{ 'TRANSLATE.MICROSOFT_ATTESTATION_TYPE_TOOLTIP' | translate }} {{ 'TRANSLATE.'+product.ProviderSettings.AttestationType | translate }}" class="font-weight-normal separator-primary text-primary cursor-pointer">
+                                    <i class="ki-outline ki-verify text-primary"></i>
+                                </span>
+                            </span>
+                        </span>
+                        <a *ngIf="product.BillingTypeName === 'MeteredBilling'" (click)="priceDetails(product)" ngbTooltip="{{ 'TRANSLATE.LABLE_TEXT_SLAB' | translate }}" style="position: relative">
+                            <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                        </a>
+                    </h3>
+                    <div *ngIf="product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE && product.ConsumptionType.toLowerCase() !== cloudHubConstants.CONSUMPTION_CONTRACT" class="d-flex d-inline-flex">
+                        <div class="font-size-h4 text-dark-50">
+                            <span class="text-info font-weight-bold fs-5">
+                                {{ product.DisplayFinalSalePrice | currency: product.CurrencySymbol : 'symbol' : '1.2-2' }}
+                            </span>
+                        </div>
+                        &nbsp;
+                        <div *ngIf="product.Discount != null && product.Discount > 0" class="font-size-h4 text-dark-50 ms-2">
+                            <span class="font-weight-bold text-danger">
+                                <del>{{ product.DisplayOriginlaSalePrice | currency: product.CurrencySymbol : 'symbol' : '1.2-2' }}</del>&nbsp;
+                                <span *ngIf="product.DiscountType === 'Percentage'">{{ product.Discount }} {{'TRANSLATE.DISCOUNT_OFF_PERCENT_SYMBOL' | translate}}</span>
+                                <span *ngIf="product.DiscountType !== 'Percentage'">{{ product.Discount | currency: product.CurrencySymbol : 'symbol' : '1.2-2' }} <span translate="TRANSLATE.LBL_DISCOUNT_TEXT"></span></span>
+                            </span>
+                        </div>
+                        <span *ngIf="product.IsPromotionAvailableForCustomer && product.ShowPromotionLink" (click)="showPromotionDetail(product)" class="mt-1 ml-2 font-weight-normal separator-primary text-primary cursor-pointer">
+                            &nbsp;<i class="ki-outline ki-discount text-primary fs-4"></i>
+                        </span>
+                    </div>
+                    <div class="mt-4 d-flex align-items-center">
+                        <div class="input-group" style="width: 25%;">
+                            <button class="btn btn-sm btn-light-primary" (click)="updateQuantity(false)" [tabIndex]="-1"
+                                [ngClass]="{'disabled': product.ProductForTrial != null && product.ProductForTrial != undefined && product.ProductForTrial != '' || product.ConsumptionType.toLowerCase() === cloudHubConstants.CONSUMPTION_USAGE_BASED || product.ConsumptionType.toLowerCase() === cloudHubConstants.CONSUMPTION_CONTRACT}">
+                                <i class="ki-duotone ki-minus"></i>
+                            </button>
+                            <input class="form-control form-control-sm text-center" min="1" oninput="this.value = Math.abs(this.value)" type="number"
+                                pattern="\d*" [(ngModel)]="product.Quantity"
+                                ngbTooltip="{{'TRANSLATE.TOOLTIP_TEXT_QUANTITY' | translate}}: {{product.Quantity}}"
+                                (blur)="onBlur();checkLength($event)"
+                                [tabIndex]="-1"
+                                [disabled]="product.ProductForTrial != null && product.ProductForTrial != undefined && product.ProductForTrial != '' || product.ConsumptionType.toLowerCase() === cloudHubConstants.CONSUMPTION_USAGE_BASED || product.ConsumptionType.toLowerCase() === cloudHubConstants.CONSUMPTION_CONTRACT" />
+                            <button class="btn btn-sm btn-light-primary" (click)="updateQuantity(true)" [tabIndex]="-1"
+                                [ngClass]="{'disabled': product.ProductForTrial != null && product.ProductForTrial != undefined && product.ProductForTrial != '' || product.ConsumptionType.toLowerCase() === cloudHubConstants.CONSUMPTION_USAGE_BASED || product.ConsumptionType.toLowerCase() === cloudHubConstants.CONSUMPTION_CONTRACT}">
+                                <i class="ki-duotone ki-plus"></i>
+                            </button>
+                        </div>
+                        <!-- *ngIf="!(product.ProductForTrial || product.ConsumptionType.toLowerCase() === cloudHubConstants.CONSUMPTION_USAGE_BASED || product.ConsumptionType.toLowerCase() === cloudHubConstants.CONSUMPTION_CONTRACT)" -->
+                        <!-- <fieldset class="float-left">
+                            <input [disabled]="product.ProductForTrial != null && product.ProductForTrial != undefined && product.ProductForTrial != '' || product.ConsumptionType.toLowerCase() === cloudHubConstants.CONSUMPTION_USAGE_BASED || product.ConsumptionType.toLowerCase() === cloudHubConstants.CONSUMPTION_CONTRACT"
+                            type="number" [(ngModel)]="product.Quantity" min="1" ngbTooltip="{{ 'TRANSLATE.TOOLTIP_TEXT_QUANTITY' | translate }}: {{ product.Quantity }}" />
+                        </fieldset> -->
+                    </div>
+                </div>
+            </div>
+        
+            <div class="row" *ngIf="product.ConsumptionType.toLowerCase() !== cloudHubConstants.CONSUMPTION_USAGE_BASED && HasSaveCart === 'Allowed'">
+                <div class="col-xxl-5 mb-11 mb-xxl-0">
+                    <!-- Empty Column -->
+                </div>
+            </div>
+        
+            <div class="font-size-md mb-4 width-text-wrapper" [innerHTML]="product.Description"></div>
+            <div class="separator separator-solid separator-border-2 mb-4"></div>
+        
+            <div class="d-flex mb-3">
+                <span class="text-dark-50 flex-root fw-bold">{{ 'TRANSLATE.CUSTOMER_SHOP_ADDON_POPUP_LABEL_TEXT_BILLING_CYCLE' | translate }}</span>
+                <span class="flex-root text-gray-800">{{ 'TRANSLATE.'+product.BillingCycleDescription | translate }}</span>
+            </div>
+            <div class="d-flex mb-3" *ngIf="product.ProviderSettings?.ProviderCategory">
+                <span class="text-dark-50 flex-root fw-bold">{{ 'TRANSLATE.C3_SHOP_POPUP_PROVIDER_CATEGORY' | translate }}</span>
+                <span class="flex-root text-gray-800">{{ product.ProviderSettings.ProviderCategory | translate }}</span>
+            </div>
+            <div class="d-flex mb-3" *ngIf="product.CategoryName.toLowerCase() === cloudHubConstants.CATEGORY_PERPETUAL_SOFTWARE">
+                <span class="text-dark-50 flex-root fw-bold">{{ 'TRANSLATE.CUSTOMER_SHOP_ADDON_POPUP_LABEL_TEXT_CATEGORY' | translate }}</span>
+                <span class="flex-root text-gray-800">{{ 'TRANSLATE.CATEGORY_DESCRIPTION_PERPETUAL_SOFTWARE' | translate }}</span>
+            </div>
+        
+            <div *ngIf="product.Addons && product.Addons.length && product.CategoryName !== 'AzurePlan'" class="d-flex mb-3">
+                <span class="font-weight-bold font-size-h6 text-left" translate="TRANSLATE.LABEL_TEXT_ADDONS"></span>
+            </div>
+        
+            <div class="card border-2 card-stretch gutter-b" *ngIf="product.Addons && product.Addons.length && product.CategoryName !== 'AzurePlan'">
+                <div class="card-body pt-4 pl-4 pr-4 pb-4">
+                    <div class="row mb-10">
+                        <div class="col-xxl-7 mb-11 mb-xxl-0">
+                            <label class="checkbox checkbox-outline checkbox-outline-2x control-label">
+                                <input type="checkbox" [disabled]="HasSaveCart !== 'Allowed'" [(ngModel)]="selectAllAddons" (change)="setIsCheckedForAddons()" />
+                                <span></span>
+                                <pre class="mb-0" style="font-family:'Poppins';font-size:13px">{{ 'CUSTOMER_SHOP_ADDON_POPUP_CHECKBOX_TEXT_SELECT_ALL_ADDONS' | translate }}</pre>
+                            </label>
+                        </div>
+                    </div>
+                    <!-- <perfect-scrollbar class="scroller" wheel-propagation="true" swipe-propagation="true" style="height:150px"> -->
+                    <div>
+                        <div *ngFor="let addon of product.Addons">
+                            <div class="row mb-5">
+                                <div class="col-xxl-6 mb-11 mb-xxl-0">
+                                    <label class="checkbox checkbox-outline checkbox-outline-2x control-label">
+                                        <input type="checkbox" [disabled]="HasSaveCart !== 'Allowed'" [(ngModel)]="addon.IsChecked" (change)="toggleSelectAllAddons(addon)" />
+                                        <span></span>{{ addon.Name }}
+                                    </label>
+                                </div>
+                                <div class="col-xxl-3 mb-11 mb-xxl-2">
+                                    <div class="input-group input-group-sm mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="ki-outline ki-handcart"></i>
+                                            </span>
+                                        </div>
+                                        <input class="form-control" type="number" [(ngModel)]="addon.Quantity" min="1" maxlength="4" ngbTooltip="{{ 'TOOLTIP_TEXT_QUANTITY' | translate }}: {{ addon.Quantity }}" />
+                                    </div>
+                                </div>
+                                <div class="col-xxl-3 pl-xxl-11">
+                                    <div  *ngIf="addon.DisplayFinalSalePrice && addon.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE">
+                                        <h6 style="margin-top:5px;">
+                                            <strong class="font-black">
+                                                {{ addon.DisplayFinalSalePrice | currency: addon.CurrencySymbol : 'symbol' : '1.2-2' }}
+                                            </strong>
+                                        </h6>
+                                        <h5>
+                                            <span *ngIf="addon.Discount != null && addon.Discount > 0">
+                                                <del class="text-danger">
+                                                    {{ addon.DisplayOriginlaSalePrice | currency: addon.CurrencySymbol : 'symbol' : '1.2-2' }}
+                                                </del>
+                                                <span *ngIf="addon.DiscountType === 'Percentage'">{{ addon.Discount }}% {{'TRANSLATE.off' | translate}}</span>
+                                                <span *ngIf="addon.DiscountType !== 'Percentage'">{{ addon.Discount | currency: addon.CurrencySymbol : 'symbol' : '1.2-2' }} <span translate="TRANSLATE.LBL_DISCOUNT_TEXT"></span></span>
+                                            </span>
+                                        </h5>
+                                    </div>
+                                      
+                                    <div *ngIf="addon.DisplayFinalSalePrice && addon.BillingTypeName.toLowerCase() !== cloudHubConstants.BILLING_TYPE_PRICE">
+                                        <h6 style="margin-top:5px;">
+                                            <strong class="font-black">
+                                                {{ addon.DisplayFinalSalePrice | currency: addon.CurrencySymbol : 'symbol' : '1.2-2' }}
+                                            </strong>
+                                        </h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="separator separator-dashed"></div>
+                        </div>
+                        <!-- </perfect-scrollbar> -->
+                    </div>
+                </div>
+            </div>
+        
+            <div *ngIf="product.CategoryName === 'AzurePlan'" class="mb-3">
+                <label class="checkbox checkbox-outline checkbox-outline-2x control-label">
+                    <input type="checkbox" [disabled]="HasSaveCart !== 'Allowed'" [(ngModel)]="product.IsChecked" />
+                    <span></span>
+                    {{ 'TRANSLATE.LABEL_TEXT_ADDONS' | translate }}
+                </label>
+            </div>
+
+            @if (product.LinkedSubscriptionName) {
+            <div ngbAccordion>
+                <div ngbAccordionItem [collapsed]="true">
+                    <div ngbAccordionHeader>
+                        <button ngbAccordionButton class="accordion-icon-collapse">
+                            <div class="fw-bold fs-6">
+                                <span>
+                                    <i class="ki-duotone ki-paper-clip text-warning small"></i>
+                                    <span
+                                        translate="TRANSLATE.CUSTOMER_SHOP_ADDON_POPUP_LABEL_TEXT_LINKED_SUBSCRIPTION_NAME"></span>
+                                </span>
+                            </div>
+                        </button>
+                    </div>
+                    <div ngbAccordionCollapse>
+                        <div class="card-body p-0">
+                            <div class="card-body px-12 py-3 pb-0">
+                                <div class="row mb-10 mt-5">
+                                    <div class="col-2 mb-11 mb-xxl-0">
+                                        @if (product.ImageUrl) {
+                                        <img [src]="product.ImageUrl" class="custom-height">
+                                        }
+                                        @if(!product.ImageUrl) {
+                                        <div class="margin-top-20">
+                                            <i class="ki-outline ki-gift" style="font-size: 75px;"></i>
+                                        </div>
+                                        }
+                                    </div>
+                                    <div class="col-xxl-7 pl-xxl-11 mt-3">
+                                        <h3 class="font-weight-bolder text-dark mb-2 font-size-h3">
+                                            <span>
+                                                {{product.LinkedProduct.Name}}
+                                                <span class="font-size-h5">
+                                                    @if (product.LinkedProduct.ProviderSettings &&
+                                                    product.LinkedProduct.ProviderSettings.EnforceAttestation == 'TRUE') {
+                                                    <span
+                                                        ngbTooltip="{{'TRANSLATE.MICROSOFT_ATTESTATION_TYPE_TOOLTIP' | translate}}{{product.LinkedProduct.ProviderSettings.AttestationType | translate}}"
+                                                        class="font-weight-normal  separator-primary text-primary cursor-pointer">
+                                                        <span><i class="ki-outline ki-verify text-primary fs-3"></i></span>
+                                                    </span>
+                                                    }
+                                                </span>
+                                            </span>
+                                        </h3>
+                                        
+                                        @if(product.LinkedProduct.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE) {
+                                        <div class="d-flex d-inline-flex">
+                                            <div class="font-size-h4 text-dark-50">
+                                                <span class="text-info font-weight-bold fs-5">
+                                                    {{ product.LinkedProduct.DisplayFinalSalePrice | currency :
+                                                    product.LinkedProduct.CurrencySymbol : 'symbol' : '1.2-2'}}
+                                                </span>
+                                            </div>
+                                            &nbsp;
+                                            @if (product.LinkedProduct.IsPromotionAvailableForCustomer &&
+                                            product.LinkedProduct.ShowPromotionLink) {
+                                            <span (click)="showLinkedProductPromotionDetail(product.LinkedProduct)"
+                                                class="mb-0 ml-2 font-weight-normal separator-primary text-primary cursor-pointer">
+                                                <span ngbTooltip="{{'TRANSLATE.NCE_PROMOTIONS_AVAILABLE_TEXT' | translate}}">
+                                                    <i class="ki-outline ki-discount text-primary fs-4"></i>
+                                                </span>
+                                            </span>
+                                            }
+            
+                                            &nbsp;
+                                            @if (product.LinkedProduct.Discount != null && product.LinkedProduct.Discount > 0) {
+                                            <div class="font-size-h4 text-dark-50 ms-2">
+                                                <span class="font-weight-bold text-danger">
+                                                    @if(product.LinkedProduct.Discount != null && product.LinkedProduct.Discount > 0) {
+                                                    <del class="">{{product.LinkedProduct.DisplayOriginlaSalePrice | currency :
+                                                        product.LinkedProduct.CurrencySymbol : 'symbol' : '1.2-2'}}
+                                                    </del>
+                                                    }
+                                                    @if (product.LinkedProduct.DiscountType == "Percentage" && product.LinkedProduct.Discount > 0 ) {
+                                                    <span>{{ product.LinkedProduct.Discount}}%
+                                                        {{'TRANSLATE.off' | translate}}
+                                                    </span>
+                                                    }
+            
+                                                    @if (product.LinkedProduct.DiscountType != "Percentage" && product.LinkedProduct.Discount > 0 ) {
+                                                    <span>{{ product.LinkedProduct.Discount | currency :
+                                                        product.LinkedProduct.CurrencySymbol : 'symbol' : '1.2-2'}}
+                                                    </span>
+                                                    }
+                                                </span>
+                                            </div>
+                                            }
+                                        </div>
+                                        }
+                                        <!--<div class="mt-4">
+                                            <div href="javascript:;" class="float-left" counter value="product.Quantity" min="1" ng-model="product.Quantity" uib-tooltip="{{'TOOLTIP_TEXT_QUANTITY' | translate}}: {{product.Quantity}}" tooltip-placement="bottom"></div>
+                                        </div>-->
+                                    </div>
+                                </div>
+
+                                @if (product.LinkedProduct.ConsumptionType.toLowerCase() !== cloudHubConstants.CONSUMPTION_USAGE_BASED && HasSaveCart === 'Allowed') {
+                                <div class="row">
+                                    <div class="col-xxl-5 mb-11 mb-xxl-0">
+                                        <!--<center href="javascript:;" class="" counter value="cc.product.Quantity" min="1" ng-model="cc.product.Quantity" uib-tooltip="{{'TOOLTIP_TEXT_QUANTITY' | translate}}: {{cc.product.Quantity}}" tooltip-placement="bottom"></center>-->
+                                    </div>
+                                </div>
+                                }
+                                
+                                <div class="font-size-md mb-4 width-text-wrapper" [innerHTML]="product.LinkedProduct.Description"></div>
+                                
+                                <div class="separator separator-solid separator-border-2 mb-4"></div>
+                                
+                                @if (previewData != null) {
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="blog-card">
+                                            <div class="meta">
+                                                <img [src]="previewData.ImageUrl" class="preview-link-image" />
+                                            </div>
+                                            <div class="description">
+                                                <h1 [innerHTML]="previewData.Title"></h1>
+                                
+                                                <p [innerHTML]="previewData.Description"> </p>
+                                                <p class="read-more">
+                                                    <a href="{{previewData.requestUrl}}" target="_blank">Read More</a>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+        <div class="modal-footer me-4">
+        <button class="btn btn-sm btn-light btn-active-light-primary" (click)="closeModalPopup()" [tabindex]="-1">{{'TRANSLATE.BUTTON_CLOSE' | translate}}</button>
+        <button class="btn btn-primary btn-sm" [appPermission]="'SAVE_TO_CART'" (click)="addtoCart(product)" [tabindex]="-1">{{'TRANSLATE.CUSTOMER_SHOP_ADDON_POPUP_BUTTON_TEXT_ADD_TO_CART' | translate}}</button>
+        </div>
+    </div>
+</div>

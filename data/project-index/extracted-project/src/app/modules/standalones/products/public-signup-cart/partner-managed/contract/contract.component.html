@@ -1,0 +1,82 @@
+@if(!!product&& !!permissions){
+    <div class="card product-description-card m-auto ">
+        <div class="card-header shop-item-title flex-nowrap">
+            <div class="card-title">
+                <div *ngIf="product.ImageUrl" class="symbol">
+                    <div class="symbol symbol-label   me-2">
+                        <img class="symbol-label" [src]="product.ImageUrl"/>
+                    </div>  
+                </div>
+                <div *ngIf="!product.ImageUrl" class="d-block symbol mr-5 pt-1 me-4">
+                    <span class="symbol-label fs-1 text-dark">
+                        {{product.Name | formatforinitials}}
+                    </span>
+                </div>
+                <div>
+                    <div class="text">
+                        <a href="javascript:void(0)" class="text-hover-primary text-dark"><span [innerHtml]="product.Name"
+                                ngbTooltip="{{product.Name}}"
+                                tooltip-placement="bottom"></span></a><!--<span class="card-title text-hover-primary font-weight-bolder font-size-h5 text-dark mb-1" ng-show="product.Name !=null && product.Name.length > 50">...</span>-->
+    
+                    </div>
+                    <div class="chips">
+                        @if(product.ProviderSettings != null && product.ProviderSettings.ProviderCategory != undefined){
+                        <span class="label label-dark font-weight-bold label-inline text-primary badge bg-light-primary"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_SERVICE_TYPE' | translate}}"
+                            *ngIf="product.ProviderSettings.ProviderCategory"
+                            [translate]="product.ProviderSettings.ProviderCategory">
+                        </span>
+                        }
+                        @if(product.ValidityType!=null && product.ValidityType == 'Month(s)'){
+                        <span class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-1"
+                         ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                            {{product.Validity}} {{(product.Validity == 1 ? (product.ValidityType === 'Month(s)'?
+                            'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                            ('TRANSLATE.TERM_DURATION_DESC_YEAR(S)')) | translate }} </span>
+                        }
+                        @if(product.BillingCycleName && product.BillingCycleName){
+                        <span class="label fw-bold label-inline text-white badge ms-md-2" [ngClass]="{
+                            'bg-warning': product.BillingCycleName?.toLowerCase() === 'monthly',
+                            'bg-success': product.BillingCycleName?.toLowerCase() === 'annual',
+                            'bg-dark': product.BillingCycleName?.toLowerCase() === 'triennial',
+                            'bg-info': product.BillingCycleName?.toLowerCase() === 'onetime'
+                            }"
+                            ngbTooltip="{{'TRANSLATE.CUSTOM_OFFER_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}"> 
+                            {{product.BillingCycleName}}
+                        </span>
+                        }
+                        @if(product.ValidityType === 'Year(s)' || product.ValidityType === 'Year'){
+                            <span class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-1"
+                             ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}"
+                                [ngClass]="{'labelcolor':product.BillingCycleName == 'Monthly','TermLabelColor': product.BillingCycleName == 'Annual'}">{{product.Validity}}
+                                {{(product.Validity == 1? (product.ValidityType === 'Month(s)'?
+                                'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                'TRANSLATE.TERM_DURATION_DESC_YEARS') | translate }} </span>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="card-toolbar">
+                <div>
+                    <button class="btn btn-sm btn-active-light-danger"
+                        ngbTooltip="{{'TRANSLATE.DELETE_PRODUCT_BUTTON_TOOLTIP_TEXT' | translate}}"
+                        tooltip-placement="bottom" *ngIf="permissions.HasDeleteCartItem === 'Allowed'"
+                        (click)="callDeleteProductFromCart(product)">
+                        <span class="svg-icon m-0 profile-info">
+                            <i class="ki-outline ki-trash fs-3">
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <hr class="divider m-0">
+        <div>
+            
+        </div>
+        
+         
+    </div>
+    }

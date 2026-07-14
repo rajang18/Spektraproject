@@ -1,0 +1,43 @@
+::ng-deep{
+  app-payment-transaction-details{
+    .my_table.w-53{
+      width: 53%;
+    }
+    .payment-transacttion-details-wrapper{
+      .label.label-inline {
+          width: auto;
+          padding: 0.15rem 0.75rem;
+          border-radius: 0.42rem;
+      }
+      .label.label-success {
+          color: #ffffff;
+          background-color: #1BC5BD;
+      }
+      .label.label-danger {
+          color: #ffffff;
+          background-color: #F64E60;
+      }
+      .label.label-info {
+          color: #ffffff;
+          background-color: #F64E60;
+      }
+      table {
+          border-collapse: collapse;
+        }
+
+        th{
+          background-color: var(--bs-app-bg-color);
+        }
+        
+        th, td {
+          border: 1px solid #ECF0F3;
+          padding: 8px;
+          // padding-left: 36px !important;
+        }
+        
+        tr:nth-child(even) {
+          background: #fafbfc;
+        }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+::ng-deep {
+    app-cost-summary-report {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}

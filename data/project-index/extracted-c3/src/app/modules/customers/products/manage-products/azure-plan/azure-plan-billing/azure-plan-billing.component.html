@@ -1,0 +1,115 @@
+ 
+         <div class="card card-custom">
+             <div class="card-body">
+                 <div class="form">
+                     <div class="form-group row">
+                         <div class="col-md-9 control-label">
+                             <h5 class="bold text-uppercase">
+                                <span translate="TRANSLATE.USAGE_SUBSCRIPTION_CUSTOMER_USAGE_DETAILS_CAPTION_TEXT_BILLING_DETAILS_OF" ></span> <span class="font-blue">{{currentSubscriptionName}}</span></h5>
+                         </div>
+                         <div class="col-md-3 control-label text-end pe-4 pb-2">
+                             <a class="btn btn-light-primary btn-sm  mr-2" [appPermission]="'DOWNLOAD_AZURE_BILLING_REPORT'"  (click)="exportBillingDetails()">
+                                 <i class="fas fa-download"></i>{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_BUTTON_TEXT_EXPORT_BILLING_DETAILS' | translate}}
+                             </a>
+                         </div>
+                     </div>
+                     <div class="form-group row">
+                         <div class="col-md-9">
+                             <b><span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_HEADER_TEXT_BILLING_PERIOD"></span> </b> 
+                         </div> 
+                         <div class="col-md-3 control-label text-end pe-4 pb-1">
+                            <select  class="form-select form-select-sm" [(ngModel)]="billingPeriodId" (change)="reloadAzureUsageItems()">
+                                @for (option of billingPeriods; track $index) { 
+                                    <option value="{{option.BillingPeriodId}}" >
+                                        {{option.BillingStartDate | c3Date}}-{{option.BillingEndDate | c3Date}}
+                                    </option>
+                                }
+                            </select>
+                         </div>
+                     </div>
+                     <div class="form-group row">
+                         <table class="table table-condensed table-bordered table-striped ">
+                             <tbody>
+                                 <tr>
+                                     <td class="col-md-10">
+                                         <b><span translate="TRANSLATE.AZURE_REPORTS_TABLE_TD_TEXT_TOTAL_COST"></span></b>
+                                     </td>
+                                     <td class="col-md-2 text-end pt-2 pe-4">
+                                        <b *ngIf="currentCurrency">
+                                            {{totalCost | CurrencyFilter : currentCurrency.CurrencySymbol : currentCurrency.CurrencyDecimalPlaces : currentCurrency.CurrencyThousandSeperator : currentCurrency.CurrencyDecimalSeperator}}
+                                        </b>  
+                                     </td>
+                                 </tr>
+                             </tbody>
+                         </table>
+                          <!-- <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                  <th aria-label="'Resource Type' | translate" class="col-md-8">
+                                    {{ 'TRANSLATE.USAGE_SUBSCRIPTION_CUSTOMER_USAGE_DETAILS_TABLE_HEADER_RESOURCE_TYPE' | translate }}
+                                  </th>
+                                  <th aria-label="'Consumed Units' | translate" class="col-md-2">
+                                    {{ 'TRANSLATE.USAGE_SUBSCRIPTION_CUSTOMER_USAGE_DETAILS_TABLE_HEADER_CONSUMED_UNITS' | translate }}
+                                  </th>
+                                  @if (!IsFixedPrice) {
+                                    <th aria-label="'Consumed Spend' | translate" class="col-md-2 text-end">
+                                      {{ 'TRANSLATE.USAGE_SUBSCRIPTION_CUSTOMER_USAGE_DETAILS_TABLE_HEADER_CONSUMED_SPEND' | translate }}
+                                    </th>
+                                  }
+                                </tr>
+                              </thead>
+                             <tbody>
+                                @for (item of azureItems; track $index) {
+                                 <tr>
+                                     <td data-title="'USAGE_SUBSCRIPTION_CUSTOMER_USAGE_DETAILS_TABLE_HEADER_RESOURCE_TYPE' | translate" sortable="'Category'" class="col-md-8" header-class="'col-md-8'">
+                                         {{item.Category}} {{item.SubCategory}} {{item.ResourceName}}
+                                     </td>
+                                     <td data-title="'USAGE_SUBSCRIPTION_CUSTOMER_USAGE_DETAILS_TABLE_HEADER_CONSUMED_UNITS' | translate" class="col-md-2" header-class="'col-md-2'">
+                                         <strong>{{item.AmountUsed}}</strong> {{item.Unit}}
+                                     </td>
+                                     @if(!IsFixedPrice){
+                                     <td data-title="'USAGE_SUBSCRIPTION_CUSTOMER_USAGE_DETAILS_TABLE_HEADER_CONSUMED_SPEND' | translate" class="col-md-2 text-end" header-class="'col-md-2 text-right'" sortable="'TotalCost'"> 
+                                       {{item.TotalCost | CurrencyFilter : currentCurrency?.CurrencySymbol : currentCurrency?.CurrencyDecimalPlaces : currentCurrency?.CurrencyThousandSeperator : currentCurrency?.CurrencyDecimalSeperator}} 
+                                     </td>
+                                    }
+                                 </tr>
+                                }
+                                @if(azureItems.length === 0 && isGridDataLoading === false){
+                                 <tr >
+                                     <td colspan="5"><span translate="TRANSLATE.MESSAGE_NO_RECORDS_FOUND_USAGE"></span></td>
+                                 </tr>
+                                } 
+                             </tbody>
+                         </table>  -->
+                     </div> 
+                 </div>
+
+
+                  <ng-template #ResourceType let-data="adtData" let-emitter="captureEvents">
+                    <div>
+                      <span class="fw-semibold">{{data.Category}} {{data.SubCategory}} {{data.ResourceName}}</span>
+                    </div>
+                  </ng-template>
+
+                  <ng-template #Consumedunits let-data="adtData" let-emitter="captureEvents">
+                    <div>
+                        <span><strong>{{data.AmountUsed}}</strong> {{data.Unit}}</span>
+                    </div>
+                  </ng-template>
+            
+                  @if(!IsFixedPrice){
+                    <ng-template #Spend let-data="adtData" let-emitter="captureEvents">
+                        <div>
+                          <span>{{data.TotalCost | CurrencyFilter : currentCurrency?.CurrencySymbol : currentCurrency?.CurrencyDecimalPlaces : currentCurrency?.CurrencyThousandSeperator : currentCurrency?.CurrencyDecimalSeperator}} </span>
+                        </div>
+                    </ng-template>
+                  }
+
+                 @if (!!datatableConfig) {
+                    <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+                    </app-c3-table>
+                    }
+             </div>
+         </div>
+ 
+ 

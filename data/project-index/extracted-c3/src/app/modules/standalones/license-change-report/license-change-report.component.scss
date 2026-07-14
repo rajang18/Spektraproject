@@ -1,0 +1,26 @@
+.custom {
+    border: 1px solid var(--bs-gray-300) !important;
+    border-top-left-radius: 7%;
+    background-color: var(--bs-body-bg);
+ 
+}
+
+input.custPlacehoder::placeholder {
+    // color: rgb(0, 0, 0);
+    color: auto;
+    /* Change this to your desired color */
+    opacity: 0.8;
+    /* This ensures the color is fully applied */
+}
+
+::ng-deep {
+    app-license-change-report {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}
+
+.custom-width {
+    width: 140px;
+}

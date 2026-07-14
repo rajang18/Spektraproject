@@ -1,0 +1,490 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <a class="btn btn-sm btn-lg btn-md btn-xs fw-semibold btn-light-primary text-nowrap"
+            (click)="downloadProductCatalogueReport()">
+            <i class="ki-outline ki-exit-down fs-2"
+                ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_DOWNLOAD_CATALOGUE' | translate}}"></i>
+        </a>
+        <a class="btn btn-sm btn-lg btn-md btn-xs fw-semibold btn-light-primary text-nowrap"
+            [routerLink]="['/partner/plans']">
+            <i class="ki-outline ki-to-left fs-2"></i> <span
+                translate="TRANSLATE.PLAN_MANAGE_ADD_BUTTON_TEXT_BACK_TO_PLAN"></span>
+        </a>
+    </div>
+</ng-template>
+
+@if(isFirstload){
+<div class="row">
+    <div class="col-md-2">
+        <div class="card p-2 mb-3" aria-hidden="true">
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-md-12"></span>
+                    <span class="placeholder col-md-12"></span>
+                    <span class="placeholder col-md-12"></span>
+                </p>
+            </div>
+        </div>
+        <div class="card p-2 mb-3" aria-hidden="true">
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-md-12"></span>
+                    <span class="placeholder col-md-12"></span>
+                    <span class="placeholder col-md-12"></span>
+                </p>
+            </div>
+        </div>
+        <div class="card p-2 mb-3" aria-hidden="true">
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-md-12"></span>
+                    <span class="placeholder col-md-12"></span>
+                    <span class="placeholder col-md-12"></span>
+                </p>
+            </div>
+        </div>
+        <div class="card p-2 mb-3" aria-hidden="true">
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-md-12"></span>
+                    <span class="placeholder col-md-12"></span>
+                    <span class="placeholder col-md-12"></span>
+                </p>
+            </div>
+        </div>
+    </div>
+    <!-- Product list section -->
+    <div class="col-md-10">
+        <div class="card p-2 mb-3" aria-hidden="true">
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-md-6"></span>
+                    <span class="placeholder col-md-4"></span>
+                    <span class="placeholder col-md-2"></span>
+                </p>
+            </div>
+        </div>
+        <div class="card p-2 mb-3" aria-hidden="true">
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-md-6"></span>
+                    <span class="placeholder col-md-4"></span>
+                    <span class="placeholder col-md-2"></span>
+                </p>
+            </div>
+        </div>
+        <div class="card p-2 mb-3" aria-hidden="true">
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-md-6"></span>
+                    <span class="placeholder col-md-4"></span>
+                    <span class="placeholder col-md-2"></span>
+                </p>
+            </div>
+        </div>
+        <div class="card p-2 mb-3" aria-hidden="true">
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-md-6"></span>
+                    <span class="placeholder col-md-4"></span>
+                    <span class="placeholder col-md-2"></span>
+                </p>
+            </div>
+        </div>
+        <div class="card p-2 mb-3" aria-hidden="true">
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-md-6"></span>
+                    <span class="placeholder col-md-4"></span>
+                    <span class="placeholder col-md-2"></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+}
+@else {
+<div class="row">
+    <div class="col-md-2">
+        <div class="card">
+            <div class="card-body filters-card">
+                <!--Start:: Filter-->
+                @if(providers.length > 0){
+                <div class="providers">
+                    <label class="mb-4 text-gray-900  fs-3 fw-bold filter-title text-uppercase"><span
+                            class="text-uppercase">{{("TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_PROVIDERS" |
+                            translate | uppercase)}}</span></label>
+                    <div class="form-group row">
+                        <div class="checkbox-list">
+                            @for(provider of providers; track $index){
+                            <div class="input-group-with-checkbox">
+                                <label class="form-check form-check-inline  me-5">
+                                    <input type="checkbox" class="form-check-input"
+                                        (click)="toggleProviderSelection(provider)"
+                                        [checked]="providerSelection.indexOf(provider) > -1" [disabled]="!stopSkelton">
+                                    <span class="text-gray-900"
+                                        translate="TRANSLATE.{{provider.Description}}"></span>
+                                </label>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                }
+                @if (filteredCategories.length > 0) {
+                <div class="filteredCategories">
+                    <label class="mb-4 text-gray-900  fs-3 fw-bold filter-title text-uppercase">
+                        <span translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_CATEGORY"></span></label>
+                    <div class="form-group row">
+                        <div class="checkbox-list">
+                            @for (category of filteredCategories; track $index) {
+                            <div class="input-group-with-checkbox">
+                                <label class="form-check form-check-inline  me-5">
+                                    <input type="checkbox" class="form-check-input" value="{{category.Description}}"
+                                        (click)="toggleCategorySelection(category)"
+                                        [checked]="categorySelection.indexOf(category) > -1" [disabled]="!stopSkelton">
+                                    <span class="text-gray-900">
+                                        {{category.Name.toLowerCase() === 'onlineservicesnce' === true ?
+                                        ('TRANSLATE.CATEGORY_FILTER_DESC_NCE'|translate) :
+                                        ('TRANSLATE.'+category.CategoryDescriptionKey | translate)}}
+                                    </span>
+                                </label>
+                            </div>
+                            }
+                            @if(selectedProviderForTrail.length > 0 &&
+                            selectedProviderForTrail[0].Name.toLowerCase() ==
+                            cloudHubConstants.ENTITY_PARTNER.toLowerCase()){
+                            <div class="input-group-with-checkbox"
+                                [appPermission]="'GET_PARTNER_TRIAL_OFFER_FILTER'">
+                                <label class="form-check form-check-inline  me-5">
+                                    <input #trialofferCheck type="checkbox" id="trialofferCheck"
+                                        [(ngModel)]="selectedIsTrailOffer" class="form-check-input"
+                                        (checked)="selectedIsTrailOffer"
+                                        (click)="filterProductsByIsTrailOffer(trialofferCheck.checked)">
+                                    <span class="text-gray-900"
+                                        translate="TRANSLATE.CATEGORY_DESC_CUSTOM"></span><sup
+                                        class="text-warning"><span
+                                            translate="TRANSLATE.PLAN_MANAGE_TRAIL_OFFER_SYMBOL_TRAIL_OFFER"></span></sup>
+                                </label>
+                            </div>
+                            }
+                            @if(selectedForEST.length > 0 && selectedForEST[0].Name.toLowerCase()==cloudHubConstants.PROVIDER_MICROSOFT.toLowerCase()){
+                                <div class="input-group-with-checkbox">
+                                    <label class="form-check form-check-inline me-5">
+                                        <input #ESToffer  type="checkbox" id="ESToffer" 
+                                        [(ngModel)]="selectedESTOffer" class="form-check-input"
+                                        (checked)="selectedESTOffer"
+                                        (click)=" filterproductsbyESToffer(ESToffer.checked)"
+                                        [disabled]="!stopSkelton">                                      
+                                        <span class="test-gray-900" translate="TRANSLATE.CATEGORY_DESC_NCE_EST"></span>
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                }
+                <!-- SubCategory -->
+                @if(subCategories?.length > 0 && isCustomSelected){
+                            <div class="providers mt-4" [appPermission]="'GET_SUBCATEGORIES_FILTER'">
+                            <label class="mb-4 text-gray-900 fw-bold filter-title text-uppercase">
+                                <span translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_SUBCATEGORY"></span></label>
+                            <div class="form-group row">
+                                <div class="checkbox-list">
+                                    @for (subCategory of subCategories; track $index) {
+                                    <div class="input-group-with-checkbox">
+                                        <label class="form-check form-check-inline me-5">
+                                            <input type="checkbox" name="category" class="form-check-input"
+                                                value="{{subCategory.Id}}"
+                                                (click)="toggleSubCategorySelection(subCategory)"
+                                                [checked]="isSubCategorySelected(subCategory)"
+                                                [disabled]="!stopSkelton">
+                                            <span class="text-gray-900">
+                                                {{subCategory.Name}}
+                                            </span>
+                                        </label>
+                                    </div>
+                                    }                                  
+                                </div>
+                            </div>
+                        </div>
+                        }
+                @if (filteredProviderCategories.length > 0) {
+                <div class="filteredProviderCategories">
+                    <label class="mb-4 text-gray-900  fs-3 fw-bold filter-title text-uppercase">
+                        <span translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_SERVICE_TYPES"></span></label>
+                    <div class="form-group row">
+                        <div class="checkbox-list">
+                            @for (providerCategory of filteredProviderCategories; track $index) {
+                            <div class="input-group-with-checkbox">
+                                <label class="form-check form-check-inline  me-5">
+                                    <input type="checkbox" class="form-check-input"
+                                        value="{{providerCategory.ProviderCategoryName}}"
+                                        (click)="toggleProviderCategorySelection(providerCategory)"
+                                        [checked]="providerCategorySelection.indexOf(providerCategory) > -1"
+                                        [disabled]="!stopSkelton">
+                                    <span class="text-gray-900">
+                                        {{providerCategory.ProviderCategoryName.split('-').length > 0 ?
+                                        providerCategory.ProviderCategoryName.split('-').join('- \n'):
+                                        (providerCategory.ProviderCategoryName|translate)}}
+                                    </span>
+                                </label>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                }
+                @if (selectedIsTrailOffer && productTrialDurations.length > 0){
+                <div class="productTrialDurations">
+                    <label class="mb-4 text-gray-900  fs-3 fw-bold filter-title text-uppercase">
+                        <span class="text-u">{{("TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_TRIAL_DURATION" |
+                            translate | uppercase)}}</span></label>
+                    <div class="form-group row">
+                        <div class="checkbox-list">
+                            @for (trialDays of productTrialDurations; track $index) {
+                            <div class="input-group-with-checkbox">
+                                <label class="form-check form-check-inline  me-5">
+                                    <input type="checkbox" class="form-check-input" value="{{trialDays}}"
+                                        (click)="toggleTrialDurationSelection(trialDays)"
+                                        [checked]="trialDurationSelection.indexOf(trialDays) > -1"
+                                        [disabled]="!stopSkelton">
+                                    <span class="text-gray-900">
+                                        {{trialDays.Days}} {{'TRANSLATE.'+trialDays.TrialPeriodKey | translate }}
+                                    </span>
+                                </label>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                }
+                @if (termDuration.length > 0){
+                <div class="termDuration">
+                    <label class="mb-4 text-gray-900  fs-3 fw-bold filter-title text-uppercase">
+                        <span>{{("TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_TERM_DURATION" | translate |
+                            uppercase)}}</span></label>
+                    <div class="form-group row">
+                        <div class="checkbox-list">
+                            @for (term of termDuration; track $index) {
+                            <div class="input-group-with-checkbox">
+                                <label class="form-check form-check-inline  me-5">
+                                    <input type="checkbox" class="form-check-input" value="{{term}}"
+                                        (click)="toggleTermDurationSelection(term)"
+                                        [checked]="termDurationSelection.indexOf(term) > -1" [disabled]="!stopSkelton">
+                                    <span class="text-gray-900">
+                                        {{term.Validity}} {{term.Validity == 1? (term.ValidityType === 'Month(s)'?
+                                        ('TRANSLATE.TERM_DURATION_DESC_MONTH'|translate) :
+                                        ('TRANSLATE.TERM_DURATION_DESC_YEAR'|translate)) :
+                                        ('TRANSLATE.TERM_DURATION_DESC_YEARS'|translate) }}
+                                    </span>
+                                </label>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                }
+                @if (planBillingCycles.length > 0){
+                <div class="planBillingCycles">
+                    <label class="mb-4 text-gray-900  fs-3 fw-bold filter-title text-uppercase">
+                        <span>{{("TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_BILLING_CYCLES" | translate |
+                            uppercase)}}</span></label>
+                    <div class="form-group row">
+                        <div class="checkbox-list">
+                            @for (billingCycle of planBillingCycles; track $index) {
+                            <div class="input-group-with-checkbox">
+                                <label class="form-check form-check-inline  me-5">
+                                    <input type="checkbox" class="form-check-input" value="{{billingCycle.Name}}"
+                                        (click)="toggleBillingCycleSelection(billingCycle)"
+                                        [checked]="billingCycleSelection.indexOf(billingCycle) > -1"
+                                        [disabled]="!stopSkelton">
+                                    <span class="text-gray-900">
+                                        {{'TRANSLATE.'+billingCycle.Description | translate}}
+                                    </span>
+                                </label>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                }
+                @if (consumptionTypes.length > 0){
+                <div class="consumptionTypes">
+                    <label class="mb-4 text-gray-900  fs-3 fw-bold filter-title text-uppercase">
+                        <span>{{("TRANSLATE.MANAGE_PLANS_FILTER_TITLE_CONSUMPTION_TYPES" | translate |
+                            uppercase)}}</span></label>
+                    <div class="form-group row">
+                        <div class="checkbox-list">
+                            @for (consumptionType of consumptionTypes; track $index) {
+                            <div class="input-group-with-checkbox">
+                                <label class="form-check form-check-inline  me-5">
+                                    <input type="checkbox" class="form-check-input" value="{{consumptionType.Name}}"
+                                        (click)="toggleConsumptionTypeSelection(consumptionType)"
+                                        [checked]="consumptionTypeSelection.indexOf(consumptionType) > -1"
+                                        [disabled]="!stopSkelton">
+                                    <span class="text-gray-900">
+                                        {{'TRANSLATE.'+consumptionType.Description | translate}}
+                                    </span>
+                                </label>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                }
+                @if (supportedMarkets?.length > 0){
+                <div class="supportedMarkets">
+                    <label class="mb-4 text-gray-900  fs-3 fw-bold filter-title text-uppercase">
+                        <span>{{("TRANSLATE.MANAGE_PLANS_FILTER_TITLE_SUPPORTED_MARKETS" | translate |
+                            uppercase)}}</span></label>
+                    <div class="form-group row">
+                        <div class="checkbox-list">
+                            @for (supportedMarket of supportedMarkets; track $index) {
+                                <div class="input-group-with-checkbox">
+                                <label class="form-check form-check-inline  me-5"
+                                    ngbTooltip="{{supportedMarket.Region}}">
+                                    <input type="checkbox" class="form-check-input"
+                                        value="{{supportedMarket.Region}}"
+                                        (click)="toggleMarketTypeSelection(supportedMarket)" [disabled]="!stopSkelton"
+                                        [checked]="findIndexOf(supportedMarket)">
+                                    <span class="text-gray-900">
+                                        {{supportedMarket.Region}} ({{ supportedMarket.MarketCode }})
+                                    </span>
+                                </label>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                }
+                <div class="showPromotion" [appPermission]="'FILTER_SHOW_PROMOTION_OFFER'" [hidden]="isFirstload">
+                    <label class="mb-4 text-gray-900  fs-3 fw-bold filter-title text-uppercase">
+                        <span>{{("TRANSLATE.MANAGE_PLAN_FILTER_TITLE_SHOW_PROMOTION_ONLY" | translate |
+                            uppercase)}}</span></label>
+                    <div class="form-group row">
+                        <div class="checkbox-list">
+                            <div class="input-group-with-checkbox">
+                                <label class="form-check form-check-inline  me-5">
+                                    <input #showPromotions id="showPromotions" type="checkbox"
+                                        class="form-check-input" [(ngModel)]="showPromotionOnly"
+                                        (checked)="showPromotionOnly"
+                                        (click)="filterShowPromotions(showPromotions.checked)" [disabled]="!stopSkelton">
+                                    <span class="text-gray-900">
+                                        {{'TRANSLATE.MANAGE_PLAN_FILTER_TITLE_SHOW_PROMOTION_ONLY_OPTION_YES'|translate}}
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <!--End:: Filter-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Product list section -->
+    @if(lazyLoadedProducts.length < 1 && !stopSkelton && !isFirstload){ 
+    <div class="col-md-10">
+        <div class="card p-2 mb-3" aria-hidden="true">
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-md-6"></span>
+                    <span class="placeholder col-md-4"></span>
+                    <span class="placeholder col-md-2"></span>
+                </p>
+            </div>
+        </div>
+        <div class="card p-2 mb-3" aria-hidden="true">
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-md-6"></span>
+                    <span class="placeholder col-md-4"></span>
+                    <span class="placeholder col-md-2"></span>
+                </p>
+            </div>
+        </div>
+        <div class="card p-2 mb-3" aria-hidden="true">
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-md-6"></span>
+                    <span class="placeholder col-md-4"></span>
+                    <span class="placeholder col-md-2"></span>
+                </p>
+            </div>
+        </div>
+        <div class="card p-2 mb-3" aria-hidden="true">
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-md-6"></span>
+                    <span class="placeholder col-md-4"></span>
+                    <span class="placeholder col-md-2"></span>
+                </p>
+            </div>
+        </div>
+        <div class="card p-2 mb-3" aria-hidden="true">
+            <div class="card-body">
+                <p class="card-text placeholder-glow">
+                    <span class="placeholder col-md-6"></span>
+                    <span class="placeholder col-md-4"></span>
+                    <span class="placeholder col-md-2"></span>
+                </p>
+            </div>
+        </div>
+    </div>
+    }
+    @else {
+        <div class="col-md-10" [hidden]="isFirstload">
+            <div class="row px-4">
+                <div class="col-md-6 p-1 p-sm-1">
+                    <input type="text" class="form-control form-control-md"
+                        placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_INPUT_FIELD_TO_SEARCH_A_PRODUCT'| translate}}"
+                        [(ngModel)]="productName" (input)="onProductSearch()" [disabled]="false" />
+                </div>
+                <div class="col-md-5 p-1 p-sm-1">
+                    <input type="text" class="form-control form-control-md"
+                        placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_INPUT_FIELD_TO_SEARCH_A_PRODUCT_ID' | translate}}"
+                        [(ngModel)]="productId" (input)="onProductSearch()" [disabled]="false" />
+                </div>
+                <div class="col-md-1 mt-1">
+                    <button type="submit" class="btn btn-xs btn-primary" (click)="filterProductsByKeyword()">
+                        <i class="ki-outline ki-magnifier fs-2">
+                        </i>
+                    </button>
+                </div>
+            </div>
+            @if(productName){
+            <label><span class="ms-3"
+                    translate="TRANSLATE.PRODUCT_CATALOGUE_SEARCH_LABEL_TEXT_SEARCH_APPLIED"></span></label><strong>&nbsp;{{productName}}</strong>
+            }
+            @if(lazyLoadedProducts.length > 0){
+            <div class="product-wrapper" (scrolled)="onScroll()" infiniteScroll [infiniteScrollDistance]="0.3"
+                [infiniteScrollThrottle]="50" [scrollWindow]="false">
+                <div *ngFor="let item of lazyLoadedProducts; trackBy: trackByFn">
+                    <div class="row" appLazyLoad (lazyLoad)="onLazyLoad(item)">
+                        <div class="p-2">
+                            <app-product-item [productItemDetails]="productItemDetails" [productItem]="item"
+                                [showAddButton]="showAddButton"
+                                (onActionData)="onOfferAction($event)">></app-product-item>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+            @else{
+            <div class="d-flex justify-content-center" [hidden]="isFirstload">
+                <div class="col-md-12">
+                    <app-common-no-record></app-common-no-record>
+                </div>
+            </div>
+            }
+        </div>
+    }
+    </div>
+    
+    <!--BEGIN :: BODY-->
+    <!-- <div class="row">
+        
+        
+    </div> -->
+    <!--END :: BODY-->
+}

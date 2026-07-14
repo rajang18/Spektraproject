@@ -1,0 +1,58 @@
+<mat-card class="requirement-panel" appearance="outlined">
+  <mat-card-header>
+    <mat-card-title>Business Requirement</mat-card-title>
+    <mat-card-subtitle>Generate enterprise Angular development artifacts as structured JSON.</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <form class="requirement-form" [formGroup]="requirementForm" (ngSubmit)="submit()">
+      <mat-form-field appearance="outline" class="requirement-field">
+        <mat-label>Target framework</mat-label>
+        <mat-select formControlName="targetFramework">
+          <mat-option value="Angular 18">Angular 18</mat-option>
+          <mat-option value="Angular 18 and Node.js">Angular 18 and Node.js</mat-option>
+          <mat-option value="Angular 18, Node.js, and PostgreSQL">Angular 18, Node.js, and PostgreSQL</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="requirement-field">
+        <mat-label>Requirement details</mat-label>
+        <textarea
+          matInput
+          formControlName="requirement"
+          rows="12"
+          [maxlength]="maxLength"
+          placeholder="Example: As a claims analyst, I need to upload supporting documents so that the claim can be validated automatically."
+        ></textarea>
+        <mat-hint align="start">Minimum 20 characters</mat-hint>
+        <mat-hint align="end">{{ requirementLength }} / {{ maxLength }}</mat-hint>
+        <mat-error *ngIf="requirementControl.touched && requirementControl.invalid">{{ requirementError }}</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="requirement-field">
+        <mat-label>Architecture and output rules</mat-label>
+        <textarea matInput formControlName="codingStandards" rows="7"></textarea>
+        <mat-hint align="end">{{ codingStandardsLength }} characters</mat-hint>
+      </mat-form-field>
+
+      <div class="requirement-form__actions">
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          [disabled]="requirementForm.invalid || isGenerating()"
+        >
+          <ng-container *ngIf="isGenerating(); else normalContent">
+            <mat-spinner diameter="18"></mat-spinner>
+            <span class="btn-text">Generating</span>
+          </ng-container>
+
+          <ng-template #normalContent>
+            <mat-icon aria-hidden="true">auto_awesome</mat-icon>
+            <span class="btn-text">Generate Artifacts</span>
+          </ng-template>
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

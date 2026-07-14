@@ -1,0 +1,42 @@
+<ng-template #addonsList let-addon="addon">
+    <div class="row mt-2">
+        <div class="col-md-12">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" [(ngModel)]="addon.IsChecked" (change)="ToggleSelectAllAddons(addon)" />
+                &nbsp;
+                <span class="form-check-label fw-semibold">
+                    {{addon.Name}}
+                    <span></span>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="addon.Addons && addon.Addons.length && (addon.IsChecked || SelectAllAddons)" style="padding-left:15px">
+        <ng-container *ngFor="let subAddon of addon.Addons" [ngTemplateOutlet]="addonsList" [ngTemplateOutletContext]="{addon: subAddon}"></ng-container>
+    </div>
+</ng-template>
+
+<div class="modal-dialog m-0">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><span translate="TRANSLATE.PARTNER_TRIAL_PLAN_ADD_POPUP_HEADER_TEXT_ADDON_LIST"></span></h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="Cancel()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+            </div>
+        </div>
+        <!-- @if (product.Addons && product.Addons.length) {} -->
+        <div class="modal-body" *ngIf="product.Addons && product.Addons.length">
+            <!-- <perfect-scrollbar class="scroller-custom" wheel-propagation="true" swipe-propagation="true" on-scroll="onScroll(scrollTop, scrollHeight)" always-visible="true" suppress-scroll-X="true" style="height: 200px"> -->
+            <!-- <div *ngFor="let addon of product.Addons" #addonsList ng-include="'addonsList'"></div> -->
+            <ng-container *ngFor="let addon of product.Addons" [ngTemplateOutlet]="addonsList" [ngTemplateOutletContext]="{addon: addon}"></ng-container>
+            <!-- </perfect-scrollbar> -->
+        </div>
+        <div class="modal-body" *ngIf="!product.Addons || product.Addons.length <= 0">
+            <span class="text-danger" translate="TRANSLATE.PARTNER_ADD_PLAN_PARENT_TRAIL_POPUP_MESSAGE_NO_TRAIL_WERE_FOUND"></span>
+        </div>
+        <div class="modal-footer">
+            <button [disabled]="!checkedCount" class="btn  btn-outline-primary" (click)="Submit()" *ngIf="product.Addons.length != 0"><span translate="TRANSLATE.PARTNER_ADD_PLAN_ADDONS_POPUP_BUTTON_TEXT_ADD"></span></button>
+            <button class="btn btn-outline-primary" type="button" (click)="Cancel()"><span translate="TRANSLATE.PARTNER_ADD_PLAN_ADDONS_POPUP_BUTTON_TEXT_CANCEL"></span></button>
+        </div>
+    </div>
+</div>

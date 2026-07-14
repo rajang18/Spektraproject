@@ -1,0 +1,60 @@
+<div class="profability-container" style="cursor: pointer;" *ngIf="data.length > 0">
+    <div class="card card-custom gutter-b card-stretch mb-5">
+        <div class="card-header pt-5">
+            <div class="card-title">
+                <div class="card-label">
+                    <div class="fw-semibold">
+                        <span translate="TRANSLATE.PARTNER_DASHBOARD_CAPTION_CUSTOM_CARDS"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" *ngIf="isLoading">
+            <div class="row gy-4">
+                @for (card of data; track $index) {
+                <div class="col-3 bg-image card card-custom card-stretch bgi-no-repeat bgi-size-cover bgi-position-y-top bgi-position-x-center"
+                    [ngStyle]="{'background-color': card.Color || 'black'}" style="cursor: pointer;">
+                    <a [href]="card.Link" target="_blank">
+                        @if (card.SelfCustomCard) {
+                        <div class="ribbon ribbon-top">
+                            <div class="ribbon-label" style="right: 0.5rem;">
+                                <span class="Schedulelabelbackgroundcolor ribbon-inner text-white rounded-bottom"></span>
+                                <span translate="TRANSLATE.CUSTOM_DASHBOARD_CARD_SELF_CARD_BADGE"></span>
+                            </div>
+                        </div>
+                        }
+                        <div class="card-body p0 customCardsSize">
+                            <div class="d-flex align-items-center justify-content-between flex-grow-1">
+                                <span style="width: 48px; height: 48px;">
+                                    @if (card.ImageUrl) {
+                                    <img src="{{card.ImageUrl}}" width="48" height="48" />
+                                    }
+                                </span>
+                                <div class="d-flex flex-column text-right">
+                                    <span class="ms-4 card-title text-white fs-4 mb-4 text-hover-state-dark d-block"
+                                        ngbTooltip="{{card.Title.length > 15 ? card.Title : ''}}">
+                                        <span [innerHtml]="card.Title | limitLength:15"></span> <span
+                                            *ngIf="card.Title != null && card.Title.length > 15"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="ms-3">
+                                <a [href]="card.Link" target="_blank"
+                                    class="btn btn-link btn-link-white font-weight-bold text-white pt-2">
+                                    <span>{{card.LinkText | translate}}</span>
+                                    <i class="ki-outline ki-black-right fs-3 text-white"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                }
+            </div>
+        </div>
+        @if (data.length === 0) {
+        <div *ngIf="isLoading">
+            <app-common-no-record></app-common-no-record>
+        </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,75 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <div class="d-flex align-items-center" [ngClass]="toolbarButtonMarginClass">
+            <a class="btn btn-sm btn-lg btn-md btn-xs text-nowrap btn-secondary"
+            ngbTooltip="{{'TRANSLATE.BTN_TEXT_SHOW_FILTERS' | translate}}" (click)="toggleFilters()">
+                <i class="ki-outline ki-filter fs-2">
+                </i>&nbsp;<span translate="TRANSLATE.BTN_TEXT_FILTER"></span>
+            </a>
+        </div>
+    </div>
+</ng-template>
+<div class="">
+    <div class="overflow-auto">
+        <ng-template #commissionstartdate let-data="adtData" let-emitter="captureEvents">
+            <span>{{data.CommissionStartDate | c3Date}}</span>
+        </ng-template>
+        <ng-template #commissionendate let-data="adtData" let-emitter="captureEvents">
+            <span>{{data.CommissionEndDate | c3Date}}</span>
+        </ng-template>
+        <form class="card" *ngIf="filtersExpanded">
+            <div class="card-body form-group row mb-0 mt-5">
+                <div class="col-4 col-sm-4 col-md-4 col-lg-64 mt-2">
+                    <select class="form-control form-control-sm form-select form-select-sm" name="customers"
+                        [(ngModel)]="selectedCustomerC3Id" [disabled]="customers.length == 0"
+                        (change)="onCustomerChange()">
+                        <option [value]="null"
+                            translate="TRANSLATE.COMMISSION_REPORT_CUSTOMER_SEARCH_INPUT_PLACEHOLDER_TEXT"></option>
+                        @for (customer of customers; track $index) {
+                        <option [value]="customer.C3Id">{{customer.Name}}</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-4 col-sm-4 col-md-4 col-lg-64 mt-2">
+                    <select class="form-control form-control-sm form-select form-select-sm" name="sites"
+                        [(ngModel)]="selectedSiteC3Id" [disabled]="sites.length == 0" (change)="onSiteChange()">
+                        <option [value]="null"
+                            translate="TRANSLATE.COMMISSION_REPORT_SITE_SEARCH_INPUT_PLACEHOLDER_TEXT"></option>
+                        @for (site of sites; track $index) {
+                        <option [value]="site.C3SiteID">{{site.Name}}</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-4 col-sm-4 col-md-4 col-lg-64 mt-2">
+                    <select class="form-control form-control-sm form-select form-select-sm" name="departments"
+                        [(ngModel)]="selectedSiteDepartmentC3Id" [disabled]="departments.length == 0">
+                        <option [value]="null"
+                            translate="TRANSLATE.COMMISSION_REPORT_DEPARTMENT_SEARCH_INPUT_PLACEHOLDER_TEXT"></option>
+                        @for (department of departments; track $index) {
+                        <option [value]="department.C3DepartmentID">{{department.Name}}</option>
+                        }
+                    </select>
+                </div>
+                <div class="row-md pb-3">
+                    <div class="card-footer col-sm-12 col-md-12 col-xs-12 col-12 col-lg-12 text-lg-end mt-4">
+                        <button class="btn btn-light-primary btn-sm  me-md-2 me-lg-2 me-sm-2 me-xl-2 me-xxl-2"
+                            (click)="searchCommissionReportList()">
+                            {{'TRANSLATE.COMMISSION_REPORT_SEARCH_SUBMIT' | translate}}
+                        </button>
+                        <button class="btn btn-light-primary btn-sm  me-md-2 me-lg-2 me-sm-2 me-xl-2 me-xxl-2"
+                            (click)="resetSearchCriteria()">
+                            {{'TRANSLATE.COMMISSION_REPORT_SEARCH_RESET_OPTION' | translate}}</button>
+                        <button class="btn btn-light-primary btn-sm"
+                            (click)="filtersExpanded = false;">{{'TRANSLATE.COMMISSION_REPORT_SEARCH_CLOSE_OPTION' |
+                            translate}}</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!-- Check if datatableConfig is defined and then render the table -->
+        <ng-container *ngIf="datatableConfig">
+            <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+            </app-c3-table>
+        </ng-container>
+    </div>
+</div>

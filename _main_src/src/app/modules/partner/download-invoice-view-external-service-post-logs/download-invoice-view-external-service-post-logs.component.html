@@ -1,0 +1,115 @@
+<ng-template #actionHeader>
+    <div class="d-flex justify-content-between">
+        <button type="button" class="btn btn-sm fw-semibold btn-primary" (click)="BackToList()">
+            <i class="ki-outline ki-to-left fs-2"></i>
+            <span>{{'TRANSLATE.EXTERNAL_SERVICE_POST_LOG_BTN_TEXT_BACK_TO_LIST' | translate}}</span>
+        </button>
+    </div>
+</ng-template>
+<div class="card">
+    <div class="card-body">
+        @if(!isGridDataLoading && externalServicePostBatches.length > 0){
+            <div ngbAccordion [closeOthers]="true">
+                <div class="m-3" ngbAccordionItem [collapsed]="data.BatchId !== latestBatchId" *ngFor=" let data of externalServicePostBatches">
+                    <div class="m-3" ngbAccordionHeader class="text-primary">
+                        <button ngbAccordionToggle class="btn btn-link text-primary ms-3"
+                            (click)="LoadExternalServicePostLogDataByBatchId(data.BatchId);">
+                            <span class="m-3">
+                                <em class="fa" [ngClass]="{
+                                    'fa-check-circle text-success': data.Status === 'Success',
+                                    'fas fa-exclamation-triangle text-danger': data.Status === 'Failed' || data.Status === 'ErrorIgnored',
+                                    'fas fa-sync-alt fa-spin': data.Status === 'InProgress' || data.Status === 'Submitted'
+                                }">
+                                </em>&nbsp;
+                                <em class="fas fa-bars"></em><span>&nbsp;{{data.BatchId}} | </span>
+                                <em class="fas fa-bars"></em><span>&nbsp;{{data.ServiceName}} | </span>
+                                <em class="fas fa-user"></em><span>&nbsp;{{data.CreatedBy}} | </span>
+                                <em class="fas fa-history"></em><span>&nbsp;{{data.CreatedDate | c3Date}} </span>
+                            </span>
+                        </button>
+                    </div>
+                    <div ngbAccordionCollapse>
+                        <div class="card" block-ui="block">
+                            <div class="">
+                                <div class="card-body form" *ngIf="activeBatchId === data.BatchId">
+                                    <!--Filters Section-->
+                                    <div class="form-group row">
+                                        <div class="col-md-3">
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-sm btn-success"
+                                                    [ngClass]="{'btn-success ' : PageMode === 'Summary', 'btn-light-success' : PageMode !== 'Summary'}"
+                                                    (click)="ChangePageMode('Summary')">
+                                                    <i class="fa fa-list"></i> <span
+                                                        translate="TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_TABLE_PAGE_MODE_SUMMARY"></span>
+                                                </button>
+                                                <button type="button" class="btn btn-sm "
+                                                    [ngClass]="{'btn-success' : PageMode === 'Detail', 'btn-light-success' : PageMode !== 'Detail'}"
+                                                    (click)="ChangePageMode('Detail')">
+                                                    <i class="fa fa-table"></i> <span
+                                                        translate="TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_TABLE_PAGE_MODE_DETAIL"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <ng-select [(ngModel)]="selectedCustomer" (change)="OnCustomerChange()"
+                                                placeholder="Select customer or reseller">
+                                                <ng-option *ngFor="let option of customers; let i = index"
+                                                    [value]="option.Name">
+                                                    {{option.Name}}
+                                                </ng-option>
+                                            </ng-select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="text-lg-end">
+                                                <div class="btn-group ">
+                                                    <button class="btn btn-sm btn-light-success"
+                                                        [(ngModel)]="successStatusSelected"
+                                                        (click)="UpdateSelectedStatus('Success')" uib-btn-checkbox>
+                                                        <span
+                                                            translate="TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_TABLE_SUMMARY_SUCCESS"></span>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-light-danger"
+                                                        [(ngModel)]="failedStatusSelected"
+                                                        (click)="UpdateSelectedStatus('Failed')" uib-btn-checkbox>
+                                                        <span
+                                                            translate="TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_TABLE_SUMMARY_FAILED"></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <!--Grid with Logs under batch-->
+                                    <div *ngIf="PageMode === 'Summary'" class="row">
+                                        <app-summary-view-log [selectedCustomer]="selectedCustomer"
+                                            [statusesSelected]="statusesSelected" [activeBatchId]="activeBatchId" [latestBatchId]="latestBatchId" 
+                                            [reloadEvent]="reloadEvent">
+                                        </app-summary-view-log>
+                                    </div>
+                                    <div *ngIf="PageMode === 'Detail'" class="row">
+                                        <app-details-view-log [selectedCustomer]="selectedCustomer"
+                                            [statusesSelected]="statusesSelected" [activeBatchId]="activeBatchId" [latestBatchId]="latestBatchId" 
+                                            [reloadEvent2]="reloadEvent2">
+                                        </app-details-view-log>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if(isGridDataLoading){
+            <div class="col-md-12">
+                <div class="text-center fw-semibold">
+                    <span>{{'TRANSLATE.LOADING_MESSAGE'| translate}}</span>
+                </div>
+            </div>
+        }
+        @if(!isGridDataLoading && externalServicePostBatches.length === 0){
+            <div class="col-md-12">
+                <app-common-no-record></app-common-no-record>
+            </div>
+        }
+    </div>
+</div>

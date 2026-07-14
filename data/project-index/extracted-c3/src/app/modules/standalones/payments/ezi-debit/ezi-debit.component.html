@@ -1,0 +1,240 @@
+<div class="btn-group" data-toggle="buttons">
+    <div class="form-check form-check-custom  me-10 mb-2">
+        <div class="form-check form-check-custom  me-10">
+            <label id="labelCC" class="radio radio-outline radio-outline-2x control-label" for="flexCheckbox30">
+                <input class="form-check-input" type="radio" value="" id="CC"
+                [ngClass]="{'active' : pageMode === 'CC'}" *ngIf="isCreditCardEnabled"
+                (click)="SetPaymentTypePageMode('CC')" name="paymentType" />
+                <span class="text-gray-700 ms-2"
+                    translate="TRANSLATE.CUSTOMER_PROFILE_PAYMENT_LABEL_TEXT_CREDIT_CARD"></span>
+            </label>
+        </div>
+        <div id="labelACH" class="form-check form-check-custom  me-10">
+            
+            <label class="radio radio-outline radio-outline-2x control-label" for="flexCheckbox30">
+                <input class="form-check-input" type="radio" value="" id="ACH"
+                [ngClass]="{'active' : pageMode === 'ACH'}" *ngIf="isACHEnabled" (click)="SetPaymentTypePageMode('ACH')"
+                name="paymentType" />
+                <span class="text-gray-700 ms-2">{{"TRANSLATE.PUBLIC_SIGNUP_TEXT_ACH" | translate}}</span>
+            </label>
+        </div>
+    </div>
+</div>
+
+<form [formGroup]="paymentFormACH" role="form" novalidate class="horizontal-form" *ngIf="data==='ACH'">
+    <div class="form-body">
+        <div class="col-md-12 mb-5 mt-5">
+            <div class="form-group">
+                <label class="control-label mb-2">
+                    {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_ALIAS_NAME' | translate}}
+                    <span class="text-danger"> *</span>
+                </label>
+                <div>
+                    <input type="text" class="form-control" formControlName="PaymentProfileAlias"
+                        name="paymentProfileAlias" [required]="true" />
+                </div>
+                @if(paymentFormACH.get('PaymentProfileAlias')?.errors?.required &&
+                paymentFormACH.get('PaymentProfileAlias')?.touched){
+                <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+
+                }
+            </div>
+        </div>
+        <div class="col-md-12 mb-5">
+            <div class="form-group">
+                <label class="control-label mb-2">
+                    {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_ACCOUNT_NUMBER' | translate }}
+                    <span class="text-danger"> *</span>
+                </label>
+                <div>
+                    <input type="text" class="form-control" formControlName="AccountNumber" name="accountNumber"
+                        [required]="true" />
+                </div>
+                @if(paymentFormACH.get('AccountNumber')?.errors?.required &&
+                paymentFormACH.get('AccountNumber')?.touched){
+                <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+
+                }
+            </div>
+        </div>
+        <div class="col-md-12 mb-5">
+            <div class="form-group">
+                <label class="control-label mb-2">
+                    {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_NAME_ON_ACCOUNT' | translate}}
+                    <span class="text-danger"> *</span>
+                </label>
+                <div>
+                    <input type="text" class="form-control" formControlName="NameOnCard" [required]="true" />
+                </div>
+                @if(paymentFormACH.get('NameOnCard')?.errors?.required &&
+                paymentFormACH.get('NameOnCard')?.touched){
+                <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+
+                }
+            </div>
+        </div>
+        <div class="col-md-12 mb-5">
+            <div class="form-group">
+                <label class="control-label mb-2">
+                    {{'TRANSLATE.ACH_FORM_LABEL_BSB' | translate}}
+                    <span class="text-danger"> *</span>
+                </label>
+                <div>
+                    <input type="text" class="form-control" formControlName="RoutingNumber" name="routingNumber"
+                        [required]="true" />
+                </div>
+                @if(paymentFormACH.get('RoutingNumber')?.errors?.required &&
+                paymentFormACH.get('RoutingNumber')?.touched){
+                <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+
+                }
+            </div>
+        </div>
+    </div>
+    <div class="clearfix margin-top-20"></div>
+    <div class="col-md-12 ms-2">
+        <div class="text-end">
+            <button class="btn btn-sm btn-light btn-active-light-primary " type="button" (click)="Cancel()"
+                appBusyLoader>{{'TRANSLATE.PAYMENT_TEMPLATE_BUTTON_TEXT_CANCEL' | translate}}</button>
+            <button class="btn btn-sm btn-primary m-2" type="submit" *ngIf="permissions.HasSaveCustomerPaymentProfile === 'Allowed'"
+                (click)="Submit(paymentFormACH)" appBusyLoader>{{'TRANSLATE.PAYMENT_TEMPLATE_BUTTON_TEXT_SUBMIT' |
+                translate}}</button>
+        </div>
+    </div>
+</form>
+
+<input type="hidden" id="systemReference" [value]="systemRefrence" />
+<form [formGroup]="paymentFormCC" *ngIf="data==='CC'">
+    <div class="portlet light bordered pt-4">
+        <!-- <div class="portlet-title">
+            <div class="caption">
+                <h3 class="caption-subject bold font-blue"><span class="uppercase"
+                        translate="TRANSLATE.PROFILE_EDITCREDITCARD_CREADITCARD_CAPTION_TEXT_CREDIT_CARD_DETAILS"></span>
+                </h3>
+            </div>
+        </div> -->
+        <div class="portlet-body">
+            <div class="col-md-offset-1 col-md-10">
+                <fieldset>
+
+                    <div id="paymentMethodCreditCard">
+
+                        <div class="row mb-2 mt-2">
+                            <div class="form-group col-md-12">
+                                <label class="control-label mt-2 mb-2">
+                                    {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_ALIAS_NAME' | translate}} <span
+                                        class="text-danger"> *</span></label>
+
+                                <div class="controls">
+                                    <input type="text" class="form-control"
+                                        [placeholder]="'TRANSLATE.INPUT_NAME'| translate"
+                                        formControlName="PaymentProfileAlias"
+                                        [(ngModel)]="CreditCardAlias.PaymentProfileAlias" name="paymentProfileAlias"
+                                        [required]="true" />
+                                    @if(paymentFormCC.get('PaymentProfileAlias')?.errors?.required &&
+                                    paymentFormCC.get('PaymentProfileAlias')?.touched){
+                                    <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD'
+                                        | translate}}</span>
+
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="form-group col-md-6">
+                                <label for="cardNumber" class="control-label mt-2 mb-2"><span
+                                        translate="TRANSLATE.CREADITCARD_FORM_LABEL_CARD_NUMBER"></span><span
+                                        class="text-danger"> *</span></label>
+
+                                <div class="controls">
+                                    <input type="text" id="cardNumber" name="cardNumber" class="form-control"
+                                        maxlength="19" placeholder="XXXX XXXX XXXX XXXX" />
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-3">
+                                <label for="cardNumber" class="control-label mt-2 mb-2"><span
+                                        translate="TRANSLATE.CREADITCARD_FORM_LABEL_TEXT_MONTH"></span><span
+                                        class="text-danger"> *</span></label>
+
+                                <div class="controls">
+                                    <select id="expiryMonth" name="expiryMonth" class="form-control"
+                                        placeholder="DD-MMM">
+                                        <option disabled selected></option>
+                                        <option value="1"
+                                            translate="TRANSLATE.CREADITCARD_FORM_LABEL_TEXT_MONTH_VALUE_JAN"></option>
+                                        <option value="2"
+                                            translate="TRANSLATE.CREADITCARD_FORM_LABEL_TEXT_MONTH_VALUE_FEB"></option>
+                                        <option value="3"
+                                            translate="TRANSLATE.CREADITCARD_FORM_LABEL_TEXT_MONTH_VALUE_MAR"></option>
+                                        <option value="4"
+                                            translate="TRANSLATE.CREADITCARD_FORM_LABEL_TEXT_MONTH_VALUE_APR"></option>
+                                        <option value="5"
+                                            translate="TRANSLATE.CREADITCARD_FORM_LABEL_TEXT_MONTH_VALUE_MAY"></option>
+                                        <option value="6"
+                                            translate="TRANSLATE.CREADITCARD_FORM_LABEL_TEXT_MONTH_VALUE_JUN"></option>
+                                        <option value="7"
+                                            translate="TRANSLATE.CREADITCARD_FORM_LABEL_TEXT_MONTH_VALUE_JUL"></option>
+                                        <option value="8"
+                                            translate="TRANSLATE.CREADITCARD_FORM_LABEL_TEXT_MONTH_VALUE_AUG"></option>
+                                        <option value="9"
+                                            translate="TRANSLATE.CREADITCARD_FORM_LABEL_TEXT_MONTH_VALUE_SEP"></option>
+                                        <option value="10"
+                                            translate="TRANSLATE.CREADITCARD_FORM_LABEL_TEXT_MONTH_VALUE_OCT"></option>
+                                        <option value="11"
+                                            translate="TRANSLATE.CREADITCARD_FORM_LABEL_TEXT_MONTH_VALUE_NOV"></option>
+                                        <option value="12"
+                                            translate="TRANSLATE.CREADITCARD_FORM_LABEL_TEXT_MONTH_VALUE_DEC"></option>
+                                    </select>
+
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-3">
+                                <label for="expiryYear" class="control-label mt-2 mb-2"><span
+                                        translate="TRANSLATE.CREADITCARD_FORM_LABEL_TEXT_YEAR"></span><span
+                                        class="text-danger"> *</span></label>
+
+                                <div class="controls">
+
+                                    <!--<input type="text" id="expiryYear" name="expiryYear" class="form-control" value="{{userProfileModel.Year}}" />-->
+                                    <input type="text" id="expiryYear" name="expiryYear" class="form-control"
+                                        maxlength="50" placeholder="YYYY" />
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="form-group col-md-6">
+                                <label for="nameOnCard" class="control-label mt-2 mb-2"><span
+                                        translate="TRANSLATE.CREADITCARD_FORM_LABEL_TEXT_NAME_OF_CARD"></span> <span
+                                        class="text-danger"> *</span></label>
+
+                                <div class="controls">
+                                    <input type="text" id="nameOnCard" name="nameOnCard" class="form-control"
+                                        maxlength="50" />
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-12 ms-5">
+                        <div class="text-end">
+                            <!--<button id="modifyButton" name="modifyButton" class="btn btn-success" busy busy-when-url="" busy-add-classes="disabled" ng-if="true" not-busy-remove-classes="disabled">Update<busy-message><i class="fa fa-refresh fa-spin"></i>{{'BUSY_MESSAGE_TEXT_PLEASE_WAIT'|translate}}</busy-message></button>-->
+                            <button (click)="Cancel()" type="button" 
+                                class="btn btn-sm btn-light btn-active-light-primary " appBusyLoader><span
+                                    translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span></button>
+                            <button type="button" class="btn btn-sm btn-primary m-3"  id="modifyButton" name="modifyButton"
+                                *ngIf="permissions.HasSaveCustomerPaymentProfile === 'Allowed'" appBusyLoader><span
+                                    translate="TRANSLATE.PAYMENT_TEMPLATE_BUTTON_TEXT_SUBMIT"></span></button>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</form>

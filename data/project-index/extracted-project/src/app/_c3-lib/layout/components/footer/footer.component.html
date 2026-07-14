@@ -1,0 +1,28 @@
+<ng-container *ngIf="appFooterContainerCSSClass">
+  <!--begin::Footer container-->
+  <div class="app-container  py-4" [ngClass]="appFooterContainerCSSClass">
+    <ng-container *ngTemplateOutlet="footerView"></ng-container>
+  </div>
+  <!--end::Footer container-->
+</ng-container>
+
+<ng-container *ngIf="!appFooterContainerCSSClass">
+  <ng-container *ngTemplateOutlet="footerView"></ng-container>
+</ng-container>
+
+<ng-template #footerView>
+  <!--begin::Copyright-->
+  <div class="col-md-6 col-sm-12 text-md-start text-sm-center pl-2">
+    <span class="me-1">{{currentDateStr}}&copy;</span>
+    <a [href]="userSettingsData?.CompanyUrl" target="_blank" class="text-primary-00">{{userSettingsData?.ContactCompanyName}}</a>
+    <span class="me-1">{{'TRANSLATE.FOOTER_TEXT_1_ALL_RIGHTS_RESERVED' | translate}}</span>
+  </div>
+  <!--end::Copyright-->
+  <div class="col-md-6 col-sm-12 text-md-end text-sm-center pe-8">
+    <span class="me-1">{{'TRANSLATE.FOOTER_TEXT_1_POWERED_BY' | translate}}</span>
+    <a [href]= "userSettingsData?.PoweredByCompanyURL" target="_blank" class="text-primary-00">{{userSettingsData?.PoweredByCompanyName}}</a>
+</div>
+  <!--begin::Menu-->
+  <!--end::Menu-->
+
+</ng-template>

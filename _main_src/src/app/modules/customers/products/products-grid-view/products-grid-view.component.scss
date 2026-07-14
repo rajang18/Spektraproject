@@ -1,0 +1,85 @@
+::ng-deep{
+    .custom-width.w-80{
+        width: 80%;
+    }
+}
+
+.container {
+    position: relative;
+    height: 400px;
+    width: 100%;
+    border: 1px solid #ccc;
+  }
+  
+  .content {
+    height: 100%;
+    overflow: auto;
+  }
+
+  .card{ 
+    .card-body{
+        display: flex;
+        flex-direction: column;
+        gap:20px ;
+        .checkbox-list{
+         display: flex;
+         flex-direction: column;
+         gap: 5px
+     }
+     }
+}
+
+@keyframes shimmer {
+  0% {
+      background-color: white !important; /* Start color */
+  }
+  50% {
+      background-color: whitesmoke !important; /* Mid color */
+  }
+  100% {
+      background-color: lightgray !important; /* End color */
+  }
+}
+
+/* Target the placeholder directly to override defaults */
+::ng-deep .placeholder {
+  background-color: gray !important; /* Ensure no default background */
+}
+
+
+
+.product-wrapper {
+  position: relative;
+  height: calc(100vh - (var(--bs-app-footer-height) + var(--bs-app-header-height) + var(--bs-app-toolbar-height) + 50px));
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 10px;
+  margin:10px 0px;
+} 
+
+.filters-card {
+  height: calc(100vh - (var(--bs-app-footer-height) + var(--bs-app-header-height) + var(--bs-app-toolbar-height) + 76px ));
+  overflow: auto;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin:20px 0; 
+}
+ .filter-dropdown {
+  position: relative;
+  height: calc(100vh - (var(--bs-app-footer-height) + var(--bs-app-header-height) + var(--bs-app-toolbar-height) + 100px));
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 10px;
+  margin:10px 0px;
+ }
+
+ ::ng-deep{
+   .grid-card {
+      .card{
+        height: 470px;
+        margin-bottom: 1rem !important;
+      }
+
+   }
+ }
+

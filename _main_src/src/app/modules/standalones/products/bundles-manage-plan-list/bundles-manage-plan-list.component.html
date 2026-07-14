@@ -1,0 +1,130 @@
+
+<div class="card border-1 gutter-b" style="margin-bottom: 0px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px;padding-right: 10px;" *ngIf="!product.IsDelete">
+    <div class="card-body">
+        <div class="container-fluid">
+            <div class="row">
+                    <div class="col-md-10">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <!--<strong>{{product.Name}}</strong>-->
+                                <strong>
+                                    <span>{{ product?.Name}}</span>
+                                </strong>
+                                <sup>
+                                    <span class="text-primary ms-2" *ngIf="product.PlanProductId === null || product.PlanProductId === undefined || product.PlanProductId === 0">{{'TRANSLATE.LABEL_TO_INDICATE_A_NEW_OFFER' | translate}} </span>
+                                </sup>
+                                <br />
+                                <span class="badge fw-bold text-white ms-1" [ngClass]="{
+                                    'bg-warning': product.BillingCycleName?.toLowerCase() === 'monthly',
+                                    'bg-success': product.BillingCycleName?.toLowerCase() === 'annual',
+                                    'bg-dark': product.BillingCycleName?.toLowerCase() === 'triennial',
+                                    'bg-info': product.BillingCycleName?.toLowerCase() === 'onetime'
+                                              }" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}">
+                                    {{'TRANSLATE.'+product.BillingCycleDescriptionKey | translate}} </span>
+                                <span class="label label-light-primary font-weight-bold label-inline badge badge-light-primary ms-1" *ngIf="product.ProviderSettings && product.ProviderSettings.ProviderCategory && product.CategoryName != 'OnlineServicesNCE'"> {{'TRANSLATE.'+product.ProviderSettings.ProviderCategory | translate}} </span>
+                                <span class="label label-light-info font-weight-bold label-inline mt-2 badge badge-light-info ms-1" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}" *ngIf="product.CategoryName == 'OnlineServicesNCE'">{{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE' | translate}}</span>
+                                <span *ngIf="product.MarketCode" class="label label-info label-inline text-white badge bg-info " ngbTooltip="{{product.MarketRegion}}">{{product.MarketCode}}</span>
+                                <span *ngIf="product.ProviderSettings && product.ProviderSettings.EnforceAttestation == 'TRUE'" ngbTooltip="{{'TRANSLATE.MICROSOFT_ATTESTATION_TYPE_TOOLTIP' | translate}}{{product.ProviderSettings.AttestationType | translate}}" class="font-weight-normal  separator-primary text-primary cursor-pointer"><span><i class="ki-outline ki-verify text-primary mt-1"></i></span></span>
+                            </div>
+                            <div class="col-md-2 body-price-alignment" *ngIf="product.PlanProductId === null || product.PlanProductId === undefined || product.PlanProductId === 0">
+                                <span>{{'TRANSLATE.LABLE_TEXT_COST_TO_PARTNER' | translate}}</span>
+                                <br />
+                                <strong>{{product?.PriceforPartner | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator : product.CurrencyDecimalSeperator}}</strong>
+                            </div>
+                            <div class="col-md-2 body-price-alignment" *ngIf="product.PlanProductId === null || product.PlanProductId === undefined || product.PlanProductId === 0">
+                                <span>{{'TRANSLATE.LABEL_TEXT_RETAIL_PRICE' | translate}}</span>
+                                <br />
+                                <strong class="text-end">{{product.ProviderSellingPrice | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator : product.CurrencyDecimalSeperator}}</strong>
+                            </div>
+                            <div class="col-md-2 body-price-alignment" *ngIf="!product.PlanProductId">
+                                <span>{{'TRANSLATE.LABLE_TEXT_SALE_PRICE' | translate}}</span>
+                                <br />
+                                <strong>
+                                    <!--<a  editable-number="product.SalePrice" buttons="no" e-style="width: 100px" e-min="0" e-step="0.01" data-toggle="tooltip" data-placement="top" ngbTooltip="Edit Sale Price" onaftersave="cc.callOnAction(product, 'edit');">
+                                    {{ product.SalePrice || 0 | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator : product.CurrencyDecimalSeperator}}
+                                </a>-->
+                                    <span> {{ (product.SalePrice || 0) | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator : product.CurrencyDecimalSeperator}}</span>
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2" *ngIf="!product.PlanProductId">
+                        <div class="actions">
+                            <a class="btn-lg " ngbTooltip="{{'TRANSLATE.DELETE_PRODUCT_BUTTON_TOOLTIP_TEXT' | translate}}" tooltip-placement="right"  [appPermission]="'ADD_PARTNER_BUNDLES'" (click)="callOnAction(product, 'delete')">
+                                <i class="ki-outline ki-trash text-danger fs-1 pt-2"></i>
+                            </a>
+                            <a class="btn-lg" ngbTooltip="{{'TRANSLATE.DELETE_ALL_ADDONS_BUTTON_TOOLTIP_TEXT' | translate}}" tooltip-placement="right" [appPermission]="'ADD_PARTNER_BUNDLES'" *ngIf="product.Addons && product.Addons.length && !product.IsDelete && !product.IsDeleteAddons" (click)="callOnAction(product, 'deleteAddons')">
+                                <i class="ki-outline ki-trash text-primary fs-1 pt-2"></i>{{'TRANSLATE.LABEL_TEXT_ADDONS' | translate}}
+                            </a>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <br />
+    <!-- <div *ngIf="product.Addons && product.Addons.length && !product.IsDelete
+                 && !product.IsDeleteAddons">
+        @for(addon of product.Addons; track $index){
+            <div  ng-init="addonLevel = 0" ng-include="'productAddon'"></div>
+        }
+    </div> -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered" *ngIf="product.Addons && product.Addons.length && !product.IsDelete
+         && !product.IsDeleteAddons">
+         @for (addon of product.Addons; track $index){
+            <!-- <div ng-repeat="addon in product.Addons" ng-init="addonLevel = 0" ng-include="'productAddon'"></div> -->
+            <ng-container *ngTemplateOutlet="recursiveTemplate; context: {$implicit: addon}"></ng-container>
+
+         }
+            </div>
+        </div>
+    </div>
+    <ng-template #recursiveTemplate let-addon>
+        <div class="card mt-2">
+            <div class="card-body">
+                <div class="container-fluid">
+                    <div class="row" *ngIf="!addon.IsDelete">
+                        <div class="col-md-10">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>
+                                        <p [style.margin-left.px]="addonLevel * 20">{{addon.Name}}</p>
+                                    </strong>
+                                </div>
+                                <div class="col-md-2 header-price-alignment" *ngIf="product.PlanProductId === null || product.PlanProductId === undefined || product.PlanProductId === 0">
+                                    <strong>{{addon.PriceforPartner | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator : product.CurrencyDecimalSeperator}}</strong>
+                                </div>
+                                <div class="col-md-2 header-price-alignment" *ngIf="product.PlanProductId === null || product.PlanProductId === undefined || product.PlanProductId === 0">
+                                    <strong style="margin-left:5px;">{{addon.ProviderSellingPrice | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator : product.CurrencyDecimalSeperator}}</strong>
+                                </div>
+                                <div class="col-md-2 header-price-alignment" *ngIf="!product.PlanProductId">
+                                    <strong style="margin-left:13px;">
+                                        <span>$</span>
+                                        <span>{{ addon.SalePrice || 0 }}</span>
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2" *ngIf="product.PlanProductId === null || product.PlanProductId === undefined || product.PlanProductId === 0">
+                            <a [appPermission]="'ADD_PARTNER_BUNDLES'" (click)="callOnAction(addon, 'delete')">
+                                <i class="ki-outline ki-trash text-danger fs-1 pt-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="clearfix"></div>
+        <br />
+        <div>
+            <div *ngIf="addon.Addons && addon.Addons.length && !addon.IsDelete" style="list-style-type:none">
+                <!-- <div ng-repeat="addon in addon.Addons" ng-init="addonLevel = addonLevel + 1" ng-include="'productAddon'"></div> -->
+                @for (childaddon of addon.Addons; track $index){
+                    <ng-container *ngTemplateOutlet="recursiveTemplate; context: {$implicit: childaddon}"></ng-container>
+                }
+            </div>
+        </div>
+    </div>
+     </ng-template>
+</div>

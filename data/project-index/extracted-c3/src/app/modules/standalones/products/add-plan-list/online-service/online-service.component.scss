@@ -1,0 +1,7 @@
+::ng-deep {
+    app-online-service {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}

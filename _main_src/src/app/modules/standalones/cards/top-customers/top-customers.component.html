@@ -1,0 +1,113 @@
+<div class="col card card-custom  d-flex">
+    @if(chartUtilities.isloadingstart){
+        <ng-container #content>
+    
+            <div class="loader-indicater btn btn-sm btn-light-primary">
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    
+                <span> {{'TRANSLATE.MESSAGE_TEXT_PLEASE_WAIT' | translate}}</span>
+            </div>
+        </ng-container>
+        }
+    <div class="card-header pt-5" [ngClass]="chartUtilities.isloadingstart ? 'opacity-8' : ''">
+        <div class="dashboard-filter-wrapper d-flex justify-content-between w-100">
+            <div class="card-title align-items-start flex-column dashboard-tile-title">
+                <span class="card-label fw-semibold d-flex" style="flex-direction: column;">
+                    <span translate="TRANSLATE.PARTNER_DASHBOARD_CAPTION_TOP_10_CUSTOMERS">
+                        <span class="text-gray-500 mt-1 fw-semibold fs-6 ms-1"
+                            translate="TRANSLATE.PARTNER_DASHBOARD_TOP_FIVE_PRODUCTS_BY_REVENUE_TILE_HEADER_2"></span>
+                    </span>
+                    @if (selectedTimePeriod.toLowerCase() != 'all' && (!!startBillingDate && !!endBillingDate)){
+                    <span class="text-gray-500 pt-1 fw-semibold fs-6"> {{startBillingDate | c3Date }} - {{endBillingDate | c3Date }} </span>
+                    }
+                </span>
+            </div>
+
+            <div class="card-toolbar-container d-flex  align-items-center gap-3" style="flex-wrap: wrap;">
+                <div ngbDropdown class="d-flex align-items-center" placement="bottom-right">
+                    <button class="btn btn-icon btn-light-primary btn-active-primary btn-dropdown btn-sm"
+                        style="padding: 10px; width: auto;" id="dropdownBasic1" ngbDropdownToggle>
+                        {{'TRANSLATE.'+selectedTimePeriod | translate}}
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+                        class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base">
+                        @for(duration of durationUnits; track $index)
+                        {
+                        <div class='menu-item my-0' ngbDropdownItem (click)="selectedDuration(duration)">
+                            <a class="menu-link px-3 py-2 d-flex align-items-center gap-3 text-wrap">
+                                {{'TRANSLATE.'+duration | translate}}
+                            </a>
+                        </div>
+                        }
+                    </div>
+                </div>
+                <div ngbDropdown class="d-flex align-items-center" #dropdown="ngbDropdown" placement="bottom-right">
+                    <button class="btn btn-sm btn-icon btn-color-primary btn-active-light-primary remove-caret d-flex flex-column"
+                        style="padding: 10px; width: auto;" id="dropdownToggle" ngbDropdownToggle>
+                        <app-keenicon name="category" class="fs-2" style="display: contents;"><span
+                                class="fs-2 ki-category ki-duotone"><span class="path1"></span><span
+                                    class="path2"></span><span class="path3"></span><span
+                                    class="path4"></span><!----></span><!----><!----></app-keenicon> </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownToggle"
+                        class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base">
+                        <div class='menu-item my-0' ngbDropdownItem>
+                            <div class="apexcharts-menu-item" (click)="generatePNG(dropdown)"><span
+                                    translate="TRANSLATE.DASHBOARD_CARD_ACTIONS_OPTION_TEXT_DOWNLOAD_PNG"></span></div>
+                        </div>
+                        <div class='menu-item my-0' ngbDropdownItem>
+                            <div class="apexcharts-menu-item" (click)="generateCSV(dropdown)"><span
+                                class="text-wrap" translate="TRANSLATE.DASHBOARD_CARD_ACTIONS_OPTION_TEXT_DOWNLOAD_CSV"></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body pt-2 pb-2 px-0">
+        @if (!!isLoading){
+        <app-loader></app-loader>
+        }
+        @else if(!!customerData && customerData.length>0){
+          <div class="top-customers-wrapper pt-2 ps-6 pe-14">
+            <div class=" ms-2 m-2 p-4" id="top-customers-by-revenue-png">
+                @for(customer of customerData; track $index){
+                <div class="d-flex flex-wrap align-items-center gap-lg-4">
+                    <div class="symbol-box flex-shrink-0 mr-4">
+                        <span class="symbol-label font-size-sm font-size-lg">{{customer?.CustomerName | formatforinitials
+                            }}</span>
+                    </div>
+                    <div class="d-flex flex-column flex-grow-1 my-lg-0 my-2 pr-3" style="width:10px"  ngbTooltip="{{customer?.CustomerName}}" placement="top-start">
+                        <span class="fs-6 fw-semibold product-name overflow-ellipsis"
+                           >
+                            {{customer?.CustomerName}}
+                        </span>
+                    </div>
+                    <div class="d-flex align-items-center py-lg-0 py-2 mr-10">
+                        <div class="d-flex flex-column text-right">
+                            <span class="fs-6 fw-semibold" style="text-align: end;">
+                                <span translate="TRANSLATE.DASHBOARD_REVENUE_TEXT"></span>
+                            </span>
+                            <span class="fs-6 fw-semibold">
+                                {{customer.BilledAmount | megaNumber : customer.CurrencySymbol :
+                                customer.CurrencyDecimalPlaces :
+                                customer.CurrencyThousandSeperator : customer.CurrencyDecimalSeperator}}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+        }
+        @else if(customerData.length<1 && !isLoading){ <div class="d-flex align-items-center justify-content-center"
+            style="height: 100%;">
+            <div class="row">
+                <div class="col-md-12">
+                    <app-common-no-record></app-common-no-record>
+                </div>
+            </div>
+    </div>
+    }
+</div>
+</div>

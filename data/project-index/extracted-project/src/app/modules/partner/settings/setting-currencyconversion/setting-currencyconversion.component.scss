@@ -1,0 +1,7 @@
+::ng-deep {
+    app-setting-currencyconversion{
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+  }

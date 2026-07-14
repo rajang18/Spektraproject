@@ -1,0 +1,11 @@
+::ng-deep {
+    app-entitymapping {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+  }
+
+.custom{
+    color: var(--bs-gray-800);
+}

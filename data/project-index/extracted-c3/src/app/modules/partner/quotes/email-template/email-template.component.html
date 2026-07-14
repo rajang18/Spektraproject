@@ -1,0 +1,29 @@
+<div class="modal-header">
+    <h3 class="modal-title text-primary">{{ 'TRANSLATE.QUOTE_EMAIL_MODAL_HEADER' | translate }}</h3>
+    <button type="button" class="close" aria-label="Close" (click)="closeModal()" style="background: none; border: none;">
+      <i class="fas fa-times text-danger"></i>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group row mt-4">
+      <div class="col-md-12">
+        <label class="control-label">
+          <b>{{ 'TRANSLATE.QUOTE_EMAIL_MODAL_HEADER' | translate }}</b>
+        </label>
+        <textarea [(ngModel)]="quoteEmailDetailsRequestMessage" (ngModelChange)="OnQuoteEmailRequestMessageChange()" rows="12" class="form-control"></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="form-group row">
+      <div class="col-md-12">
+        <div class="float-right">
+          <a class="btn btn-sm fw-semibold btn-primary" [href]="'mailto:?subject=Notification%20-%20Quote%20Ready%20for%20Review&body=' + EncodedQuoteEmailRequestMessage">
+            <i class="ki-outline ki-sms"></i>
+            {{ 'TRANSLATE.BTN_TEXT_OPEN_IN_EMAIL' | translate }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  

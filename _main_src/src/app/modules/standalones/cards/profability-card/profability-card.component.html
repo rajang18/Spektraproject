@@ -1,0 +1,199 @@
+
+<div class="profability-container" style="cursor: pointer;">
+    <div class="card card-custom gutter-b card-stretch" (click)="navigateToRevenue()">
+        <div class="card-header pt-5">
+            <div class="card-title">
+                <div class="card-label">
+                    <div class="fw-semibold"
+                    [routerLink]="['/partner/business/revenue']">
+                        <span translate="TRANSLATE.PARTNER_DASHBOARD_CAPTION_PROFITABILITY"></span>
+                    </div>
+                    <div class="text-gray-500 mt-1 fw-semibold fs-6">
+                        @if(billGenerationDate){
+                            {{billingPeriodsData?.BillingStartDate | c3Date}} - {{billingPeriodsData?.BillingEndDate | c3Date}} <span class="tooltips ng-binding"
+                            data-original-title="Invoice generated on">({{billingPeriodsData?.BillGenerationDate | c3Date }})</span>
+                        }
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body d-flex flex-column">
+            @if (!!isLoading){
+                <app-loader></app-loader>
+            }
+            @if (!isProfitabilityDetailsLoading){
+                <div class="flex-grow-1" style="position: relative;">
+                    <!-- ngIf: vm.IsProfitabilityDetailsLoading -->
+                </div>
+                <div>
+                    <div class="row row-paddingless mb-5">
+                        <div class="col-6 pt-1 pb-1 col-md-3">
+                            <div
+                                class="d-flex justify-content-lg-center justify-content-md-center justify-content-sm-center mr-2 gap-2">
+                                <div class="symbol symbol-50 symbol-light-info mr-4 flex-shrink-0"
+                                [routerLink]="['/partner/business/revenue']">
+                                    <div class="symbol-label">
+                                        <span class="svg-icon svg-icon-info">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                xmlns:xlink="http://www.w3.org/1999/xlink" style="height: 24px; width: 24px;"
+                                                viewBox="0 0 24 24" version="1.1">
+                                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                    <rect x="0" y="0" width="24" height="24"></rect>
+                                                    <path
+                                                        d="M2,6 L21,6 C21.5522847,6 22,6.44771525 22,7 L22,17 C22,17.5522847 21.5522847,18 21,18 L2,18 C1.44771525,18 1,17.5522847 1,17 L1,7 C1,6.44771525 1.44771525,6 2,6 Z M11.5,16 C13.709139,16 15.5,14.209139 15.5,12 C15.5,9.790861 13.709139,8 11.5,8 C9.290861,8 7.5,9.790861 7.5,12 C7.5,14.209139 9.290861,16 11.5,16 Z"
+                                                        fill="#000000" opacity="0.3"
+                                                        transform="translate(11.500000, 12.000000) rotate(-345.000000) translate(-11.500000, -12.000000) ">
+                                                    </path>
+                                                    <path
+                                                        d="M2,6 L21,6 C21.5522847,6 22,6.44771525 22,7 L22,17 C22,17.5522847 21.5522847,18 21,18 L2,18 C1.44771525,18 1,17.5522847 1,17 L1,7 C1,6.44771525 1.44771525,6 2,6 Z M11.5,16 C13.709139,16 15.5,14.209139 15.5,12 C15.5,9.790861 13.709139,8 11.5,8 C9.290861,8 7.5,9.790861 7.5,12 C7.5,14.209139 9.290861,16 11.5,16 Z M11.5,14 C12.6045695,14 13.5,13.1045695 13.5,12 C13.5,10.8954305 12.6045695,10 11.5,10 C10.3954305,10 9.5,10.8954305 9.5,12 C9.5,13.1045695 10.3954305,14 11.5,14 Z"
+                                                        fill="#000000"></path>
+                                                </g>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold fs-3">
+                                        {{TotalProviderBilledAmount| megaNumber : CurrencySymbol : CurrencyDecimalPlaces : CurrencyThousandSeperator : CurrencyDecimalSeperator}}
+                                    </div>
+                                    <div class="text-muted fw-semibold text-muted d-block fs-6" translate="TRANSLATE.REVENUE_AND_COST_SUMMARY_COST_ON_PARTNER">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 pt-1 pb-1 col-md-3">
+                            <div
+                                class="d-flex justify-content-lg-center justify-content-md-center justify-content-sm-center mr-2 gap-2">
+                                <div class="symbol symbol-50 symbol-light-primary mr-4 flex-shrink-0"
+                                [routerLink]="['/partner/business/revenue']">
+                                    <div class="symbol-label">
+                                        <span class="svg-icon svg-icon-primary">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                xmlns:xlink="http://www.w3.org/1999/xlink" style="height: 24px; width: 24px;"
+                                                viewBox="0 0 24 24" version="1.1">
+                                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                    <rect x="0" y="0" width="24" height="24"></rect>
+                                                    <path
+                                                        d="M5,3 L6,3 C6.55228475,3 7,3.44771525 7,4 L7,20 C7,20.5522847 6.55228475,21 6,21 L5,21 C4.44771525,21 4,20.5522847 4,20 L4,4 C4,3.44771525 4.44771525,3 5,3 Z M10,3 L11,3 C11.5522847,3 12,3.44771525 12,4 L12,20 C12,20.5522847 11.5522847,21 11,21 L10,21 C9.44771525,21 9,20.5522847 9,20 L9,4 C9,3.44771525 9.44771525,3 10,3 Z"
+                                                        fill="#000000"></path>
+                                                    <rect fill="#000000" opacity="0.3"
+                                                        transform="translate(17.825568, 11.945519) rotate(-19.000000) translate(-17.825568, -11.945519)"
+                                                        x="16.3255682" y="2.94551858" width="3" height="18" rx="1"></rect>
+                                                </g>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold fs-3">
+                                         {{TotalC3BillAmount| megaNumber : CurrencySymbol : CurrencyDecimalPlaces : CurrencyThousandSeperator : CurrencyDecimalSeperator}}    
+                                    </div>
+                                    <div class="text-muted fw-semibold text-muted d-block fs-6">
+                                        <span translate="TRANSLATE.PARTNER_DASHBOARD_LABLE_TOTAL_BILL_AMOUNT" class="ng-scope"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 pt-1 pb-1 col-md-3">
+                            <div
+                                class="d-flex justify-content-lg-center justify-content-md-center justify-content-sm-center mr-2 gap-2">
+                                <div class="symbol symbol-50 mr-4 flex-shrink-0 symbol-light-success"
+                                [routerLink]="['/partner/business/revenue']">
+                                    <div class="symbol-label">
+                                        <span class="svg-icon svg-icon-success">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                xmlns:xlink="http://www.w3.org/1999/xlink" style="height: 24px; width: 24px;"
+                                                viewBox="0 0 24 24" version="1.1">
+                                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                    <rect x="0" y="0" width="24" height="24"></rect>
+                                                    <path
+                                                        d="M16.0322024,5.68722152 L5.75790403,15.945742 C5.12139076,16.5812778 5.12059836,17.6124773 5.75613416,18.2489906 C5.75642891,18.2492858 5.75672377,18.2495809 5.75701875,18.2498759 L5.75701875,18.2498759 C6.39304347,18.8859006 7.42424328,18.8859006 8.060268,18.2498759 C8.06056298,18.2495809 8.06085784,18.2492858 8.0611526,18.2489906 L18.3196731,7.9746922 C18.9505124,7.34288268 18.9501191,6.31942463 18.3187946,5.68810005 L18.3187946,5.68810005 C17.68747,5.05677547 16.6640119,5.05638225 16.0322024,5.68722152 Z"
+                                                        fill="#000000" fill-rule="nonzero"></path>
+                                                    <path
+                                                        d="M9.85714286,6.92857143 C9.85714286,8.54730513 8.5469533,9.85714286 6.93006028,9.85714286 C5.31316726,9.85714286 4,8.54730513 4,6.92857143 C4,5.30983773 5.31316726,4 6.93006028,4 C8.5469533,4 9.85714286,5.30983773 9.85714286,6.92857143 Z M20,17.0714286 C20,18.6901623 18.6898104,20 17.0729174,20 C15.4560244,20 14.1428571,18.6901623 14.1428571,17.0714286 C14.1428571,15.4497247 15.4560244,14.1428571 17.0729174,14.1428571 C18.6898104,14.1428571 20,15.4497247 20,17.0714286 Z"
+                                                        fill="#000000" opacity="0.3"></path>
+                                                </g>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold fs-3 d-flex justify-content-center">
+                                        <span>
+                                            {{TotalNetProfit| megaNumber : CurrencySymbol : CurrencyDecimalPlaces : CurrencyThousandSeperator : CurrencyDecimalSeperator}}
+                                        </span>
+                                        <span>
+                                            @if(TotalNetProfit < 0){
+                                                <i class="ki-duotone ki-arrow-down text-danger fs-2">
+                                                    <span class="path1"></span>
+                                                    <span class="path2"></span>
+                                                </i>
+                                            }@else{
+                                                <i class="ki-duotone ki-arrow-up text-success fs-2">
+                                                    <span class="path1"></span>
+                                                    <span class="path2"></span>
+                                                </i>
+                                            }
+                                        </span>
+                                    </div>
+                                    <div class="text-muted fw-semibold text-muted d-block fs-6 ">
+                                        <span translate="TRANSLATE.PARTNER_DASHBOARD_LABLE_NET_PROFIT" ></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 pt-1 pb-1 col-md-3">
+                            <div
+                                class="d-flex justify-content-lg-center justify-content-md-center justify-content-sm-center mr-2 gap-2">
+                                <div class="symbol symbol-50 mr-4 flex-shrink-0 symbol-light-success"
+                                [routerLink]="['/partner/business/revenue']">
+                                    <div class="symbol-label">
+                                        <span class="svg-icon  svg-icon-success">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                xmlns:xlink="http://www.w3.org/1999/xlink" style="height: 24px; width: 24px;"s
+                                                viewBox="0 0 24 24" version="1.1">
+                                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                    <rect x="0" y="0" width="24" height="24"></rect>
+                                                    <path
+                                                        d="M16.0322024,5.68722152 L5.75790403,15.945742 C5.12139076,16.5812778 5.12059836,17.6124773 5.75613416,18.2489906 C5.75642891,18.2492858 5.75672377,18.2495809 5.75701875,18.2498759 L5.75701875,18.2498759 C6.39304347,18.8859006 7.42424328,18.8859006 8.060268,18.2498759 C8.06056298,18.2495809 8.06085784,18.2492858 8.0611526,18.2489906 L18.3196731,7.9746922 C18.9505124,7.34288268 18.9501191,6.31942463 18.3187946,5.68810005 L18.3187946,5.68810005 C17.68747,5.05677547 16.6640119,5.05638225 16.0322024,5.68722152 Z"
+                                                        fill="#000000" fill-rule="nonzero"></path>
+                                                    <path
+                                                        d="M9.85714286,6.92857143 C9.85714286,8.54730513 8.5469533,9.85714286 6.93006028,9.85714286 C5.31316726,9.85714286 4,8.54730513 4,6.92857143 C4,5.30983773 5.31316726,4 6.93006028,4 C8.5469533,4 9.85714286,5.30983773 9.85714286,6.92857143 Z M20,17.0714286 C20,18.6901623 18.6898104,20 17.0729174,20 C15.4560244,20 14.1428571,18.6901623 14.1428571,17.0714286 C14.1428571,15.4497247 15.4560244,14.1428571 17.0729174,14.1428571 C18.6898104,14.1428571 20,15.4497247 20,17.0714286 Z"
+                                                        fill="#000000" opacity="0.3"></path>
+                                                </g>
+                                            </svg>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold fs-3 d-flex justify-content-center">
+                                        <span>
+                                            {{ProfitPercentage.toFixed(2)}}%
+                                        </span>
+                                        <span>
+                                            @if(ProfitPercentage < 0){
+                                                <i class="ki-duotone ki-arrow-down text-danger fs-2">
+                                                    <span class="path1"></span>
+                                                    <span class="path2"></span>
+                                                </i>
+                                            }@else{
+                                                <i class="ki-duotone ki-arrow-up text-success fs-2">
+                                                    <span class="path1"></span>
+                                                    <span class="path2"></span>
+                                                </i>
+                                            }
+                                        </span>
+                                    </div>
+                                    <div class="text-muted fw-semibold text-muted d-block fs-6">
+                                        <span translate="TRANSLATE.PARTNER_DASHBOARD_LABLE_PERCENTAGE_PROFIT"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

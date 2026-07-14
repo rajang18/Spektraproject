@@ -1,0 +1,102 @@
+<!-- @if (!cc.IsTenantConfiguration && data.IsShowOnScreen) { Update below condition once the summer note implemented-->
+@if (cc.IsTenantConfiguration && data.IsShowOnScreen) {
+<div>
+    <!-- <form name="frmPartnerSetting" [formGroup]="form"> -->
+    <div class="row">
+        <div class="col-md-5">
+            <div class="fs-6 mb-3 pt-3 align-items-center d-inline-flex text-start">
+                <span class="fw-semibold">{{'TRANSLATE.'+data.DisplayName | translate}}<span class="text-danger ms-1"
+                        *ngIf="data.IsRequired">*</span>
+                    <i class="ki-duotone ki-information-2 fs-8 ms-1 mt-1 align-self-baseline"
+                        ngbTooltip="{{'TRANSLATE.'+data.Description | translate }}">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                    </i></span>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="row align-middle" [formGroup]="form" *ngIf="pageMode === 'list'">
+                <div class="col-8 fs-6 mb-3 pt-3 d-flex align-items-center justify-content-start text-start">
+                    {{data.Value}}
+                    <!-- <span [innerHTML]="data.Value"></span> -->
+                </div>
+                <div class="col-4 d-flex align-items-center justify-content-end text-end">
+                    @if (cc.Permissions.HasSaveConfiguration === 'Allowed' ||
+                    cc.Permissions.HasUpdateConfigurationsManagedByCustomer === 'Allowed' ||
+                    cc.Permissions.HasUpdateConfigurationsManagedByReseller === 'Allowed') {
+                    <button class="btn btn-sm btn-light-primary btn-icon tooltips me-2 " (click)="Edit()"
+                        *ngIf="data.IsCustom === true && ( data.IsManagedByPartner || data.IsManagedByCustomer  || data.IsManagedByReseller)"
+                        ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_EDIT'|translate}}"><i
+                            class="ki-outline ki-pencil text-primary"></i></button>
+                    }
+
+                    @if (cc.Permissions.HasRevertConfiguration === 'Allowed' ||
+                    cc.Permissions.HasUpdateConfigurationsManagedByCustomer === 'Allowed' ||
+                    cc.Permissions.HasUpdateConfigurationsManagedByReseller === 'Allowed') {
+                    <button class="btn btn-sm btn-light-primary btn-icon tooltips me-2"
+                        (click)="revertTenantConfig(data)"
+                        *ngIf="data.IsCustom === true && (data.IsManagedByPartner || data.IsManagedByCustomer || data.IsManagedByReseller)"
+                        ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_REVERT'|translate}}"><i
+                            class="ki-outline ki-arrow-circle-left text-primary"></i></button>
+                    }
+                    @if (cc.Permissions.HasOverRideConfiguration === 'Allowed' ||
+                    cc.Permissions.HasUpdateConfigurationsManagedByCustomer === 'Allowed' ||
+                    cc.Permissions.HasUpdateConfigurationsManagedByReseller === 'Allowed') {
+                    <button class="btn btn-sm btn-light-primary btn-icon tooltips  me-2"
+                        *ngIf="data.IsCustom === false && (data.IsManagedByPartner || data.IsManagedByCustomer || data.IsManagedByReseller)"
+                        (click)="Edit()" ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_OVERRIDE'|translate}}"><i
+                            class="ki-outline ki-arrow-circle-right text-primary"></i></button>
+                    }
+
+                </div>
+            </div>
+            <!-- <label class="col-4 col-form-label">
+                    <i class="ki-duotone ki-information-2 fs-5" ngbTooltip="{{'TRANSLATE.'+data.Description | translate }}">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                    </i>
+                    <span translate="{{'TRANSLATE'+data.DisplayName}}"></span>
+                </label> -->
+            <div class="row" *ngIf="pageMode === 'edit'" [formGroup]="form">
+                <div class="col-8 fs-6 d-flex align-items-center justify-content-start text-start">
+                    <textarea class="form-control" rows="5" id="{{data.Name}}" [formControlName]="frmControlName"
+                        name="{{data.Name}}" #text (input)="onChange(text.value)" (blur)="onTouched()"
+                        [value]="data.Value" [disabled]="!data.IsManagedByPartner"></textarea>
+                    <!-- <span ng-show="frmPartnerSetting.{{data.Name}}.$error.pattern" class="text-danger"><span translate="VALIDATION_MESSAGE_ENTER_VALID_PHONE_NUMBER"></span></span> -->
+                </div>
+                <div class="col-4 d-flex align-items-center text-end">
+                    <button class="btn btn-sm btn-light-primary btn-icon tooltips me-2" (click)="saveTenantConfig(data)"
+                        ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_SAVE'|translate}}"><i
+                            class="ki-outline ki-check"></i></button>
+                    <button class="btn btn-sm btn-light-danger btn-icon tooltips me-2" (click)="cancelTenantConfig()"
+                        ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_CANCEL'|translate}}"><i
+                            class="ki-outline ki-cross"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- </form> -->
+</div>
+}
+
+@if (!cc.IsTenantConfiguration && data.IsShowOnScreen) {
+<div class="form-group mb-1 row mt-6" [formGroup]="form">
+    <label class="col-4 col-form-label">
+        <span translate="{{'TRANSLATE.'+data.DisplayName}}"></span>
+        <i class="ki-duotone ki-information-2 fs-8 ms-1 bottom-10"
+            ngbTooltip="{{'TRANSLATE.'+data.Description | translate }}">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+        </i>
+    </label>
+    <div class="col-6">
+        <textarea class="form-control" rows="5" id="{{data.Name}}" [formControlName]="frmControlName"
+            name="{{data.Name}}" #text (input)="onChange(text.value)" (blur)="onTouched()" [value]="data.Value"
+            [disabled]="!data.IsManagedByPartner"></textarea>
+        <!-- <span ng-show="frmPartnerSetting.{{data.Name}}.$error.pattern" class="text-danger"><span translate="VALIDATION_MESSAGE_ENTER_VALID_PHONE_NUMBER"></span></span> -->
+    </div>
+</div>
+}

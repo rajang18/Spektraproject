@@ -1,0 +1,12 @@
+input:disabled,
+input[disabled]
+{
+cursor:not-allowed !important;
+}
+::ng-deep {
+    app-add-user {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+  }

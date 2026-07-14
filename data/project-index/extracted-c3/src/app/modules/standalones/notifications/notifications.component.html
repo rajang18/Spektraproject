@@ -1,0 +1,316 @@
+<ng-template #actionHeader *ngIf="!showEvents">
+    <button type="button" class="btn btn-light-primary btn-sm fw-semibold me-2" busy="" busy-add-classes="disabled" not-busy-remove-classes="disabled" >
+        <i class="ki-outline ki-to-left fs-2"></i>
+        {{'TRANSLATE.INVOICE_INVOICE_BUTTON_BACK_TO_INVOICES' | translate }}
+    </button>
+</ng-template>
+<div class="card" *ngIf="pageType==='list'">
+    <div class="card-body overflow-auto">
+        <!-- Filter section form -->
+        <form *ngIf="filtersExpanded">
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group row mb-0 mt-5">
+                        <div class="col-md-3" ng-controller="DatepickerUIController">
+                            <label class="control-label fw-semibold">
+                                {{ 'TRANSLATE.ACTIVITY_LOGS_TEXT_EFFECTIVE_FROM' | translate }}
+                            </label>
+                            <div class="input-group">
+                                <input class="form-control form-control-sm  mb-3 mb-lg-0"
+                                    placeholder="{{'TRANSLATE.ACTIVITY_LOGS_TEXT_EFFECTIVE_FROM'|translate}}"
+                                    [readOnly]="true"
+                                    name="StartDate" [(ngModel)]="StartDate" ngbDatepicker #sd="ngbDatepicker" readonly [maxDate]="todayDate" />
+                                    <button class="btn btn-light-primary btn-sm" (click)="sd.toggle()" type="button"><i class="ki-outline ki-calendar fs-3 pe-0"></i></button>
+                            </div>
+                        </div>
+                        <div class="col-md-3" ng-controller="DatepickerUIController">
+                            <label class="control-label fw-semibold">
+                                {{ 'TRANSLATE.ACTIVITY_LOGS_EFFECTIVE_TO' | translate }}
+                            </label>
+                            <div class="input-group">
+                                <input class="form-control form-control-sm  mb-3 mb-lg-0"
+                                    placeholder="{{'TRANSLATE.ACTIVITY_LOGS_EFFECTIVE_TO'|translate}}" name="EndDate"
+                                    [readOnly]="true"
+                                    [(ngModel)]="EndDate" ngbDatepicker #ed="ngbDatepicker" readonly [maxDate]="todayDate" [minDate]="StartDate" />
+                                    <button class="btn btn-light-primary btn-sm" (click)="ed.toggle()" type="button"><i class="ki-outline ki-calendar fs-3 pe-0"></i></button>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="control-label fw-semibold">
+                                {{ 'TRANSLATE.ACTIVITY_LOGS_TEXT_STATUS' | translate }}
+                            </label>
+                            <select class="form-select  form-select-sm" [(ngModel)]="Status"
+                                name="Status">
+                                <option selected value=null>
+                                    {{'TRANSLATE.CUSTOMER_SEARCH_DEFAULT_OPTION'|translate}}
+                                </option>
+                                <option [value]="'Success'">
+                                    {{'TRANSLATE.ACTIVITY_LOGS_TEXT_SUCCESS'|translate}}
+                                </option>
+                                <option [value]="'Failure'">
+                                    {{'TRANSLATE.ACTIVITY_LOGS_TEXT_FAILED'|translate}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-3" *ngIf="showEvents">
+                            <label class="control-label fw-semibold">
+                                <span translate="TRANSLATE.ACTIVITY_LOGS_TEXT_ACTION_NAME"></span>
+                            </label>
+                            <select [(ngModel)]="EventId" name="EventId"
+                                class="form-select  form-select-sm">
+                                <option [value]="null">
+                                    {{'TRANSLATE.CUSTOMER_SEARCH_DEFAULT_OPTION'|translate}}
+                                </option>
+                                @for(option of Event; track $index){
+                                <option [value]="option.ID">
+                                    {{'TRANSLATE.'+ option.Description | translate}}
+                                </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row mt-5" *ngIf="ActiveCustomer && ActiveCustomer.length > 0">
+                        <div class="col-md-3">
+                            <label class="control-label fw-semibold">
+                                <span translate="TRANSLATE.AUDITLOG_TEXT_CUSTOMER_NAME"></span>
+                            </label>
+                            <select [(ngModel)]="CustomerC3Id" name="CustomerC3Id"
+                                class="form-select  form-select-sm" (change)="onCustomerChange()">
+                                <option [value]="null">{{'TRANSLATE.ACTIVITY_LOG_PLACEHOLDER_ALL_CUSTOMERS' | translate}}
+                                </option>
+                                @for(customer of ActiveCustomer; track $index){
+                                <option [value]="customer.C3Id">
+                                    {{customer.Name}}
+                                </option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group"
+                                *ngIf="serviceProviderustomerDetails && serviceProviderustomerDetails.length > 0 && (CustomerC3Id || entityName.toLowerCase() === cloudHubConstants.ENTITY_CUSTOMER)">
+                                <label class="control-label fw-semibold">
+                                    <span translate="TRANSLATE.AUDITLOG_TEXT_SERVICE_PROVIDER_CUSTOMER_DOMAIN"></span>
+                                </label>
+                                <select class="form-select  form-select-sm"
+                                    [(ngModel)]="customerRefId" name="addTaxPercentage_StateProvince">
+                                    <option [value]="null">{{'TRANSLATE.ACTIVITY_LOG_PLACEHOLDER_ALL_DOMAINS' | translate}}
+                                    </option>
+                                    @for (option of serviceProviderustomerDetails; track $index) {
+                                    <option [value]="option.CustomerRefId">{{option.DomainName}}</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer py-3">
+                    <div class="form-group row justify-content-end d-flex flex-column align-items-end">
+                        <div class="mt-auto d-flex justify-content-end">
+                            <button type="button" class="btn btn-light-primary btn-sm m-2" (click)="ReloadTableData()">
+                                {{'TRANSLATE.AUDITLOG_BUTTON_LABEL_SEARCH' | translate}}
+                            </button>
+                            <button type="button" class="btn btn-light-primary btn-sm m-2" (click)="ResetSearchData()">
+                                {{'TRANSLATE.CUSTOM_NOTIFICATION_RESET_OPTION' | translate}}
+                            </button>
+                            <button type="button" class="btn btn-light-primary btn-sm m-2" (click)="filtersExpanded = false;">
+                                {{'TRANSLATE.CUSTOMER_SEARCH_CLOSE_OPTION' | translate}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- Filter Section Form End -->
+
+        <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+            <div class="d-flex justify-content-end">
+                <!-- Add your action buttons or other elements here -->
+                <div class="d-flex align-items-center"
+                    *ngIf="data.ContactLogStatus === 'Failure' && data.ContactMethod === 'Webhook' && data.RetryCount > 0">
+                    <div title="{{'TRANSLATE.ACTIVITY_LOGS_BUTTON_TEXT_RETRY'|translate}}"
+                        class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto"
+                        [ngClass]="toolbarButtonHeightClass" (click)="resendWebhookdetails(data)">
+                        <span
+                            class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg me-md-2 h-20px w-20px">
+                            <i class="fa-solid fa-rotate-right text-primary"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div title="{{'TRANSLATE.ACTIVITY_LOGS_TEXT_VIEW_EMAIL'|translate}}"
+                        class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto text-primary"
+                        [ngClass]="toolbarButtonHeightClass" (click)="viewMessage(data)">
+                        <span
+                            class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg me-md-2 h-20px w-20px">
+                            <i class="ki-outline ki-eye fs-1 text-primary">
+                                <!-- <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span> -->
+                            </i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+        <ng-template #status let-data="adtData">
+            <div>
+                <span *ngIf="data.ContactLogStatus === 'Success'" class="badge badge-success">{{
+                    'TRANSLATE.ACTIVITY_LOGS_TEXT_SUCCESS' | translate }} </span>
+                <span *ngIf="data.ContactLogStatus === 'Failure'" class="badge badge-danger">{{
+                    'TRANSLATE.ACTIVITY_LOGS_TEXT_FAILED' | translate }}</span>
+            </div>
+        </ng-template>
+
+        <ng-template #subjectText let-row="adtData">
+            <div>
+                {{row.SubjectText}}
+                <sup><i class="fas fa-envelope text-primary"
+                        *ngIf="row?.ContactMethod?.toLowerCase() === cloudHubConstants.CONTACT_METHOD_EMAIL && false"></i></sup>
+                <sup><i class="fas fa-paperclip" *ngIf="row?.Attachments || row?.AttachmentPaths"></i></sup>
+            </div>
+        </ng-template>
+
+        <ng-template #createDate let-data="adtData" let-emitter="captureEvents">
+            <span>{{data.CreateDate | c3Date}}</span>
+        </ng-template>
+        <!-- Check if datatableConfig is defined and then render the table -->
+
+        <div class="d-flex justify-content-between pt-5 pb-10">
+            <h6 class="help-block text-primary ng-binding pt-5">
+                {{'TRANSLATE.ACTIVITY_LOG_INFORMATION_TEXT_SHOWING_LOGS_FROM' | translate}} {{todayStr | c3Date}}</h6>
+            <div class="d-flex justify-content-between">
+                <button data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" data-kt-menu-flip="top-end"
+                    class="btn btn-sm text-nowrap btn-secondary" (click)="toggleFilters()">
+                    <i class="ki-outline ki-filter fs-2" >
+                        <!-- <span class="path1"></span>
+                        <span class="path2"></span> -->
+                    </i>&nbsp;
+                    <span translate="TRANSLATE.BTN_TEXT_FILTER"></span>
+                </button>
+            </div>
+        </div>
+        
+        <ng-container *ngIf="!!datatableConfig">
+            <app-c3-table [reload]="reloadEvent"
+                [datatableConfig]="datatableConfig" [searchFilter]="false">
+            </app-c3-table>
+        </ng-container>
+    </div>
+</div>
+
+
+<div class="card" *ngIf="pageType==='view'">
+    <div class="card-body overflow-auto">
+        <div class="form row mt-5">
+            <div class="col-md-6" style="display: flex; justify-content: space-between;">
+                <div class="inbox-header">
+                    <h4 class="bold"> {{emailBody?.SubjectText}} </h4>
+                </div>
+
+            </div>
+            <div class="col-md-6 text-end">
+                <button class="btn btn-light-primary btn-sm" style="align-self: flex-end;" (click)="updatePageMode('list')">
+                    <i class="ki-outline ki-to-left fs-2"></i>
+                    {{'TRANSLATE.BUTTON_TEXT_BACK_TO_LIST' | translate}}
+                </button>
+            </div>
+        </div>
+        <div class="form m-5" *ngIf="emailBody !== null">
+            <div class="form-group row">
+                <div class="col-md-12 activity-log-msg">
+                    <div class="inbox-body">
+                        <div class="inbox-content">
+                            <div class="alert alert-block alert-danger fade in"
+                                *ngIf="emailBody?.ContactLogStatus === 'Failure' && emailBody?.ReasonForFailure !== ''">
+                                <p>{{emailBody?.ReasonForFailure}}</p>
+                            </div>
+                            <div class="inbox-view-info">
+                                <div class="form-group row">
+                                    <div class="col-md-9">
+                                        <div class="col-md-12">
+                                            <div class="table-responsive-md">
+                                                <table class="table table-bordered">
+                                                    <tr *ngIf="emailBody?.SenderContact" style="border-width : 1px;">
+                                                        <td class="text-left black">
+                                                            {{'TRANSLATE.ACTIVITY_LOGS_TEXT_FROM' | translate}}:</td>
+                                                        <td><strong><span>{{emailBody?.SenderContact}}</span></strong>
+                                                        </td>
+                                                    </tr>
+                                                    <tr *ngIf="emailBody?.ToRecipients" style="border-width : 1px;">
+                                                        <td class="text-left black">{{'TRANSLATE.ACTIVITY_LOGS_TEXT_TO'
+                                                            | translate}}:</td>
+                                                        <td><strong><span>{{emailBody?.ToRecipients}}<span
+                                                                        *ngIf="emailBody.CCRecipients !== ''">,{{emailBody.CCRecipients}}</span></span></strong>
+                                                        </td>
+                                                    </tr>
+                                                    <tr *ngIf="emailBody?.BCCRecipients" style="border-width : 1px;">
+                                                        <td class="text-left black">{{'TRANSLATE.ACTIVITY_LOGS_TEXT_BCC'
+                                                            | translate}}:</td>
+                                                        <td><strong><span>&lt;{{emailBody?.BCCRecipients}}&gt;</span></strong>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="col-md-12">
+                                            <div class="table-responsive-md">
+                                                <table class="table table-hover table-bordered">
+                                                    <tr style="border-width : 1px;">
+                                                        <td>
+                                                            <span *ngIf="emailBody?.ContactLogStatus === 'Success'">
+                                                                <span class="text-success">{{
+                                                                    'TRANSLATE.ACTIVITY_LOGS_TEXT_SUCCESS' | translate
+                                                                    }}</span>
+                                                            </span>
+                                                            <span *ngIf="emailBody?.ContactLogStatus === 'Failure'">
+                                                                <span class="text-danger">{{
+                                                                    'TRANSLATE.ACTIVITY_LOGS_TEXT_FAILED' | translate
+                                                                    }}</span>
+                                                            </span>
+                                                            <span *ngIf="emailBody?.CreateDate">
+                                                                <strong>{{emailBody?.CreateDate | c3Date}}</strong>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="overflow-auto scroll-test" style="padding: 0px 15px 10px 15px"
+                                        *ngIf="emailBody?.ContactMethod === 'Email'">
+                                        <app-view-email-template [text]="emailBody?.BodyText"></app-view-email-template>
+                                    </div>
+                                    <div class="col-6" *ngIf="emailBody?.ContactMethod === 'Webhook'">
+                                        <table class="table table-bordered">
+                                            <tbody *ngFor="let item of webhookPayload">
+                                                <tr class="font-size-lg text-start" *ngIf="item[1] !== null">
+                                                    <td class="font-weight-bold col-md-2">{{item[0]}}</td>
+                                                    <td *ngIf="checkType(item[1], 'object') === false" class="col-md-3">
+                                                        {{item[1]}}</td>
+                                                    <td *ngIf="checkType(item[1], 'object') === true" class="col-md-3">
+                                                        <table class="table">
+                                                            <tbody *ngFor="let i of item[1]">
+                                                                <tr class="font-size-lg text-start"
+                                                                    *ngIf="i[1] !== null">
+                                                                    <td class="font-weight-bold col-md-2">{{i[0]}}</td>
+                                                                    <td class="col-md-3">{{i[1]}}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

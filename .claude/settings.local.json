@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"C:\\\\Users\\\\AbhinavTyagi\\(CEL\\)\\\\.claude\\\\projects\\\\c--Users-AbhinavTyagi-CEL--Downloads-Spektra-Copliot-dev--1--Spektra-Copliot-dev\\\\memory\")"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\AbhinavTyagi(CEL)\\.claude\\projects\\c--Users-AbhinavTyagi-CEL--Downloads-Spektra-Copliot-dev--1--Spektra-Copliot-dev\\memory"
+    ]
+  }
+}

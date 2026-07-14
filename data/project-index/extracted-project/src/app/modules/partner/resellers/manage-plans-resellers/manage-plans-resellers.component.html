@@ -1,0 +1,42 @@
+<ng-template #actionHeader>
+  <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+      <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="backToResellersList()">
+          <i class="ki-outline ki-to-left fs-2"></i> <span translate="TRANSLATE.BUTTON_TEXT_BACK_TO_RESELLERS"></span></button>
+  </div> 
+</ng-template>
+<div class="card">
+    <div class="card-body pt-0 overflow-auto">
+      <div class="d-flex align-items-center position-relative my-3 mx-1">
+        <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
+          <span class="custom-path1"></span><span
+            class="custom-path2"></span></i> <input type="text" data-field="Name" data-action="filter"
+          class="header-input-field form-control form-control-solid w-200px ps-10" placeholder="Search...">
+      </div>
+      <ng-template #actions let-data="adtData" let-emitter="captureEvents" >
+        <div>
+          <a class="btn btn-sm btn-warning btn-sm" *ngIf="data.IsActive === true && Permissions.HasUpdateResellerPlan"
+            (click)="UpdateCustomerPlanStatus(data.InternalPlanReferenceId, false, data.IsActive)">
+            <span translate="TRANSLATE.PARTNER_CUSTOMER_PLAN_BUTTON_TEXT_DISABLE"></span>
+          </a>
+          <a class="btn btn-light-primary btn-sm" *ngIf="data.IsActive === false && Permissions.HasUpdateResellerPlan"
+            (click)="UpdateCustomerPlanStatus(data.InternalPlanReferenceId, true, data.IsActive)">
+            <span translate="TRANSLATE.PARTNER_CUSTOMER_PLAN_BUTTON_TEXT_ENABLE"></span>
+          </a>
+          <a class="btn btn-sm btn-success btn-sm" *ngIf="data.IsActive === null && Permissions.HasUpdateResellerPlan"
+            (click)="UpdateCustomerPlanStatus(data.InternalPlanReferenceId, true, data.IsActive)">
+            <span translate="TRANSLATE.PARTNER_CUSTOMER_PLAN_BUTTON_TEXT_ASSIGN"></span>
+          </a>
+        </div>
+      </ng-template>
+        @if (!!datatableConfig && shouldshow ) {
+          
+            <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+            </app-c3-table>
+        
+        }
+     
+    </div>
+  </div>
+
+
+  

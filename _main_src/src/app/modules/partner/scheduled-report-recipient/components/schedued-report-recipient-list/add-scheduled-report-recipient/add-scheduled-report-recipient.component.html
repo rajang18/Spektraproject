@@ -1,0 +1,81 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3 pe-9">
+      <button type="button" class="btn btn-sm fw-semibold btn-light-primary" (click)="backToReports()">
+        <i class="ki-outline ki-to-left fs-2">
+            </i> <span translate="TRANSLATE.PARTNER_SCHEDULED_RECIPIENTS_BTN_TEXT_BACK_TO_SCHEDULED_REPORTS_RECIPIENT"></span>
+      </button>
+    </div>
+</ng-template>
+  <div class="add-customer-container">
+    <div class="card custom-card">
+        <div class="card-body">
+            <form [formGroup]="addform">
+                <div class="form-group row mt-7">
+                    <div class="form-group row mt-7">
+                        <div class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.EVENT_NOTIFICATION_LABLE_TEXT_RECIPIENT_TYPE"></label>
+                        </div> 
+                        <div class="col-md-5">
+                            <select class="form-select form-select-sm fw-bold"
+                           formControlName="recipientType" (change)="SelectedRecipientType($event)"> 
+                           <option value="" disabled selected><span translate="TRANSLATE.DROPDOWN_PLACEHOLDER_SELECT"></span></option>
+                           @for(recipients of this.recipientsTypes; track $index){
+                           <option [value]="recipients.ID">{{'TRANSLATE.' + recipients.NameKey | translate}}</option>
+                        }    
+                        <!-- <option value="" translate="TRANSLATE.SELECT_DEFAULT_OPTION_SELECT"></option> -->
+                      </select>
+                        @if(addform.get('recipientType')?.errors?.required &&
+                        addform.get('recipientType')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                        }
+                        </div>
+                    </div>  
+                    <div class="form-group row mt-7">
+                        <div class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.EVENT_NOTIFICATION_LABLE_TEXT_RECIPIENTS"></label>
+                        </div> 
+                        <div class="col-md-5">
+                            @if (this.selectedValue === 'People') {
+                                <input  class="form-control form-control-sm" formControlName="emailAddress">
+                                @if (addform.get('emailAddress')?.errors?.required && addform.get('emailAddress')?.touched) {
+                                    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                                }
+
+                                @if (addform.get('emailAddress')?.errors?.invalidEmail && addform.get('emailAddress')?.touched && !addform.get('emailAddress')?.errors?.required) {
+                                    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_PLEASE_ENTER_A_VALID_EMAIL"></span>
+                                }
+                            } 
+                            @if (this.selectedValue === 'Role') {
+                                <ng-select formControlName="roleValue" [multiple]="true" >              
+                                    @for (item of rolesValueDetails; track $index) {
+                                         <ng-option [value]="item.Name">{{item.Description | translate}}</ng-option>
+                                    }
+                              </ng-select>
+                                <!-- <ng-select [data]="rolesValueDetailsDataSet" class="form-select"  formControlName="roleValue"
+                                 [templates]="rolesValueDetails" [multiple]="true">
+                                    <ng-template #rolesValueDetails let-data="data" class="border-0">
+                                        <span [ngClass]="{'multiple-select-choice' : !isEditMode}" translate="{{data?.value}}" class="border-0"></span>
+                                    </ng-template>
+                                </ng-select>  -->
+                                @if(addform.get('roleValue')?.errors?.required && addform.get('roleValue')?.touched){
+                                    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                                } 
+                            }
+                                
+                        </div> 
+                    </div>   
+                </div>
+            </form>
+        </div>
+        <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3">
+            <button type="button" class="btn btn-sm btn-light btn-active-light-primary" (click)="BackToScheduleReportRecipient()">
+                <span>{{'TRANSLATE.BUTTON_TEXT_CANCEL' | translate}}</span>
+            </button>
+            <button type="button" class="btn btn-sm btn-primary" (click)="onSubmit()">
+                {{ 'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate }}
+            </button>       
+        </div> 
+    </div>
+</div>

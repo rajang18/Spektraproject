@@ -1,0 +1,49 @@
+.requirement-panel {
+  border-color: #e5eaf2;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.requirement-form {
+  display: grid;
+  gap: 18px;
+  padding-top: 18px;
+}
+
+.requirement-field {
+  width: 100%;
+}
+
+textarea {
+  min-height: 280px;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.requirement-form__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+button[mat-flat-button] {
+  min-width: 180px;
+}
+
+button mat-spinner,
+button mat-icon {
+  margin-right: 8px;
+}
+
+@media (max-width: 768px) {
+  .requirement-form__actions {
+    justify-content: stretch;
+  }
+
+  button[mat-flat-button] {
+    width: 100%;
+  }
+
+  textarea {
+    min-height: 220px;
+  }
+}

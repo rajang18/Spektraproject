@@ -1,0 +1,14 @@
+<ng-template #expireson let-data="adtData" >
+  {{data.ExpiresOn | c3Date}}
+</ng-template>
+
+<div class="card border-0">
+    <div class="card-body px-0 pt-0 overflow-auto">
+  
+      <!-- enable name field --> 
+      @if (!!datatableConfig) {
+      <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+      </app-c3-table>
+      }
+    </div>
+  </div>

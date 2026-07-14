@@ -1,0 +1,7 @@
+::ng-deep {
+    app-phone-number-row {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}

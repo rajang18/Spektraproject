@@ -1,0 +1,85 @@
+<div class="col card card-custom d-flex">
+    <div class="card-header pt-5">
+        <div class="dashboard-filter-wrapper d-flex justify-content-between w-100">
+            <div class="card-title align-items-start flex-column dashboard-tile-title">
+                <span class="card-label fw-semibold"><span
+                        translate="TRANSLATE.CUSTOMER_DASHBOARD_PRODUCT_COUNTS_BY_SKU_TILE_HEADER"></span>
+                </span>
+            </div>
+
+
+            <div class="card-toolbar-container d-flex  align-items-center gap-3" style="flex-wrap: wrap;">
+                <div ngbDropdown class="d-flex align-items-center" placement="bottom-right">
+                    <button class="btn btn-icon btn-light-primary btn-active-primary btn-dropdown btn-sm"
+                        style="padding: 10px; width: auto;" id="dropdownBasic1" ngbDropdownToggle>
+                        {{'TRANSLATE.'+selectedTimePeriod | translate}}
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+                        class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base">
+                        @for(duration of durationUnits; track $index)
+                        {
+                        <div class='menu-item my-0' ngbDropdownItem (click)="selectedDuration(duration)">
+                            <a class="menu-link px-3 py-2 d-flex align-items-center gap-3">
+                                {{'TRANSLATE.'+duration | translate}}
+                            </a>
+                        </div>
+                        }
+                    </div>
+                </div>
+                <div ngbDropdown class="d-flex align-items-center" placement="bottom-right">
+                    <button class="btn btn-sm btn-icon btn-color-primary btn-active-light-primary remove-caret d-flex flex-column"
+                    style="padding: 10px; width: auto;" id="dropdownToggle" ngbDropdownToggle>
+                        <app-keenicon name="category" class="fs-2" style="display: contents;"><span
+                                class="fs-2 ki-category ki-duotone"><span class="path1"></span><span
+                                    class="path2"></span><span class="path3"></span><span
+                                    class="path4"></span><!----></span><!----><!----></app-keenicon> </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownToggle"
+                        class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base w-175px text-wrap">
+                        <div class='menu-item my-0' ngbDropdownItem>
+                            <div class="apexcharts-menu-item" (click)="generateTOP10SKus()"><span class="w-175px text-wrap"
+                                    translate="TRANSLATE.DASHBOARD_CARD_ACTIONS_OPTION_TEXT_TOP_10_SKUS_DOWNLOAD_CSV"></span>
+                            </div>
+                        </div>
+                        <div class='menu-item my-0' ngbDropdownItem>
+                            <div class="apexcharts-menu-item" (click)="generateALLSKus()"><span class="w-175px text-wrap"
+                                    translate="TRANSLATE.DASHBOARD_CARD_ACTIONS_OPTION_TEXT_ALL_SKUS_DOWNLOAD_CSV"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body pt-2 pb-2" style="height:auto">
+        @if(!!isLoading){
+        <app-loader></app-loader>
+        }
+        @else if(!!skusData && skusData.Data && skusData.Data.length > 0){
+        <div id="site_statistics" class="chart">
+
+            <apx-chart [series]="chartOptions?.series" [chart]="chartOptions?.chart" [labels]="chartOptions?.labels"
+                [dataLabels]="chartOptions?.dataLabels"  [fill]="chartOptions?.fill"
+                [responsive]="chartOptions?.responsive" [xaxis]="chartOptions.xaxis" 
+                [yaxis]="chartOptions.yaxis"
+                [tooltip]="chartOptions.tooltip"
+                [tooltip]="chartOptions.tooltip"
+                [grid]="chartOptions.grid"
+                [colors]="chartOptions.colors"
+                >
+            </apx-chart>
+        </div>
+        <div>
+        </div>
+        }
+
+        @else if(!!skusData?.Data && !isLoading){
+        <div class="d-flex align-items-center justify-content-center" style="height: 100%;">
+            <div class="row">
+                <div class="col-md-12">
+                    <app-common-no-record></app-common-no-record>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</div>

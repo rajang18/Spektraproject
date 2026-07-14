@@ -1,0 +1,15 @@
+<!--begin::Toolbar container-->
+<div id="kt_app_toolbar_container" class="app-container d-flex flex-wrap" [ngClass]="appToolbarContainerCSSClass">
+    <ng-container>
+      <app-page-title [appPageTitleDirection]="appPageTitleDirection" [appPageTitleBreadcrumb]="appPageTitleBreadcrumb"
+        [appPageTitleDescription]="appPageTitleDescription" class="page-title d-flex flex-wrap me-3"
+        [ngClass]="{'flex-column justify-content-center': appPageTitleDirection === 'column', 'align-items-center': appPageTitleDirection !== 'column', appPageTitleCSSClass}">
+      </app-page-title>
+
+
+      <div *ngIf="dynamicTemplate">
+        <ng-container *ngTemplateOutlet="dynamicTemplate; context: { data: { text: 'Data from Parent' } }"></ng-container>
+      </div>
+
+    </ng-container>
+<!--end::Toolbar container-->

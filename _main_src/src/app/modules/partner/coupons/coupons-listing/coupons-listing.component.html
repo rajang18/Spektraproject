@@ -1,0 +1,44 @@
+<div class="card card-custom">
+    <!-- begin::Header -->
+    <div class="card-header card-header-stretch overflow-auto">
+      <ul class="nav nav-stretch nav-line-tabs fw-bold border-transparent flex-nowrap" role="tablist">
+        <li class="nav-item">
+          <a
+            routerLink="coupondetails"
+            class="nav-link cursor-pointer"
+            role="tab"
+            routerLinkActive="text-primary active" [routerLinkActiveOptions]="{ exact: true }"
+            (click)="setActiveTab(tabs.CouponDetails)">
+            {{'TRANSLATE.COUPONS_TAB_HEADING_TEXT_COUPONS' | translate}}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a
+            routerLink="couponassignment"
+            class="nav-link cursor-pointer"
+            role="tab"
+            routerLinkActive="text-primary active" [routerLinkActiveOptions]="{ exact: true }"
+            (click)="setActiveTab(tabs.CouponAssignment)">
+            {{'TRANSLATE.COUPONS_ASSIGNMENT_TAB_HEADING_TEXT_COUPONS_ASSIGNMENT' | translate}}
+          </a>
+        </li>
+        @if ( this.permissions.HasCouponStatus === 'Allowed') {
+        <li class="nav-item">
+          <a
+            routerLink="couponstatus"
+            class="nav-link cursor-pointer"
+            role="tab"
+            routerLinkActive="text-primary active" [routerLinkActiveOptions]="{ exact: true }"
+            (click)="setActiveTab(tabs.CouponStatus)">
+          {{'TRANSLATE.COUPONS_STATUS_TAB_HEADING_TEXT_COUPONS_STATUS' | translate}}
+          </a>
+        </li>
+      }
+      </ul>
+    </div>
+  
+    <div class="card-body">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+  

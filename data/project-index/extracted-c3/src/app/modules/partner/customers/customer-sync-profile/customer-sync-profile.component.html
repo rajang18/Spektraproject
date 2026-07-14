@@ -1,0 +1,24 @@
+<div class="card">
+    <div class="card-body p-0 overflow-auto">
+        <div class="row m-0">
+            <div class="col-md-12 m-0 p-0">
+                <ul class="list-group">
+                    @for(row of RefreshStatus; track $index){
+                    <li class="list-group-item">
+                        <span>
+                            <i class="ki-outline ki-check-circle text-success" *ngIf="row.status === 'done'"></i>
+                            <i class="ki-outline ki-loading text-success fs-3" *ngIf="row.status === 'inprogress'"></i>
+                            <i class="ki-outline ki-information-5 text-danger" *ngIf="row.status === 'error'"></i>
+                            &nbsp;
+                            {{row.name}}
+                            &nbsp;
+                            <span class="text-danger">{{row.errors}}</span>
+                        </span>
+                    </li>
+                    }
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

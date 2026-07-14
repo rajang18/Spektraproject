@@ -1,0 +1,72 @@
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>{{'TRANSLATE.NCE_PROMOTIONS_POPUP_PROMOTION_DETAILS' | translate}}</h2>
+        </div>
+        <div class="modal-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <h4 class="font-weight-bold">
+                            {{promotionDetail?.Name}}
+                        </h4>
+                        <p><b>{{'TRANSLATE.NCE_PROMOTIONS_POPUP_PROVIDER_REF_ID' | translate}}</b>
+                            {{promotionDetail?.PromotionalId || promotionDetail?.PromotionId}}
+                        </p>
+                        <p>{{promotionDetail?.Description}}</p>
+                        <table
+                            class="table table-bordered table-responsive-md table-responsive-lg table-responsive-sm table-responsive-xl table-responsive-xxl">
+                            <thead class="fw-semibold">
+                                <tr>
+                                    <td>
+                                        <span translate="TRANSLATE.NCE_PROMOTIONS_POPUP_TERM"></span>
+                                    </td>
+                                    <td>
+                                        <span translate="TRANSLATE.NCE_PROMOTIONS_POPUP_BILLING_FREQUENCY"></span>
+                                    </td>
+                                    <td>
+                                        <span style="display : flex ; justify-content : end"
+                                            translate="TRANSLATE.NCE_PROMOTIONS_POPUP_DISCOUNT"></span>
+                                    </td>
+                                    <td>
+                                        <span translate="TRANSLATE.NCE_PROMOTIONS_POPUP_END_DATE"></span>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="fw-semibold">
+                                        {{promotionDetail?.Validity}} {{(promotionDetail?.Validity === 1? (promotionDetail?.ValidityType === 'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                        'TRANSLATE.TERM_DURATION_DESC_YEAR') : 'TRANSLATE.TERM_DURATION_DESC_YEARS') | translate }}
+                                    </td>
+                                    <td>
+                                        {{'TRANSLATE.'+promotionDetail?.BillingCycleDescriptionKey | translate}}
+                                    </td>
+                                    <td style="display : flex ; justify-content : end">
+                                        {{promotionDetail?.Discount}} {{(promotionDetail?.DiscountType?.toLowerCase()) ==='percentdiscount'? '%':''}}
+
+                                        <!-- {{promotionDetail.Discount || promotionDetail.PromotionDiscount}} {{(promotionDetail.PromotionDiscountType.toLowerCase() || promotionDetail.DiscountType.toLowerCase()) ==='percentdiscount'? '%':''}} -->
+
+                                    </td>
+                                    <td>
+                                        {{promotionDetail?.EndDate | c3Date}}
+                                        <!-- {{ (promotionDetail?.PromotionEndDate || promotionDetail?.EndDate) | date:'MMM dd, yyyy HH:mm:ss':'+0000' }} -->
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-12">
+                        <span
+                        [appPermission]="'ARE_NCE_PROMOTIONS_ENABLED'"
+                            *ngIf="promotionDetail?.IsPromotionAvailableForCustomer && promotionDetail?.ShowPromotionLink"
+                            (click)="checkNcePromotionEligibility()"
+                            class="mb-0 me-2 font-weight-normal  separator-primary text-primary cursor-pointer">{{'TRANSLATE.NCE_PROMOTIONS_CHECK_ELIGIBILITY' | translate }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-light btn-active-light-primary " (click)="closeModalPopup()"
+                translate="TRANSLATE.NCE_PROMOTIONS_POPUP_CLOSE" tabindex="-1"></button>
+        </div>
+    </div>

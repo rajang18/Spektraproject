@@ -1,0 +1,58 @@
+::ng-deep {
+    .height-100vh {
+        height: 100dvh;
+    }
+
+    .centered {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .scroll.max-height-300 {
+        max-height: 300px;
+    }
+
+    .form-check-input {
+        position: absolute;
+        margin-top: 0.3rem;
+        margin-left: -1.25rem;
+    }
+
+
+    .container {
+        position: relative;
+        height: 400px;
+        width: 100%;
+        border: 1px solid #ccc;
+      }
+      
+      .content {
+        height: 100%;
+        overflow: auto;
+      }
+    
+      .card{
+        // width:230px;
+        // height:470px;
+        // overflow: auto;
+        .card-body{
+            display: flex;
+            flex-direction: column;
+            gap:20px ;
+            .checkbox-list{
+             display: flex;
+             flex-direction: column;
+             gap: 5px
+         }
+         }
+        }
+    }
+    .scroll.max-height-500{
+       max-height: 500px;
+    }
+    .fixed-height-one {
+        height: 300px; /* Fixed height for Tab 1 */
+        overflow-y: auto; /* Scroll if content exceeds height */
+      }

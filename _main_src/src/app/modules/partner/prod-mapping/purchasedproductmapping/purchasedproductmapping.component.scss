@@ -1,0 +1,27 @@
+.label.label-light-success {
+    color: #1BC5BD;
+    background-color: #C9F7F5;
+}
+
+::ng-deep {
+    app-purchasedproductmapping {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        
+    }
+}
+
+
+.min-content{
+    width: min-content;
+}
+
+.custom{
+    color: var(--bs-gray-800);
+}

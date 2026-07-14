@@ -1,0 +1,30 @@
+@if (!isEditing){
+<div class="d-flex align-items-center">
+  <!-- <span class="text-gray-800">{{ data[field] }}</span> -->
+  <span [class]="'' + (data.DeletedOn ? 'text-danger' : 'fw-semibold')">{{ data[field] }}</span>
+  @if(data.DeletedOn == null)
+  {
+    <button class="btn btn-sm btn-active-light-primary p-2" (click)="toggleEditField()">
+      <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg me-md-2 h-20px w-20px">
+        <i class="ki-outline ki-pencil text-primary">
+        </i>
+      </span>
+    </button>
+  }
+</div>
+} @else {
+<div class="d-flex align-items-center">
+  <div class="form-group">
+    <input type="text" class="form-control" [(ngModel)]="data[field]" />
+  </div>
+  <button class="btn btn-sm p-2 ms-2" (click)="onClickSave()">
+    <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg me-md-2 h-20px w-20px">
+      <i class="ki-outline ki-check fs-1 text-success"></i>
+    </span>
+  </button>
+  <button class="btn btn-sm p-2" (click)="onClickCancel()">
+    <i class="ki-outline ki-cross fs-1 text-danger" aria-hidden="true"></i>
+  </button>
+</div>
+}
+<span class="badge badge-info" ngbTooltip="{{ data.MarketRegion }}">{{data.MarketCode}}</span>

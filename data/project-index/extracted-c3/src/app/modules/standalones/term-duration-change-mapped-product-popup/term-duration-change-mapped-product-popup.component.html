@@ -1,0 +1,218 @@
+<div class="modal-dialog m-0 modal-dialog m-0-centered">
+    <div class="modal-content">
+        @if(categoryName.toLowerCase() !== cloudHubConstants.RESERVED_INSTANCES.toLowerCase()){
+            <div class="modal-header">
+                <h2 id="modal-title">
+                    <span translate="TRANSLATE.MANUAL_SYNC_PUPUP_TITLE"></span>
+                </h2>
+                <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModalPopup()" data-bs-dismiss="modal">
+                    <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+                </div>
+            </div>
+            <div class="modal-body" id="modal-body" style="max-height:250px;">
+            
+                <table class="table table-striped table-bordered table-hover table-checkable">
+                    <thead>
+                        <tr>
+                            <th class="text-left col-md-2"><span translate="TRANSLATE.BILLING_CYCLE_CHANGE_TABLE_HEADER_TEXT_CURRENT_PRODUCT_NAME"></span></th>
+                            <th class="text-left col-md-10"><span translate="TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_MATCHING_PRODUCTS"></span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (row of subscriptionsList; track $index) {
+                        <td style="width:20%;" class="ps-3">
+                            @if(row.SubscriptionBillingQualifiedOfferId.length > 40){
+                            <span *ngFor="let i of getTimes(row.SubscriptionBillingQualifiedOfferId.length / 36) track $index ">
+                                &nbsp;&nbsp;
+                            </span>
+                            }
+                            {{row.SubscriptionOfferName}}
+                            @if(row.SubscriptionBillingQualifiedOfferId.length > 40){
+                            <sup class="text-warning">
+                                <span translate="TRANSLATE.PLAN_MANAGE_ADD_FORM_TABLE_1_HEADER_TEXT_OFFER_ADD_ON"></span>
+                            </sup>
+                            }
+                            <div class="small p-0">
+                                <span class="small"><span translate="TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_BILLING_CYCLE"></span></span>{{row.BillingCycleName}}
+                            </div>
+                        </td>
+                        <td>
+                            <select2 [data]="mappingC3PlanProductsDatasetDict[row.ProviderSubscriptionId]" class="form-select-solid custom-height" [templates]="template" [multiple]="false" (update)="selectPlanProductId(row,$event)">
+                                <ng-template #template let-data="data">
+                                    {{data?.PlanOfferQualifiedOfferName}}
+                                    <div class="custom-not"><small> Plan: <span>{{data?.PlanName}}</span></small></div>
+                                    <div class="custom-not"><small *ngIf="data?.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE.toLowerCase() && data?.CompositeProductId === null">Price:<span>{{data?.CurrencySymbol}}</span><span>{{data?.FinalSalePrice}}</span></small></div>
+                                </ng-template>
+                            </select2>
+                        </td>
+                        }
+                    </tbody>
+                </table>
+            
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-light-primary btn-active-primary btn-sm" [disabled]="!isAllProductSelected" (click)="proceed(subscriptionsList,false)">{{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}</button>
+                <button class="btn btn-light-primary btn-active-primary btn-sm" (click)="closeModalPopup()">{{'TRANSLATE.BUTTON_TEXT_CANCEL' | translate}}</button>
+            </div>
+            }
+            @if(categoryName.toLowerCase() === cloudHubConstants.RESERVED_INSTANCES.toLowerCase()){
+            <div class="modal-header">
+                <h2 id="modal-title">
+                    <span translate="TRANSLATE.MANUAL_SYNC_PUPUP_TITLE"></span>
+                </h2>
+                <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModalPopup()" data-bs-dismiss="modal">
+                    <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+                </div>
+            </div>
+            <div class="modal-body">
+                @if(customerPlans != null && customerPlans.length > 0){
+                <form [formGroup]="reservedInstanceFormGroup">
+                    <table class="table table-borderless table-hover table-checkable">
+                        <tbody>
+                            <tr>
+                                <div ngbAccordion>
+                                    <div ngbAccordionItem [collapsed]="false">
+                                        <div ngbAccordionHeader class="text-primary">
+                                            <button ngbAccordionButton class="text-primary">
+                                                <span translate="TRANSLATE.RECONCILIATION_NOTES"></span>
+                                            </button>
+                                        </div>
+                                        <div ngbAccordionCollapse>
+                                            <div class="row bs-callout bs-callout-info" style="margin-top: -10px;margin-bottom:-20px">
+                                                <ul class="ml-12 col-12" style="margin-left:revert !important">
+                                                    <li>
+                                                        <span translate="TRANSLATE.CUSTOMER_ONBOARDING_MANUAL_SYNC_SALE_PRICE_INSTRUCTION_MESSAGE"></span>
+                                                    </li>
+                                                    <li>
+                                                        <span translate="TRANSLATE.RECONCILIATION_NOTES_RI_INVOICE"></span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </tr>
+                            <tr>
+                                <td class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-4 text-left text-sm-left  text-md-right text-lg-right text-xl-right col-form-label">
+                                            <i class="ki-duotone ki-information fs-1x" aria-hidden="true" ngbTooltip="{{'TRANSLATE.RECON_TABLE_TEXT_PROVIDER_SUBSCRIPTION' | translate}}">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i>
+                                            <span>
+                                                {{'TRANSLATE.RECON_TABLE_TEXT_PROVIDER_SUBSCRIPTION' | translate}}
+                                            </span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <span> {{subscriptionsList[0].ProviderSubscriptionOfferName}}</span>
+                                            <br>
+                                            <span class="small90"><span translate="TRANSLATE.RECON_TABLE_TEXT_RESERVATION_ORDER_ID"></span>{{subscriptionsList[0].ReservationOrderID}}</span>
+                                            <div [hidden]="(subscriptionsList[0].ProviderSubscriptionId == '')" class="small90">
+                                                <span class="small90"><span translate="TRANSLATE.RECON_TABLE_TEXT_SUBSCRIPTION_ID"></span>{{subscriptionsList[0].ProviderSubscriptionId}}</span>
+                                            </div>
+                                            <span style="text-decoration:none !important" class="d-inline-block">
+                                                <span *ngIf="subscriptionsList[0].ValidityType === 'Year(s)' || subscriptionsList[0].ValidityType === 'Year'" [ngClass]="{'labelcolor': subscriptionsList[0].ProviderBillingCycleName == 'Monthly','TermLabelColor': subscriptionsList[0].ProviderBillingCycleName == 'Annual'}" class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2" aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}"> {{subscriptionsList[0].Validity}} {{subscriptionsList[0].Validity>1?subscriptionsList[0].ValidityType.replace('(','').replace(')',''):subscriptionsList[0].ValidityType.replace('(s)','') | translate}} </span>
+                                                <span class="label label-light-dark font-weight-bold label-inline text-white badge bg-dark ms-md-2" aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}"> {{subscriptionsList[0].BillingCycleName}} </span>
+                                                <span [hidden]="subscriptionsList[0].CategoryName == null ||(subscriptionsList[0].ProviderSubscriptionOfferName==null)" class="label label-light-info font-weight-bold label-inline text-white badge bg-info ms-md-2" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}">{{subscriptionsList[0].CategoryName | translate}}</span>
+                                                <span *ngIf="subscriptionsList[0].Status!=null && subscriptionsList[0].Status!=''  && subscriptionsList[0].Status !=undefined" class="label label-light-primary font-weight-bold label-inline text-dark badge bg-light-primary ms-md-2" aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_STATUS' | translate}}"> {{subscriptionsList[0].Status}} </span>
+                                                <span *ngIf="subscriptionsList[0].CSPCountryCode!=null && subscriptionsList[0].CSPCountryCode!=''  && subscriptionsList[0].CSPCountryCode!=undefined" class="badge badge-info mt-1" ngbTooltip="{{subscriptionsList[0].CSPCountryName || 'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_COUNTRYCODE' | translate}}">{{subscriptionsList[0].CSPCountryCode}}</span>
+                                                <span *ngIf="subscriptionsList[0].Scope != '' && subscriptionsList[0].Scope != null" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_SCOPE' | translate}}" class="label label-light-info font-weight-bold label-inline text-white badge bg-info ms-md-2">{{subscriptionsList[0].Scope}}</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-left col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-4 text-left col-form-label">
+                                            <i class="ki-duotone ki-information fs-1x" aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_ONBOARDING_MANUAL_SYNC_TABLE_HEADER_TEXT_PLAN_NAME' | translate}}">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i>
+                                            <span>
+                                                {{'TRANSLATE.CUSTOMER_ONBOARDING_MANUAL_SYNC_TABLE_HEADER_TEXT_PLAN_NAME' | translate}}
+                                            </span>
+                                        </div>
+                                        <div class="col-md-8 text-left text-body">
+                                            <select2 [data]="customerPlansDataset" class="form-select form-select-solid" [templates]="template" [multiple]="false" (update)="getReservedInstancesProductsForSync($event)" formControlName="planName">
+                                                <ng-template #template let-data="data">
+                                                    {{data?.Name}}
+                                                </ng-template>
+                                            </select2>
+                                            @if(reservedInstanceFormGroup.get('planName')?.errors?.required && reservedInstanceFormGroup.get('planName')?.touched){
+                                            <span class="text-danger">{{'TRANSLATE.REQUIRED_FIELD' | translate}}</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            @if(filterMappedsubscriptionsList[0].MappingC3PlanProducts.length > 0){
+                            <tr>
+                                <td class="text-right col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-4 text-left text-sm-left  text-md-right text-lg-right text-xl-right col-form-label">
+                                            <i class="ki-duotone ki-information fs-1x" aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_ONBOARDING_MANUAL_SYNC_TABLE_HEADER_TEXT_PRODUCT_NAME' | translate}}">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i>
+                                            <span>
+                                                {{'TRANSLATE.CUSTOMER_ONBOARDING_MANUAL_SYNC_TABLE_HEADER_TEXT_PRODUCT_NAME' | translate}}
+                                            </span>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <select2 [data]="filterMappedsubscriptionsListMappingC3PlanProductsDataset" class="form-select form-select-solid" [templates]="template" [multiple]="false" (update)="selectPlanProductId(filterMappedsubscriptionsList[0],$event)">
+                                                <ng-template #template let-data="data">
+                                                    {{data?.PlanOfferQualifiedOfferName}}
+                                                </ng-template>
+                                            </select2>
+                                            @if(reservedInstanceFormGroup.get('planProductName')?.errors?.required && reservedInstanceFormGroup.get('planProductName')?.touched){
+                                            <span class="text-danger">{{'TRANSLATE.REQUIRED_FIELD' | translate}}</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            }
+                            <tr>
+                                <td class="text-left col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-4 text-left col-form-label">
+                                            <i class="ki-duotone ki-information fs-1x" aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_ONBOARDING_MANUAL_SYNC_TABLE_TOOLTIP_SALE_PRICE' | translate}}">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i>
+                                            <span>
+                                                {{'TRANSLATE.CUSTOMER_ONBOARDING_MANUAL_SYNC_TABLE_HEADER_TEXT_SALE_PRICE' | translate}}
+                                            </span><span class="text-danger">*</span>
+                                        </div>
+                                        <div class="col-md-8 text-left">
+                                            <input type="number" class="form-control" [(ngModel)]="riSalePrice" step="0.01" formControlName="salePrice" required>
+                                            @if(reservedInstanceFormGroup.get('salePrice')?.errors?.required && reservedInstanceFormGroup.get('salePrice')?.touched){
+                                            <span class="text-danger">{{'TRANSLATE.CUSTOMER_ONBOARDING_MANUAL_SYNC_VALIDATION_MESSAGE_SALE_PRICE' | translate}}</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+            
+                        </tbody>
+                    </table>
+                </form>
+                }
+                @else{
+                <span class="text-warning">{{'TRANSLATE.CUSTOMER_ONBOARDING_MANUAL_SYNC_NO_PLANS_WARNING_MESSAGE'|translate}}</span>
+                }
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-light-primary btn-active-primary btn-sm" (click)="proceed(filterMappedsubscriptionsList[0], false)">{{'TRANSLATE.BTN_TEXT_FIX' | translate}}</button>
+                <button class="btn btn-light-primary btn-active-primary btn-sm" (click)="closeModalPopup()">{{'TRANSLATE.BUTTON_TEXT_CANCEL' | translate}}</button>
+            </div>
+            }
+    </div>
+</div>

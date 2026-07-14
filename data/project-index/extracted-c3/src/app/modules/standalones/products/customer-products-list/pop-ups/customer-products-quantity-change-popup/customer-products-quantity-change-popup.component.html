@@ -1,0 +1,150 @@
+<div>
+  <div class="modal-header">
+    <h4 class="modal-title" id="exportUserModalLabel">{{'TRANSLATE.QUANTITY_EDIT_POPPUP_TITLE_TEXT' | translate}}</h4>
+    <div class="d-flex">
+      <span (click)="cancel()" class="cursor-pointer"><i class="ki-duotone ki-cross fs-1 justify-content-end">
+        <span class="path1"></span>
+        <span class="path2"></span></i>
+      </span>
+    </div>
+  </div>
+
+  <div class="modal-body">
+    <!-- Key-Value Pairs -->
+    <div class="form-group row mb-2">
+      <div class="col-md-12 mb-2">
+
+        <!-- <table class="mb-3">
+          <tr>
+            <td class="fw-bold">
+              {{ "TRANSLATE.CUSTOMERS_TABLE_HEADER_TEXT_NAME" | translate }}
+            </td>
+            <td>&nbsp;:&nbsp;</td>
+            <td class="fw-semibold pt-6">
+              {{ productdetails.ProductSubscriptionName }}
+            </td>
+          </tr>
+          <tr class="mb-2">
+            <td colspan="3" style="height: 10px;"></td> 
+          </tr>
+          <tr>
+            <td class="fw-bold">
+              {{
+                "TRANSLATE.CUSTOMER_PRODUCTS_LIST_TITLE_SUBSCRIPTION_ID"
+                  | translate
+              }}
+            </td>
+            <td>&nbsp;:&nbsp;</td>
+            <td class="fw-semibold">
+              {{ productdetails.ProductSubscriptionId }}
+            </td>
+          </tr>
+      </table> -->
+
+        <div class="d-flex mb-1">
+          <label class="col-md-2 me-3 pt-2 fw-bold">
+            {{ "TRANSLATE.CUSTOMERS_TABLE_HEADER_TEXT_NAME" | translate }}
+          </label>
+          <span class="pt-2">&nbsp;:&nbsp;</span>
+          <div class="pt-2 fw-semibold ps-1">
+            {{ productdetails.ProductSubscriptionName }}
+          </div>
+        </div>
+
+        <div class="d-flex mb-1">
+          <label class="col-md-2 me-3 pt-2 fw-bold">
+            {{
+              "TRANSLATE.CUSTOMER_PRODUCTS_LIST_TITLE_SUBSCRIPTION_ID"
+                | translate
+            }}
+          </label>
+          <span class="pt-2">&nbsp;:&nbsp;</span>
+          <div class="pt-2 fw-semibold ps-1">
+            {{ productdetails.ProductSubscriptionId }}
+          </div>
+        </div>
+
+        <div>
+          <div class="d-flex mb-1">
+            <label class="col-md-2 me-3 pt-2 fw-bold">
+              {{
+                "TRANSLATE.CUSTOMER_PRODUCTS_TABLE_HEADER_TEXT_QUANTITY"
+                  | translate
+              }} </label
+            ><span class="pt-2">&nbsp;:&nbsp;</span>
+            <div>
+              <input title=""
+              type="number" [disabled]="isLoading || productdetails?.IsEST" 
+              class="form-control form-control-solid form-control-sm w-60px ms-1 h-20px border border-1"
+              [(ngModel)]="selectedQuantity" tabindex="-1" (change)="CheckQuantity()" min="0"
+              required
+            />
+
+            @if(selectedQuantity < 0 || isDecimal(selectedQuantity)){
+              <span class="text-danger">{{'TRANSLATE.INVALID_QUANTITY' | translate}}</span>
+            }
+            </div>
+
+          </div>
+          <div class="row">
+             @if(!isDecimal(selectedQuantity)){
+              @if(IsSeatLimitExceeded && IsTransactionLimitExceeded){
+                <span class="text-danger">{{"TRANSLATE.PRODUCT_QUNTITTY_CHANGE_POPUP_SEATLIMIT_TRANSACTIONLIMIT_MESSAGE" | translate}}</span>
+              } 
+              @else{
+                @if(IsSeatLimitExceeded && Permissions.HasManageProductApproval === 'Allowed'){
+                  <span class="text-danger" [innerHTML]="'TRANSLATE.CUSTOMER_PRODUCT_SEAT_LIMIT_CONFIRMATION' | translate:{ SeatLimit: product.NumberOfLicensesCustomerCanPurchase,productName:product.ProductSubscriptionName }"></span>
+                }
+                @if(IsTransactionLimitExceeded){
+                  @if(selectedQuantity > productdetails.OldQuantity){
+                  <span class="text-danger" [innerHTML]="'TRANSLATE.CUSTOMER_CART_TRANSACTION_AMOUNT_LIMIT_CONFIRMATION' | translate:{ TransactionAmountLimit: product.TransactionAmountLimit }"> </span>
+                  }
+                }
+              }
+             }  
+
+          </div>
+          @if(this.Permissions.HasTextBoxPONumberInHistory === 'Allowed'){
+            <div class="d-flex mb-2 mt-1">
+             <label class="col-md-2 me-3 pt-2 fw-bold">
+             {{
+             "TRANSLATE.PONUMBER_TITLE"
+             | translate
+             }} </label>
+ 
+             <div class="d-flex col-md-10 " *ngIf="this.Permissions.HasTextBoxPONumberInHistory === 'Allowed'">
+              <span class="pt-2">&nbsp;:&nbsp;</span>
+             <input type="text" [disabled]="isLoading" class="form-control  form-control-sm ms-1 me-10"
+             [(ngModel)]="PONumber" placeholder="{{'TRANSLATE.PONUMBER_PLACEHOLDER' | translate}}" />
+             </div>
+            </div>
+         }
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer p-0">
+      <button type="button" class="btn btn-sm btn-light btn-active-light-primary mt-8" (click)="cancel()" appBusyLoader>
+        <span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span>
+      </button>
+      @if(selectedQuantity < 0 || isDecimal(selectedQuantity) || selectedQuantity == product.OldQuantity){
+        <button
+        type="button"
+        class="btn btn-sm btn-primary mt-8"
+        (click)="submit()" disabled
+      >
+        <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+      </button>
+      }
+      @else{
+        <button appBusyLoader
+        type="button"
+        class="btn btn-sm btn-primary mt-8"
+        (click)="submit()"
+      >
+        <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+      </button>
+      }
+    </div>
+  </div>
+</div>

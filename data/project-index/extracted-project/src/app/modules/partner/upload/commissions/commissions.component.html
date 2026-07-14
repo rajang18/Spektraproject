@@ -1,0 +1,251 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary me-1" (click)="showHelpText = !showHelpText">
+            <span translate="TRANSLATE.CHANGE_PLAN_HELP"></span>&nbsp;
+            <i class="ki-outline ki-question-2 fs-4"></i>
+        </button>
+    </div>
+</ng-template>
+
+<div class="row mb-5" *ngIf="showHelpText">
+    <div class="col-md-12">
+        <div class="card card-custom gutter-b">
+            <div class="card-body">
+                <div class="m-heading-1 border-green m-bordered">
+                    <div
+                        class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+                        <div class="card-title">
+                            <h6 class="card-label"><span
+                                    translate="TRANSLATE.PRODUCT_COMMISSIONS_UPLOAD_FORM_INSTRUCTIONS"></span></h6>
+                        </div>
+                        <div class="row m-heading-1 border-green m-bordered ms-1">
+                            <ol>
+                                <li>
+                                    <span translate="TRANSLATE.BULK_UPLOAD_PRODUCT_COMMISSIONS_HELP_TEXT"></span>
+                                </li>
+                                <!-- translate-values="{ dateFormat: '{{dateFormat}}'}" -->
+                                <li>
+                                    <span
+                                        [innerHTML]="'TRANSLATE.BULK_UPLOAD_PRODUCT_COMMISSIONS_INSTRUCTIONS_PART_1' | translate : { dateFormat: dateFormat}"></span>
+                                </li>
+                                <li>
+                                    <span
+                                        [innerHTML]=" 'TRANSLATE.BULK_UPLOAD_PRODUCT_COMMISSIONS_INSTRUCTIONS_PART_2' | translate "></span>
+                                </li>
+                                <li>
+                                    <span
+                                        [innerHTML]="'TRANSLATE.BULK_UPLOAD_PRODUCT_COMMISSIONS_INSTRUCTIONS_PART_3' | translate"></span>
+                                </li>
+                                <li>
+                                    <span
+                                        translate="TRANSLATE.BULK_UPLOAD_PRODUCT_COMMISSIONS_INSTRUCTIONS_PART_4"></span>
+                                </li>
+                                <li>
+                                    <span
+                                        translate="TRANSLATE.BULK_UPLOAD_PRODUCT_COMMISSIONS_INSTRUCTIONS_PART_5"></span>
+                                </li>
+                                <li>
+                                    <span
+                                        [innerHTML]="'TRANSLATE.BULK_UPLOAD_PRODUCT_COMMISSIONS_INSTRUCTIONS_PART_6' | translate"></span>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body pt-0 overflow-auto">
+        <div class="row">&nbsp;</div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-3">
+                        <select class="chosen-select form-select form-select-sm" [(ngModel)]="selectedCustomer"
+                            name="CustomerName" [disabled]="customers && customers.length == 0"
+                            (ngModelChange)="OnCustomerChange()">
+                            <option value="">
+                                {{'TRANSLATE.BULK_UPLOAD_PRODUCT_COMMISSIONS_CUSTOMER_SEARCH_INPUT_PLACEHOLDER_TEXT'|
+                                translate}}</option>
+                            @for (item of customers; track $index) {
+                            <option [ngValue]="item">{{item.Name}}</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="chosen-select form-select form-select-sm" name="SiteName"
+                            [ngClass]="{'disable':sites && sites?.length == 0}"
+                            [attr.disabled]="sites!= undefined && sites?.length == 0" (ngModelChange)="OnSiteChange()">
+                            <option value="">
+                                {{'TRANSLATE.BULK_UPLOAD_PRODUCT_COMMISSIONS_SITE_SEARCH_INPUT_PLACEHOLDER_TEXT' |
+                                translate}}</option>
+                            @for (item of sites; track $index) {
+                            <option [ngValue]="item">{{item.Name}}</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="chosen-select form-select form-select-sm" name="DepartmentName"
+                            [ngClass]="{'disabled':departments && departments?.length == 0}"
+                            [attr.disabled]="departments!= undefined && departments?.length == 0"
+                            (ngModelChange)="OnSiteDepartmentChange()">
+                            <option value="">
+                                {{'TRANSLATE.BULK_UPLOAD_PRODUCT_COMMISSIONS_DEPARTMENT_SEARCH_INPUT_PLACEHOLDER_TEXT' |
+                                translate}}</option>
+                            @for (item of departments; track $index) {
+                            <option [ngValue]="item">{{item.Name}}</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <a [appPermission]="'DOWNLOADPRODUCTCOMMISSIONSCATALOGUE'"
+                            class="btn btn-sm btn-light-primary w-100" busy
+                            busy-when-url="api/commission/downloadCatalogue" busy-add-classes="disabled"
+                            not-busy-remove-classes="disabled" (click)="DownloadProductCommissionsCatalogue()">
+                            <i class="ki-outline ki-exit-down fs-2"></i>&nbsp;{{'TRANSLATE.PRODUCT_COMMISSIONS_DOWNLOAD_CATALOGUE_BUTTON_TEXT'
+                            | translate}} </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">&nbsp;</div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-8 p0">
+                        <div class="row">
+                            <div class="col-md-5 pl0 widthPx" style="--widthinpx: 300px">
+                                <div class="">
+                                    <input filestyle type="file" #fileUpload accept=".csv" data-button-text="Select"
+                                        data-class-button="btn-outline-secondary"
+                                        data-class-input="form-control inline p0" nv-file-select=""
+                                        uploader="vm.uploader" class="form-control form-control-sm" style="width:100%"
+                                        (change)="fileChange($event)" />
+                                </div>
+                                <div class="padding-top-10" style="display: none;">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-sm btn-outline-danger">
+                                            <span class="icon-trash mr"></span><span
+                                                translate="TRANSLATE.USERS_UPLOAD_FORM_BUTTON_TEXT_REMOVE"></span>
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <button [appPermission]="'IMPORTPRODUCTCOMMISSIONS'"
+                                    class="btn btn-sm btn-light-primary" busy
+                                    busy-when-url="api/commission/stageandvalidatecommisioncatalogue"
+                                    busy-add-classes="disabled" not-busy-remove-classes="disabled"
+                                    (click)="LoadUpdatedProductCommissionsCatalogue()" appBusyLoader>
+                                    {{'TRANSLATE.PRODUCT_COMMISSIONS_LOAD_UPDATED_CATALOGUE_BUTTON_TEXT' | translate}}
+                                </button>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-sm btn-light-primary"
+                                    [appPermission]="'IMPORTPRODUCTCOMMISSIONS'" *ngIf="!isImportDisabled" busy
+                                    busy-when-url="api/commission/importCommissionData" busy-add-classes="disabled"
+                                    not-busy-remove-classes="disabled" (click)="importProductCommissionsCatalogue()"
+                                    appBusyLoader>
+                                    {{'TRANSLATE.PRODUCT_COMMISSIONS_IMPORT_UPDATED_CATALOGUE_BUTTON_TEXT' | translate}}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 center-block">
+                        <div class="col-md-12 text-end fw-medium">
+                            {{'TRANSLATE.REPORT_USAGE_BUTTON_TEXT_FILTER_BY' | translate}}
+                            <div class="btn-group">
+                                <a class="btn btn-sm btn-light-success btn-outline btn-sm" (click)="updateSelectedStatus('Success')"
+                                    [(ngModel)]="successStatusSelected"
+                                    [ngClass]="{'btn-success' : successStatusSelected === true, 'btn-light-success' : !successStatusSelected}">
+                                    <span class="d-flex align-items-center" [ngStyle]="{'text-color': '#A7A977'}"><i class="ki-outline ki-check fs-1 #A7A977"
+                                            *ngIf="successStatusSelected"></i>{{'TRANSLATE.REPORT_USAGE_STATUS_TABLE_FILTER_TEXT_SUCCESS'
+                                        | translate}}</span>
+                                </a>
+                                <a class="btn btn-sm btn-light-danger btn-outline btn-sm" (click)="updateSelectedStatus('Error')"
+                                    [(ngModel)]="failedStatusSelected"
+                                    [ngClass]="{'btn-danger' : failedStatusSelected === true, 'btn-light-danger' : !failedStatusSelected}">
+                                    <span class="d-flex align-items-center" [ngStyle]="{'text-color': '#F2583E'}"><i class="ki-outline ki-check fs-1 #F2583E"
+                                            *ngIf="failedStatusSelected"></i>{{'TRANSLATE.REPORT_USAGE_STATUS_TABLE_FILTER_TEXT_ERROR'
+                                        | translate}}</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">&nbsp;</div>
+
+        <ng-template #commissionStartDate let-data="adtData" let-emitter="captureEvents">
+            <div>
+                {{data.CommissionStartDate | c3Date}}
+            </div>
+        </ng-template>
+
+        <ng-template #commissionEndDate let-data="adtData" let-emitter="captureEvents">
+            <div>
+                {{data.CommissionEndDate | c3Date}}
+            </div>
+        </ng-template>
+
+        <ng-template #commissionValidationStatus let-data="adtData" let-emitter="captureEvents">
+            <div *ngIf="currentStep === 'Validation'">
+                <span *ngIf="data.ValidationStatus?.toLowerCase() === 'success'"
+                    translate="TRANSLATE.BULK_UPLOAD_PRODUCT_COMMISSIONS_VALIDATION_STATUS_SUCCESS"></span>
+                <span *ngIf="data.ValidationStatus?.toLowerCase() === 'error'"
+                    translate="TRANSLATE.BULK_UPLOAD_PRODUCT_COMMISSIONS_VALIDATION_STATUS_ERROR"></span>
+            </div>
+        </ng-template>
+
+        <ng-template #commissionValidationError let-data="adtData" let-emitter="captureEvents">
+            <div>
+                <div *ngIf="data.ValidationStatus?.toLowerCase() === 'error'">
+                    <ul>
+                        @for (error of data.ValidationError; track $index) {
+                        <li>
+                            &nbsp;&nbsp; <span>{{'TRANSLATE.' + error | translate }}</span>
+                        </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template #commissionImportStatus let-data="adtData" let-emitter="captureEvents">
+            <div>
+                <span *ngIf="data.ImportStatus?.toLowerCase() === 'success'"
+                    translate="TRANSLATE.BULK_UPLOAD_PRODUCT_COMMISSIONS_IMPORT_STATUS_SUCCESS"></span>
+                <span *ngIf="data.ImportStatus?.toLowerCase() === 'error'"
+                    translate="TRANSLATE.BULK_UPLOAD_PRODUCT_COMMISSIONS_IMPORT_STATUS_ERROR"></span>
+            </div>
+        </ng-template>
+
+        <ng-template #commissionImportError let-data="adtData" let-emitter="captureEvents">
+            <div>
+                <div *ngIf="data.ImportStatus?.toLowerCase() === 'error'">
+                    <ul>
+                        @for (error of data.ImportError; track $index) {
+                        <li>
+                            &nbsp;&nbsp; <span>{{'TRANSLATE.' + error | translate }}</span>
+                        </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </ng-template>
+        <div class="d-flex justify-content-center align-items-center col-md-12" *ngIf="isGridDataLoading">
+            <span class="spinner-border text-primary" role="status"></span>
+            <span class="text-muted fs-6 fw-semibold ms-5" [translate]="'TRANSLATE.LOADING_MESSAGE'"></span>
+        </div>
+        @if(!isLoading){
+        @if (!!datatableConfig) {
+        <app-c3-table [datatableConfig]="datatableConfig">
+        </app-c3-table>
+        }
+        }
+
+    </div>
+</div>

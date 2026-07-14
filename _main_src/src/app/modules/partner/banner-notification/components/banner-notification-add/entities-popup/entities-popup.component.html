@@ -1,0 +1,31 @@
+<div class="modal-dialog m-0">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title">
+                <span>{{ this.entityCategory}} {{'TRANSLATE.MESSAGE_RECORDS_POP_UP'|translate}}</span>
+            </h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModal()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+            </div>
+        </div>
+        <div class="modal-body  adjustable-height">
+            <ng-template #name let-data="adtData" let-emitter="captureEvents">
+                <div>
+                  <span class="form-check"> 
+                    <input class="form-check-input me-1" type="checkbox" [checked]="data.Selected" (change)="onChange($event, data)">
+                    {{data.Name}}
+                  </span>
+                </div>
+            </ng-template>
+            @if (!!datatableConfig) {
+                <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+                </app-c3-table>
+            }
+        </div>
+        <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3">
+            <button type="button" class="btn btn-primary" (click)="onsubmit()">
+                {{ 'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate }}
+            </button>
+        </div>
+    </div>
+</div>

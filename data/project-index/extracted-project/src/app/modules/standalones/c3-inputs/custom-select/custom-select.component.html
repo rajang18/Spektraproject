@@ -1,0 +1,164 @@
+<ng-template #tooltipDescription>
+  <div [innerHTML]="'TRANSLATE.'+data.Description | translate">
+
+  </div>
+</ng-template>
+
+
+
+@if(cc?.IsTenantConfiguration){
+<div class="row">
+  <div class="col-md-5">
+
+    <div class="fs-6 mb-3 pt-3 align-items-center d-inline-flex text-start">
+
+      <span class="fw-semibold">{{'TRANSLATE.'+data.DisplayName | translate}}<span class="text-danger ms-1"
+          *ngIf="data.IsRequired">*</span>
+        <i class="ki-duotone ki-information-2 fs-8 ms-1 mt-1 align-self-baseline"[ngbTooltip]="'TRANSLATE.' + (data.Description || '') | translate">
+          <span class="path1"></span>
+          <span class="path2"></span>
+          <span class="path3"></span>
+        </i></span>
+    </div>
+  </div>
+
+  <div class="col-md-7">
+    <div class="row" [formGroup]="form" *ngIf="pageMode === 'list'">
+      <div class="col-5 fs-6  mb-3 pt-3 d-flex align-items-center justify-content-start text-start">
+        @if (data.Value?.toLowerCase() === 'grid') {
+          {{ 'TRANSLATE.PRODUCT_VIEW_GRID' | translate }}
+        } @else if (data.Value?.toLowerCase() === 'list') {
+          {{ 'TRANSLATE.PRODUCT_VIEW_LIST' | translate }}
+        } @else {
+          {{ data.Value }}
+        }
+      </div>
+      <div class="col-7 text-end">
+
+        @if (cc.Permissions.HasSaveConfiguration === 'Allowed' ||
+        cc.Permissions.HasUpdateConfigurationsManagedByCustomer === 'Allowed' ||
+        cc.Permissions.HasUpdateConfigurationsManagedByReseller === 'Allowed') {
+        <button class="btn btn-light-primary btn-sm btn-icon tooltips  me-2" (click)="Edit()"
+          *ngIf="data.IsCustom === true && ( data.IsManagedByPartner || data.IsManagedByCustomer  || data.IsManagedByReseller)"
+          ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_EDIT'|translate}}">
+          <i class="ki-outline ki-pencil"></i>
+        </button>
+        }
+
+
+        @if (cc.Permissions.HasRevertConfiguration === 'Allowed' ||
+        cc.Permissions.HasUpdateConfigurationsManagedByCustomer === 'Allowed' ||
+        cc.Permissions.HasUpdateConfigurationsManagedByReseller === 'Allowed') {
+        <button class="btn btn-light-primary btn-sm btn-icon tooltips  me-2" (click)="revertTenantConfig(data)"
+          *ngIf="data.IsCustom === true && (data.IsManagedByPartner || data.IsManagedByCustomer || data.IsManagedByReseller)"
+          ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_REVERT'|translate}}">
+          <i class="ki-outline ki-arrow-circle-left"></i>
+        </button>
+        }
+
+
+        @if (cc.Permissions.HasOverRideConfiguration === 'Allowed' ||
+        cc.Permissions.HasUpdateConfigurationsManagedByCustomer === 'Allowed' ||
+        cc.Permissions.HasUpdateConfigurationsManagedByReseller === 'Allowed') {
+        <button class="btn btn-light-primary btn-sm btn-icon tooltips  me-2"
+          *ngIf="data.IsCustom === false && (data.IsManagedByPartner || data.IsManagedByCustomer || data.IsManagedByReseller)"
+          (click)="Edit()" ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_OVERRIDE'|translate}}">
+          <i class="ki-outline ki-arrow-circle-right"></i>
+        </button>
+        }
+
+
+      </div>
+    </div>
+
+    <div class="row" [formGroup]="form" *ngIf="pageMode === 'edit'">
+      <div class="col-md-8 fs-6  d-flex align-items-center justify-content-start text-start">
+        <select class="form-select form-select-sm form-control-sm fw-bold"
+          [ngClass]="{'input-disable':!data.IsManagedByPartner}" #select (change)="onChange(select.value)"
+          [disabled]="!data.IsManagedByPartner" [formControlName]="frmControlName">
+          <!-- <option [value]="data.Value">{{data.Value}}</option> -->
+          @for(value of data.PossibleValues.split(','); track $index){
+            <option [value]="value">
+              @if (value === 'Grid') {
+                {{ 'TRANSLATE.PRODUCT_VIEW_GRID' | translate }}
+              } @else if (value === 'List') {
+                {{ 'TRANSLATE.PRODUCT_VIEW_LIST' | translate }}
+              } @else {
+                {{ value }}
+              }
+            </option>          }
+        </select>
+        @if(form.get(data.Name)?.touched && form.get(data.Name)?.errors?.required){
+        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+        }
+      </div>
+      <div class="col-md-4 text-end">
+        <button class="btn btn-light-primary btn-sm  btn-icon tooltips  me-2" (click)="saveTenantConfig(data)"
+          ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_SAVE'|translate}}">
+          <i class="ki-outline  ki-check"></i>
+        </button>
+        <button class="btn btn-light-danger btn-sm btn-icon tooltips me-2" (click)="cancelTenantConfig()"
+          ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_CANCEL'|translate}}">
+          <i class="ki-outline ki-cross">
+          </i>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+}
+@else if(!cc?.IsTenantConfiguration && data?.IsShowOnScreen){
+<div class="form-group row mt-6" [formGroup]="form">
+  <label class="col-4 col-form-label">
+
+    <span>{{'TRANSLATE.'+ data.DisplayName |translate}}</span>
+    <span class="text-danger" *ngIf="data.IsRequired">*</span>
+    <i class="ki-duotone ki-information-2 fs-8 ms-1 bottom-10" [ngbTooltip]="'TRANSLATE.' + (data.Description || '') | translate">
+      <span class="path1"></span>
+      <span class="path2"></span>
+      <span class="path3"></span>
+    </i>
+  </label>
+  <div class="col-6">
+    @if(data.Name === 'SelectedSMTPOption'){
+    <!-- (change)="filterEmailConfiguration(data)" Need to add this function for smtp-->
+    <select class="form-select form-select-sm" name="{{data.Name}}" id="{{data.Name}}"
+      [formControlName]="frmControlName" #select (change)="filterEmailConfiguration(select.value)"
+      [disabled]="!data.IsManagedByPartner" [ngClass]="{'disabled':!data.IsManagedByPartner}">
+      @for (item of data.PossibleValues.split(','); track $index) {
+      <option [value]="item">{{'TRANSLATE.'+item | translate}}</option>
+      }
+    </select>
+    }
+    @else if (data.Name === 'AutotaskContractMappingType' || data.Name === 'AutotaskUploadFrequency') {
+    <select class="form-select  form-select-sm" [ngClass]="{'input-disable':!data.IsManagedByPartner}" #select
+      (change)="onChange(select.value)" [disabled]="!data.IsManagedByPartner" [formControlName]="frmControlName"
+      [ngClass]="{'disabled':!data.IsManagedByPartner}">
+      @for(value of possibleValues; track $index){
+      <option [value]="value">{{'TRANSLATE.'+value | translate}}</option>
+      }
+    </select>
+
+    @if(form.get(data.Name)?.touched && form.get(data.Name)?.errors?.required){
+    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+    }
+    }
+    @else{
+    <select class="form-select  form-select-sm" [ngClass]="{'input-disable':!data.IsManagedByPartner}" #select
+      (change)="onChange(select.value)" [disabled]="!data.IsManagedByPartner" [formControlName]="frmControlName"
+      [ngClass]="{'disabled':!data.IsManagedByPartner}">
+      @for(value of data.PossibleValues.split(','); track $index){
+      <option [value]="value">{{value}}</option>
+      }
+    </select>
+
+    @if(form.get(data.Name)?.touched && form.get(data.Name)?.errors?.required){
+    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+    }
+    }
+
+  </div>
+</div>
+
+}

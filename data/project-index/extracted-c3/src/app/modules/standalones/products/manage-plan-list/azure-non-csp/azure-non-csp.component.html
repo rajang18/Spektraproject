@@ -1,0 +1,179 @@
+<div class="card mr-5" style="margin-bottom: 0px;padding-left: 10px;padding-right: 10px;" *ngIf="!product.IsDelete">
+    <div class="card-body pt-0 pb-0">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-11">
+                    <div class="table-responsive-md">
+                        <table class="table-responsive-md table-responsive-sm table-responsive-xl table-responsive-lg">
+                            <thead>
+                                <tr>
+                                    <td class="border-0" [ngClass]="{'col-md-4': !product.IsResellerPlanView, 'col-md-5' : product.IsResellerPlanView}">
+                                        <span translate="TRANSLATE.LABLE_TEXT_OFFER_NAME"></span>
+                                    </td>
+                                    <td class="border-0" [ngClass]="{'col-md-3': !product.IsResellerPlanView, 'col-md-4' : product.IsResellerPlanView}">
+                                        <span translate="TRANSLATE.LABLE_TEXT_FRIENDLY_NAME"></span>
+                                    </td>
+                                    <td class="custom-col header-price-alignment border-0">
+                                        <span translate="TRANSLATE.LABLE_TEXT_SALE_PRICE"></span>
+                                    </td>
+                                    <td class="col-md-2 border-0" *ngIf="!isResellerPlanView">
+                                        <span></span>
+                                    </td>
+                                    <td class="col-md-1 border-0">
+                                        <span></span>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="border-0 pe-4" [ngClass]="{'col-md-4': !product.IsResellerPlanView, 'col-md-5' : product.IsResellerPlanView}">
+                                        <div>
+                                            <strong>{{ product.ProviderProductName }}</strong>
+                                            <sup>
+                                                <span class="text-primary" *ngIf="product.PlanProductId === null || product.PlanProductId === undefined || product.PlanProductId === 0">{{'TRANSLATE.LABEL_TO_INDICATE_A_NEW_OFFER' | translate}} </span>
+                                            </sup>
+                                            <br />
+                                            <span class="label fw-bold label-inline text-white badge ms-md-2" [ngClass]="{
+                                                'bg-warning': product.BillingCycleName?.toLowerCase() === 'monthly',
+                                                'bg-success': product.BillingCycleName?.toLowerCase() === 'annual',
+                                                'bg-dark': product.BillingCycleName?.toLowerCase() === 'triennial',
+                                                'bg-info': product.BillingCycleName?.toLowerCase() === 'onetime'
+                                                }"> {{'TRANSLATE.'+product.BillingCycleDescriptionKey | translate}} </span>
+                                            <span class="label label-light-primary font-weight-bold badge ms-md-2" *ngIf="product.ProviderSettings && product.ProviderSettings.ProviderCategory"> {{'TRANSLATE.'+product.ProviderSettings.ProviderCategory | translate}} </span>
+<!--                                            <span *ngIf="product.PlanProductMacroName != null" class="label label-light-warning font-weight-bold mt-1 label-inline" ngbTooltip="{{'PLAN_MACRO_DETAILS_LABEL_TEXT' | translate}}"> {{product.PlanProductMacroName | translate}}<span *ngIf="product.PlanProductMacroValue != null && product.PlanProductMacroValue != 0 ">({{product.PlanProductMacroValue | translate}})</span></span>
+-->                                        </div>
+                                    </td>
+                                    <td class="border-0 pe-4" [ngClass]="{'col-md-3': !product.IsResellerPlanView, 'col-md-4' : product.IsResellerPlanView}">
+                                        <div>
+                                            <strong>
+                                                <a [appPermission]="'SAVE_PLAN'" href="javascript:void(0)" editable-text="product.Name" buttons="no" data-toggle="tooltip" data-placement="top" title="Edit Name" onaftersave="callOnAction(product, 'edit');" e-maxlength="100" e-minlength="1">{{ product.Name || ('MANAGE_PLAN_FRIENDLY_NAME_TYPE_IN_NAME_PLACEHOLDER'|translate) }}</a>
+                                                <span [appPermission]="'SAVE_PLAN'">{{ product.Name || '' }}</span>
+                                            </strong>
+                                        </div>
+                                    </td>
+                                    <td class="custom-col body-price-alignment border-0">
+                                        <div>
+                                            <span *ngIf="product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE">
+                                                @if (!product.PlanProductId) {
+                                                    <input type="number" min="0" step="0.01" class="form-control salePriceValue" [(ngModel)]="product.SalePrice" (blur)="Onblur(product)" (ngModelChange)="preProcessPriceChange(product, 'edit')"
+                                                    *ngIf="product.edit">
+                                                    <a class="ng-binding editable editable-click cursor-pointer" editable-number="product.SalePrice" 
+                                                        buttons="no" e-style="width: 100px" 
+                                                        e-min="0" e-step="0.01" data-toggle="tooltip" data-placement="top" 
+                                                        class="ng-binding editable editable-click cursor-pointer"
+                                                        ngbTooltip="{{'TRANSLATE.SALE_PRICE_EDIT_TOOLTIP_TEXT' | translate}}" 
+                                                        *ngIf="product.edit == undefined || product.edit == false"
+                                                        (click)="preProcessPriceChange(product, 'edit');">
+                                                        {{ product.SalePrice || 0 | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator : product.CurrencyDecimalSeperator }}
+                                                    </a>
+                                                } 
+                                                <!--<span *ngIf="product.PlanProductId">{{ product.SalePrice || 0 | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator : product.CurrencyDecimalSeperator }}</span>-->
+                                                <span *ngIf="product.PlanProductId" [appPermission]="'SAVE_PLAN'">
+                                                    <a (click)="preProcessPriceChange(product, 'priceChange')" class="ng-binding editable editable-click cursor-pointer">
+                                                        {{ product.SalePrice || 0 | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator : product.CurrencyDecimalSeperator }}
+                                                    </a>
+                                                </span>
+                                                <span *ngIf="product.PlanProductId" [appPermission]="'SAVE_PLAN'">
+                                                    {{ product.SalePrice || 0 | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator : product.CurrencyDecimalSeperator }}
+                                                </span>
+                                            </span>
+                                            <span *ngIf="product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_MARKUP || product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PERCENTAGE">
+                                                <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.MANAGE_PLAN_TOOLTIP_ON_SELECTING_MARKUP_OR_PERCENTAGE_VALUE' | translate}}">
+                                                    <span class="path1"></span>
+                                                    <span class="path2"></span>
+                                                    <span class="path3"></span>
+                                                </i> 
+                                                @if (!product.PlanProductId) {
+                                                    <input type="number" min="0" step="0.01" class="form-control salePriceValue" [(ngModel)]="product.SalePrice" (blur)="Onblur(product)" (ngModelChange)="preProcessPriceChange(product, 'edit')"
+                                                        *ngIf="product.edit">
+                                                    <a  class="ng-binding editable editable-click cursor-pointer" editable-number="product.SalePrice" buttons="no" e-style="width: 100px" 
+                                                        e-min="0" e-step="0.0001" data-toggle="tooltip" data-placement="top" 
+                                                        ngbTooltip="{{'TRANSLATE.SALE_PRICE_EDIT_TOOLTIP_TEXT' | translate}}" 
+                                                        *ngIf="product.edit == undefined || product.edit == false"
+                                                        (click)="preProcessPriceChange(product, 'edit');">
+                                                        {{ product.SalePrice || 0 }}%
+                                                    </a>
+                                                }
+                                                
+                                                <!--<span *ngIf="product.PlanProductId">{{ product.SalePrice || 0 }}%</span>-->
+                                                <span *ngIf="product.PlanProductId" [appPermission]="'SAVE_PLAN'">
+                                                    <a (click)="preProcessPriceChange(product, 'priceChange')" class="ng-binding editable editable-click cursor-pointer">
+                                                        {{ product.SalePrice || 0 }}%
+                                                    </a>
+                                                </span>
+                                                <span *ngIf="product.PlanProductId" [appPermission]="'SAVE_PLAN'">
+                                                    {{ product.SalePrice || 0 }}%
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="col-md-2 border-0" *ngIf="!isResellerPlanView">
+                                        <div>
+                                            {{ ('TRANSLATE.'+product.IsAvailableToCustomer && 'TRANSLATE.LABEL_TEXT_AVAILABLE_TO_CUSTOMER' || 'TRANSLATE.LABEL_TEXT_NOT_AVAILABLE_TO_CUSTOMER') | translate }}
+                                        </div>
+                                    </td>
+                                    <td class="col-md-1 border-0">
+                                        <div>
+                                            <span *ngIf="!product.PlanProductId">
+                                                {{ showBillingTypes() }}
+                                            </span>
+                                            <span *ngIf="product.PlanProductId">{{ product.BillingTypeName }}</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="mb-2 mt-2">
+                        <b><span translate="TRANSLATE.TRANSLATE.CUSTOMER_PRODUCTS_TABLE_HEADER_TEXT_ACTION"></span></b>
+                    </div>
+                    <div class="actions mt-8 ms-5" *ngIf="!product.PlanProductId">
+                        <div ngbDropdown class="d-inline-block">
+                            <div ngbDropdownToggle class="toggle-wrapper" [appPermission]="'SAVE_PLAN'">
+                              <i class="ki-duotone ki-dots-square fs-1">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                                <span class="path4"></span>
+                              </i>
+                            </div>
+                            <div ngbDropdownMenu>
+                                <a ngbDropdownItem href="javascript:void(0)" [appPermission]="'SAVE_PLAN'"
+                                (click)="callOnAction(product, 'delete')">
+                                <span translate="TRANSLATE.DELETE_PRODUCT_BUTTON_TOOLTIP_TEXT"></span>
+                             </a>
+                            </div>
+                          </div>
+                    </div>
+                    <div class="actions mt-8 ms-5" *ngIf="product.PlanProductId">
+                        <div class="mb-2 mt-2">
+                            <b><span translate="TRANSLATE.TRANSLATE.CUSTOMER_PRODUCTS_TABLE_HEADER_TEXT_ACTION"></span></b>
+                        </div>
+                        <div ngbDropdown class="d-inline-block">
+                            <div ngbDropdownToggle class="toggle-wrapper" [appPermission]="'SAVE_PLAN'">
+                              <i class="ki-duotone ki-dots-square fs-1">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                                <span class="path4"></span>
+                              </i>
+                            </div>
+                            <div ngbDropdownMenu>
+                                <a  ngbDropdownItem href="javascript:void(0)" *ngIf="product.IsActive" [appPermission]="'SAVE_PLAN'"
+                                (click)="preProcessEnableDisableProduct(product, false)">
+                                 <i class="fa fa-ban text-danger"></i><span translate="TRANSLATE.TOOLTIP_TEXT_DISABLE_PRODUCT"></span>
+                             </a>
+                             <a ngbDropdownItem href="javascript:void(0)" *ngIf="!product.IsActive" [appPermission]="'SAVE_PLAN'"
+                                (click)="preProcessEnableDisableProduct(product, true)">
+                                 <i class="ki-outline ki-check fs-1 text-success"></i><span translate="TRANSLATE.TOOLTIP_TEXT_ENABLE_PRODUCT"></span>
+                             </a>
+                            </div>
+                          </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

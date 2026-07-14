@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title></title>
+  <base href="/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link id="dynamic-favicon-img" rel="shortcut icon" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+  <!-- SPLASH SCREEN--> 
+
+  <link rel="stylesheet" href="/assets/css/toastr.css">
+  <link rel="stylesheet" href="/assets/css/summernote-lite.min.css">
+  <link rel="stylesheet" href="/assets/css/socicon.css">
+  <link rel="stylesheet" href="/assets/css/line-awesome.css">
+  <link rel="stylesheet" href="/assets/css/prism-shades-of-purple.css">
+  <link rel="stylesheet" href="/assets/css/animate.css">
+  <link rel="stylesheet" href="/assets/plugins/dataTables/dataTables.checkboxes.css"> 
+
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="stylesheet" href="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.12/css/dataTables.checkboxes.css" integrity="sha384-OfMcw8qH7HMnF4am2M2GaX6mqj8uJCssdsbz4eRq0p8ns7EkZpcQ0x1eihWP2KUA" crossorigin="anonymous">
+  <script type="text/javascript" src="/api/Configuration/appsettings"></script>  
+</head>
+
+<body root id="kt_body" class="mat-typography app-loading">
+  <!-- <body root id="kt_body" class="mat-typography" direction="rtl" dir="rtl" style="direction: rtl"></body> -->
+  <div id="splash-screen" class="splash-screen">
+    <img id="logo"  class="object-fit app-sidebar-logo-default" />
+    <div>
+      <span class="spinner-border text-primary" role="status"></span>
+    </div>
+    <div  class=" d-flex align-items-center mt-5">
+        <span id="greetingsText" class="text-muted fs-6 fw-semibold ms-5"></span>
+        <span id="userNameText" class="text-muted fs-6 fw-semibold"></span>
+    </div>
+    <div  class=" d-flex align-items-center mt-5">
+      <span id="pleaseWaitText" class="text-muted fs-6 fw-semibold ms-5"></span>
+  </div>
+  </div>
+  <app-root ></app-root> <!-- Selector for additional bootstrapped component -->
+  <script src="https://static.ezidebit.com.au/javascriptapi/js/ezidebit_2_0_0.min.js"></script>
+
+</body>
+
+</html>

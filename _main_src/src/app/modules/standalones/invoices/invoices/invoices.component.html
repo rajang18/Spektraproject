@@ -1,0 +1,173 @@
+<ng-template #actionHeader>
+
+    @if(permissions.HasCreateInvoice === 'Allowed' && currentStateName === partnerState && selectedBillingPeriods.length === 1){
+    <a class="btn btn-sm fw-semibold btn-light-primary me-2" (click)="createInvoice()">
+        {{ 'TRANSLATE.CUSTOMER_INVOICES_BUTTON_TEXT_CREATE_INVOICE' | translate }}
+    </a>
+    }
+
+    @if(permissions.HasGetCustomersRevenue === 'Allowed' && currentStateName === partnerState){
+    <a class="btn btn-sm fw-semibold btn-light-primary" (click)="backToRevenueAndCustomerSummary()">
+        <i class="ki-outline ki-to-left fs-2"></i>{{ 'TRANSLATE.CUSTOMER_INVOICES_BUTTON_TEXT_BACK_TO_REVENUE_AND_COST_SUMMARY' | translate }}
+    </a>
+    }
+
+</ng-template>
+
+<div class="card card-custom h-100">
+    <div class="card-header card-header-stretch mt-2 border-bottom">
+        <ul class="nav nav-stretch nav-line-tabs border-transparent fs-5 fw-bold">
+            <li class="nav-item">
+                <a class="nav-link" [ngClass]="{'active text-primary':tab === 'invoices'}" (click)="switchTab('invoices')"> <span translate="TRANSLATE.INVOICE_LIST_CAPTION_TEXT_INVOICES"></span> </a>
+            </li>
+            @if (permissions.HasInvoiceTransactions === 'Allowed') {
+            <li class="nav-item" (click)="switchTab('payments')">
+                <a class="nav-link" [ngClass]="{'active text-primary':tab === 'payments'}"> <span translate="TRANSLATE.INVOICE_LIST_HEADER_TEXT_TRANSACTIONS"></span> </a>
+            </li>
+            }
+
+        </ul>
+    </div>
+
+    <div class="card-body">
+        @if (tab === 'invoices') {
+        <div class=" row mb-4 ">
+            <div class="col-md-12">
+                <div class="float-end">
+                    @if (permissions.HasPermissionToDownloadPreviousInvoiceDues === 'Allowed') {
+                    <button class="btn btn-primary btn-sm" (click)="downloadCustomerOrResellerPreviousInvoicesDues()">
+                        <!-- <busy-message><i class="fa fa-refresh fa-spin"></i> <span translate="BUSY_MESSAGE_TEXT_PLEASE_WAIT"></span></busy-message> -->
+                        {{'TRANSLATE.BUTTON_TEXT_DOWNLOAD_INVOICES_DUES' | translate}}
+                    </button>
+                    }
+
+                </div>
+
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl">
+                    @if (!!invoiceDataTableConfig) {
+                    <ng-container>
+                        <app-c3-table [reload]="reloadInvoicesEvent" [datatableConfig]="invoiceDataTableConfig"></app-c3-table>
+                    </ng-container>
+
+                    }
+                </div>
+            </div>
+
+        </div>
+        } @else if(tab === 'payments') {
+        <div class=" row mb-4 ">
+            <div class="col-md-12">
+                <div class="float-end">
+                    <button class="btn btn-sm btn-primary " (click)="toggleNestedPaymentDetail()">
+                        <!-- <busy-message><i class="fa fa-refresh fa-spin"></i> <span translate="BUSY_MESSAGE_TEXT_PLEASE_WAIT"></span></busy-message> -->
+                        <span [translate]="!collapsePaymentNestedDetail ? 'TRANSLATE.COLLAPSE_ALL_PAYMENTS' : 'TRANSLATE.EXPAND_ALL_PAYMENTS'"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl">
+                    @if (!!paymentsDataTableConfig) {
+                    <ng-container>
+                        <app-c3-table [reload]="reloadPaymentsEvent" [datatableConfig]="paymentsDataTableConfig" [isNestedGrid]="isPaymentNested" (tableReady)="onTableRender($event)"></app-c3-table>
+                    </ng-container>
+
+                    }
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+
+</div>
+
+
+<ng-template #invoiceNumber let-row="adtData">
+    <div>
+        <a href="javascript:void(0)" class="tooltips text-primary pe-auto" *ngIf="permissions.HasGetInvoiceDetails ==='Allowed'" (click)="viewLineItems(row)" ngbTooltip="{{'TRANSLATE.VIEW_USAGE_LINE_ITEMS_TOOLTIP_INVOICES' | translate}}">
+            {{row.InvoiceNumber}}
+        </a>
+        <span class="tooltips text-primary" *ngIf="permissions.HasGetInvoiceDetails !=='Allowed'">
+            {{row.InvoiceNumber}}
+        </span>
+        <br />
+        <span style="font-size:xx-small;text-align:left">
+            <span [innerHTML]="'TRANSLATE.INVOICES_LBL_OWNED_BY' | translate:{ownedBy:row.CombinedRecordName}"></span>
+        </span>
+    </div>
+</ng-template>
+
+
+<ng-template #postTax let-row="adtData">
+    <div>
+        {{row.PostTaxAmount | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator}}
+    </div>
+</ng-template>
+
+<ng-template #statusDesc let-row="adtData">
+    <div>
+        {{'TRANSLATE.'+row.StatusDescription | translate}}
+    </div>
+</ng-template>
+
+<ng-template #billingDates let-row="adtData">
+    <div>
+        {{row.BillingStartDate | c3Date}} - {{row.BillingEndDate | c3Date}}
+    </div>
+</ng-template>
+
+<ng-template #paidAmountPayments let-row="adtData">
+    <div>
+        {{row.PaidAmount | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator}}
+    </div>
+</ng-template>
+
+<ng-template #usedAmountPayments let-row="adtData">
+    <div>
+        {{row.UsedAmount | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator}}
+    </div>
+</ng-template>
+
+<ng-template #remainingAmount let-row="adtData">
+    <div>
+        {{row.RemainingAmount | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator}}
+    </div>
+</ng-template>
+
+<ng-template #statusDescPayments let-row="adtData">
+    <div>
+        {{'TRANSLATE.'+row.StatusDescription | translate}}
+    </div>
+</ng-template>
+
+<ng-template #failureReason let-row="adtData">
+    <div>
+        @if(row.FailureReason){
+            {{'TRANSLATE.'+row.FailureReason | translate}}
+        }
+    </div>
+</ng-template>
+
+<ng-template #remarks let-row="adtData">
+    <div>
+        {{row.Remarks | translate}}
+    </div>
+</ng-template>
+
+<ng-template #iconPayments let-row="adtData">
+    <div>
+        @if (row.InvoiceDetails.Data && row.InvoiceDetails.Data.length > 0 && row.collapse) {
+            <a class="pe-auto"> <i class="ki-outline ki-plus text-primary fs-2 fw-bold"></i> </a>
+        }
+        
+        @if (row.InvoiceDetails.Data && row.InvoiceDetails.Data.length > 0 && !row.collapse) {
+        <a class="pe-auto"> <i class="ki-outline ki-minus text-primary fs-2 fw-bold"></i> </a>
+        }
+    </div>
+</ng-template>

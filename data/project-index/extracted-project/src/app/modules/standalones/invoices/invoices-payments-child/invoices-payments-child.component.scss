@@ -1,0 +1,25 @@
+.payment-child{
+    table {
+        border: 1px solid var(--bs-app-bg-color);
+        border-collapse: collapse;
+      }
+
+      th{
+        background-color: var(--bs-app-bg-color);
+      }
+      
+      th, td {
+        // border: 1px solid #ECF0F3;
+        padding: 8px;
+      }
+}
+::ng-deep{
+  app-invoices-payments-child{
+    .left-120px{
+      left: 120px;
+    }
+    .w-400px{
+      width: 400px;
+    }
+  }
+}

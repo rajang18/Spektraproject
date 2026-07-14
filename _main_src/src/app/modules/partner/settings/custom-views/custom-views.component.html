@@ -1,0 +1,96 @@
+<ng-template #actionHeader >
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3"></div>
+</ng-template>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12" *ngIf="styles.length > 0">
+            <div class="card card-custom">
+                <div>
+                    <div class="card ">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <h6>
+                                    <span class="caption-subject font-dark sbold uppercase"> <span translate="TRANSLATE.PARTNER_SETTINGS_PORTLET_TITLE_STYLES"></span></span>
+                                </h6>
+                            </div>
+                        </div>
+                        <div class="card-body mt-4">
+                            <form [formGroup]="customViewsSettingsForm" class="form form-horizontal">
+                                @for(data of styles; track $index){
+                                    <div class="form-group">
+                                        <tenantconfig [data]="data" [form]="customViewsSettingsForm" [frmControlName]="data.Name" [controlType]="data.ControlType"></tenantconfig>
+                                    </div>
+                                }
+                            </form>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-flex justify-content-end">
+                                <button class="btn btn-sm btn-primary"  [appPermission]="'SAVE_CUSTOM_VIEW_SETTINGS'" (click)="savePartnerSettings(styles)">{{'TRANSLATE.BUTTON_TEXT_SAVE' | translate}}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card card-custom mt-4">
+                <div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <h6>
+                                    <span class="caption-subject font-dark sbold uppercase"> <span translate="TRANSLATE.PARTNER_SETTINGS_PORTLET_TITLE_TEMPLATES"></span></span>
+                                </h6>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <!-- removed form control and form group due to confusion and errors !!!! -->
+                            <!-- not clear wether a reactive approach was to be used or template driven approach -->
+                            <form  class="form form-horizontal">
+                                <div class="form-group row">
+                                    <label class="col-md-3 d-flex justify-content-start mt-3 fw-semibold fs-6">
+                                        <span translate="TRANSLATE.PARTNER_SETTINGS_CUSTOM_VIEW_SELECT_VIEW"></span>
+                                    </label>
+                                    <div class="col-md-9">
+                                        <!-- use ngValue in case u want to bind back object else use value bind -->
+                                        <select class="form-control form-control-sm" name="selectedCustomerView" [(ngModel)]="selectedViews" title="{{'TRANSLATE.PARTNER_SETTINGS_CUSTOM_VIEW_SELECT_VIEW'| translate}}">
+                                            @for(view of views; track $index){
+                                                <option [ngValue]="view">
+                                                    {{'TRANSLATE.'+view.DisplayName |translate}}
+                                                </option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row mt-4">
+                                    <div class="col-12">
+                                        <!-- {{selectedViews.Value | json}} -->
+                                        @if(selectedViews?.Value){
+                                            <div [ngxSummernote]="config" [(ngModel)] ="selectedViews.Value" name="emailtemplate"></div>
+                                        }
+                                        <!-- the ngmodel doesnt update until we move back from codeview !!! -->
+                                        <!-- refer the https://github.com/lula/ngx-summernote incase someone wants to change the behaviour -->
+                                        <!-- <app-email-template-viewer [config]="config" [selectedView]="selectedViews" name="emailtemplate"></app-email-template-viewer> -->
+                                    </div>
+                                </div>
+
+                            </form>
+                            @if(selectedViews){
+                                <div class="col-md-12">
+            
+                                </div>
+                            }
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-flex justify-content-end">
+                                <button class="btn btn-sm btn-primary"  [appPermission]="'SAVE_CUSTOM_VIEW_SETTINGS'" (click)="savePartnerSettings(selectedViews)" appBusyLoader>{{'TRANSLATE.BUTTON_TEXT_SAVE' | translate}}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+</div>

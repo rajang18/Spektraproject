@@ -1,0 +1,394 @@
+<ng-template #sevicecol let-data="adtData" let-emitter="captureEvents">
+    <div [hidden]="IsFixedPrice==true && currentSubscriptionId!=null && !isPartnerLevel">
+        {{data.ChargeForCustomer |CurrencyFilter : currentCurrency?.CurrencySymbol : currentCurrency?.CurrencyDecimalPlaces : currentCurrency?.CurrencyThousandSeperator : currentCurrency?.CurrencyDecimalSeperator}}
+    </div>
+</ng-template>
+
+<!-- groupReportDetailsSource col-1 -->
+<ng-template #groupreportdetailscol1  let-data="adtData" let-emitter="captureEvents">
+    <span class="fw-semibold">
+        <span class="body-alignment-normal">{{data?.SubscriptionName}} ({{data?.SubscriptionId}})</span>
+        <span class="small body-alignment-normal" *ngIf="data?.EntitlementName"><br /><span translate="TRANSLATE.AZURE_ESTIMATE_ENTITLEMENT_NAME_LABEL" ></span> : {{data?.EntitlementName}}</span>
+        <span class="small body-alignment-normal" *ngIf="data?.EntitlementId"><br /><span translate="TRANSLATE.AZURE_ESTIMATE_ENTITLEMENT_ID_LABEL" ></span> : {{data?.EntitlementId}}</span>
+        <span class="small body-alignment-normal"><br /><span translate="TRANSLATE.AZURE_ESTIMATE_ENTITLEMENT_BILLING_PERIOD_LABEL" ></span> : {{data?.ChargeStartDate | c3Date}} - {{data?.ChargeEndDate| c3Date}}</span>
+    </span>
+</ng-template>
+
+<!-- groupReportDetailsSource col-2 -->
+<ng-template #groupreportdetailscol2  let-data="adtData" let-emitter="captureEvents">
+    <span>
+        <i class="ki-duotone ki-arrow-right pe-2" *ngIf="!data?.ShowRows">
+            <span class="path1"></span>
+            <span class="path2"></span>
+        </i>
+        <i class="ki-duotone ki-arrow-down pe-2" *ngIf="data?.ShowRows">
+            <span class="path1"></span>
+            <span class="path2"></span>
+        </i>
+        <span>{{data.ResourceGroup}}</span>
+    </span>
+</ng-template>
+
+<!-- groupReportDetailsSource col-3 -->
+<ng-template #groupreportdetailscol3 let-data="adtData" let-emitter="captureEvents">
+    <span [hidden]="IsFixedPrice==true && currentSubscriptionId!=null && !isPartnerLevel" data-title="'AZURE_REPORTS_TABLE_TD_TEXT_TOTAL_COST' | translate" class="col-md-2 datatable-cell padding-right-5 body-price-alignment" header-class="'header-price-alignment'" sortable="'ChargeForCustomer'">
+        <span>{{data.ChargeForCustomer | CurrencyFilter : currentCurrency?.CurrencySymbol : currentCurrency?.CurrencyDecimalPlaces : currentCurrency?.CurrencyThousandSeperator : currentCurrency?.CurrencyDecimalSeperator}}</span>
+    </span>
+</ng-template>
+
+<ng-template #taglast let-data="adtData" let-emitter="captureEvents">
+    <span [hidden]="IsFixedPrice==true && currentSubscriptionId !=null  && !isPartnerLevel" >
+        {{data.ChargeForCustomer | CurrencyFilter : currentCurrency?.CurrencySymbol : currentCurrency?.CurrencyDecimalPlaces : currentCurrency?.CurrencyThousandSeperator : currentCurrency?.CurrencyDecimalSeperator}}
+    </span>
+</ng-template>
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-custom">
+                <div class="card-body">
+                  @if(!isPartnerLevel && ProviderTenantsCount !== null && ProviderTenantsCount === 0){
+                    <div class="form-group row" ng-if="(!vm.isPartnerLevel && vm.ProviderTenantsCount !== null && vm.ProviderTenantsCount === 0) || (vm.isPartnerLevel && vm.ProviderCoustomerCount !== null && vm.ProviderCoustomerCount === 0)">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-md-12 unlink-provider">
+                                    <!-- <div class="number font-green">
+                                        <i class="ki-outline ki-disconnect"></i>
+                                    </div> -->
+                                    <div class="details">
+                                        <i class="ki-outline ki-disconnect me-2"></i>
+                                        <span translate="TRANSLATE.CUSTOMER_NOT_LINKED_TO_ANY_PROVIDER_TENANTS_ERROR" *ngIf="!isPartnerLevel"></span>
+                                        <span translate="PARTNER_CUSTOMER_NOT_LINKED_TO_ANY_PROVIDER_TENANTS_ERROR" *ngIf="isPartnerLevel"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  }
+
+                   @if(isPartnerLevel){
+
+                    <div class="form-group row mb-4">
+                        <div class="col-2 text-start">
+                            <label class="col-form-label text-start text-sm-start text-md-start text-lg-start">
+                                <span translate="TRANSLATE.AZURE_REPPORT_CUSTOMERS"></span>
+                                <span class="text-danger">*</span>
+                                <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.AZURE_REPPORT_CUSTOMERS_TOOLTIP'|translate}}">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <span class="path3"></span>
+                                </i>
+
+                            </label>
+                        </div>
+                        <div class="col-5">
+                            <select [(ngModel)]="currentC3CustomerId" (change)="OnCustomerChange()" class="form-select form-select-sm">
+                               @for(i of customers;track $index){
+                                <option [ngValue]="i.C3Id">
+                                    {{i.Name}}
+                                </option>
+                               }
+                            </select>
+                        </div>
+                    </div>    
+
+                   } 
+                    
+                   @if (!isSubscriptionManage && currencies?.length>1) 
+                   {
+                    <div class="form-group row mb-4">
+                        <label class="col-2 col-form-label text-start text-sm-start text-md-start text-lg-start">
+                            <span translate="TRANSLATE.AZURE_REPPORT_CURRENCY"></span><span class="text-danger">*</span>
+                            <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" aria-hidden="true"  translate="{{'TRANSLATE.AZURE_REPPORT_CURRENCY_TOOLTIP'|translate}}">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+
+                        </label>
+                        <div class="col-md-5">
+                            <select class="form-select form-select-sm"
+                                    [(ngModel)]="currentCurrencyCode"
+                                    (change)="OnCurrencyChange()"
+                                    name="CustomerId">
+
+                            
+                                    @for(currency of currencies; track $index){
+                                        <option  [selected]="currentCurrencyCode=='{{currency.CurrencyCode}}'">
+                                            {{currency.CurrencyCode}}
+                                        </option>
+                                    }
+
+                            </select>
+                        </div>
+                    </div>
+                   }
+
+                   @if (!isSubscriptionManage) 
+                   {
+
+                    <div class="form-group row mb-4">
+                        <label class="col-md-2 col-form-label text-start text-sm-start text-md-start text-lg-start">
+                            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_TENANTS"></span>
+                            <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" aria-hidden="true"  ngbTooltip="{{'TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_MICROSOFT_TENANT_SELECTOR' | translate}}">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+
+                        </label>
+                        <div class="col-md-5">
+
+
+                            <select  [(ngModel)]="selectedServiceProviderCustomer" (change)="ReloadEstimates()" class="form-select form-select-sm">   
+                                @for(tenant of Tenants; track $index){
+                                    <option [ngValue]="tenant">
+                                        <span class="d-block">{{tenant.CustomerName}}</span>
+                                        <span class="d-block">{{tenant.CustomerRefId}}</span>
+                                    </option>
+                                }
+
+                            </select>
+
+                          
+                        </div>
+                    </div>
+
+                   }
+
+                   <div class="form-group row mb-4">
+                    <label class="col-md-2 col-form-label text-start text-sm-start text-md-start text-lg-start">
+                        <span translate="TRANSLATE.AZURE_ESTIMATE_TAGS"></span>
+                        <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" aria-hidden="true"  ngbTooltip="{{'TRANSLATE.AZURE_ESTIMATE_TAGS_TOOLTIP' | translate}}">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                        </i>
+                    </label>
+                    <div class="col-md-5">
+                        <select class="form-select form-select-sm"
+                                [(ngModel)]="currentTagModel"
+                                (change)="LoadTagView(currentTagModel)"
+                                name="CustomerId">
+                            <option [ngValue]="null" [selected]="currentGroup==null" translate="TRANSLATE.AZURE_REPORTS_OPTION_SELECT_TAG"></option>
+                            @for(tag of tagDataSource; track $index){
+                                <option [ngValue]="tag.TagKey" [selected]="currentTagModel=='{{tag}}'">
+                                    {{tag.TagKey}}
+                                </option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="form-group row mb-4">
+                    <label class="col-md-2 col-form-label text-start text-sm-start text-md-start text-lg-start">
+                        <span translate="TRANSLATE.AZURE_REPORTS_LABEL_TEXT_GROUP"></span>
+                    </label>
+                    <div class="col-md-5">
+
+                        <select [(ngModel)]="currentGroup" class="form-select form-select-sm" (change)="OnGroupChange()">
+                            <option [ngValue]="null" [selected]="currentGroup==null" translate="TRANSLATE.AZURE_REPORTS_OPTION_TEXT_ALL_GROUPS"></option>
+                            <option [ngValue]="0" [selected]="currentSubscriptionId=='0'" translate="TRANSLATE.AZURE_REPORTS_OPTION_TEXT_UNASSIGNED"></option>
+                            @for(group of groupDataSource; track $index){
+                                <option [ngValue]="group.Id" [selected]="currentGroup=='{{group.Id}}'">
+                                    <span translate="{{'TRANSLATE.'+group.Name}}"></span>
+                                </option>
+                            }
+                        </select>
+
+                    </div>
+                </div> 
+
+
+                @if(!isSubscriptionManage){
+                    <div  class="form-group row mb-4">
+                        <label class="col-md-2 col-form-label text-start text-sm-start text-md-start text-lg-start">
+                            <span translate="TRANSLATE.AZURE_REPORTS_LABEL_TEXT_SUBSCRIPTION"></span>
+                        </label>
+    
+                        <div class="col-md-5">
+                            <select [(ngModel)]="currentSubscriptionId" class="form-select form-select-sm"  (change)="OnSubscriptionChange()">
+                                <option [value]="null" [selected]="currentSubscriptionId === null" translate="TRANSLATE.AZURE_REPORTS_OPTION_TEXT_ALL_SUBSCRIPTIONS"></option>
+                                @for(subscription of subscriptionDataSource; track $index){
+                                    <option  [value]="subscription.SubscriptionId" [selected]="currentSubscriptionId=='{{subscription.SubscriptionId}}'">{{subscription.SubscriptionName}} - {{subscription.SubscriptionId}}</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                }
+
+                @if(showEntitlement){
+                    <div class="form-group row mb-4">
+                        <label class="col-md-2 col-form-label text-start text-sm-start text-md-start text-lg-start">
+                            <span translate="TRANSLATE.AZURE_REPORTS_LABEL_TEXT_ENTITLEMENT"></span>
+                        </label>
+                        <div class="col-md-5">
+                            <select [(ngModel)]="currentEntitlement" (change)="UpdateEntitlementId()" class="form-select form-select-sm">
+                                @for(entitlement of entitlementList;track $index){
+                                    <option [ngValue]="entitlement" [selected]="currentEntitlement == entitlement">
+                                        <div>{{entitlement.Name}}</div>
+                                        <div *ngIf="entitlement.SiteName">
+                                            <span translate="TRANSLATE.AZURE_ESTIMATE_LABEL_SITE"></span>
+                                            <span *ngIf="entitlement.SiteName" ng-bind-html="entitlement.SiteName | highlight: $select.search">
+                                                {{entitlement.SiteName}}
+                                            </span>
+                                        </div>
+                                        <div *ngIf="entitlement.DepartmentName">
+                                            <span translate="TRANSLATE.AZURE_ESTIMATE_LABEL_DEPARTMENT"></span>
+                                            <span *ngIf="entitlement.DepartmentName" ng-bind-html="entitlement.DepartmentName | highlight: $select.search">
+                                                {{entitlement.DepartmentName}}
+                                            </span>
+                                        </div>
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                }
+
+                <div class="form-group row mb-4">
+                    <label class="col-md-2 col-form-label text-start text-sm-start text-md-start text-lg-start">
+                        <span translate="TRANSLATE.AZURE_REPORTS_LABEL_TEXT_MONTH"></span>
+                    </label>
+                    <div class="col-md-5">
+                        <select [(ngModel)]="billingPeriodId" class="form-select form-select-sm"  (change)="OnMonthChange()">
+                           @for(billingPeriod of billingPeriods  | orderBy: 'BillGenerationDate' : 'desc'; track $index){
+                            <option  [value]="billingPeriod.BillingPeriodId" 
+                                [selected]="billingPeriodId=='{{billingPeriod.BillingPeriodId}}'">
+                                {{billingPeriod.BillGenerationDate| c3Date}} 
+                                ( {{billingPeriod.BillingStartDate| c3Date}} - {{billingPeriod.BillingEndDate| c3Date}} )
+                            </option>
+                           }
+                        </select>
+                    </div>
+                </div>
+
+                @if(currentSubscriptionId!=null && currentSubscriptionId!='')
+                {
+                    <div class="form-group row mb-4">
+                        <label class="col-md-2 col-form-label text-start text-sm-start text-md-start text-lg-start">
+                            <span translate="TRANSLATE.AZURE_REPORTS_LABEL_TEXT_DATE"></span>
+                        </label>
+                        <div class="col-md-5">
+                            <select [(ngModel)]="currentDateValue" class="form-select form-select-sm"  (change)="OnDateChange()">
+                                <option [value]="''"  translate="TRANSLATE.AZURE_REPORTS_OPTION_TEXT_SELECT_DATE"></option>
+
+                                @for(date of dateDataSource; track $index){
+
+                                    <option ng-repeat="date in vm.dateDataSource" [ngValue]="date.Date" [selected]="currentDateValue=='{{date.Date}}'">{{date.Date}}</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                }
+                <div class="row mb-4">
+                    <div class="actions form-group col-md-5 float-end">
+                        <button class="btn btn-light-primary btn-sm" (click)="LoadGroupView()"><i class="ki-outline ki-calendar fs-2"></i> <span translate="TRANSLATE.AZURE_REPORTS_BITTON_TEXT_DETAILS_BY_RESOURCE_GROUP"></span></button>
+                        <button class="btn btn-light-primary btn-sm ms-2" (click)="LoadDefaultView()"><i class="ki-outline ki-data fs-2"></i> <span translate="TRANSLATE.AZURE_REPORTS_BITTON_TEXT_DETAILS_BY_SERVICE"></span></button>
+                    </div>
+                    <div class="actions form-group col-md-7 d-inline-flex justify-content-end">
+                        <button class="btn btn-light-primary btn-sm" (click)="LoadData()">
+                            <i class="ki-outline ki-magnifier fs-3"></i> <span translate="TRANSLATE.AZURE_REPORTS_BITTON_TEXT_GET_DETAILS"></span>
+                        </button>
+                        <!-- ng-if="vm.Permissions.HasDownloadAzureEstimateReport === 'Allowed' && vm.Permissions.HasDownloadAzureEstimateReportByTags === 'Denied'"  -->
+                        <a *ngIf="Permissions.HasDownloadAzureEstimateReport === 'Allowed' && Permissions.HasDownloadAzureEstimateReportByTags === 'Denied'"  class="btn btn-light-primary btn-sm ms-2" (click)="ExportAzureEstimateReport()">
+                            <i class="ki-outline ki-exit-down fs-2"></i> {{'TRANSLATE.AZURE_ESTIMATE_REPORT' | translate}}
+                        </a>
+                        <!-- ng-if="vm.Permissions.HasDownloadAzureEstimateReport === 'Denied' && vm.Permissions.HasDownloadAzureEstimateReportByTags === 'Allowed'" -->
+                        <a  *ngIf="Permissions.HasDownloadAzureEstimateReport === 'Denied' && Permissions.HasDownloadAzureEstimateReportByTags === 'Allowed'" class="btn btn-light-primary btn-sm ms-2" (click)="ExportAzureEstimateReportByTags()">
+                            <i class="ki-outline ki-exit-down fs-2"></i> {{'TRANSLATE.AZURE_REPORTS_BY_TAGS_BITTON_TEXT' | translate}}
+                        </a>
+                        <!--  ng-if="vm.Permissions.HasDownloadAzureEstimateReport === 'Allowed' && vm.Permissions.HasDownloadAzureEstimateReportByTags === 'Allowed'" -->
+                        <div ngbDropdown *ngIf="Permissions.HasDownloadAzureEstimateReport === 'Allowed' && Permissions.HasDownloadAzureEstimateReportByTags === 'Allowed'" class="dropdown dropdown-inline ms-2">
+                            <a ngbDropdownToggle  class="btn btn-primary btn-sm dropdown-toggle text-white" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                &nbsp;{{'TRANSLATE.AZURE_REPORTS_BITTON_TEXT' | translate}}
+                            </a>
+                            <div ngbDropdownMenu class="dropdown-menu p-0 m-0 dropdown-menu-md dropdown-menu-right" style="width: min-content;">
+                                <ul class="navi" role="menu" ngbDropdownItem>
+                                    <li class="navi-item">
+                                        <a class="navi-link" (click)="ExportAzureEstimateReport()" role="button">
+                                            {{'TRANSLATE.AZURE_REPORTS_BITTON_TEXT_WITH_OUT_TAGS'|translate}}
+                                        </a>
+                                    </li>
+                                    <li class="navi-item" ngbDropdownItem>
+                                        <a class="navi-link" (click)="ExportAzureEstimateReportByTags()" role="button">
+                                            {{'TRANSLATE.AZURE_REPORTS_BY_TAGS_BITTON_TEXT'|translate}}
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="float-right">
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <td class="col-md-10">
+                                <span translate="TRANSLATE.AZURE_REPORTS_TABLE_TD_TEXT_TOTAL_COST" class="fw-bold text-700"></span>
+                            </td>
+                            <td class="col-md-2 text-end pe-4">
+                                <span class="fw-bold text-700">{{totalCost | CurrencyFilter : currentCurrency?.CurrencySymbol : currentCurrency?.CurrencyDecimalPlaces : currentCurrency?.CurrencyThousandSeperator : currentCurrency?.CurrencyDecimalSeperator}}</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="table-responsive table-responsive-md table-responsive-lg table-responsive-sm" *ngIf="dataMode==='service'">
+                    @if(!!reportDetailsSource){ 
+                        <app-c3-table [reload]="reportDetailsSourcerReloadEvent" [datatableConfig]="reportDetailsSource">
+                        </app-c3-table>
+                    }
+                </div>
+
+                <ng-template #iconTemplate let-data="adtData" let-row="userData">
+                    <span>
+                        @if(!data.Collapse){
+                            <i class="clicked-icon cursor-pointer ki-duotone ki-plus text-primary fs-2"></i>
+                          } @else{
+                            <i class="clicked-icon cursor-pointer ki-duotone ki-minus text-primary fs-2"></i>
+                          }
+                        </span>
+                </ng-template>
+                <div class="table-responsive table-responsive-md table-responsive-lg table-responsive-sm" *ngIf="dataMode==='group'">
+                    @if(!!groupReportDetailsSource){
+                        <app-c3-table 
+                            [reload]="groupReportDetailsSourceReloadEvent" 
+                            [datatableConfig]="groupReportDetailsSource"
+                            (tableReady)="onTableReady($event)"
+                            (pageSizeChange)="onPageSizeChange($event)"
+                            [isNestedGrid]="true"
+                            [searchFilter]="false"
+                            >
+                        </app-c3-table>
+                    }
+                </div>
+                
+                <div class="table-responsive table-responsive-md table-responsive-lg table-responsive-sm" *ngIf="dataMode==='tag'">
+                    @if(!!tagReportDetailsSource){
+                        <app-c3-table 
+                            [reload]="tagReportDetailsSourceReload"
+                            [datatableConfig]="tagReportDetailsSource">
+                        </app-c3-table>
+                    }
+                </div>
+
+
+
+
+
+                </div>
+                <div class="card-footer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

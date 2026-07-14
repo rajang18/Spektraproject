@@ -1,0 +1,28 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+      <button type="button" class="btn btn-sm btn-light-primary" (click)="backToCustomers()">
+        <i class="ki-outline ki-to-left fs-2"></i>&nbsp;<span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_BUTTON_TEXT_BACK_TO_CUSTOMERS"></span>
+      </button> 
+      <button [appPermission]="'TEST_PAYMENT'" class="btn btn-sm btn-light-primary mr-2" (click)="RecordPayment()">
+        <span translate="TRANSLATE.CUSTOMERS_BUTTON_TEXT_PROCESS_TEST_PAYMENT"></span>
+      </button>
+     
+    </div>
+  </ng-template>
+  
+  <div class="card">
+      <div class="card-body pt-0 overflow-auto">
+  
+        <!-- <div class="col-md-12 d-flex justify-content-end my-2 pt-1">
+          <button type="button" class="btn btn-sm btn-primary"   [appPermission]="'ADD_OR_UPDATE_TAGS'"  >
+            <i class="ki-outline ki-plus fs-2"></i> <span translate="TRANSLATE.BUTTONS_TEXT_ADD_PARTNER_USER_TAG"></span>
+          </button>
+        </div> -->
+  
+        <!-- Check if datatableConfig is defined and then render the table -->
+        <ng-container *ngIf="datatableConfig">
+          <app-c3-table [datatableConfig]="datatableConfig">
+          </app-c3-table>
+        </ng-container>
+      </div>
+    </div>

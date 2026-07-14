@@ -1,0 +1,193 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="backToCustomCard()">
+            <i class="ki-outline ki-to-left fs-2"></i>
+            <span translate="TRANSLATE.CUSTOM_DASHBOARD_CARD_BUTTON_BACK_TO_LIST"></span>
+        </button>
+    </div>
+</ng-template>
+
+
+<div class="card-body pt-0">
+    <form [formGroup]="customCardForm">
+        <div class="form-group row">
+            <div class="col-md-6 col-form-label text-right text-sm-left text-md-left text-lg-right">
+                <label class="required fw-semibold fs-6 mb-2"
+                    translate="TRANSLATE.CUSTOM_NOTIFICATION_LABEL_TITLE_TEXT"></label>
+                <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                    [ngbTooltip]="'TRANSLATE.CUSTOM_DASHBOARD_CARD_TITLE_TOOLTIP' | translate">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                </i>
+                <input type="text" class="form-control form-control-sm" formControlName="title" />
+                @if(customCardForm.get('title')?.errors?.required &&
+                customCardForm.get('title')?.touched){
+                <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                }
+                @if(customCardForm.get('title')?.errors?.maxlength){
+                <span class="text-danger" translate="TRANSLATE.CUSTOM_CARDS_VALIDATION_MESSAGE_MAX_LENGTH_100"></span>
+                }
+            </div>
+            <div class="col-md-6 col-form-label text-right text-sm-left text-md-left text-lg-right">
+                <label class="fw-semibold fs-6 mb-2"
+                    translate="TRANSLATE.CUSTOM_DASHBOARD_CARD_HEADER_DESCRIPTION"></label>
+                <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                    [ngbTooltip]="'TRANSLATE.CUSTOM_DASHBOARD_CARD_DESCRIPTION_TOOLTIP' | translate">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                </i>
+                <textarea class="form-control form-control-sm" style="height: 34.81px"
+                    formControlName="description"></textarea>
+            </div>
+        </div>
+        <div class="form-group row mt-7">
+            <div class="col-md-6 col-form-label text-right text-sm-left text-md-left text-lg-right">
+                <label class="fw-semibold fs-6 mb-2" translate="TRANSLATE.CUSTOM_DASHBOARD_CARD_HEADER_COLOR"></label>
+                <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                    [ngbTooltip]="'TRANSLATE.CUSTOM_DASHBOARD_CARD_COLOR_TOOLTIP' | translate">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                </i>
+                <input type="color" class="form-control form-control-sm" formControlName="color" />
+            </div>
+            <div class="col-md-6 col-form-label text-right text-sm-left text-md-left text-lg-right">
+                <label class="required fw-semibold fs-6 mb-2"
+                    translate="TRANSLATE.CUSTOM_DASHBOARD_CARD_LABEL_LINK_TEXT"></label>
+                <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                    [ngbTooltip]="'TRANSLATE.CUSTOM_DASHBOARD_CARD_LINK_TEXT_TOOLTIP' | translate">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                </i>
+                <input type="text" class="form-control form-control-sm" formControlName="linkText" />
+                @if(customCardForm.get('linkText')?.errors?.required &&
+                customCardForm.get('linkText')?.touched){
+                <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                }
+                @if(customCardForm.get('linkText')?.errors?.maxlength){
+                <span class="text-danger" translate="TRANSLATE.CUSTOM_CARDS_VALIDATION_MESSAGE_MAX_LENGTH_20"></span>
+                }
+            </div>
+        </div>
+        <div class="form-group row mt-7">
+            <div class="col-md-6 col-form-label text-right text-sm-left text-md-left text-lg-right">
+                <label class="required fw-semibold fs-6 mb-2"
+                    translate="TRANSLATE.CUSTOM_DASHBOARD_CARD_HEADER_LINK"></label>
+                <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                    [ngbTooltip]="'TRANSLATE.CUSTOM_DASHBOARD_CARD_LINK_TOOLTIP' | translate">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                </i>
+                <input type="text" class="form-control form-control-sm" formControlName="link" />
+                @if(customCardForm.get('link')?.errors?.required &&
+                customCardForm.get('link')?.touched){
+                <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                }
+                @if (customCardForm.get('link')?.errors?.invalidUrl) {
+                <span class="text-danger" translate="TRANSLATE.CUSTOM_DASHBOARD_CARD_INVALID_URL_OR_EMAIL_VALIDATION_MESSAGE"></span>
+                }
+            </div>
+            <div class="col-md-6 col-form-label text-right text-sm-left text-md-left text-lg-right">
+                <label class="fw-semibold fs-6 mb-2"
+                    translate="TRANSLATE.CUSTOM_DASHBOARD_CARD_LABEL_CARD_ICON"></label>
+                <div class="input-group mb-3">
+                    <input #inputFile type="file" class="form-control" id="inputGroupFile02" (change)="onFileSelected($event)">
+                    <label class="input-group-text" for="inputGroupFile02">
+                        <span class="buttonText">
+                            <i class="ki-outline ki-folder fs-5" aria-hidden="true"></i>
+                        </span>
+                    </label>
+                </div>
+                <span class="help-block text-muted" translate="TRANSLATE.CUSTOM_ICON_HELP_TEXT"></span>
+
+                @if(!!url){
+                <div>
+                    <img [src]="url" height="100"> <br />
+                    <button class="btn btn-danger btn-sm mt-3" (click)="ClearImage()">
+                        <span translate="TRANSLATE.REMOVE_PARTNER_PRODUCT_ICON"></span></button>
+                </div>
+                }
+                
+                @if (customCardForm.get('image')?.value) {
+                <div>
+                    <img [src]="customCardForm.get('image')?.value" height="100"/>
+                    <button class="btn btn-danger btn-xs mt-3" (click)="ClearImage()">
+                        <i class="fa fa-trash"></i>
+                        <span translate="TRANSLATE.REMOVE_PARTNER_PRODUCT_ICON"></span>
+                    </button>
+                </div>
+                }
+            </div>
+        </div>
+        <div class="form-group row mt-7">
+            <div class="col-md-6 col-form-label text-right text-sm-left text-md-left text-lg-right">
+                <div class="input-group-with-checkbox">
+                    <label class="form-check form-check-inline me-5">
+                        <input type="checkbox" class="form-check-input" formControlName="cardForSelf">
+                        <span class="fw-semibold ps-2 fs-6 text-gray-700"
+                            translate="TRANSLATE.CUSTOM_DASHBOARD_CARD_SELF_CARD">
+                            <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                                [ngbTooltip]="'TRANSLATE.CUSTOM_DASHBOARD_CARD_SELF_CARD_TOOLTIP' | translate">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                        </span>
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-3 col-form-label text-right text-sm-left text-md-left text-lg-right">
+                <div class="card card-custom card-stretch gutter-b customCardsSize"
+                    [style.border-color]="customCardForm.value.color || 'black'"
+                    [style.background-color]="customCardForm.value.color || 'black'">
+
+                    @if (customCardForm.get('cardForSelf')?.value) {
+                    <div class="ribbon ribbon-top">
+                        <div class="ribbon-label" style="right: 0.5rem;">
+                            <span class="Schedulelabelbackgroundcolor ribbon-inner text-white rounded-bottom"></span>
+                            <span translate="TRANSLATE.CUSTOM_DASHBOARD_CARD_SELF_CARD_BADGE"></span>
+                        </div>
+                    </div>
+                    }
+
+                    <div class="card-body p0">
+                        <div class="d-flex align-items-center justify-content-between flex-grow-1">
+                            <span style="width: 48px; height: 48px;">
+                                <img *ngIf="url || customCardForm.get('image')?.value" [src]="url || customCardForm.get('image')?.value" width="48" height="48" />
+                            </span>
+
+                            <div class="d-flex flex-column text-right">
+                                <span class="text-white fs-4">
+                                    <span>{{customCardForm.value.title | limitLength: 15}}</span>
+                                    <span *ngIf="customCardForm.value.title !=null && customCardForm.value.title.length > 15"></span>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        @if (customCardForm.get('linkText')?.value) {
+                        <div class="ms-3">
+                            <a [href]="customCardForm.value.link" target="_blank"
+                                class="btn btn-link btn-link-white font-weight-bold text-white pt-2">
+                                <span>{{ customCardForm.value.linkText }}</span>
+                                <i class="ki-outline ki-black-right fs-3 text-white"></i>
+                            </a>
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3">
+        <button type="button" class="btn btn-sm btn-light btn-active-light-primary" (click)="resetCustomCardForm()">
+            {{'TRANSLATE.CUSTOM_DASHBOARD_CARD_CANCEL_BUTTON' | translate}}
+        </button>
+        <button type="button" class="btn btn-sm btn-primary" (click)="saveCustomCardDetails()">
+            {{ 'TRANSLATE.CUSTOM_DASHBOARD_CARD_SAVE_BUTTON' | translate }}
+        </button>
+    </div>
+</div>

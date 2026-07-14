@@ -1,0 +1,22 @@
+.TermLabelColor {
+    background-color: #3D9C49 !important;  
+}
+
+.labelcolor {
+    background-color: #DF2B03 !important;
+}
+::ng-deep {
+    app-onboard-microsoft-customer-non-shared {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+        .ellipsis {
+            white-space: nowrap;        /* Prevents text from wrapping to the next line */
+            overflow: hidden;           /* Hides the overflowing text */
+            text-overflow: ellipsis;
+            width: 200px;           
+        }
+    }
+  }
+
+  

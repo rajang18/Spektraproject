@@ -1,0 +1,7 @@
+::ng-deep {
+    app-upload-to-psa {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+  }

@@ -1,0 +1,80 @@
+<div *ngIf="pageMode === 'list'">
+    <div class="card-header">
+        <div class="card-title">
+            <h4 class="card-label"> <span translate="TRANSLATE.AZURE_SUBSCRIPTION_DETAILS"></span></h4>
+        </div>
+    </div>
+    <div class="card-body form form-horizontal">
+        <div class="row ps-2">
+            <div class="form-group col-md-6">
+                <label class="col-md-6 control-label fw-bold">
+                    <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_SUBSCRIPTION_NAME"></span> :
+                </label>
+                <br>
+                <label class="col-md-6 pt-5">
+                    <span>
+                        {{currentUsageSubscription.SubscriptionName}}
+                    </span>
+                </label>
+            </div>
+            <div class="form-group col-md-6">
+                <label class="col-md-6 control-label fw-bold">
+                    <span translate="TRANSLATE.AZURE_SUBSCRIPTION_ID"></span> :
+                </label>
+                <br>
+                <label class="col-md-6 pt-5 text-nowrap">
+                    {{currentUsageSubscription.SubscriptionId}}
+                </label>
+            </div>
+            <div class="form-group col-md-6 mt-8">
+                <label class="col-md-6 control-label fw-bold">
+                    <span translate="TRANSLATE.AZURE_ESTIMATED_COST"></span> :
+                </label>
+                <br>
+                <label class="col-md-6 pt-5">
+                    {{currentUsageSubscription.CurrentMonthUsage | currency}}
+                </label>
+            </div>
+        </div>
+        <div class="row ps-2">
+            <div class="form-group col-md-6 mt-8"
+                *ngIf="permissions.HasPermissionToChangeIsManagedByPartner &&  isInheritedPartnerRole === true">
+                <label class="col-md-6 control-label fw-bold">
+                    {{'TRANSLATE.IS_MANAGEABLE_ONLY_BY_PARTNER' | translate}} :
+                </label>
+                <br>
+                <label class="col-md-6 pt-5">
+                    {{ isManagedByPartnerInPurchasedProducts && 'TRANSLATE.MANAGE_CUSTOMER_PRODUCTS_INFO_TEXT_YES'
+                    || 'TRANSLATE.MANAGE_CUSTOMER_PRODUCTS_INFO_TEXT_NO' | translate }}
+                </label>
+            </div>
+        </div>
+        <div class="mt-8 ms-1"
+            *ngIf="DefaultTermsAndConditionURL !== null && DefaultTermsAndConditionURL!=='' && ShowTermsAndConditionsForSubscriptionUpdate === 'true'
+        && ((currentUsageSubscription.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_SUSPENDED && permissions.HasReactivateCustomerProductSubscription === 'Allowed')
+        || ((currentUsageSubscription.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_ACTIVE && permissions.HasSuspendProductSubscription === 'Allowed') && (isCustomerAllowedToReduceSeats === true || isInheritedPartnerRole === true)))">
+        <label class="form-check form-check-inline">
+            <input type="checkbox" class="form-check-input me-2" value=""
+                name="DefaultTermsAndConditionURLText" id="flexCheckDefault" [(ngModel)]="IsAgreedOnTermsAndCondition"
+                [required]="isCheckboxRequired()" [ngbTooltip]="isCheckboxRequired() ? ('TRANSLATE.CHECK_THIS_BOX_TOOLTIP_TEXT'|translate) : null" title=""
+                container="body" triggers="hover" />
+            <span class="text-gray-800 remove-space" style="display:inline-block;" [innerHTML]="DefaultTermsAndConditionText"></span>
+            <a class="fw-bold" style="display:block;" href="{{DefaultTermsAndConditionURL}}"
+                target="_blank" translate="TRANSLATE.CUSTOMER_ORDER_CART_DEFAULT_TERMS_AND_CONDITION_TEXT"></a>
+            <!--<span ng-show="formCart.form.$submitted &amp;&amp; formCart.form.DefaultTermsAndConditionURLText.$error.required" class="text-danger"><span />{{'CUSTOMER_ORDER_CART_TERMS_AND_CONDITION_IS_NOT_ENABLED_TEXT' | translate}}</span>-->
+        </label>
+        </div>
+        <button [disabled]="!readyToComplete"
+            *ngIf="currentUsageSubscription.Status=='Active' && permissions.HasSuspendProductSubscription === 'Allowed'"
+            class="form-control btn btn-light-danger mt-8"
+            (click)="popUpPONumberSuspendSubscription(currentUsageSubscription)">
+            <span translate="TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_SUSPEND_SUBSCRIPTION" class="white " appBusyLoader></span>
+        </button>
+        <button [disabled]="!readyToComplete"
+            *ngIf="currentUsageSubscription.Status=='Suspended' && permissions.HasReactivateCustomerProductSubscription === 'Allowed'"
+            class="form-control btn btn-light-success mt-8"
+            (click)="popUpPONumberReActivateSubscription(currentUsageSubscription)" appBusyLoader>
+            <span translate="TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_REACTIVATE_SUBSCRIPTION" class="white "></span>
+        </button>
+    </div>
+</div>

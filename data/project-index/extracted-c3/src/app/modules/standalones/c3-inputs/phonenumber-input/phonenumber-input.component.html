@@ -1,0 +1,20 @@
+@if(cc.IsTenantConfiguration && data.IsShowOnScreen){
+<div class="form-group mb-1 row" [formGroup]="form">
+    <label class="col-md-4 control-label text-end d-inline-flex">
+        <i class="ki-duotone ki-information-2 fs-8 ms-1 align-self-baseline" ngbTooltip="{{'TRANSLATE.'+data.Description | translate }}">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+        </i>
+        <span translate="{{'TRANSLATE.'+data.DisplayName}}"></span>
+    </label>
+    <div class="col-md-8">
+        <input type="text" [disabled]="!data.IsManagedByPartner" class="form-control form-control-lg form-control-solid" [ngClass]="{'input-disable': !data.IsManagedByPartner}"
+               [ngStyle]="{'pointer-events': !data.IsManagedByPartner ? 'none':'initial','cursor': !data.IsManagedByPartner? 'not-allowed':'initial'}" #text (input)="onChange(text.value)" (blur)="onTouched()" [value]="data.Value" [formControlName]="frmControlName">
+
+        <!-- @if(form.get(data.Name)?.touched && form.get(data.Name)?.errors?.required){
+        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+        } -->
+    </div>
+</div>
+}

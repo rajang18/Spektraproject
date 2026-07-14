@@ -1,0 +1,55 @@
+#top-customers-by-revenue-png {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    padding-right: 2.25rem;
+    width: 100%;
+    padding-left: 0.5rem;
+} 
+.top-customers-wrapper {
+    height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;   
+}
+::ng-deep {
+    app-top-customers {
+        .opacity-8 {
+            opacity: 0.8;
+        }
+
+        .loader-indicater {
+            position: absolute;
+            margin: auto;
+            top: 50%;
+            left: 41%;
+        }
+
+        .z-index-10 {
+            z-index: 10 !important;
+        }
+
+        .select2-container--default .select2-selection--single {
+            position: relative;
+            padding-right: 30px;
+        }
+
+        .select2-container--default .select2-selection--single::after {
+            content: "\f107";
+            font-family: 'FontAwesome' !important;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: var(--select2-arrow-color, #888);
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow:before {
+            content: "";
+            display: none;
+        }
+        .card-title{
+            flex:20% !important;
+        }
+    }
+}

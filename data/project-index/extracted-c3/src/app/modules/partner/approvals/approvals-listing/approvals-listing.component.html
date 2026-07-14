@@ -1,0 +1,443 @@
+<ng-template #actionHeader>
+  <div class="font-weight-bold p-0 my-2 font-size-sm text-nowrap">
+    <i  *ngIf="pageMode === 'purchaseRequestDetails' && transactionAmountLimit > 0" class="ki-duotone ki-information-2 fs-5 ms-1 me-1"
+      aria-hidden="true" tooltip-placement="bottom"
+      ngbTooltip="{{'TRANSLATE.APPROVAL_SCREEN_CURRENT_TRANSACTION_LIMIT_INCREASE_BY' | translate}} {{(remainingLimitForTooltip - onHoldICartItemValue)}}">
+      <span class="path1"></span>
+      <span class="path2"></span>
+      <span class="path3"></span>
+    </i>
+    <i  *ngIf="pageMode === 'nextScheduleRenewalChanges' && transactionAmountLimit > 0"
+      class="ki-duotone ki-information-2 fs-5 ms-1 me-1" aria-hidden="true" tooltip-placement="bottom"
+      ngbTooltip="{{'TRANSLATE.APPROVAL_SCREEN_CURRENT_TRANSACTION_LIMIT_INCREASE_BY_SCHEDUAL_RENEWAL' | translate}}">
+      <span class="path1"></span>
+      <span class="path2"></span>
+      <span class="path3"></span>
+    </i>
+    <span class="fw-bold mr-1 me-6" *ngIf="(pageMode === 'purchaseRequestDetails' || pageMode === 'nextScheduleRenewalChanges') && transactionAmountLimit > 0"
+    [innerHTML]="'TRANSLATE.TRANSACTION_LIMIT_MESSAGE' | translate:{ RemainingAmount: remainingLimit,TotalLimit:transactionAmountLimit}"></span>
+    <a class="btn btn-light-primary btn-xs btn-sm btn-md btn-lg me-2"
+      *ngIf="pageMode === 'purchaseRequestDetails' || pageMode === 'nextScheduleRenewalChanges'"
+      (click)="updatePageMode('listOfPendingPurchases')">
+      <i class="ki-outline ki-to-left fs-2"></i>
+      <span translate="TRANSLATE.PARTNER_PENDING_PURCHASE_REQUEST_DETAILS_PAGE_BACK_TO_LIST"></span>
+    </a>
+  </div>
+</ng-template>
+
+<div *ngIf="pageMode==='listOfPendingPurchases'">
+  <div class="card card-custom mb-4">
+    <div class="card-body pt-0 mt-0 mb-0 pb-0">
+      <div class="row bs-callout bs-callout-info rounded">
+        <form class="form" role="form">
+          <span class="svg-icon svg-icon-primary svg-icon-xl">
+            <!--begin::Svg Icon | path:assets/media/svg/icons/Tools/Compass.svg-->
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px"
+              height="24px" viewBox="0 0 24 24" version="1.1">
+              <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                <rect x="0" y="0" width="24" height="24"></rect>
+                <path
+                  d="M7.07744993,12.3040451 C7.72444571,13.0716094 8.54044565,13.6920474 9.46808594,14.1079953 L5,23 L4.5,18 L7.07744993,12.3040451 Z M14.5865511,14.2597864 C15.5319561,13.9019016 16.375416,13.3366121 17.0614026,12.6194459 L19.5,18 L19,23 L14.5865511,14.2597864 Z M12,3.55271368e-14 C12.8284271,3.53749572e-14 13.5,0.671572875 13.5,1.5 L13.5,4 L10.5,4 L10.5,1.5 C10.5,0.671572875 11.1715729,3.56793164e-14 12,3.55271368e-14 Z"
+                  fill="#000000" opacity="0.3"></path>
+                <path
+                  d="M12,10 C13.1045695,10 14,9.1045695 14,8 C14,6.8954305 13.1045695,6 12,6 C10.8954305,6 10,6.8954305 10,8 C10,9.1045695 10.8954305,10 12,10 Z M12,13 C9.23857625,13 7,10.7614237 7,8 C7,5.23857625 9.23857625,3 12,3 C14.7614237,3 17,5.23857625 17,8 C17,10.7614237 14.7614237,13 12,13 Z"
+                  fill="#000000" fill-rule="nonzero"></path>
+              </g>
+            </svg>
+            <!--end::Svg Icon-->
+            <span translate="TRANSLATE.PARTNER_PENDING_PURCHASE_REQUESTS_SCREEN_INSTRUCTION_1"></span>
+          </span>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body pt-0 overflow-auto">
+      <ng-template #requesttype let-data="adtData">
+        {{'TRANSLATE.'+ data.RequestType | translate}}
+      </ng-template>
+
+      <ng-template #actionbtn let-data="adtData">
+        <!-- *ngIf="Permissions.HasGetPendingPurchaseRequests === 'Allowed'" -->
+        <a class="btn btn-light-primary btn-xs btn-sm btn-md btn-lg"
+          (click)="viewPurchaseRequestDetails(data)">{{'TRANSLATE.PENDING_PURCHASE_REQUESTS_BUTTON_TEXT_VIEW_DETAILS'|
+          translate}}</a>
+      </ng-template>
+
+      <!-- enable name field --> 
+        @if (!!datatableConfig) {
+          <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" [isPaginationHide]="true" [isPaginationRowHide]="true" >
+          </app-c3-table>
+        }
+
+    </div>
+  </div>
+</div>
+
+<div *ngIf="pageMode==='purchaseRequestDetails' || pageMode==='nextScheduleRenewalChanges'">
+  <div class="row">
+    <div class="col-md-2" *ngIf="selectedOrder.RequestType === 'TRANSACTION_TYPE_PURCHASE' || selectedOrder.RequestType === 'TRANSACTION_TYPE_UPDATE'">
+      <div class="card-body">
+        <!--begin::Aside-->
+        <div class="flex-column offcanvas-mobile filters-card" id="kt_profile_aside"
+          *ngIf="selectedOrder.RequestType === 'TRANSACTION_TYPE_PURCHASE' || selectedOrder.RequestType === 'TRANSACTION_TYPE_UPDATE'">
+          <!--begin::Forms Widget 15-->
+          <div class="card card-custom gutter-b">
+            <!--begin::Body-->
+            <div class="card-body">
+              <!--begin::Form-->
+              <form>
+                <!--begin::Menu Nav-->
+                <!-- <perfect-scrollbar class="scroller-custom" wheel-propagation="true" swipe-propagation="true" on-scroll="onScroll(scrollTop, scrollHeight)" always-visible="true" suppress-scroll-X="true" ng-style="{'height': vm.PageMode==='listOfPendingPurchases' ? '{{vm.frameHeight-311}}px' : '{{vm.frameHeight-311}}px'}"> -->
+                <div class="form">
+                  <div class="form-group  pb-3">
+                    <!-- Providers -->
+                    @if(providers.length > 0)
+                    {
+                    <div class="providers">
+                      <label class="mb-4 text-gray-900 fw-bold filter-title text-uppercase">
+                        <span translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_PROVIDERS"></span>
+                      </label>
+                      <div class="form-group row">
+                        <div class="checkbox-list">
+                          @for(provider of providers; track $index)
+                          {
+                          <div class="input-group-with-checkbox">
+                            <label class="form-check form-check-inline me-5">
+                              <input type="checkbox" class="form-check-input" value="{{provider.Name}}"
+                                (click)="toggleProviderSelection(provider)"
+                                [checked]="providerSelection.indexOf(provider) > -1" [disabled]="false">
+                              <span class="text-gray-900">{{'TRANSLATE.'+provider.Description | translate}}</span>
+                            </label>
+                            <label class="checkbox" style="display: none"></label>
+                          </div>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                    }
+                  </div>
+                  <div class="form-group  pb-3">
+                    <!-- Categories -->
+                    @if(filteredCategories.length > 0){
+                    <div class="providers">
+                      <label class="mb-4 text-gray-900 fw-bold filter-title text-uppercase">
+                        <span translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_CATEGORY"></span>
+                      </label>
+                      <div class="form-group row">
+                        <div class="checkbox-list">
+                          @for(category of filteredCategories; track $index)
+                          {
+                          <div class="input-group-with-checkbox">
+                            <label class="form-check form-check-inline me-5">
+                              <input type="checkbox" class="form-check-input" value="{{category.Description}}"
+                                (click)="toggleCategorySelection(category)"
+                                [checked]="categorySelection.indexOf(category) > -1" [disabled]="false">
+                              <span class="text-gray-900">{{category.Name.toLowerCase() === 'onlineservicesnce' === true
+                                ? ('TRANSLATE.CATEGORY_FILTER_DESC_NCE'|translate) : 'TRANSLATE.'+
+                                category.CategoryDescriptionKey | translate}}</span>
+                            </label>
+                          </div>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                    }
+
+                  </div>
+                  <div class="form-group pb-3">
+                    @if(filteredProviderCategories.length > 0)
+                    {
+                    <div class="providers">
+                      <label class="mb-4 text-gray-900 fw-bold filter-title text-uppercase">
+                        <span translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_SERVICE_TYPES"></span>
+                      </label>
+                      <div class="form-group row">
+                        <div class="checkbox-list">
+                          @for(providerCategory of filteredProviderCategories; track $index)
+                          {
+                          <div class="input-group-with-checkbox">
+                            <label class="form-check form-check-inline me-5">
+                              <input type="checkbox" class="form-check-input"
+                                value="{{providerCategory.ProviderCategoryName}}"
+                                (click)="toggleProviderCategorySelection(providerCategory)"
+                                [checked]="providerCategorySelection.indexOf(providerCategory) > -1" [disabled]="false">
+                              <span class="text-gray-900"> {{providerCategory.ProviderCategoryName.split('-').length > 0
+                                ? providerCategory.ProviderCategoryName.split('-').join('- \n'):
+                                (providerCategory.ProviderCategoryName|translate)}}</span>
+                            </label>
+                            <label class="checkbox" style="display: none"></label>
+                          </div>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                    }
+
+                    <!-- Filtered Provider Categories -->
+
+                  </div>
+                  <div class="form-group  pb-3">
+                    <!-- Billing Cycles -->
+                    @if(billingCycles.length > 0)
+                    {
+                    <div class="providers">
+                      <label class="mb-4 text-gray-900 fw-bold filter-title text-uppercase">
+                        <span translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_BILLING_CYCLES"></span>
+                      </label>
+                      <div class="form-group row">
+                        <div class="checkbox-list">
+                          @for(billingCycle of billingCycles; track $index)
+                          {
+                          <div class="input-group-with-checkbox">
+                            <label class="form-check form-check-inline me-5">
+                              <input type="checkbox" class="form-check-input" value="{{billingCycle.Name}}"
+                                (click)="toggleBillingCycleSelection(billingCycle)"
+                                [checked]="billingCycleSelection.indexOf(billingCycle) > -1" [disabled]="false">
+                              <span class="text-gray-900">{{'TRANSLATE.'+billingCycle.Description | translate}}</span>
+                            </label>
+                            <label class="checkbox" style="display: none"></label>
+                          </div>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                    }
+
+                  </div>
+                  <div class="form-group  pb-3">
+                    <!-- Consumption types -->
+                    @if(consumptionTypes.length > 0)
+                    {
+                    <div class="providers">
+                      <label class="mb-4 text-gray-900 fw-bold filter-title text-uppercase">
+                        <span translate="TRANSLATE.MANAGE_PLANS_FILTER_TITLE_CONSUMPTION_TYPES"></span>
+                      </label>
+                      <div class="form-group row">
+                        <div class="checkbox-list">
+                          @for(consumptionType of consumptionTypes; track $index)
+                          {
+                          <div class="input-group-with-checkbox">
+                            <label class="form-check form-check-inline me-5">
+                              <input type="checkbox" class="form-check-input" value="{{consumptionType.Name}}"
+                                (click)="toggleConsumptionTypeSelection(consumptionType)"
+                                [checked]="consumptionTypeSelection.indexOf(consumptionType) > -1" [disabled]="false">
+                              <span class="text-gray-900">{{'TRANSLATE.'+consumptionType.Description |
+                                translate}}</span>
+                            </label>
+                            <label class="checkbox" style="display: none"></label>
+                          </div>
+                          }
+
+                        </div>
+                      </div>
+                    </div>
+                    }
+
+                  </div>
+                </div>
+                <!-- </perfect-scrollbar> -->
+                <!--end::Menu Nav-->
+              </form>
+              <!--end::Form-->
+            </div>
+            <!--end::Body-->
+          </div>
+          <!--end::Forms Widget 15-->
+        </div>
+        <!--end::Aside-->
+      </div>
+    </div>
+    <div class="col-md-10"
+      [ngClass]="{'col-md-10':selectedOrder.RequestType === 'TRANSACTION_TYPE_PURCHASE' || selectedOrder.RequestType === 'TRANSACTION_TYPE_UPDATE', 'col-md-12':!(selectedOrder.RequestType === 'TRANSACTION_TYPE_PURCHASE' || selectedOrder.RequestType === 'TRANSACTION_TYPE_UPDATE')}">
+      <!--begin::Layout-->
+      <div class="flex-row-fluid ml-lg-8">
+        <div class="col-md-12 no-padding-right"
+          [ngClass]="{'pl-0': selectedOrder.RequestType === 'TRANSACTION_TYPE_UPGRADE' || selectedOrder.RequestType === 'NEXT_SCHEDULE_RENEWAL_CHANGE'}">
+          <div class="input-group input-lg pull-left" style="margin-top: 9px;">
+            <input type="text" class="form-control"
+              placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_INPUT_FIELD_TO_SEARCH_A_PRODUCT' | translate}}"
+              [(ngModel)]="search" ng-model-options="{debounce: 1000}" (change)="filterOrderItemsByKeyword()">
+            <span class="input-group-btn">
+              <button type="submit" class="btn btn-primary ml-2" (click)="filterOrderItemsByKeyword()">
+                <i class="fa fa-search"></i>
+              </button>
+            </span>
+          </div>
+        </div>
+        <div>
+          <label>
+            <span *ngIf="search">{{'TRANSLATE.CUSTOMER_ORDERS_SEARCH_LABEL_TEXT_SEARCH_APPLIED' | translate}}:</span>
+          </label> <strong>{{search}}</strong>
+        </div>
+        <div class="row">
+          <div class="col-md-12 ">
+            <div class="row product-wrapper" (scrolled)="onScroll()" infiniteScroll [infiniteScrollDistance]="0.3"
+              [infiniteScrollThrottle]="50" [scrollWindow]="false">
+              @for (item of orderItems; track $index) {
+              <div class="col-md-12" appLazyLoad (lazyLoad)="onLazyLoad(item)">
+                <div class="p-2">
+                  <div id="approvalList" style="margin-bottom:5px;" class="row">
+                    <!-- <product-item-in-purchase-request product="product" request-type="vm.selectedOrder.RequestType" on-action="vm.OnAction(product, action)" recalculate-transaction-limit="vm.RecalculateTransactionLimit()" reject-product-reason="vm.RejectProductReason(product)" permissions="vm.Permissions" check-nce-promotion-eligibility="vm.checkNcePromotionEligibility(product)" show-linked-product-promotion-detail="vm.showLinkedProductPromotionDetail(product)"></product-item-in-purchase-request> -->
+                    <app-product-item-in-purchase-request [product]="item" [requestType]="selectedOrder.RequestType"
+                      [permissions]="Permissions" (onAction)="onActionChange($event)"
+                      (recalculateTransactionLimit)="recalculateTransactionLimit()"
+                      (rejectProductReason)="rejectProductReason($event)"
+                      (checkNcePromotionEligibilities)="checkNcePromotionEligibility($event)"
+                      (showLinkedProductPromotionDetails)="showLinkedProductPromotionDetail($event)"
+                      [(selectRadio)]="selectRadioMap[item.CartLineItemID]"
+                      ></app-product-item-in-purchase-request>
+                  </div>
+                  
+                </div>
+                
+              </div> 
+              }  
+              <div *ngIf="orderItems && orderItems.length === 0 && scrollBusy == true "> 
+                <div class="d-flex align-items-center justify-content-center" style="height: 100%;">
+                  <div class="row">
+                      <div class="col-md-12">
+                        <app-common-no-record></app-common-no-record>
+                      </div>
+                  </div> 
+                </div>
+              </div>
+            </div>
+
+            <div class="row text-end float-end" *ngIf="onHoldCount > 0 || entityName === 'Partner'">
+              <div class="col-md-12 text-end"
+                *ngIf="selectedOrder.RequestType === 'TRANSACTION_TYPE_PURCHASE' || selectedOrder.RequestType === 'TRANSACTION_TYPE_UPDATE'">
+                <a class="btn btn-light-primary btn-xs btn-sm btn-md btn-lg me-2"
+                  *ngIf="(pageMode==='purchaseRequestDetails' && Permissions.HasUpdatePendingPurchaseRequests === 'Allowed')"
+                  (click)="submitChanges()" appBusyLoader>
+                  <span translate="TRANSLATE.PARTNER_PENDING_PURCHASE_REQUEST_DETAILS_PAGE_SUBMIT_CHANGES"></span>
+                </a>
+                <a class="btn btn-light-primary btn-xs btn-sm btn-md btn-lg me-2"
+                  *ngIf="(pageMode === 'purchaseRequestDetails' && Permissions.HasUpdatePendingPurchaseRequests === 'Allowed')"
+                  (click)="approveCart()" appBusyLoader>
+                  <span translate="TRANSLATE.PARTNER_PENDING_PURCHASE_REQUEST_DETAILS_PAGE_APPROVE_CART"></span>
+                </a>
+                <a class="btn btn-light-primary btn-xs btn-sm btn-md btn-lg"
+                  *ngIf="(pageMode==='purchaseRequestDetails' && Permissions.HasUpdatePendingPurchaseRequests === 'Allowed')"
+                  (click)="rejectAllProductModal()" appBusyLoader>
+                  <span translate="TRANSLATE.PARTNER_PENDING_PURCHASE_REQUEST_DETAILS_PAGE_REJECT_CART"></span>
+                </a>
+              </div>
+              <div class="col-md-12 text-right"
+                *ngIf="selectedOrder.RequestType === 'TRANSACTION_TYPE_UPGRADE' || selectedOrder.RequestType === 'NEXT_SCHEDULE_RENEWAL_CHANGE'">
+                <a class="btn btn-light-primary btn-xs btn-sm btn-md btn-lg me-2"
+                  *ngIf="((pageMode==='purchaseRequestDetails' || pageMode==='nextScheduleRenewalChanges') && Permissions.HasUpdatePendingPurchaseRequests === 'Allowed')"
+                  (click)="approveCart()" appBusyLoader>
+                  <span translate="TRANSLATE.PARTNER_PENDING_PURCHASE_REQUEST_DETAILS_PAGE_APPROVE_UPGRADE_REQUEST"></span>
+                </a>
+                <a class="btn btn-light-primary btn-xs btn-sm btn-md btn-lg"
+                  *ngIf="((pageMode==='purchaseRequestDetails' || pageMode==='nextScheduleRenewalChanges') && Permissions.HasUpdatePendingPurchaseRequests === 'Allowed')"
+                  (click)="rejectCart()" appBusyLoader>
+                  <span translate="TRANSLATE.PARTNER_PENDING_PURCHASE_REQUEST_DETAILS_PAGE_REJECT_UPGRADE_REQUEST"></span>
+                </a>
+              </div>
+            </div>
+            
+            <div class="row listing-page-spinner" *ngIf="orderItems && orderItems.length > 0 && scrollBusy == false ">
+              <h3>
+                <span class="text-muted"><span class="col-md-12 spinner spinner-primary spinner-center"></span>
+                  {{'TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}</span>
+              </h3>
+
+              
+            </div>
+
+            
+            
+            </div>
+          </div>
+          
+        </div>
+        
+      </div>
+      <!--end::Layout-->
+    </div>
+  </div>
+
+
+
+<ng-template #rejectedProductReasonModal>
+  <div>
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title">
+          <span class="caption-subject">
+            {{'TRANSLATE.REJECT_PRODUCT_COMMENT_HEADER' | translate }}
+          </span>
+        </h5>
+        <!--<button type="button" class="close btn-bg-danger" data-dismiss="modal" aria-label="Close">
+              <i aria-hidden="true" class="ki ki-close" style="color: #F64E60"></i>
+          </button>-->
+      </div>
+      <div class="modal-body">
+        <div class="p-1">
+          <span class="d-block"> {{'TRANSLATE.REJECT_PRODUCT_COMMENT_INSTRUCTION' | translate }}<span
+              class="text-danger">*</span></span>
+          <textarea class="form-control border-1" rows="4" required [(ngModel)]="rejectProductRemarks"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer border-0 pt-2">
+        <div class="d-flex align-items-center justify-content-between">
+
+          <div>
+            <button class="btn  btn-light btn-xs me-2" (click)="resetRejectedProduct()">{{'TRANSLATE.BUTTON_CLOSE' |
+              translate}}</button>
+          </div>
+          <div>
+            <button class="btn btn-light-danger btn-xs"
+              (click)="saveRejectProductRemarks()">{{'TRANSLATE.REJECT_PRODUCT_POPUP_BUTTON' | translate}}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #rejectAllProductModalOpen>
+  <div>
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title text-dark">
+          <span class="caption-subject bold">
+            {{ 'TRANSLATE.REJECT_ALL_PRODUCT_POPUP_HEADER' | translate }}
+          </span>
+        </h5>
+        <!--<button type="button" class="close btn-bg-danger" data-dismiss="modal" aria-label="Close">
+              <i aria-hidden="true" class="ki ki-close" style="color: #F64E60"></i>
+          </button>-->
+      </div>
+      <div class="modal-body">
+        <div class="p-1">
+          <span class="d-block"> {{ 'TRANSLATE.REJECT_ALL_PRODUCTS_COMMENT_INSTRUCTION' | translate }}<span
+              class="text-danger">*</span></span>
+          <textarea class="form-control border-1" rows="4" required [(ngModel)]="rejectAllProductsRemarks"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer border-0 pt-2">
+        <div class="d-flex align-items-center justify-content-between">
+
+          <div>
+            <button class="btn  btn-light btn-xs me-2" (click)="onCloseRejectAllPopup()">{{'TRANSLATE.BUTTON_CLOSE' |
+              translate}}</button>
+          </div>
+          <div>
+            <button class="btn btn-light-danger btn-xs"
+              (click)="rejectCart()">{{'TRANSLATE.REJECT_ALL_PRODUCT_POPUP_BUTTON' | translate}}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #customerName let-data="adtData" let-emitter="captureEvents">
+  <span>
+    <span class="fw-semibold">{{data.CustomerName}}</span> <br />
+    <span *ngIf="data.ResellerName != null && entityName.toLowerCase() === cloudHubConstants.ENTITY_PARTNER">Reseller-{{data.ResellerName}}</span>
+  </span>
+</ng-template>  

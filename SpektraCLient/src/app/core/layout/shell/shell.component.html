@@ -1,0 +1,137 @@
+<mat-sidenav-container class="shell">
+  <mat-sidenav
+    [mode]="isHandset() ? 'over' : 'side'"
+    [opened]="isHandset() ? isMobileNavOpen() : true"
+    (openedChange)="isMobileNavOpen.set($event)"
+    class="shell__sidenav"
+    [class.shell__sidenav--compact]="isCompact()"
+  >
+    <div class="shell__brand">
+      <div class="shell__brand-logo">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="shell__brand-copy">
+        <span class="shell__brand-title">Spektra AI</span>
+        <span class="shell__brand-subtitle">Engineering Copilot</span>
+      </div>
+    </div>
+
+    <nav class="shell__nav">
+      <ng-container *ngFor="let item of navigationItems; trackBy: trackByRoute">
+        <a
+          class="shell__nav-link"
+          [routerLink]="item.route"
+          routerLinkActive="active-link"
+          [routerLinkActiveOptions]="{ exact: true }"
+          [matTooltip]="isCompact() ? item.label : ''"
+          matTooltipPosition="right"
+          (click)="closeMobileNav()"
+        >
+          <span class="nav-item-icon"><svg [lucideIcon]="item.icon" [size]="18"></svg></span>
+          <span class="nav-item-label">{{ item.label }}</span>
+        </a>
+      </ng-container>
+    </nav>
+
+    <div class="shell__footer">
+      <div class="shell__avatar">{{ avatarInitial() }}</div>
+      <div>
+        <span>{{ firstName() }}</span>
+      </div>
+      <button
+        type="button"
+        class="shell__logout"
+        aria-label="Log out"
+        matTooltip="Log out"
+        (click)="logout()"
+      >
+        <svg lucideLogOut [size]="16"></svg>
+      </button>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="shell__content">
+    <header class="shell__topbar glass-surface">
+      @if (isHandset()) {
+        <button
+          type="button"
+          class="icon-btn"
+          aria-label="Toggle navigation"
+          (click)="isMobileNavOpen.set(!isMobileNavOpen())"
+        >
+          @if (isMobileNavOpen()) {
+            <svg lucideX [size]="20"></svg>
+          } @else {
+            <svg lucideMenu [size]="20"></svg>
+          }
+        </button>
+      }
+
+      <label class="shell__search">
+        <svg lucideSearch [size]="16"></svg>
+        <input type="text" placeholder="Search projects, requirements, logs…" />
+      </label>
+
+      <div class="shell__topbar-actions">
+        <button
+          type="button"
+          class="icon-btn"
+          aria-label="Toggle color theme"
+          [attr.aria-pressed]="theme() === 'dark'"
+          (click)="themeService.toggle()"
+        >
+          @if (theme() === 'dark') {
+            <svg lucideSun [size]="18"></svg>
+          } @else {
+            <svg lucideMoon [size]="18"></svg>
+          }
+        </button>
+
+        <button type="button" class="icon-btn" aria-label="Notifications">
+          <svg lucideBell [size]="18"></svg>
+          <span class="icon-btn__dot"></span>
+        </button>
+
+        <div class="user-menu">
+          <button
+            type="button"
+            class="user-menu__trigger"
+            [attr.aria-expanded]="isUserMenuOpen()"
+            (click)="isUserMenuOpen.set(!isUserMenuOpen())"
+          >
+            <span class="shell__avatar shell__avatar--sm">{{ avatarInitial() }}</span>
+            <span class="user-menu__name">{{ firstName() }}</span>
+            <svg lucideChevronDown [size]="15"></svg>
+          </button>
+
+          @if (isUserMenuOpen()) {
+            <div class="user-menu__panel">
+              <div class="user-menu__header">
+                <span class="shell__avatar">{{ avatarInitial() }}</span>
+                <div>
+                  <strong>{{ firstName() }}</strong>
+                  <small>{{ email() }}</small>
+                </div>
+              </div>
+              <a class="user-menu__item" routerLink="/settings" (click)="isUserMenuOpen.set(false)">
+                <svg lucideSettings [size]="16"></svg>
+                <span>Settings</span>
+              </a>
+              <button type="button" class="user-menu__item user-menu__item--danger" (click)="logout()">
+                <svg lucideLogOut [size]="16"></svg>
+                <span>Log out</span>
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    </header>
+
+    <main class="shell__main">
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

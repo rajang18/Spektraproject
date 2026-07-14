@@ -1,0 +1,120 @@
+<!-- Modal -->
+<div>
+    <div class="modal-header">
+        <h4 class="modal-title" id="exportUserModalLabel">
+            <span translate="TRANSLATE.CUSTOMER_BUTTON_TEXT_EXPORT_USER_LICENSE"></span>
+        </h4>
+    </div>
+
+    <div class="modal-body">
+        <!-- Key-Value Pairs -->
+        <div class="form-group row mb-2">
+            <div class="col-md-12 mb-2">
+                <table>
+                    <tr>
+                        <td>{{'TRANSLATE.USER_LICENSE_ASSIGNMENT_POPUP_LABEL_TENENT_ID' | translate}}</td>
+                        <td>&nbsp;:&nbsp;</td>
+                        <td class="fw-semibold">{{selectedServiceProviderCustomer.CustomerRefId}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{'TRANSLATE.USER_LICENSE_ASSIGNMENT_POPUP_LABEL_TENANT_NAME' | translate}}</td>
+                        <td>&nbsp;:&nbsp;</td>
+                        <td class="fw-semibold">
+                            {{selectedServiceProviderCustomer.CustomerName}}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Users List with Checkboxes -->
+        <div class="col-md-12 mt-2">
+            <div class="row p-2">
+                <div class="col-md-2 pl-1">
+                    <span>{{'TRANSLATE.USER_LICENSE_ASSIGNMENT_POPUP_LABEL_CUSTOMER_USERS' | translate}}</span>
+                </div>
+
+                @if(customerAdmindetails.length == 0 || customerAdmindetails == null){
+                <div class="col-md-10 pl-2">
+                    <span class="pl-4">&nbsp;:&nbsp;</span>
+                    <span class="fw-semibold"><b>{{'TRANSLATE.NO_CUSTOMER_ADMIN_AVAILABLE_FOR_THE_SELECTED_TENANT' |
+                            translate}}</b></span>
+                </div>
+                }
+
+
+                @if(customerAdmindetails.length > 0){
+                <div class="col-md-10 pl-2 mb-1 h-100px">
+                    <div class="pl-2 form-check mb-2 mt-1" style="position: sticky; top: 0; z-index: 1;">
+
+                        <input type="checkbox" class="form-check-input" id="selectAllCheckbox"
+                            [(ngModel)]="selectallcolumn" (change)="SelectAllColumnFunction(selectallcolumn)">
+                        <label class="fw-semibold cursor-pointer" for="selectAllCheckbox">
+                            {{'TRANSLATE.DOWNLOAD_GRID_POPUP_CHECKBOX_TEXT_SELECT_ALL' | translate}}
+                        </label>
+
+                    </div>
+                    <div class="col-md-10 pl-2 mb-1 h-100px" style="overflow-x:auto; white-space:nowrap">
+                        @for(column of customerAdmindetails;track column){
+                        <div class="pl-2 form-check mb-2">
+                            <input type="checkbox" class="form-check-input" id="{{column.EmailId}}"
+                                [(ngModel)]="column.isChecked">
+                            <label class="fw-semibold cursor-pointer" ngbTooltip="{{column.EmailId}}"
+                                for="{{column.EmailId}}">
+                                {{ column.EmailId.length > 37 ? column.EmailId.substring(0, 37) + '...' : column.EmailId
+                                }}
+                            </label>
+
+                        </div>
+                        }
+                    </div>
+
+                </div>
+                }
+            </div>
+        </div>
+
+        <!-- Email Text Area -->
+        <form [formGroup]="formEmail" name="formData">
+            <div class="row mt-5 pt-2">
+                <div class="col-md-2">
+                    <label for="emailInput">{{'TRANSLATE.USER_LICENSE_ASSIGNMENT_POPUP_LABEL_EMAILS' | translate}}<span
+                            class="text-danger">*</span>
+                    </label>
+                </div>
+                <div class="col-md-10">
+                    <!-- Replace input with textarea -->
+                    <textarea class="form-control" formControlName="emailAdderss" id="emailTextarea" rows="3"
+                        placeholder="{{'TRANSLATE.ACCOUNT_MANAGERS_TABLE_HEADER_EMAIL_ADDRESS' | translate}}"></textarea>
+                    @if(formEmail.get('emailAdderss')?.errors?.required &&
+                    (formEmail.get('emailAdderss')?.touched || buttonClicked)){
+                    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                    }
+                    @if(formEmail.get('emailAdderss')?.errors?.invalidEmails && formEmail.get('emailAdderss')?.dirty){
+                    <ng-container *ngIf="!formEmail.get('emailAdderss')?.errors?.invalidEmails.includes('')">
+                        <span class="text-danger">{{formEmail.get('emailAdderss')?.errors?.invalidEmails.join(',
+                            ')}}</span>
+                        <span class="text-danger" translate="TRANSLATE.NOT_VALID_MESSAGE"></span>
+                    </ng-container>
+                    <span *ngIf="formEmail.get('emailAdderss')?.errors?.invalidEmails.includes('')" class="text-danger"
+                        translate="TRANSLATE.ENTER_AN_E-MAIL_AFTER_THE_COMA_OR_REMOVE_THE_EXTRA_COMMA"></span>
+                    }
+                    <!-- <div *ngIf="emailInvalid" class="text-danger">Please enter a valid email.</div> -->
+                </div>
+
+            </div>
+        </form>
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-light btn-active-light-primary" (click)="cancel()">
+            <span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span>
+        </button>
+        <button type="button" class="btn btn-sm btn-primary" (click)="submit()">
+            <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+        </button>
+    </div>
+
+
+</div>

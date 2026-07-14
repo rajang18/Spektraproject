@@ -1,0 +1,124 @@
+<div class="offcanvas-header pb-2">
+    <h3 class="card-title fw-bold text-gray-900">{{'TRANSLATE.AUDITLOG_TEXT_TABLE_HEADER_VIEW_DETAILS' | translate}}</h3>
+</div>
+<hr />
+<div class="offcanvas-body pt-2">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between" style="border-bottom:1px dashed #C0C0C0;">
+                <div class="d-flex align-items-center mb-2">
+                    <span class="fs-4 fw-semibold me-1 "> {{'TRANSLATE.'+auditDetails.Action | translate}} </span>
+                </div>
+                <div class="d-flex flex-wrap fw-bold fs-6 mb-2 pe-2">
+                    <span class="d-flex align-items-center text-gray-500 me-5 mb-2">
+                        <span class="p-1 fs-6 badge"
+                            [ngClass]="{'badge-light-success':setHeaderStyle(auditDetails.Action),'badge-light-danger':!setHeaderStyle(auditDetails.Action)}">
+                            {{setHeaderStyle(auditDetails.Action)?"Success":"Failure"}}
+                        </span>
+                    </span>
+                    <span class="d-flex align-items-center text-gray-500 me-5 mb-2">
+
+                        <span class="fs-6">
+                            {{auditDetails.CreatedDate | c3Date}}
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="d-flex flex-column">
+            <table class="table">
+                <tbody>
+                    @for (item of auditDetails.Data; track item; let i = $index){
+                    <tr>
+                        <td class="auditlog-border-top pt-2 pb-0">
+                            <div class=""
+                                *ngIf="item?.Name !== 'NEW_LINE' && item?.Name !== 'EVENT_DATA_HAS_ADDITIONAL_DETAIL'">
+                                <div class="row">
+                                    <div class="col-md-4 fs-6 fw-semibold">
+                                        {{item?.Name | translate}}
+                                        {{ item?.translatedKey }}
+                                    </div>
+                                    <div class="col-md-8 word-break-all fs-1x" style="font-weight: normal;">
+                                        <span class="text-break">
+                                            @if(auditDetails?.Action === 'EVENT_DESC_DELETE_PAYMENT_OPTION_FAILURE' ||
+                                            auditDetails?.Action ==="EVENT_DESC_DELETE_PAYMENT_OPTION" || item?.Name ==="INVOICE_GENERATION_REASON"){
+                                            {{item?.Value}}
+                                            }
+                                            @else if(item?.Name?.toUpperCase()?.endsWith('REASON') ||
+                                            item?.Name?.toUpperCase()?.endsWith('ONHOLD')) {
+                                            @if((_translateService.instant('TRANSLATE.' + item?.Value)) !== ('TRANSLATE.' + item?.Value)) {
+                                            {{ 'TRANSLATE.' + item?.Value | translate }}
+                                            } @else {
+                                            {{ item?.Value }}
+                                            }
+                                            }
+                                            @else if(isString(item?.Value) &&
+                                            (item?.Value?.toUpperCase()?.startsWith('ERROR') ||
+                                            item?.Value?.toUpperCase()?.startsWith('CATEGORY_DESC'))) {
+                                            {{ 'TRANSLATE.' + item?.Value | translate }}
+                                            }
+                                            @else {
+                                                @if(item?.keyExists) {
+                                                    {{ 'TRANSLATE.' + item?.Value | translate }}
+                                                } 
+                                                @else {
+                                                    @for(i of getFormattedValues(item?.Name, item?.Value); track i) {
+                                                        <span [innerHTML]="i | translate"></span>
+                                                        @if(getFormattedValues(item?.Name, item?.Value).indexOf(i) < getFormattedValues(item?.Name, item?.Value).length - 1) {
+                                                            <span>,&nbsp;</span>
+                                                        }
+                                                    }
+                                                    
+                                                }
+                                            }
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="item?.Name === 'NEW_LINE' && (auditDetails?.Data.length -1) !== i"
+                                class="col-md-12" style="border-top:1px dashed #C0C0C0;">
+                            </div>
+                        </td>
+                    </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+
+        @if (!!datatableConfig && !showMoreDetails) {
+        <!-- <div style="border-bottom:1px dashed #C0C0C0;"> -->
+        <div class="mb-15">
+            <app-c3-table [datatableConfig]="datatableConfig">
+            </app-c3-table>
+        </div>
+        <!-- </div> -->
+
+        }
+    </div>
+</div>
+
+
+<div class="offcanvas-bottom py-5 float-end" id="kt_activities_footer">
+    <hr />
+    <div class="float-end">
+        @if (isMoreDetails && showMoreDetails) {
+        <button class="btn btn-light-primary me-2" (click)="showDetails(auditDetails.EventLogId)">
+            {{'TRANSLATE.AUDIT_LOG_MORE_DETAILS_BTN_TEXT' | translate}}
+        </button>
+        }
+        @if (isMoreDetails && !showMoreDetails) {
+        <button class="btn btn-light-primary me-2" (click)="hideDetails()">
+            {{'TRANSLATE.AUDIT_LOG_HIDE_DETAILS_BTN_TEXT' | translate}}
+        </button>
+        }
+
+        <button class="btn btn-light-danger me-2" (click)="close()">
+            {{'TRANSLATE.BUTTON_CLOSE'|translate}}
+        </button>
+    </div>
+
+</div>

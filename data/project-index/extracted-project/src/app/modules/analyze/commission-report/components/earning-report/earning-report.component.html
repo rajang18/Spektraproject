@@ -1,0 +1,45 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+      <div class="card-header card-header-stretch overflow-auto">
+        <div class="d-flex w-100 justify-content-between">
+          <div class="period-options">
+            <div class="dropdown" appClickOutSide (clickOutside)="billingPeriodDropDownClickOutside()">
+                <div class="d-flex">
+                    <button (click)="toggleDropdown()"
+                      class="btn-content btn btn-sm btn-sm col-12 d-flex justify-content-between">
+                      {{ getSelectedOptionText() }}                      
+                      <strong>
+                        <i class="fa-solid fa-angle-down"></i>
+                      </strong>
+                    </button>
+                  </div>
+                <div class="dropdown-content" autoClose="outside"  [ngClass]="{'show':dropdownVisible}">
+                    <label *ngFor="let option of billingPeriods; track $index" 
+                           [ngClass]="{'selected': option.BillingPeriodId === searchCriteriaForEarning.BillingPeriodId}"
+                           (click)="searchCriteriaForEarning.BillingPeriodId = option.BillingPeriodId; reload(); toggleDropdown()">
+                        {{option.BillingStartDate | c3Date}}-{{option.BillingEndDate | c3Date}} ({{option.BillingId}})
+                    </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+</ng-template>
+<div class="">
+    <div class="overflow-auto">
+        <ng-template #commissionamount let-data="adtData" let-emitter="captureEvents">
+            <span>{{data.CommissionAmount | CurrencyFilter : data.currencySymbol : data.currencyDecimalPlaces : data.currencyThousandSeperator : data.currencyDecimalSeperator }}</span>
+        </ng-template>
+        <div class="m-heading-1 border-green m-bordered">
+            <div class="callout callout-info">
+                <p translate="TRANSLATE.PRODUCT_COMMISSION_EARNING_REPORT_HELPTEXT"> </p>
+            </div>
+        </div>
+        <!-- Check if datatableConfig is defined and then render the table -->
+        <ng-container *ngIf="datatableConfig">
+            <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+            </app-c3-table>
+        </ng-container>
+    </div>
+</div>

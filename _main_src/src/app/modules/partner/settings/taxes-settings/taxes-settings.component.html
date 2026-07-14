@@ -1,0 +1,44 @@
+<ng-template #actionHeader >
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-bold btn-primary" [appPermission]="'BTN_ADD_OR_UPDATE_TAXES'" [routerLink]="['/partner/settings/taxpercentages/addandedittaxpercentages']" appBusyLoader>
+            <i class="ki-outline ki-plus fs-3"></i>
+            <span class="pt-3">{{'TRANSLATE.TAX_PERCENTAGES_TAXPERCENTAGE_BUTTON_ADD_TAX_PERCENTAGE'|translate}}</span>
+        </button>
+    </div>
+</ng-template>
+<!-- <div class="card-header pe-7 m-0">
+    <div class="card-toolbar ms-auto">
+    </div>
+</div> -->
+<div class="card-body overflow-auto">
+    <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+        <div class="d-flex justify-content-end align-items-end">
+            <!-- Add your action buttons or other elements here -->
+            <div class="d-flex align-items-end">
+                <div ngbTooltip="{{'TRANSLATE.TAX_PERCENTAGES_TAXPERCENTAGE_TABLE_ACTION_BUTTON_TOOLTIP_EDIT'|translate}}"
+                    class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto"placement="top"
+                    [ngClass]="toolbarButtonHeightClass" (click)="editTaxPercentage(data)" [appPermission]="'BTN_ADD_OR_UPDATE_TAXES'">
+                    <span>
+                        <i class="ki-outline ki-pencil text-primary">
+                        </i>
+                    </span>
+                </div>
+            </div>
+            <div class="d-flex align-items-end">
+                <div ngbTooltip="{{'TRANSLATE.TAX_PERCENTAGES_TAXPERCENTAGE_TABLE_ACTION_BUTTON_TOOLTIP_DELETE'|translate}}"
+                    class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto" placement="top"
+                    [ngClass]="toolbarButtonHeightClass" (click)="deleteTaxPercentage(data)" [appPermission]="'BTN_DELETE_TAXES'">
+                    <span>
+                        <i class="ki-outline ki-trash text-primary">
+                        </i>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+    <!-- Check if datatableConfig is defined and then render the table -->
+    <ng-container *ngIf="datatableConfig">
+        <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+        </app-c3-table>
+    </ng-container>
+</div>

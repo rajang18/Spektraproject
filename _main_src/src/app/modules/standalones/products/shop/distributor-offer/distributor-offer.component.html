@@ -1,0 +1,234 @@
+<div class="card card-custom gutter-b card-stretch card-border" *ngIf="product.Settings.IsAddon == 'false'">
+    <div class="card-header shop-item-title pt-2 shop-nce-card flex-nowrap">
+        <div class="card-title ms-0">
+            <div class="symbol" *ngIf="product.ImageUrl">
+                <img [src]="product.ImageUrl">
+            </div>
+            <div class="symbol symbol-45 mr-3 pt-1" *ngIf="!product.ImageUrl">
+                <span class="symbol-label symbol-label font-size-h3 bg-dark text-white">
+                    {{product.Name | formatforinitials}}
+                </span>
+            </div>
+        </div>
+        <div class="card-toolbar text-end pt-2">
+            <div
+                *ngIf="product.DisplayFinalSalePrice!==null && product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE">
+                <div class="fs-5 text-info fw-bold">
+                    {{product.DisplayFinalSalePrice | CurrencyFilter : product.CurrencySymbol :
+                    product.CurrencyDecimalPlaces
+                    : product.CurrencyThousandSeperator : product.CurrencyDecimalSeperator}}
+                    <span class="text-danger fw-normal" *ngIf="product.Discount != null && product.Discount > 0">
+                        <small>
+                            <span class="ng-binding text-decoration-line-through red">
+                                {{product.DisplayOriginlaSalePrice | CurrencyFilter : product.CurrencySymbol :
+                                product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                                product.CurrencyDecimalSeperator}}
+                            </span>
+                            <span *ngIf="product.DiscountType == 'Percentage'">
+                                {{product.Discount}}%
+                            </span>
+                            <span *ngIf="product.DiscountType != 'Percentage'">
+                                {{product.Discount | CurrencyFilter : product.CurrencySymbol :
+                                product.CurrencyDecimalPlaces :
+                                product.CurrencyThousandSeperator : product.CurrencyDecimalSeperator }}
+                            </span>
+                            <span [translate]="'TRANSLATE.LBL_OFF'"></span>
+                        </small>
+                    </span>
+                </div>
+                <div *ngIf="product.LinkedProduct != null">
+                    <div
+                        *ngIf="product.LinkedProduct.DisplayFinalSalePrice!== null && product.LinkedProduct.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE">
+                        <div class="fs-5 text-info  text-end">
+                            <i class="ki-duotone ki-paper-clip text-warning small"></i> &nbsp;
+                          <span class="fw-bold">
+                            {{product.LinkedProduct.DisplayFinalSalePrice | CurrencyFilter :
+                            product.LinkedProduct.CurrencySymbol
+                            : product.LinkedProduct.CurrencyDecimalPlaces :
+                            product.LinkedProduct.CurrencyThousandSeperator
+                            : product.LinkedProduct.CurrencyDecimalSeperator}}
+                            </span>
+                            <span class="text-danger fw-normal"
+                                *ngIf="product.LinkedProduct.Discount != null && product.LinkedProduct.Discount > 0">
+                                <small>
+                                    <span class="ng-binding text-decoration-line-through red mr-2">
+                                        {{product.LinkedProduct.DisplayOriginlaSalePrice | CurrencyFilter :
+                                        product.LinkedProduct.CurrencySymbol :
+                                        product.LinkedProduct.CurrencyDecimalPlaces :
+                                        product.LinkedProduct.CurrencyThousandSeperator :
+                                        product.LinkedProduct.CurrencyDecimalSeperator}}
+                                    </span>
+                                    <span *ngIf="product.LinkedProduct.DiscountType == 'Percentage'">
+                                        {{product.LinkedProduct.Discount}}%
+                                    </span>
+                                    <span *ngIf="product.LinkedProduct.DiscountType != 'Percentage'">
+                                        {{product.LinkedProduct.Discount | CurrencyFilter :
+                                        product.LinkedProduct.CurrencySymbol :
+                                        product.LinkedProduct.CurrencyDecimalPlaces :
+                                        product.LinkedProduct.CurrencyThousandSeperator :
+                                        product.LinkedProduct.CurrencyDecimalSeperator }}
+                                    </span>
+                                    <span [translate]="'TRANSLATE.LBL_OFF'"></span>
+                                </small>
+                            </span>
+                            <span
+                                *ngIf="product.LinkedProduct.ShowPromotionLink && areNcePromotionsEnabled === 'Allowed' && product.LinkedProduct.IsPromotionAvailableForCustomer"
+                                (click)="callOnAction('showLinkedProductPromotionDetail')"
+                                class="mb-0 mr-1 font-weight-normal  separator-primary text-primary cursor-pointer"><span
+                                    tooltip-append-to-body="true"
+                                    ngbTooltip="{{'TRANSLATE.TRANSLATE.NCE_PROMOTIONS_AVAILABLE_TEXT' | translate}}">&nbsp;<i
+                                        class="ki-outline ki-discount text-primary"></i></span></span>
+                        </div>
+                    </div>
+                </div>
+                <p class="p-0">
+                    @if (product.ValidityType !== null && product.Validity !== '' && product.ValidityType == 'Month(s)')
+                    {
+                    <span class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-1"
+                        ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                        {{product.Validity}}
+                        {{ (product.Validity === 1 ?
+                        (product.ValidityType === 'Month(s)' ?
+                        'TRANSLATE.TERM_DURATION_DESC_MONTH'
+                        : 'TRANSLATE.TERM_DURATION_DESC_YEAR')
+                        : 'TRANSLATE.TERM_DURATION_DESC_YEARS') | translate }}
+
+                    </span>
+                    }
+                    @if (product.ValidityType === 'Year(s)' || product.ValidityType === 'Year') {
+                    <span class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-1"
+                        aria-hidden="true"
+                        [ngClass]="{'labelcolor':product.BillingCycleName == 'Monthly','TermLabelColor': product.BillingCycleName == 'Annual'}"
+                        ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                        {{product.Validity}}
+                        {{ (product.Validity === 1 ? (product.ValidityType === 'Month(s)' ?
+                        'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                        'TRANSLATE.TERM_DURATION_DESC_YEARS') | translate }}
+                    </span>
+                    }
+                    <span *ngIf="product.BillingCycleName !== null && product.BillingCycleName !== ''">
+                        <span *ngIf="product.BillingCycleName !== null && product.BillingCycleName !== ''"
+                            class="label fw-bold label-inline text-white badge ms-md-1" [ngClass]="{
+                                'bg-warning': product.BillingCycleName?.toLowerCase() === 'monthly',
+                                'bg-success': product.BillingCycleName?.toLowerCase() === 'annual',
+                                'bg-dark': product.BillingCycleName?.toLowerCase() === 'triennial',
+                                'bg-info': product.BillingCycleName?.toLowerCase() === 'onetime'
+                                }"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}">{{'TRANSLATE.'+product.BillingCycleDescription
+                            | translate}}</span>
+                    </span>
+                    <span *ngIf="product.BillingTypeName !== null && product.BillingTypeName !== ''"
+                        class="label label-light-danger font-weight-bold label-inline text-danger badge bg-light-danger ms-md-1"
+                        ngbTooltip="{{'TRANSLATE.BILLING_TYPE_TOOLTIP' | translate}}">{{product.BillingTypeName}}</span>
+                    <br>
+                    <span
+                        class="label label-info font-weight-bold label-inline text-info badge bg-light-info ms-md-1 mt-1"
+                        ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_CATEGORY' | translate}}">{{'TRANSLATE.CATEGORY_DESC_DISTRIBUTOR_OFFERS'
+                        | translate}}</span>
+                        <span
+                        *ngIf="product.SubCategoryName" [appPermission]="'GET_SUBCATEGORIES_PILLS'"
+                        class="badge badge-danger fw-semibold label-inline ms-md-1 mt-1 "
+                        placement="top"
+                        ngbTooltip="{{ 'TRANSLATE.PARTNER_CUSTOM_CATEGORY_FOR_SUBCATEGORY_TOOLTIP_PILL' | translate }}">
+                        {{ product.SubCategoryName }}
+                        </span>
+                </p>
+            </div>
+        </div>
+    </div>
+    <hr class="shop-tile-ruler" />
+    <div class="card-body p0 form">
+        <form class="form" role="form">
+            <div class="form-body pt0">
+                <!-- Product Name-->
+                <div class="row product-name-section">
+                    <div class="col-md-12">
+                        <span class="fw-bold text-gray-900">
+                            <a class="text-gray-900 cursor-pointer" [innerHTML]="product.Name | limitLengthWithoutDot: 70"
+                            ngbTooltip="{{product.Name}}"
+                            tooltipPlacement="bottom" (click)="callOnAction('offerDetails')"></a>
+                            @if (product.Name != null && product.Name.length > 70) {
+                            <span>...</span>
+                            }
+                          </span>
+                        <div>
+                            <div>
+                                <span class="text-muted linked-p-name-text">
+                                    <i class="ki-duotone ki-paper-clip text-warning small"
+                                        *ngIf="product.IsPrimaryInLinkedProduct"></i> &nbsp;
+                                    {{product.LinkedSubscriptionName}}
+                                </span>
+                                <span *ngIf="product.LinkedProduct != null">
+                                    <span
+                                        *ngIf="product.LinkedProduct.ProviderSettings && product.LinkedProduct.ProviderSettings.EnforceAttestation == 'TRUE'"
+                                        ngbTooltip="{{'TRANSLATE.MICROSOFT_ATTESTATION_TYPE_TOOLTIP' | translate}}{{product.LinkedProduct.ProviderSettings.AttestationType | translate}}"
+                                        class="font-weight-normal separator-primary text-primary cursor-pointer"><i class="ki-outline ki-verify fs-2 text-primary mt-1"></i></span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Detail -->
+                    <div class="row shop-item-detail">
+                        <div class="col-md-12">
+                            @if (product.IsPrimaryInLinkedProduct) {
+                                <span [innerHtml]="product.Description | limitLengthWithoutDot:100" class="p-detail-text"></span>
+                                <a (click)="callOnAction('offerDetails')" class="text-primary cursor-pointer"
+                                    *ngIf="product.Description !=null && product.Description.length > 100">
+                                    {{'TRANSLATE.SHOP_TILE_HYPERLINK_READ_MORE' | translate}}
+                                </a>                              }
+                              @else{
+                                <span [innerHtml]="product.Description | limitLengthWithoutDot:150" class="p-detail-text"></span>
+                                <a (click)="callOnAction('offerDetails')" class="text-primary cursor-pointer"
+                                    *ngIf="product.Description !=null && product.Description.length > 150">
+                                    {{'TRANSLATE.SHOP_TILE_HYPERLINK_READ_MORE' | translate}}
+                                </a>  
+                                                        }
+                        </div>
+                    </div>
+
+                </div>
+                <div class="shop-item-footer shop-partner-cart" *ngIf="savePlan === 'Allowed'">
+                    <!-- Quantity and Tags-->
+                    <div class="input-group" *ngIf="hasAddDistributorOffers == 'Allowed'">
+                        <span class="input-group-text"><i class="ki-outline ki-handcart fs-3"></i></span>
+                        <input class="form-control form-control-sm" name="quantity"
+                            [disabled]="!(savePlan === 'Allowed')" type="number" min="1" maxlength="4"
+                            (blur)="onBlur();checkLength($event)" [(ngModel)]="product.Quantity"
+                            ngbTooltip="{{'TRANSLATE.TOOLTIP_TEXT_QUANTITY' | translate}}: {{product.Quantity}}">
+                        <button type="button" class="btn btn-sm btn-success mr-2"
+                            *ngIf="(!product.HasAddons || product.HasAddons == 0) && savePlan === 'Allowed'"
+                            (click)="callOnAction('addtocart',true)" appBusyLoader>
+                            {{ 'TRANSLATE.SHOP_PAGE_BUTTON_TEXT_ADD_TO_CART' | translate }}
+                        </button>
+                        <div ngbDropdown class="d-flex align-items-center" placement="bottom-right"
+                            *ngIf="savePlan === 'Allowed' && product.Settings.IsAddon == 'false' && product.HasAddons>0">
+                            <button class="btn btn-sm btn-success mr-2"
+                                style="height: 40px;border-top-left-radius: 0px;border-bottom-left-radius: 0px;" id="dropdownBasic1"
+                                title="addToCart" ngbDropdownToggle>
+                                {{'TRANSLATE.SHOP_PAGE_BUTTON_TEXT_ADD_TO_CART' | translate}}
+                            </button>
+                            <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+                                class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base w-auto">
+
+                                <div class='menu-item my-0' ngbDropdownItem>
+                                    <a class="menu-link px-3 py-2 d-flex align-items-center gap-2"
+                                        (click)="callOnAction('addtocart',true)">
+                                        {{ 'TRANSLATE.BUTTON_TEXT_ADD' |
+                                        translate}} </a>
+                                </div>
+
+                                <div class='menu-item my-0' ngbDropdownItem>
+                                    <a class="menu-link px-3 py-2 d-flex align-items-center gap-2"
+                                        (click)="callOnAction('addtocartwithaddons',true)">
+                                        {{
+                                        'TRANSLATE.BUTTON_TEXT_ADD_WITH_ADDONS' |
+                                        translate}}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

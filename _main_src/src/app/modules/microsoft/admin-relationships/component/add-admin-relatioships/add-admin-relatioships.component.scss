@@ -1,0 +1,19 @@
+.entrrole-list {
+    height: calc(90vh - (var(--bs-app-footer-height) + var(--bs-app-header-height) + var(--bs-app-toolbar-height) + 76px));
+    overflow: auto;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin: 20px 0;
+}
+
+::ng-deep {
+    app-add-admin-relatioships {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}
+
+.ng-select {
+    max-width: 97% !important;
+}

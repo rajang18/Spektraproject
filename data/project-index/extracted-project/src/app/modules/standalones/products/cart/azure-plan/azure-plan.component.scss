@@ -1,0 +1,11 @@
+::ng-deep {
+    .mr-auto {
+        margin-right: auto !important;
+    }
+}
+
+select:disabled,
+select[disabled]
+{
+cursor:not-allowed !important;
+}

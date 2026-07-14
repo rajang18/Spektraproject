@@ -1,0 +1,7 @@
+::ng-deep {
+    app-azure-billing-report {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}

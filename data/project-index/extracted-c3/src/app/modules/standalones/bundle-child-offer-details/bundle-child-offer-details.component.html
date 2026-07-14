@@ -1,0 +1,45 @@
+<div class="modal-dialog m-0 modal-dialog m-0-centered w-100">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>{{'TRANSLATE.MANAGE_PLAN_PARTNER_BUNDLES_CHILD_OFFERS_POPUP_TITLE' |
+                translate}}
+            </h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModalPopup()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+            </div>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <div class="container-fluid">
+                <div class="portlet-body mt-checkbox-list" slim-scroll style="height: 200px">
+                    <ng-container *ngFor="let offer of bundleChildOffers">
+                        <ng-container *ngTemplateOutlet="offerList; context: { $implicit: offer }"></ng-container>
+                    </ng-container>
+
+                    <ng-template #offerList let-offer>
+                        <div class="row">
+                            <div class="col-md-10">
+                                <div class="caption">
+                                    <label class="mt-checkbox mt-checkbox-outline">
+                                        {{ offer.Name }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <ul class="list-unstyled" *ngIf="offer.Addons && offer.Addons.length"
+                            style="padding-left: 15px">
+                            <li *ngFor="let addon of offer.Addons">
+                                <ng-container
+                                    *ngTemplateOutlet="offerList; context: { $implicit: addon }"></ng-container>
+                            </li>
+                        </ul>
+                    </ng-template>
+
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeModalPopup()"
+                tabindex="-1">{{'TRANSLATE.NCE_PROMOTIONS_POPUP_CLOSE' | translate}}</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,61 @@
+
+<div class="modal-dialog m-0 modal-dialog m-0-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title">
+                <span translate="TRANSLATE.MANUAL_SYNC_PUPUP_TITLE"></span>
+            </h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModalPopup()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+            </div>
+        </div>
+        <div class="modal-body" id="modal-body" style="max-height:250px;">
+            <table class="table table-striped table-bordered table-hover table-checkable">
+                <thead>
+                    <tr>
+                        <th class="text-start col-md-2"><span translate="TRANSLATE.BILLING_CYCLE_CHANGE_TABLE_HEADER_TEXT_CURRENT_PRODUCT_NAME"></span></th>
+                        <th class="text-start col-md-10"><span translate="TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_MATCHING_PRODUCTS"></span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (row of subscriptionsList; track $index) {
+                    <td style="width:20%;" class="ps-3">
+                        @if(row.SubscriptionBillingQualifiedOfferId.length > 40){
+                        <span *ngFor="let i of getTimes(row.SubscriptionBillingQualifiedOfferId.length / 36) track $index ">
+                            &nbsp;&nbsp;
+                        </span>
+                        }
+                        {{row.SubscriptionOfferName}}
+                        @if(row.SubscriptionBillingQualifiedOfferId.length > 40){
+                        <sup class="text-warning">
+                            <span translate="TRANSLATE.PLAN_MANAGE_ADD_FORM_TABLE_1_HEADER_TEXT_OFFER_ADD_ON"></span>
+                        </sup>
+                        }
+                        <div class="small ps-0">
+                            <span class="small"><span translate="TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_BILLING_CYCLE"></span></span>{{row.BillingCycleName}}
+                        </div>
+                    </td>
+                    <td>
+                        <select2 [data]="mappingC3PlanProductsDatasetDict[row.ProviderSubscriptionOfferId]" class="form-select-solid form-select-solid custom-height" [templates]="template" [multiple]="false" (update)="selectPlanProductId(row,$event)">
+                            <ng-template #template let-data="data">
+                                {{data?.PlanOfferQualifiedOfferName}}
+                                <div class="custom-not"><small> Plan: <span>{{data?.PlanName}}</span></small></div>
+                                <!-- <div class="custom-not"><small *ngIf="data?.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE.toLowerCase() && data?.CompositeProductId === null">Price:<span>{{data?.CurrencySymbol}}</span><span>{{data?.FinalSalePrice}}</span></small></div> -->
+                                <div class="custom-not">
+                                    <small>
+                                        {{data?.BillingTypeName}}: <span *ngIf="data?.BillingTypeName === 'Price'">{{data?.CurrencySymbol}}{{data?.FinalSalePrice}}</span>
+                                    </small>
+                                </div>
+                            </ng-template>
+                        </select2>
+                    </td>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-light-primary btn-active-primary btn-sm" [disabled]="!isAllProductSelected" (click)="proceed(subscriptionsList)">{{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}</button>
+            <button class="btn btn-light-primary btn-active-primary btn-sm" (click)="closeModalPopup()">{{'TRANSLATE.BUTTON_TEXT_CANCEL' | translate}}</button>
+        </div>
+    </div>
+</div>

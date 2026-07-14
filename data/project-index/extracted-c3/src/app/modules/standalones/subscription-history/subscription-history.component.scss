@@ -1,0 +1,60 @@
+.disabled-link {
+  pointer-events: none;
+  cursor: default;
+  color: gray;
+}
+
+.header-actions {
+  padding-top: 10px;
+}
+
+::ng-deep {
+  app-subscription-history {
+    .w-fit-content {
+      width: fit-content;
+    }
+
+    .dropdown-toggle::after {
+      display: none !important;
+    }
+
+    .deletedQuote {
+      color: #B50000;
+    }
+
+    .badgeColorPrimary {
+      background-color: rgba(0, 141, 245, 0.1);
+      color: #008DF5;
+    }
+
+    .badgeColorDeleted {
+      background-color: rgba(181, 0, 0, 0.1);
+      color: #b50000;
+    }
+
+    .badgeColorInprovision {
+      background-color: rgba(255, 165, 0, 0.1);
+      color: orange;
+    }
+
+    .badgeColorExpired {
+      background-color: rgba(248, 40, 90, 0.1);
+      color: #F8285A;
+    }
+
+    .badgeColorApproved {
+      background-color: rgba(23, 198, 83, 0.1);
+      color: #17C653;
+    }
+
+    .badgeColorProcessed {
+      background-color: rgba(70, 130, 180, 0.1);
+      color: #4682B4;
+      white-space: nowrap;
+    }
+    .badgeColorSuspended{
+      background:  var(--bs-secondary-light) !important;
+    }
+
+  }
+}

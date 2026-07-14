@@ -1,0 +1,242 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="showHelpText = !showHelpText">
+            <span translate="TRANSLATE.CHANGE_PLAN_HELP"></span>
+            <i class="ki-outline ki-question-2 fs-4"></i>
+        </button>
+    </div>
+</ng-template>
+<div class="card mb-7" *ngIf="showHelpText">
+    <div class="card-body overflow-auto">
+        <div class="m-heading-1 border-green m-bordered">
+            <div
+                class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+                <div class="card-title mb-5">
+                    <h6 class="card-label"><span translate="TRANSLATE.ENTITLEMENT_MANAGEMENT_INSTRUCTIONS"></span></h6>
+                </div>
+                <div class="row m-heading-1 border-green m-bordered ms-6">
+                    <ol>
+                        <li>
+                            <span
+                                [innerHtml]="'TRANSLATE.ENTITLEMENT_MANAGEMENT_INSTRUCTIONS_PART_1' | translate"></span>
+                        </li>
+                        <li>
+                            <span
+                                [innerHtml]="'TRANSLATE.ENTITLEMENT_MANAGEMENT_INSTRUCTIONS_PART_2' | translate"></span>
+                        </li>
+                        <li>
+                            <span
+                                [innerHtml]="'TRANSLATE.ENTITLEMENT_MANAGEMENT_INSTRUCTIONS_PART_3' | translate"></span>
+                        </li>
+                        <li>
+                            <span
+                                [innerHtml]="'TRANSLATE.ENTITLEMENT_MANAGEMENT_INSTRUCTIONS_PART_4' | translate"></span>
+                        </li>
+                    </ol>
+                </div>
+                <div>
+                    <span class="font-size-lg"
+                        [innerHTML]="'TRANSLATE.ENTITLEMENT_MANAGEMENT_INSTRUCTIONS_NOTE_LABEL' | translate"></span>
+                    <span translate="TRANSLATE.ENTITLEMENT_MANAGEMENT_INSTRUCTIONS_NOTE"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body overflow-auto">
+        @if ((!isPartnerLevel && providerTenantsCount !== null && providerTenantsCount === 0) || (isPartnerLevel &&
+        providerCustomerCount !== null && providerCustomerCount === 0)) {
+        <div class="col-md-12">
+            <div class="card card-custom">
+                <div class="card-body">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <div class="col-md-12 unlink-provider mb-0">
+                                <h5 class="d-flex align-items-center">
+                                    <i class="ki-outline ki-disconnect fs-2 me-2"></i>
+                                    @if (!isPartnerLevel) {
+                                    <span
+                                        translate="TRANSLATE.CUSTOMER_NOT_LINKED_TO_ANY_PROVIDER_TENANTS_ERROR"></span>
+                                    }
+                                    @if (isPartnerLevel) {
+                                    <span
+                                        translate="TRANSLATE.PARTNER_CUSTOMER_NOT_LINKED_TO_ANY_PROVIDER_TENANTS_ERROR"></span>
+                                    }
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+
+        @if ((!isPartnerLevel && providerTenantsCount != null && providerTenantsCount > 0) || (isPartnerLevel &&
+        providerCustomerCount !== null && providerCustomerCount > 0)) {
+        <div class="col-md-12 h-100">
+            <form>
+                @if (isPartnerLevel) {
+                <div class="form-group row">
+                    <label class="col-md-2 col-form-label col-form-label-sm  fw-semibold fs-6 mb-2">
+                        <span translate="TRANSLATE.AZURE_REPPORT_CUSTOMERS"></span>
+                        <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" aria-hidden="true"
+                            [ngbTooltip]="'TRANSLATE.AZURE_REPPORT_CUSTOMERS_TOOLTIP' | translate">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                        </i>
+                        <span class="required"></span>
+                    </label>
+                    <div class="col-md-5">
+                        <select class="form-select  form-select-sm fw-bold" [(ngModel)]="this.currentC3CustomerId"
+                            name="CustomerId" (change)="onCustomerChange()" [disabled]="dataLoading">
+                            @for (customer of allCustomers; track $index) {
+                            <option [value]="customer.C3Id">{{customer.Name |
+                                translate}}</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                }
+
+                <div class="form-group row">
+                    <label class="col-md-2 col-form-label col-form-label-sm fw-semibold fs-6 mb-2">
+                        <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_TENANTS"></span>
+                        <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" aria-hidden="true"
+                            [ngbTooltip]="'TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_MICROSOFT_TENANT_SELECTOR' | translate">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                        </i>
+                        <span class="required"></span>
+                    </label>
+                    <div class="col-md-5">
+                        <select class="form-select  form-select-sm fw-bold"
+                            [(ngModel)]="tenantServiceProviderCustomerId" name="ServiceProviderCustomer"
+                            (change)="onTenantChange()" [disabled]="dataLoading">
+                            @for (tenant of Tenants; track $index) {
+                            <option [value]="tenant.ServiceProviderCustomerId">{{tenant.CustomerName |
+                                translate}} ({{tenant.CustomerRefId}})</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 col-form-label col-form-label-sm required fw-semibold fs-6 mb-2"
+                        translate="TRANSLATE.AZURE_REPORTS_LABEL_TEXT_SUBSCRIPTION">
+                    </label>
+                    <div class="col-md-5">
+                        <select class="form-select form-select-sm  fw-bold" [(ngModel)]="currentSubscriptionId"
+                            name="azureGroups_main" [disabled]="true">
+                            <option value="undefined" translate="TRANSLATE.AZURE_SUBSCRIPTION_NOT_FOUND_FOR_THE_TENANT">
+                            </option>
+                            @for (subscription of subscriptionDataSource; track $index) {
+                            <option [value]="subscription.InternalCustomerProductId">{{subscription.SubscriptionName | translate}}
+                                -
+                                {{subscription.SubscriptionId}}</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row" *ngIf="currentSubscriptionId">
+                    <label class="col-md-2 col-form-label col-form-label-sm fw-semibold fs-6 mb-2"
+                        translate="TRANSLATE.AZURE_REPORTS_LABEL_TEXT_AZURE_PLAN_PRICE">
+                    </label>
+                    <div class="col-md-5 pt-2">
+                        <span>{{subscriptionDataSource[0].Price}}%</span>
+                    </div>
+                </div>
+                <div class="col-md-12 d-flex justify-content-end">
+                    @if (currentSubscriptionId && permissions.HasExportAzureEntitlementLevelPricing == 'Allowed') {
+                    <div ngbDropdown class="d-flex align-items-center" placement="bottom-right">
+                        <button class="btn btn-sm fw-bold btn-light-primary btn-xs ms-2 remove-caret text-end"
+                            id="dropdownBasic1" ngbDropdownToggle>
+                            <i class="ki-outline ki-exit-down fs-2"></i>
+                            <span translate="TRANSLATE.ENTITLEMENT_MANAGEMENT_LABEL_EXPORT"></span>
+                            <i class="ki-duotone ki-down ps-1"></i>
+                        </button>
+                        <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+                            class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-1 fs-base w-auto">
+                            <div class='menu-item my-0' ngbDropdownItem>
+                                <a class="menu-link px-3 py-2 d-flex justify-content-start align-items-center"
+                                    (click)="exportFilter()">
+                                    <span class="text-center"
+                                        translate="TRANSLATE.ENTITLEMENT_MANAGEMENT_LABEL_EXPORT_FILTER"></span>
+                                </a>
+                            </div>
+                            <div class='menu-item my-0' ngbDropdownItem>
+                                <a class="menu-link px-3 py-2 d-flex justify-content-start align-items-center"
+                                    (click)="exportAll()">
+                                    <span class="text-center"
+                                        translate="TRANSLATE.ENTITLEMENT_MANAGEMENT_LABEL_EXPORT_ALL"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </form>
+            <ng-template #name let-data="adtData" let-emitter="captureEvents">
+                <div>
+                    <span class="fw-semibold">{{data.Name}}</span>
+                    <span
+                        [ngClass]="{'label-light-success bg-light-success text-success': data.StatusName === 'Active','label-light-danger bg-light-danger text-danger': data.StatusName === 'Deleted' || data.StatusName === 'Suspended' || data.StatusName === 'Expired' || data.StatusName === 'Disabled','label-light-warning bg-light-warning text-warning': data.StatusName === 'InProvision'}"
+                        class="label fw-bold label-inline badge ms-md-2">{{'TRANSLATE.'+ data.StatusDescription |
+                        translate}}</span>
+                </div>
+            </ng-template>
+            <ng-template #createDate let-data="adtData" let-emitter="captureEvents">
+                <div>
+                    {{data.CreatedDate | c3Date}}
+                </div>
+            </ng-template>
+            <ng-template #price let-data="adtData" let-emitter="captureEvents">
+                <div>
+                    {{data.Price}}%
+                </div>
+            </ng-template>
+            <ng-template #action let-data="adtData" let-emitter="captureEvents">
+                <div class="d-flex justify-content-end">
+                    <div class="d-flex align-items-center">
+                        <button #buttonRef *ngIf="!data.IsOverriddenPrice && data.EnableEntitlementLevelPricing == 'Yes'"
+                            class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+                            [ngClass]="toolbarButtonHeightClass"
+                            [ngbTooltip]="'TRANSLATE.BUTTON_TEXT_OVERRIDE'|translate" (click)="editPriceDetails(data)"
+                            [disabled]="data.StatusName != 'Active'">
+                            <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+                                <i class="ki-outline ki-arrow-circle-right text-primary">
+                                </i>
+                            </span>
+                        </button>
+                        <button #buttonRef1 *ngIf="data.IsOverriddenPrice && data.EnableEntitlementLevelPricing == 'Yes'"
+                            class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+                            [ngClass]="toolbarButtonHeightClass" [ngbTooltip]="'TRANSLATE.BUTTON_TEXT_EDIT'|translate"
+                            (click)="editPriceDetails(data)" [disabled]="data.StatusName != 'Active'">
+                            <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+                                <i class="ki-outline ki-pencil text-primary">
+                                </i>
+                            </span>
+                        </button>
+                        <button *ngIf="data.IsOverriddenPrice && data.EnableEntitlementLevelPricing == 'Yes'"
+                            class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+                            [ngClass]="toolbarButtonHeightClass" [ngbTooltip]="'TRANSLATE.BUTTON_TEXT_REVERT'|translate"
+                            (click)="revertPriceDetails(data)" [disabled]="data.StatusName != 'Active'">
+                            <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+                                <i class="ki-outline ki-arrow-circle-left text-primary">
+                                </i>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </ng-template>
+            @if (!!datatableConfig) {
+            <div class="mt-4">
+                <app-c3-table [datatableConfig]="datatableConfig">
+                </app-c3-table>
+            </div>
+            }
+        </div>
+        }
+    </div>
+</div>

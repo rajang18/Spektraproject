@@ -1,0 +1,128 @@
+<div class="modal-dialog m-0 modal-dialog m-0-centered">
+    <div class="modal-content pt-0 overflow-auto">
+        <div class="modal-header">
+            <h2 id="modal-title">
+                <span translate="TRANSLATE.ENTITLEMENT_MANAGEMENT_LABEL_BULK_ADD_ENTITLEMENT"></span>
+            </h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModalPopup()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+            </div>
+        </div>
+        <div class="modal-body">
+            <form [formGroup]="addAzureEntitlementForm">
+                <div class="form-group row mt-7">
+                    <label
+                        class="required col-md-2 col-form-label text-start text-sm-start text-md-start  fw-semibold fs-6 mb-2">
+                        {{'TRANSLATE.ENTITLEMENT_MANAGEMENT_LABEL_ENTITLEMENT_NAME' | translate}}
+                    </label>
+                    <div class="col-md-5">
+                        <input type="text" class="form-control form-control-sm"
+                            formControlName="entitlementName" required />
+                        @if(addAzureEntitlementForm.get('entitlementName')?.errors?.required &&
+                        addAzureEntitlementForm.get('entitlementName')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div>
+                </div>
+    
+                <div class="form-group row mt-7">
+                    <label
+                        class="required col-md-2 col-form-label text-start text-sm-start text-md-start text-lg-right fw-semibold fs-6 mb-2">
+                        {{'TRANSLATE.ENTITLEMENT_MANAGEMENT_LABEL_SEQUENCE' | translate}}
+                    </label>
+                    <div class="col-md-5">
+                        <input type="text" class="form-control form-control-sm"
+                            formControlName="subscriptionSequence" required />
+                        @if(addAzureEntitlementForm.get('subscriptionSequence')?.errors?.required &&
+                        addAzureEntitlementForm.get('subscriptionSequence')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div>
+                </div>
+    
+                <div class="form-group row mt-7">
+                    <label
+                        class="required col-md-2 col-form-label text-start text-sm-start text-md-start text-lg-start fw-semibold fs-6 mb-2">
+                        {{'TRANSLATE.ENTITLEMENT_MANAGEMENT_LABEL_ENTITLEMENT_COUNT' | translate}}
+                    </label>
+                    <div class="col-md-5">
+                        <input type="number" class="form-control form-control-sm"
+                          (change)="onCountChange()"   formControlName="subscriptionCount" required />
+                        @if(addAzureEntitlementForm.get('subscriptionCount')?.errors?.required &&
+                        addAzureEntitlementForm.get('subscriptionCount')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div>
+                </div>
+    
+                @if (Sites?.length > 0) {
+                <div class="form-group row mt-7">
+                    <label
+                        class="col-md-2 col-form-label text-start text-sm-start text-md-start text-lg-start fw-semibold fs-6 mb-2">
+                        {{'TRANSLATE.ENTITLEMENT_MANAGEMENT_LABEL_SITE' | translate}}
+                    </label>
+                    <div class="col-md-5">
+                        <select class="form-select  form-select-sm fw-bold" formControlName="ownerSiteId"
+                            (change)="getSiteDepartments()">
+                            <option value="" [selected]="ownerSiteId === null" value=""></option>
+                            @for(site of Sites; track $index){
+                            <option [value]="site.C3SiteID">{{site.Name}}</option>
+                            }
+                        </select>
+                        @if(addAzureEntitlementForm.get('ownerSiteId')?.errors?.required &&
+                        addAzureEntitlementForm.get('ownerSiteId')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div>
+                </div>
+                }
+    
+                @if (SiteDepartments?.length > 0) {
+                <div class="form-group row mt-7">
+                    <label
+                        class="col-md-2 col-form-label text-start text-sm-start text-md-start text-lg-right fw-semibold fs-6 mb-2">
+                        {{'TRANSLATE.ENTITLEMENT_MANAGEMENT_LABEL_DEPARTMENT' | translate}}
+                    </label>
+                    <div class="col-md-5">
+                        <select class="form-select  form-select-sm fw-bold"
+                            formControlName="ownerDepartmentId">
+                            <option value="" [selected]="ownerDepartmentId === null" value=""></option>
+                            @for(department of SiteDepartments; track $index){
+                            <option [value]="department.C3DepartmentID">{{department.Name}}</option>
+                            }
+                        </select>
+                        @if(addAzureEntitlementForm.get('ownerDepartmentId')?.errors?.required &&
+                        addAzureEntitlementForm.get('ownerDepartmentId')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div>
+                </div>
+                }
+    
+                <div class="form-group row mt-7">
+                    <div class="col-md-12">
+                        <span translate="TRANSLATE.THE_SEQUENCE_LABEL_THE_STARTING_NAME"></span><span
+                            class="text-danger">{{entitlementName}} {{subscriptionSequence}}</span>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer d-flex justify-content-end py-6 px-9 gap-3">
+            <button type="button" class="btn btn-sm btn-light btn-active-light-primary" (click)="closeModalPopup()">
+                {{ 'TRANSLATE.BUTTON_TEXT_CANCEL' | translate }}
+            </button>
+                @if (!entitlementName || !(subscriptionCount > 0) || !subscriptionSequence) {
+                <button type="button" class="btn btn-primary btn-sm"
+                    [disabled]="!entitlementName || !(subscriptionCount > 0) || !subscriptionSequence || (isLoadedLastEntitlementDate === false)">
+                    {{ 'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate }}
+                </button>
+                }
+                @if (entitlementName != null && subscriptionCount > 0 && subscriptionSequence != null &&
+                isLoadedLastEntitlementDate == true) {
+                <button type="button" class="btn btn-primary btn-sm" (click)="onModalsubmit()">
+                    {{ 'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate }}
+                </button>
+                }
+        </div>
+    </div>
+</div>

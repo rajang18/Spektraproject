@@ -1,0 +1,7 @@
+::ng-deep {
+    app-manage-subscription-expiry-check-setting {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+  }

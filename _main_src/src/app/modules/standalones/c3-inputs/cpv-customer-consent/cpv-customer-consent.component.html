@@ -1,0 +1,79 @@
+
+@if (cc.EntityName==='Customer') {
+<div class="form-group ">
+    <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+        <div class="row m-heading-1 border-green m-bordered">
+            <div>
+                &nbsp;&nbsp;&nbsp; <strong><span
+                        translate="TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_HEADING_CUSTOMER"></span></strong>
+                <ul class="mt-2">
+                    <li>
+                        <!-- <span class="text-primary cursor-pointer" [innerHTML]="'TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_CUSTOMER_1' | translate: {consentURL: consentUrl}"></span> -->
+                        <span class="text-primary cursor-pointer pe-auto"> <b>click
+                                <span class="text-primary cursor-pointer" (click)="confirmCopy()">{{
+                                    'TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_PARTNER_6' | translate }}</span></b>
+                        </span>
+                        <span translate="TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_CUSTOMER_2"></span>
+                    </li>
+                    <li>
+                        <span translate="TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_CUSTOMER_3"></span>
+                    </li>
+                    <li>
+                        <span translate="TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_CUSTOMER_4"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-12 control-label">
+            <a class="btn btn-primary btn-xs me-2" (click)="testCustomerConsent(data)">
+                {{'TRANSLATE.TEST_PARTNER_ACCESS_BTN_TEXT' | translate}}
+            </a>
+            <span translate="TRANSLATE.ACCEPT_THE_MICROSOFT_AZURE_API_CONSENT_BTN_TEXT"></span>
+        </div>
+    </div>
+</div>
+}
+
+@if (cc.EntityName==='Partner') {
+    <div class="form-group">
+        <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+    
+            <div class="row m-heading-1 border-green m-bordered">
+    
+                <div>
+                    &nbsp;&nbsp;&nbsp; <strong><span
+                            translate="TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_HEADING_PARTNER"></span></strong>
+                    <ul class="mt-2">
+                        <li>
+                            <span class="text-primary cursor-pointer pe-auto">
+                                <b>click <span class="text-primary cursor-pointer" (click)="confirmCopy()">{{
+                                        'TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_PARTNER_6' | translate }}</span></b>
+                            </span>
+                            <span translate="TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_PARTNER_2"></span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_PARTNER_3"></span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_PARTNER_5"></span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_PARTNER_4"></span>
+                        </li>
+                    </ul>
+                </div>
+    
+            </div>
+            <div class="col-md-12 control-label">
+                <a class="btn btn-primary btn-xs me-2" (click)="testCustomerConsent(data)">
+                    <!-- <busy-message><i class="fa fa-refresh fa-spin"></i>{{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}</busy-message> -->
+                    {{'TRANSLATE.TEST_PARTNER_ACCESS_BTN_TEXT' | translate}}
+                </a>
+                <span class="ms-2" translate="TRANSLATE.ACCEPT_THE_MICROSOFT_AZURE_API_CONSENT_BTN_TEXT"></span>
+            </div>
+        </div>
+    </div>
+}
+
+

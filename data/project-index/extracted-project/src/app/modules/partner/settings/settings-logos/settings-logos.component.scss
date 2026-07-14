@@ -1,0 +1,19 @@
+.ng-option-label,.ng-option-label.ng-star-inserted{
+    font-weight: normal;
+}
+
+
+.ng-option.ng-option-disabled.ng-option-selected .ng-option-label{
+    font-weight: normal;
+}
+
+.ng-dropdown-panel-items.scroll-host{
+    font-weight: normal;
+}
+::ng-deep {
+    app-settings-logos {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+  }

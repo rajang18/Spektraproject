@@ -1,0 +1,77 @@
+@if(activeServiceDetail){
+<div class="card card-custom">
+    <!-- begin::Header -->
+    <div class="card-header card-header-stretch overflow-auto">
+        <ul class="nav nav-stretch nav-line-tabs fw-bold border-transparent flex-nowrap" role="tablist">
+            <li class="nav-item">
+                <a routerLink="refresh-mapping" [appPermission]="'REFRESH_EXTERNAL_ENTITY_LIST_IN_LOCAL'"
+                    [ngClass]="{'text-primary active': activeTab === 'refresh-mapping'}"
+                    (click)="setActiveTab('refresh-mapping')" routerLinkActive="active" class="nav-link cursor-pointer"
+                    role="tab">
+                    {{'TRANSLATE.RFRESH_DATA_FROM_PSA' | translate}}
+                </a>
+            </li>
+            @if ((activeServiceDetail.Name.toLowerCase() === 'autotask') ||
+            (activeServiceDetail.MappingType && activeServiceDetail.MappingType.toLowerCase() === 'subscription' &&
+            activeServiceDetail.Name.toLowerCase() === 'connectwise')) {
+            <li class="nav-item" [ngClass]="{'disabled-link': isRefreshInprocess==true}">
+                <a routerLink="mapping" routerLinkActive="active" class="nav-link cursor-pointer" role="tab"
+                    [ngClass]="{'text-primary active': activeTab === 'mapping'}" (click)="setActiveTab('mapping')">
+                    {{'TRANSLATE.PURCHASE_PRODUCT_MAPPING' | translate}}
+                </a>
+            </li>
+            }
+            @if ((activeServiceDetail.Name.toLowerCase() === 'autotask') ||
+            (permissions.BulkManageEntityAndProductMapping.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED && activeServiceDetail.MappingType && activeServiceDetail.MappingType.toLowerCase() === 'subscription' &&
+            activeServiceDetail.Name.toLowerCase() === 'connectwise')) {
+            <li class="nav-item"
+                [ngClass]="{'disabled-link': isRefreshInprocess==true}">
+                <a routerLink="bulk-mapping" routerLinkActive="active" class="nav-link cursor-pointer" role="tab"
+                    [ngClass]="{'text-primary active': activeTab === 'bulk-mapping'}"
+                    (click)="setActiveTab('bulk-mapping')">
+                    {{'TRANSLATE.BULK_PURCHASED_PRODUCT_MAPPING' | translate}}
+                </a>
+            </li>
+            }
+            @if (activeServiceDetail.MappingType && activeServiceDetail.MappingType.toLowerCase() === 'product' &&
+            activeServiceDetail.Name.toLowerCase() === 'connectwise') {
+            <li class="nav-item" [ngClass]="{'disabled-link': isRefreshInprocess==true}">
+                <a routerLink="entity-mapping" routerLinkActive="active" class="nav-link cursor-pointer" role="tab"
+                    [ngClass]="{'text-primary active': activeTab === 'entity-mapping'}"
+                    (click)="setActiveTab('entity-mapping')">
+                    {{'TRANSLATE.ENTITY_MAPPING' | translate}}
+                </a>
+            </li>
+            <li class="nav-item" [ngClass]="{'disabled-link': isRefreshInprocess==true}">
+                <a routerLink="product-mapping" routerLinkActive="active" class="nav-link cursor-pointer" role="tab"
+                    [ngClass]="{'text-primary active': activeTab === 'product-mapping'}"
+                    (click)="setActiveTab('product-mapping')">
+                    {{'TRANSLATE.PRODUCT_MAPPING' | translate}}
+                </a>
+            </li>
+            <li class="nav-item" [ngClass]="{'disabled-link': isRefreshInprocess==true}">
+                <a routerLink="bulk-product-mapping" routerLinkActive="active" class="nav-link cursor-pointer"
+                    role="tab" [ngClass]="{'text-primary active': activeTab === 'bulk-product-mapping'}"
+                    (click)="setActiveTab('bulk-product-mapping')">
+                    {{'TRANSLATE.BULK_PRODUCT_MAPPING' | translate}}
+                </a>
+            </li>
+            }
+            @if(activeServiceDetail.MappingType && activeServiceDetail.Name.toLowerCase() === 'connectwise' &&
+            additionType === cloudHubConstants.INVOICE_LINE_ITEM_ADDITIONTYPE && isThirdPartySubscriptionPushEnabled){
+            <li class="nav-item">
+                <a routerLink="third-party-subscription-mapping" routerLinkActive="active"
+                    [ngClass]="{'disabled': isRefreshInprocess}" class="nav-link cursor-pointer" role="tab"
+                    [ngClass]="{'text-primary active': activeTab === 'third-party-subscription-mapping'}"
+                    (click)="setActiveTab('third-party-subscription-mapping')">
+                    {{'TRANSLATE.THIRD_PARTY_SUBSCRIPTION_MAPPING' | translate}}
+                </a>
+            </li>
+            }
+        </ul>
+    </div>
+</div>
+}
+<div class="card-body">
+    <router-outlet></router-outlet>
+</div>

@@ -1,0 +1,7 @@
+::ng-deep {
+    app-record-advance-payment {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}

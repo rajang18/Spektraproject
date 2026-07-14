@@ -1,0 +1,46 @@
+<div class="modal-dialog m-0 modal-dialog m-0-centered w-100 modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title">
+                <span translate="TRANSLATE.ADD_ENTITLEMENT"></span>
+            </h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModalPopup()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>               
+            </div>
+        </div>
+        <div class="modal-body">
+            <span class="text-danger">
+                <i class="ki-duotone ki-information-2 fs-5 ms-1 text-danger" aria-hidden="true">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                </i>
+                {{'TRANSLATE.ADD_ENTITLEMENT_DESCRIPTION' | translate}}
+            </span>
+            <form [formGroup]="azurePlanDetailsRegisterForm">
+                <div class="form-body form-group ps-1">
+                    <!-- Name-->
+                    <div class="form-group"
+                        [ngClass]="{'has-error':azurePlanDetailsRegisterForm.get('Name')?.errors?.required && buttonClicked}">
+                        <label class="col-md-3">
+                            <span class="required" translate="TRANSLATE.COUPON_TABLE_HEADER_TEXT_NAME"></span>
+                        </label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control form-contol-sm" formControlName="Name" />
+                        </div>
+                        @if(azurePlanDetailsRegisterForm.get('Name')?.errors?.required && buttonClicked){
+                        <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                        }
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+
+            <button class="btn btn-secondary btn-sm"><span translate="TRANSLATE.BUTTON_TEXT_CANCEL" [tabIndex]="'-1'"
+                    (click)="closeModalPopup()"></span></button>
+            <button type="button" class="btn btn-primary btn-sm" [tabIndex]="'-1'"
+                (click)=" onSubmit()">{{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}</button>
+        </div>
+    </div>
+</div>

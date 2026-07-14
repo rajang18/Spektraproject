@@ -1,0 +1,130 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="back()">
+            <i class="ki-outline ki-to-left fs-2"></i>
+            <span>
+                {{'TRANSLATE.CURRENCY_CONVERSION_CAPTION_BUTTON_TEXT_BACK_TO_CURRENCY_CONVERSION'|translate}}
+            </span>            
+        </button>
+    </div>
+</ng-template>
+
+<div class="row mt-5">
+    <div class="col-6 col-sm-6 col-md-6 col-lg-6 control-label">
+        <!--<h6 class="bold uppercase"><span *ngIf="vm.PageMode === 'add'"><span translate="BUTTON_TEXT_ADD_CURRENCY_CONVERSION"></span></span><span *ngIf="PageMode === 'edit'"><span translate="CURRENCY_CONVERSION_CAPTION_TEXT_EDIT"></span></span>-->
+        <!--<span translate="CURRENCY_CONVERSION_CAPTION_TEXT_CURRENCY_CONVERSION">--><!--</span>--><!--</h6>-->
+        <h5 class="bold uppercase" *ngIf="pageType=='clone'">
+            {{'TRANSLATE.CLONE_CURRENCY_CAPTION_TEXT_CLONE_CURRENCY' | translate}}</h5>
+    </div>
+</div>
+<div class="card-body pt-0">
+    <form [formGroup]="currencyConversionDetailsRegisterForm">
+        <div class="form-group-row">
+            <div class="form-group row mt-5">
+                <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                    <label class="required  fs-6 text-gray-800 fw-semibold"
+                        translate="TRANSLATE.CURRENCY_CONVERSION_LABEL_TEXT_SOURCE_CURRENCY"></label>
+                </div>
+                <div class="col-md-5">
+                    <ng-select appendTo="body" class="fw-bold" formControlName="sourceCurrency" (change)="getTargetCurrencyList()"
+                        placeholder="{{'TRANSLATE.SELECT_A_SOURCE_CURRENCY' |translate}}">
+                        <ng-option *ngFor="let item of currencyData"
+                            [value]="item.CurrencyCode">{{item.CurrencyCode}}</ng-option>
+                    </ng-select>
+                    @if(currencyConversionDetailsRegisterForm.get('sourceCurrency')?.errors?.required &&
+                    (currencyConversionDetailsRegisterForm.get('sourceCurrency')?.touched || buttonClicked)){
+                    <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                    }
+                </div>
+            </div>
+            <div class="form-group row mt-5">
+                <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                    <label class="required text-gray-800 fs-6 fw-semibold"
+                        translate="TRANSLATE.CURRENCY_CONVERSION_LABEL_TEXT_TARGET_CURRENCY"></label>
+                </div>
+                <div class="col-md-5">
+                    <ng-select appendTo="body" class="fw-bold" formControlName="targetCurrency"
+                        [readonly]="!(filteredCurrencyList && filteredCurrencyList.length > 0 )"
+                        placeholder="{{ pageType == 'add' ? (data.SourceCurrency ? (filteredCurrencyList && filteredCurrencyList.length > 0 ? ('TRANSLATE.SELECT_TARGET_CURRENCY_PLACEHOLDER' |translate) : ('TRANSLATE.INFORMATION_TEXT_NO_CURRENCIES_AVAILABLE_ON_RECORD' | translate)) : ('TRANSLATE.INFORMATION_TEXT_PLEASE_SELECT_A_SOURCE_CURRENCY'|translate)) : '' }}">
+                        <ng-option *ngFor="let item of filteredCurrencyList"
+                            [value]="item.CurrencyCode">{{item.CurrencyCode}}</ng-option>
+                    </ng-select>
+                    @if(currencyConversionDetailsRegisterForm.get('targetCurrency')?.errors?.required &&
+                    (currencyConversionDetailsRegisterForm.get('targetCurrency')?.touched || buttonClicked)){
+                    <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                    }
+                </div>
+            </div>
+            <div class="form-group row mt-5">
+                <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                    <label class="required text-gray-800 fs-6 fw-semibold"
+                        translate="TRANSLATE.CURRENCY_CONVERSION_LABEL_TEXT_CONVERSION_RATE"></label>
+                </div>
+                <div class="col-md-5">
+                    <input type="number" class="form-control form-control-sm fw-bold" formControlName="conversionRate">
+                    @if(currencyConversionDetailsRegisterForm.get('conversionRate')?.errors?.required &&
+                    (currencyConversionDetailsRegisterForm.get('conversionRate')?.touched || buttonClicked)){
+                    <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                    }
+                    @if(currencyConversionDetailsRegisterForm.get('conversionRate')?.errors?.min &&
+                    (currencyConversionDetailsRegisterForm.get('conversionRate')?.touched || buttonClicked)){
+                    <span
+                        class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED_NEGATIVE_VALUE'|translate}}</span>
+                    }
+                </div>
+            </div>
+            <div class="form-group row mt-5">
+                <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                    <label class="text-gray-800 fs-6 fw-semibold"
+                        translate="TRANSLATE.CURRENCY_CONVERSION_LABEL_TEXT_CUSTOMER"></label>
+                </div>
+                <div class="col-md-5">
+                    <ng-select appendTo="body" class="fw-bold" formControlName="activeCustomer"
+                        placeholder="{{ pageType == 'add' || pageType == 'clone' ? (activeCustomers && activeCustomers.length > 0 ? (data.CustomerId ? 'Reset value' : ('TRANSLATE.CHOOSE_CUSTOMER_CURRENCY_CONVERSION_PLACEHOLDER_TEXT'|translate)) : ('TRANSLATE.NO_CUSTOMER_ON_RECORD_CURRENCY_CONVERSION_PLACEHOLDER_TEXT' | translate)) : '' }}">
+                        @for (item of activeCustomers; track $index) {
+                        <ng-option [value]="item.ID">{{item.Name}}</ng-option>
+                        }
+                    </ng-select>
+                </div>
+            </div>
+            <div class="form-group row mt-5">
+                <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                    <label class="required text-gray-800 fs-6 fw-semibold"
+                        translate="TRANSLATE.TAX_PERCENTAGES_ADD_EDIT_FORM_LABEL_EFFECTIVE_FROM"></label>
+                </div>
+                <div class="col-md-5">
+                    <div class="input-group">
+                        <input class="form-control form-control-sm fw-bold" formControlName="effectiveFrom"
+                            (dateSelect)="updateDate($event)" [ngClass]="{ 'custPlacehoder': effectiveFromWithOffset  }"
+                            [readOnly]="true"
+                            [placeholder]="effectiveFromWithOffset ? (effectiveFromWithOffset | c3Date) :('TRANSLATE.CLONE_CURRENCY_PLACEHOLDER_TEXT_PLEASE_SELECT_A_DATE' |translate)"
+                            ngbDatepicker #sd="ngbDatepicker" readonly />
+                        <button class="btn btn-light-primary btn-sm pe-3" (click)="sd.toggle()" type="button">
+                            <i class="ki-outline ki-calendar fs-3"></i>
+                        </button>
+                    </div>
+                    @if(currencyConversionDetailsRegisterForm.get('effectiveFrom')?.errors?.required &&
+                    buttonClicked){
+                    <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="form-group float-end"></div>
+        <div class="row-md">
+            <div class="col-sm-12 col-md-12 col-xs-12 col-12 col-lg-12 text-lg-end mt-4">
+
+                <button class="btn btn-sm btn-light btn-active-light-primary" [routerLink]="['/partner/settings/currencyconversion']">
+                    {{'TRANSLATE.BUTTON_TEXT_CANCEL' | translate}}</button>
+                <button class="btn btn-primary text-white btn-sm ms-md-2 ms-lg-2 ms-sm-2 ms-xl-2 ms-xxl-2"
+                    (click)="submitCurrencyConversion()" [appPermission]="'BTN_SAVE_CURRENCY_CONVERSION'">
+                    <span *ngIf="isGridLoading"><i
+                            class="fa fa-refresh fa-spin"></i>&nbsp;{{'TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT'
+                        | translate}}</span>
+                    <span *ngIf="!isGridLoading" translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+                </button>
+                
+            </div>
+        </div>
+    </form>
+</div>

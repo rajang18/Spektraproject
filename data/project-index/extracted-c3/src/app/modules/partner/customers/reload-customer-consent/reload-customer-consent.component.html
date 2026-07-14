@@ -1,0 +1,26 @@
+<div class="card">
+    <div class="card-body p-0 overflow-auto">
+        <div class="row m-0">
+            <div class="col-md-12 m-0 p-0">
+                <ul class="list-group">
+                    @for(row of RefreshStatus; track $index){
+                    <li class="list-group-item">
+                        <span>
+                            <i class="fa"
+                                [ngClass]="{'fa-spin fa-spinner text-success' : row.status === 'inprogress', 
+                                            'fa-check-circle text-success' : row.status === 'done', 
+                                            'fa-exclamation-circle text-danger' : row.status === 'error' }">
+                            </i>
+                            &nbsp;
+                            {{row.name}}
+                            &nbsp;
+                            <span class="text-danger">{{row.errors}}</span>
+                        </span>
+                    </li>
+                    }
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

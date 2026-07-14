@@ -1,0 +1,32 @@
+<div class="modal-dialog m-0 modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2> <span translate="TRANSLATE.BTN_QUOTE_DUPLICATE_QUOTE"></span></h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="cancel()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                </i>
+            </div>
+        </div>
+
+        <div class="modal-body" id="modal-body">
+            <div class="margin-bottom-15">
+                @for (customer of customers; track $index) {
+                <div class="mt-2">
+                    <div class="form-check pb-1">
+                        <input type="radio" name="customerSelect" class="form-check-input me-2" [value]="customer?.CustomerId" [(ngModel)]="selectedCustomerId" (change)="onCustomerChange(customer)" />
+                        <span>{{ customer?.CustomerName }}</span>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-light-primary" (click)="cloneQuote()"> <span translate="TRANSLATE.BTN_QUOTE_DUPLICATE_QUOTE"></span></button>
+            <a class="btn btn-sm btn-light btn-active-light-primary" (click)="cancel()">
+                <span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span>
+            </a>
+        </div>
+    </div>
+</div>

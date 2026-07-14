@@ -1,0 +1,137 @@
+<div class="col-md-12">
+  <div class="card" *ngIf="filtersExpanded">
+    <div class=" card-body row">
+      <div class="col-md-6">
+        <label class="fw-semibold">
+          {{'TRANSLATE.RESELLER_REVENUE_AND_COST_SUMMARY_VIEWBY'|translate}}
+        </label>
+        <ng-select [(ngModel)]="selectedAggType" name="selectedAggType">
+          <ng-option *ngFor="let val of Aggtypes" value="{{val.Value}}">
+            {{val.Name | translate }}</ng-option>
+        </ng-select>
+      </div>
+      <div class="col-md-6">
+        <label class="fw-semibold">
+          {{'TRANSLATE.RESELLER_PROFIT_SUMMARY_VIEWBY_RESLLER'|translate}}
+        </label>
+        <ng-select [(ngModel)]="SelectedResellers" name="SelectedResellers" [multiple]="true">
+          <ng-option *ngFor="let val of ResellerTypes" value="{{val.Value}}">
+            {{val.Name | translate }}
+          </ng-option>
+        </ng-select>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="form-actions text-lg-end w-auto m-1 d-flex justify-content-end">
+        <button class="btn btn-light-primary btn-sm me-md-2 me-lg-2 me-sm-2 me-xl-2 me-xxl-2" (click)="reloadGrid()">
+          {{'TRANSLATE.SUBSCRIPTION_HISTORY_SEARCH_OPTION' | translate}}
+        </button>
+        <button class="btn btn-light-primary btn-sm me-md-2 me-lg-2 me-sm-2 me-xl-2 me-xxl-2"
+          (click)="ResetFilters()">{{'TRANSLATE.SUBSCRIPTION_HISTORY_SEARCH_RESET_OPTION' | translate}}</button>
+        <button class="btn btn-light-primary btn-sm me-md-2 me-lg-2 me-sm-2 me-xl-2 me-xxl-2"
+          (click)="filterForm()">{{'TRANSLATE.SUBSCRIPTION_HISTORY_SEARCH_CLOSE_OPTION' |
+          translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex w-100 justify-content-between mt-5 ps-18">
+  <ng-select class="border custom-dropdown" [(ngModel)]="selectedBillingPeriodId"
+    name="selectedBillingPeriodId" (change)="ReloadTableData()">
+    <ng-option *ngFor="let val of BillingPeriods" value="{{val.BillingPeriodId}}">
+      {{val.BillingStartDate | c3Date}}-{{val.BillingEndDate | c3Date}} ({{val.BillingId}})
+    </ng-option>
+  </ng-select>
+  <div class="">
+    <div class="menu-section d-flex">
+      <div class="">
+        <a class="btn btn-sm btn-lg btn-md btn-xs text-nowrap fw-bold btn-secondary" (click)="filterForm()"
+          ngbTooltip="{{'TRANSLATE.BTN_TEXT_SHOW_FILTERS' | translate}}">
+          <i class="ki-outline ki-filter fs-2"></i>
+          <span class="ps-2">{{
+            "TRANSLATE.BUTTON_TEXT_FILTER" | translate
+            }}</span>
+        </a>
+        <a class="ms-2 btn btn-sm fw-bold btn-primary" (click)="onProfitabilityReport()">
+          <i class="ki-outline ki-exit-down fs-2"></i>
+          <span class="ps-2">{{
+            "TRANSLATE.RESELLER_PROFIT_SUMMARY_REPORT" | translate
+            }}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card-body">
+  <ng-template #SelectAggtype let-data="adtData" let-emitter="captureEvents">
+    <!-- {{data|json}} -->
+    <div class="d-flex align-items-center">
+      <span class="fw-semibold" *ngIf="currentAggType == 'Customer'">{{data.ResellerName}}</span>
+      <span class="fw-semibold" *ngIf="currentAggType == 'Provider'">{{data.ProviderName}}</span>
+      <span class="fw-semibold" *ngIf="currentAggType == 'SaleType'">{{data.SaleType}}</span>
+      <span class="fw-semibold" *ngIf="currentAggType == 'Category'">{{data.CategoryName}}</span>
+      <span class="fw-semibold" *ngIf="data?.TotalText">{{'TRANSLATE.'+data?.TotalText | translate}}</span>
+    </div>
+  </ng-template>
+  <ng-template #totalCostOnPartner let-data="adtData" let-emitter="captureEvents">
+    <span>
+      {{
+      data.TotalCostOnPartner
+      | CurrencyFilter
+      }}</span>
+  </ng-template>
+  <ng-template #totalBilledAmount let-data="adtData" let-emitter="captureEvents">
+    <span>
+      {{
+      data.TotalBilledAmount
+      | CurrencyFilter
+      : ''
+      : data.CurrencyDecimalPlaces
+      }}</span>
+  </ng-template>
+  <ng-template #totalProfitAmount let-data="adtData" let-emitter="captureEvents">
+    <span>
+      {{
+      data.TotalProfitAmount
+      | CurrencyFilter
+      : ''
+      : data.CurrencyDecimalPlaces
+      }}</span>
+  </ng-template>
+  <ng-template #totalCostOnReseller let-data="adtData" let-emitter="captureEvents">
+    <span>
+      {{
+      data.TotalCostOnReseller
+      | CurrencyFilter
+      : ''
+      : data.CurrencyDecimalPlaces
+      }}</span>
+  </ng-template>
+  <ng-template #totalResellerBilledAmount let-data="adtData" let-emitter="captureEvents">
+    <span>
+      {{
+      data.TotalResellerBilledAmount
+      | CurrencyFilter
+      : ''
+      : data.CurrencyDecimalPlaces
+      }}</span>
+  </ng-template>
+  <ng-template #totalResellerProfitAmount let-data="adtData" let-emitter="captureEvents">
+    <span>
+      {{
+      data.TotalResellerProfitAmount
+      | CurrencyFilter
+      : ''
+      : data.CurrencyDecimalPlaces
+      }}</span>
+  </ng-template>
+  @if (!!datatableConfig) {
+  <div class="table-buisness">
+    <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" (tableReady)="onTableReady($event)"
+      (pageSizeChange)="onPageSizeChange($event)" [isNestedGrid]="true" [searchFilter]="false">
+    </app-c3-table>
+  </div>
+  }
+</div>
+

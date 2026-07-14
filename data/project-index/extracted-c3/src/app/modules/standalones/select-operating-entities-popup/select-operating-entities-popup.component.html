@@ -1,0 +1,139 @@
+<ng-template #operatingEntitiesList let-operatingEntity="operatingEntity" let-type="type">
+
+    <label class="checkbox checkbox-outline checkbox-outline-2x control-label mb-2 form-check"
+        style="margin-bottom: 10px;">
+        <input type="checkbox" class="form-check-input" [(ngModel)]="operatingEntity.selected" name="operatingEntity" (click)="toggleOperatingEntitySelect(operatingEntity, type)"
+            [checked]="operatingEntity.selected" [disabled]="false">
+        <span class="checkbox-data">{{operatingEntity.Name}}</span>
+    </label>
+    <div *ngIf="operatingEntity.Departments && operatingEntity.Departments.length > 0" style="padding-left:15px">
+        <div class="checkbox py-2" style="padding-bottom: 2px;">
+            @for (item of operatingEntity.Departments; track $index) {
+            <div>
+                <ng-container
+                    *ngTemplateOutlet="operatingEntitiesList; context: { operatingEntity: item, type: 'Department' }"></ng-container>
+            </div>
+            }
+        </div>
+    </div>
+</ng-template>
+<div class="m-0 m-centered">
+    <div class="modal-header py-4">
+        <h2 class="modal-title fs-3" id="modal-title">
+            <span translate="TRANSLATE.BUTTON_TEXT_SET_OPERATIONAL_ENTITY"></span>
+        </h2>
+        <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="cancel()" data-bs-dismiss="modal">
+            <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+        </div>
+    </div>
+    <div class="modal-body">
+        <div class="custom-height" infiniteScroll [infiniteScrollDistance]="0.3" [infiniteScrollThrottle]="50"
+            [scrollWindow]="false">
+            <div [appPermission]="'PRODUCT_OWNERSHIP_MANAGEMENT'" class="notice rounded border border-gray-500 border-dashed man-w-lg-450px flex-shrink-0 p-3">
+                <div>
+                    <div class="d-flex align-items-start">
+                        <div class="d-flex align-items-start mt-2"
+                            *ngIf="(entityName === 'Customer' || entityName === 'Site')" style="padding-left:15px">
+                            <div class="fs-5 fw-bold text-gray-800"><span
+                                    translate="TRANSLATE.OPERATING_ENTITY_ORGANIZATIONAL_SETUP"></span></div>
+                        </div>
+                        <div class="d-flex align-items-start ms-2">
+                            <button [appPermission]="'PRODUCT_OWNERSHIP_MANAGEMENT'"
+                                *ngIf="(entityName === 'Customer' || entityName === 'Site')"
+                                class="btn btn-light-primary btn-sm mr-2" data-toggle="button"
+                                [ngClass]="{'btn-primary' : includeChildEntities === true, 'btn-light-primary' : !includeChildEntities}"
+                                (click)="updateSelectionForChildEntities()"
+                                tabindex="-1">
+                                <span
+                                    translate="TRANSLATE.CUSTOMER_PRODUCTS_SET_OPERATING_ENTITIES_FILTER_BUTTON_TEXT_INCLUDE_CHILD_ENTITIES"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div *ngIf="entityName === 'Customer'" style="padding-left:15px">
+                        <div class="form-group form-check mt-1">
+                            <div class="" style="padding-bottom: 2px;">
+                                <label class="" style="margin-bottom: 10px;word-break:break-all;">
+                                    <input type="checkbox" class="form-check-input" name="customer" [(ngModel)]="isCustomerSelected" [disabled]="false"
+                                        (click)="customerSelected()">
+                                    <span class=" ">{{customerName}}</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="entityName === 'Site'" style="padding-left:15px">
+                        <div class="form-group form-check">
+                            <div class="" style="padding-bottom: 2px;">
+                                <label class="" style="margin-bottom: 10px;word-break:break-all;">
+
+                                    <input type="checkbox" class="form-check-input" name="siteName" [disabled]="false"
+                                        [(ngModel)]="isSiteSelected" (change)="siteSelected()">
+                                    <span class="">{{siteName}}</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="(sites && sites.length > 0) || (departments && departments.length > 0)"
+                        style="padding-left:30px">
+                        <div class="" *ngIf="(sites && sites.length > 0) || (departments && departments.length > 0)">
+                            <div class="checkbox-list" style="padding-bottom: 2px;" *ngIf="sites && sites.length > 0">
+                                @for (operatingEntity of sites; track $index) {
+                                <div>
+                                    <ng-container
+                                        *ngTemplateOutlet="operatingEntitiesList; context: { operatingEntity: operatingEntity, type: 'Site' }"></ng-container>
+                                </div>
+                                }
+                            </div>
+                            <div class="checkbox-list" style="padding-bottom: 2px;"
+                                *ngIf="departments && departments.length > 0">
+                                @for (operatingEntity of departments; track $index) {
+                                <div>
+                                    <ng-container
+                                        *ngTemplateOutlet="operatingEntitiesList; context: { operatingEntity: operatingEntity, type: 'Department' }"></ng-container>
+                                </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="domains && domains.length>0" class="notice rounded border border-gray-500 border-dashed man-w-lg-450px flex-shrink-0 p-3 mt-3">
+                <div style="padding-left:15px">
+                    <div class="caption p0 mb-2">
+                        <div class="fs-5 fw-bold text-gray-800">
+                            <span
+                                translate="TRANSLATE.CUSTOMER_PRODUCTS_SET_OPERATING_ENTITIES_FILTER_DOMAIN_NAME"></span>
+                        </div>
+                    </div>
+                    @for (domain of domains; track $index) {
+                    <div class="form-group form-check" style="padding-bottom: 2px;">
+                        <label class="" style="margin-bottom: 10px;word-break:break-all;">
+                            <input type="checkbox" class="form-check-input" name="domain" [disabled]="false"
+                                [(ngModel)]="domain.selected">
+                            <span class="">{{domain.DomainName}}</span>
+                        </label>
+                    </div>
+                    }
+                </div>
+            </div>
+            <div [appPermission]="'PRODUCT_OWNERSHIP_MANAGEMENT'" class="notice rounded border border-gray-500 border-dashed man-w-lg-450px flex-shrink-0 p-5 mt-3">
+                <div class="form-group form-check ps-12">
+                    <div class="">
+                        <input type="checkbox" class="form-check-input" name="includeZeroQuantites" [disabled]="false"
+                            [(ngModel)]="includeZeroQuantites" (click)="updateSelectionForIncludingZeroQuantities()">
+                        <label>
+                            {{'TRANSLATE.CUSTOMER_PRODUCTS_BUTTON_TEXT_INCLUDE_ZERO_QUANTITIES' | translate}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" type="submit" (click)="clearSelection()">
+            <span translate="TRANSLATE.CUSTOMER_PRODUCTS_SET_OPERATING_ENTITIES_FILTER_BUTTON_TEXT_CLEAR"></span>
+        </button>
+        <button class="btn btn-primary btn-sm" type="submit" (click)="preProcessFilterProductsBySitesAndDepartments()">
+            <span translate="TRANSLATE.CUSTOMER_PRODUCTS_SET_OPERATING_ENTITIES_FILTER_BUTTON_TEXT_APPLY"></span>
+        </button>
+    </div>
+</div>

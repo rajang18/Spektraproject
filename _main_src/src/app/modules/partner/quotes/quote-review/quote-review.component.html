@@ -1,0 +1,42 @@
+<div *ngIf="!showEmailTemplate">
+<form name="cc.frmAddNewUser" role="form" class="form" novalidate>
+    <div>
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-title">
+          <span class="">{{ 'TRANSLATE.QUOTE_READY_FOR_REVIEW' | translate }}</span>
+        </h4>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <div class="form-body">
+          <div class="form-group row pl-4">
+            <label class="control-label">
+              <span translate="TRANSLATE.QUOTE_LABEL_TEXT_WEB_LINK"></span>
+            </label>
+            <div class="col-md-12 row ps-5">
+              <input type="text" class="form-control-sm col-md-10" id="myInputField" [value]="shareableUrl" readonly>
+              <div class="col-md-2">
+                <button class="btn btn-outline btn-light-primary btn-sm" type="button" (click)="copyToClipboard()">
+                  <span translate="TRANSLATE.QUOTE_BUTTON_TEXT_COPY"></span>
+                </button>
+              </div>
+            </div> 
+          </div>
+        </div>
+        <div class="modal-footer pe-3">
+          <button class="btn btn-sm btn-light btn-active-light-primary" style="background-color: #E4E6EF;" type="button" (click)="Cancel()">
+            <span translate="TRANSLATE.QUOTE_BUTTON_TEXT_CLOSE"></span>
+          </button>
+          <button class="btn btn-primary btn-sm mr-2" type="button" (click)="EmailQuote()">
+            {{ 'TRANSLATE.QUOTE_BUTTON_TEXT_EMAIL_QUOTE' | translate }}
+            <!-- <i class="fa fa-spinner fa-spin" *ngIf="isBusy"></i>
+            {{ 'TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate }} -->
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+  
+  
+  

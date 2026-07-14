@@ -1,0 +1,132 @@
+.bs-callout {
+  margin: 20px 0;
+  padding: 15px 30px 15px 15px;
+  border-left: 5px solid #eee;
+}
+
+.bs-callout h4 {
+  margin-top: 0;
+}
+
+.bs-callout p:last-child {
+  margin-bottom: 0;
+}
+
+.bs-callout code,
+.bs-callout .highlight {
+  background-color: #fff;
+}
+
+/* Themes for different contexts */
+.bs-callout-danger {
+  background-color: #fcf2f2;
+  border-color: #dFb5b4;
+}
+
+.bs-callout-warning {
+  background-color: #fefbed;
+  border-color: #f1e7bc;
+}
+
+.bs-callout-info {
+  background-color: #f0f7fd;
+  border-color: #d0e3f0;
+}
+
+.strike-through {
+  text-decoration: line-through !important;
+}
+
+.text-mediumvioletred {
+  color: #C71585 !important;
+}
+
+.align-element-right {
+  display: flex;
+  justify-content: flex-end
+}
+
+.labelcolor {
+  background-color: #DF2B03 !important;
+}
+
+.TermLabelColor {
+  background-color: #3D9C49 !important;
+}
+
+.small90 {
+  font-size: 90%;
+}
+.flex-center-center{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.w-100{
+  width: 100%;
+}
+.gap-4{
+  gap: 4px;
+}
+.flex-between-center{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.flex-left-center{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.radius-padding-pointer{
+  border-radius: 2px;
+  padding: 2px 2px 0px 1px;
+  cursor: pointer;
+
+}
+.advance-filter{
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+.flex-column-right-center{
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  flex-direction: column;
+}
+.flex-right-center{
+  display: flex;
+  justify-content: right;
+  align-items: center;
+}
+.multiple-select-choice {
+    padding-left: 20px;
+}
+.btn-custom{
+  background-color: var(--bs-gray-200);
+}
+.btn-custom:hover{
+  background-color: var(--bs-gray-300);
+}
+.btn-custom-highlight{
+  background-color: var(--bs-primary) !important;
+  color: var(--bs-primary-inverse);
+}
+.flex{
+  display: flex;
+}
+.padding-zero{
+  padding: 0px;
+}
+.icon-absolute{
+  position: absolute;
+  top: 10px;
+  right: 3%;
+}
+.parent-relative{
+  position: relative
+}
+:host ::ng-deep .select2-selection__rendered {
+  --select2-selection-multiple-padding: 2px 20px 2px 5px;
+}

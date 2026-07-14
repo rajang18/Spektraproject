@@ -1,0 +1,47 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_DOWNLOAD_PLAN_OFFER' | translate}}" (click)="downloadGridReport()" [appPermission]="'BTN_PLAN_OFFERS_GRID_DOWNLOADABLE_REPORTS'">
+            <i class="ki-outline ki-exit-down fs-2 p-0"></i>
+        </button>
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="BackToPlans()">
+            <i class="ki-outline ki-to-left fs-2"></i> <span
+                translate="TRANSLATE.PLAN_MANAGE_ADD_BUTTON_TEXT_BACK_TO_PLAN"></span>
+        </button>
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" [routerLink]="['/partner/plans/addProduct']" [appPermission]="'SAVE_PLAN'">
+            <span translate="TRANSLATE.PARTNER_ADD_PLAN_BUTTON_TEXT_ADD_MORE_PRODUCTS"></span>
+        </button>
+        <button type="button" class="btn btn-sm fw-bold btn-primary" (click)="savePlan()" [appPermission]="'SAVE_PLAN'">
+            <span translate="TRANSLATE.PARTNER_ADD_PLAN_BUTTON_TEXT_SAVE_PLAN"></span>
+        </button>
+    </div>
+</ng-template>
+
+@if(selectedProducts.length < 1 && !stopSkelton) { @for (item of [1,2,3]; track $index) { <div class="card p-2 mb-3"
+    aria-hidden="true">
+    <div class="card-body">
+        <p class="card-text placeholder-glow">
+            <span class="placeholder col-md-8"></span>
+            <span class="placeholder col-md-4"></span>
+            <span class="placeholder col-md-2"></span>
+            <span class="placeholder col-md-2"></span>
+            <span class="placeholder col-md-2"></span>
+            <span class="placeholder col-md-2"></span>
+        </p>
+    </div>
+    </div>
+    }
+    }
+    <div class="manage-screen-cards" (scrolled)="onScroll()" infiniteScroll [infiniteScrollDistance]="0.3"
+    [infiniteScrollThrottle]="50" [scrollWindow]="false">
+        @if(selectedProducts.length==0 && stopSkelton){
+        <div class="col-md-12">
+            <app-common-no-record></app-common-no-record>
+        </div>
+        }
+        @for (item of selectedProducts; track $index) {
+        <div class="p-2" appLazyLoad (lazyLoad)="onLazyLoad(item)">
+            <app-product-item [productItemDetails]="productItemDetails" [productItem]="item"
+                (onActionData)="onManagePlanAction($event)"></app-product-item>
+        </div>
+        }
+    </div>

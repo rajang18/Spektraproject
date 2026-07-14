@@ -1,0 +1,58 @@
+.addPlanBorderColorforGreaterprice {
+    border: 3px solid gold !important;
+    //border-top: 2px solid gold !important;
+}
+
+.addPlanBorderColorforlessPrice {
+    border: 3px solid red !important;
+    //border-top: 3px solid red !important;
+}
+
+.highlight {
+    background-color: palegreen;
+}
+
+.addPlanBorderColorforOfferWithPromotion {
+    border: 2px solid blue !important;
+    border-top: 2px solid blue !important;
+}
+
+.addBorderColorToEditAndNewOfferForShowPurchasedOffer {
+    border: 2px solid gold !important;
+    border-top: 2px solid gold !important;
+}
+.toggle-wrapper {
+    visibility: hidden;
+  }
+  
+  .toggle-wrapper i {
+    visibility: visible;
+    cursor: pointer;
+  }
+
+
+  .child-row td {
+    // padding-left: 20px;
+  }
+
+  .scrollable-table {
+    max-height: 570px;
+    overflow-y: auto;
+}
+
+.scrollable-table::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollable-table::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+}
+
+.scrollable-table::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+}
+.custom-col {
+    width: calc(100% / 12 * 1.3); 
+  }
+

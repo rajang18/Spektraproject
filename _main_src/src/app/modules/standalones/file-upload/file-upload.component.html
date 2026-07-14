@@ -1,0 +1,24 @@
+<input type="file" class="file-input"
+       [accept]="requiredFileType"
+       (change)="onFileSelected($event)" #fileUpload>
+
+<div class="file-upload">
+
+   {{fileName || "No file uploaded yet."}}
+
+    <button *ngIf="fileName != null" color="primary" class="upload-btn"
+      (click)="fileUpload.click()">
+        <i class="fa file-upload">upload</i>
+
+    </button>
+
+</div>
+
+<div class="progress">
+
+  <progress class="progress-bar" mode="determinate"
+                    [value]="uploadProgress" *ngIf="uploadProgress">
+
+  </progress>
+  <i class="fa cancel-upload" (click)="cancelUpload()">delete_forever</i>
+</div>

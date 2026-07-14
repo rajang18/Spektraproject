@@ -1,0 +1,20 @@
+.text-dark-75 {
+    color: #464E5F !important;
+}
+.font-weight-bolder {
+    font-weight: 600 !important; 
+    padding-bottom: 20px;
+}
+.control-labelP{
+    padding: 15px;
+}
+.checkbox-data{
+    margin-left: 10px;
+}
+
+.custom-height {
+    position: relative;
+    height: calc(97vh - (var(--bs-app-footer-height) + var(--bs-app-header-height) + var(--bs-app-toolbar-height) + 100px));
+    overflow-y: auto;
+    overflow-x: hidden;
+}

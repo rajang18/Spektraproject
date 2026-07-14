@@ -1,0 +1,146 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="backToList()">
+            <i class="ki-duotone ki-to-left fs-2">
+            </i> <span translate="TRANSLATE.NOTIFICATION_BUTTON_TEXT_BACK_TO_LIST"></span>
+        </button>
+    </div>
+</ng-template>
+
+<div class="card card-custom">
+    <div class="card-body">
+        <form [formGroup]="newUserForm">
+            <div class="form-body">
+                <div class="form-group row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3 mt-3">
+                            <label class="mb-1">
+                                <span translate="TRANSLATE.USERS_ADD_EDIT_FORM_LABELS_FIRST_NAME"
+                                    class="fw-semibold required"></span>
+                            </label>
+                            <input type="text" class="form-control form-control-sm" formControlName="FirstName"
+                                maxlength="25" required>
+                            @if(newUserForm.get('FirstName')?.errors?.required &&
+                            newUserForm.get('FirstName')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> }
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="form-group mt-3">
+                            <label class="mb-1">
+                                <span translate="TRANSLATE.USERS_ADD_EDIT_FORM_LABELS_LAST_NAME"
+                                    class="fw-semibold required"></span>
+
+                            </label>
+                            <div class="form-group">
+                                <input type="text" class="form-control form-control-sm" formControlName="LastName"
+                                    maxlength="25" required>
+                                @if(newUserForm.get('LastName')?.errors?.required &&
+                                newUserForm.get('LastName')?.touched){
+                                <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-6 mt-3">
+                        <div class="form-group mb-3 mt-3">
+                            <label class="mb-1">
+                                <span translate="TRANSLATE.USERS_ADD_EDIT_FORM_LABELS_DISPLAY_NAME"
+                                    class="fw-semibold required"></span>
+
+                            </label>
+                            <input type="text" ng-model="vm.addUserModel.DisplayName" maxlength="50"
+                                class="form-control form-control-sm " formControlName="DisplayName" required
+                                spellcheck="false" data-ms-editor="true">
+                            @if(newUserForm.get('DisplayName')?.errors?.required &&
+                            newUserForm.get('DisplayName')?.touched) {
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> }
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3 mt-3">
+                        <div class="form-group mt-3">
+                            <label class="mb-1">
+
+                                <span translate="TRANSLATE.USERS_ADD_EDIT_FORM_LABELS_EMAIL"
+                                    class="fw-semibold required"></span>
+
+                            </label>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="email" class="form-control form-control-sm"
+                                        formControlName="EmailPrefix" required>
+                                    <select class="form-select form-control form-select-sm input-group-with-select" formControlName="Email"
+                                        required>
+                                        @for(domain of customDomains; track domain) {
+                                        <option [value]="domain">
+                                            {{'@'+domain }}</option>
+                                        }
+                                    </select>
+                                </div>
+                                @if(newUserForm.get('EmailPrefix')?.errors?.required && newUserForm.get('EmailPrefix')?.touched){
+                                <div class="text-danger mt-1" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></div>
+                                }
+                                <!-- @if(newUserForm.get('Email')?.errors?.invalidEmail && newUserForm.get('Email')?.touched && !newUserForm.get('Email')?.errors?.required){
+                                <div class="text-danger mt-1" translate="TRANSLATE.VALIDATION_MESSAGE_PLEASE_ENTER_A_VALID_EMAIL"></div>
+                            } -->
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row mt-3">
+                    <div class="col-md-6 mt-3">
+                        <div class="form-group"
+                            ng-class="{'has-error':( vm.frmAddUser.$submitted || vm.frmAddUser.addUserModel_UsageLocation.$dirty) &amp;&amp; vm.frmAddUser.addUserModel_UsageLocation.$error.required}">
+                            <label class="control-label mb-1">
+                                <span translate="TRANSLATE.USERS_ADD_EDIT_FORM_LABELS_USAGE_LOCATION"
+                                    class="fw-semibold required"> </span>
+                            </label>
+                            <ng-select formControlName="country"
+                                placeholder="{{'TRANSLATE.ADD_CUSTOMER_PLEASE_SELECT_A_COUNTRY' |translate}}"
+                                (change)="hideCursorInNgSelect()">
+                                <ng-option value=""
+                                    translate="TRANSLATE.ADD_CUSTOMER_PLEASE_SELECT_A_COUNTRY"></ng-option>
+                                @for (country of countriesData; track $index) {
+                                <ng-option [value]="country.Code">{{country?.Name}}</ng-option>
+                                }
+                            </ng-select>
+
+                            @if(newUserForm.get('country')?.errors?.required &&
+                            newUserForm.get('country')?.touched) {
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> }
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card-footer mt-10 pe-0">
+                <div class="row">
+                    <div class="text-end">
+                        <button class="btn btn-sm btn-secondary me-2">
+                            <span translate="TRANSLATE.BUTTON_TEXT_CANCEL" (click)="backToList()"></span>
+                        </button>
+                        <button class="btn btn-sm btn-primary" (click)="onsubmit()">
+                            @if(pageMode ==='edit' || pageMode==''){
+                            <span translate="TRANSLATE.BUTTON_TEXT_UPDATE"></span>
+                            }
+                            @else {
+                            <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+                            }
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+
+        </form>
+
+
+
+
+    </div>
+</div>

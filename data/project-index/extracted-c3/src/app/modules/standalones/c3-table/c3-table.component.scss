@@ -1,0 +1,113 @@
+::ng-deep{
+  app-c3-table{
+    table{
+      td{
+        vertical-align: top;
+      }
+    }
+    .overflow-y-hidden{
+      overflow-y: hidden !important;
+    }
+    .dt-empty{
+      display: none;
+    }
+    .dt-length{
+      display: none;
+      padding-left: 1rem;
+      label {
+        visibility: hidden; // This will hide the label
+      }
+    }
+    .pagination-empty{
+      .row{
+        &:nth-child(2){
+          visibility: hidden;
+        }
+      }
+      .bottom{
+        visibility: hidden;
+      }
+    }
+    /*.position-relative.top-70px{
+      top: -70px;
+    }*/
+      .table.gy-5 th, .table.gy-5 td {
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+      }
+      .column-title-pe-5{
+        .dt-column-title{
+            padding-right: 0.8rem !important;
+        }
+      }
+      .pagination-table{
+          // background: #F3F6F9;
+          width: fit-content;
+          position: relative;
+          bottom: 37px;
+          left: 214px;
+          .page-options{
+            padding: 9px 12px 9px 12px !important;
+            // color: #6c757d;
+            font-size: 13px;
+          }
+          .active{
+            color: #3699FF;
+          }
+        }
+      .dt-container.dt-bootstrap5{
+          .bottom{
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2%;
+            .dt-info{
+              background: #F3F6F9;
+              padding-inline: 20px;
+              padding-top: 7px;
+            }
+          }
+        }
+      .header-alignment-normal {
+          text-align: left !important;
+      }
+      
+      .header-price-alignment {
+          text-align: right !important;
+      }
+      
+      .header-icon-alignment {
+          text-align: center !important;
+      }
+      
+      .header-action-alignment {
+          text-align: center !important;
+      }
+      
+      .body-alignment-normal {
+          text-align: left !important;
+      }
+      
+      .body-price-alignment {
+          text-align: right !important;
+      }
+      
+      .body-icon-alignment {
+          text-align: center !important;
+      }
+      
+      .body-action-alignment {
+          text-align: center !important;
+      }
+
+      .fixed-height-card {
+        height: 345px; 
+        overflow-y: auto; 
+        overflow-x: hidden;
+        
+      }
+  }
+}
+
+.w-3{
+  width: 3% !important;
+}

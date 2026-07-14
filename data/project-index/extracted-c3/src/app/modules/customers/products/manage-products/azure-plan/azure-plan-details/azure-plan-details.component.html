@@ -1,0 +1,389 @@
+<div>
+    <div class="card card-custom gutter-b card-stretch" *ngIf="pageMode === 'list'">
+        <div class="card-header">
+            <div class="card-title">
+                <h4 class="card-label"> <span translate="TRANSLATE.AZURE_SUBSCRIPTION_DETAILS"></span></h4>
+            </div>
+            <div class="card-toolbar">
+                <a class="btn btn-light-success btn-circle btn-sm me-2"
+                    *ngIf="currentUsageSubscription.CategoryName=='Azure' &&  permissions.HasAzureSubscriptionUpgrade &&  isInheritedPartnerRole && isHideUpgradeEligibilityButton==false"
+                    (click)="checkEligibilityUpgradeAzureSubscription()">
+                    <i class=" la la-level-up"></i> <span translate="TRANSLATE.UPGRADE_ELIGIBILITY_CHECK"></span>
+                </a>
+                <a class="btn btn-light-success btn-circle btn-sm me-2"
+                    *ngIf="currentUsageSubscription.CategoryName=='Azure' && isEligibilityUpgradeAzureSubscription && permissions.HasAzureSubscriptionUpgrade &&  isInheritedPartnerRole"
+                    (click)="upgradeAzureSubscription()">
+                    <i class=" la la-level-up"></i> <span translate="TRANSLATE.UP_GRADE_AZURE_SUBSCRIPTION"></span>
+                </a>
+                <a class="btn btn-light-success btn-circle btn-sm me-2"
+                    *ngIf=" currentUsageSubscription.CategoryName=='Azure' && isUpgradeLoading==true && permissions.HasAzureSubscriptionUpgrade">
+                    <i class="la la-refresh la-spin"></i>&nbsp;<span
+                        translate="TRANSLATE.AZURE_UPGRADE_WAIT_MESSAGE"></span>
+                </a>
+                <span class="btn btn-light-danger btn-circle btn-sm me-2"
+                    *ngIf=" currentUsageSubscription.CategoryName=='Azure' && permissions.HasAzureSubscriptionUpgrade && isIneligible">
+                    <span translate="TRANSLATE.AZURE_UPGRADE_INELIGIBLE_MESSAGE"></span>
+                </span>
+                <span class="btn btn-light-warning me-2"
+                    *ngIf=" currentUsageSubscription.CategoryName=='Azure' && isUpgradeEligibilityChecking==true && permissions.HasAzureSubscriptionUpgrade">
+                    <i class="la la-refresh la-spin"></i>&nbsp;<span
+                        translate="TRANSLATE.AZURE_UPGRADE_ELIGIBILITY_LOADING_MESSAGE"></span>
+                </span>
+                <a class="btn btn-light-primary btn-circle btn-sm"
+                    *ngIf="permissions.HasEditInfo === 'Allowed'  && currentUsageSubscription.OwnerEntity == 'Customer'"
+                    (click)="editDetails()"><i class="ki-outline ki-pencil text-primary"></i> <span
+                        translate="TRANSLATE.AZURE_SUBSCRIPTION_BUTTON_EDIT"></span> </a>
+            </div>
+        </div>
+        <hr />
+        <div class="card-body form form-horizontal">
+            <div class="row ps-2">
+                <div class="form-group col-md-6">
+                    <label class="col-md-6 control-label fw-bold">
+                        <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_SUBSCRIPTION_NAME"></span> :
+                    </label>
+                    <br>
+                    <label class="col-md-6 pt-5">
+                        <span>
+                            {{currentUsageSubscription.SubscriptionName}}
+                        </span>
+                    </label>
+                </div>
+                <div class="form-group col-md-6">
+                    <label class="col-md-6 control-label fw-bold">
+                        <span translate="TRANSLATE.AZURE_SUBSCRIPTION_ID"></span> :
+                    </label>
+                    <br>
+                    <label class="col-md-6 pt-5">
+                        {{currentUsageSubscription.SubscriptionId}}
+                    </label>
+                </div>
+                <div class="form-group col-md-6 mt-8">
+                    <label class="col-md-6 control-label fw-bold">
+                        <span translate="TRANSLATE.AZURE_ESTIMATED_COST"></span> :
+                    </label>
+                    <br>
+                    <label class="col-md-6 pt-5">
+                        {{currentUsageSubscription.CurrentMonthUsage | CurrencyFilter}}
+                    </label>
+                </div>
+                <div class="form-group col-md-6 mt-8">
+                    <label class="col-md-6 control-label fw-bold">
+                        <span translate="TRANSLATE.LABEL_NOTIFICATION_RECIPIENTS"></span> :
+                    </label>
+                    <br>
+                    <label class="col-md-6 pt-5">
+                        {{currentUsageSubscription.NotificationRecipients}}
+                    </label>
+                </div>
+            </div>
+            <div class="row ps-2">
+                <div class="form-group col-md-6 mt-8"
+                    *ngIf="permissions.HasPermissionToChangeIsManagedByPartner &&  isInheritedPartnerRole === true">
+                    <label class="col-md-6 control-label fw-bold">
+                        {{'TRANSLATE.IS_MANAGEABLE_ONLY_BY_PARTNER' | translate}} :
+                    </label>
+                    <br>
+                    <label class="col-md-6 pt-5">
+                        {{ isManagedByPartnerInPurchasedProducts && 'TRANSLATE.MANAGE_CUSTOMER_PRODUCTS_INFO_TEXT_YES'
+                        || 'TRANSLATE.MANAGE_CUSTOMER_PRODUCTS_INFO_TEXT_NO' | translate }}
+                    </label>
+                </div>
+            </div>
+            <div class="mt-8">
+                <h4 class="caption-subject fw-semibold uppercase pb-4"> <span
+                        translate="TRANSLATE.AZURE_THRESHOLD_DETAILS"></span> </h4>
+                <hr />
+                <div class="row mt-8 ps-2">
+                    <div class="form-group col-md-6">
+                        <label class="col-md-6 control-label fw-bold">
+                            <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_MONTHLY_BUDGET"></span> :
+                        </label>
+                        <br>
+                        <label class="col-md-6 pt-5">
+                            <span class="control-label"> {{currentUsageSubscription.MonthlyBudget | CurrencyFilter}} </span>
+                        </label>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="col-md-6 control-label fw-bold">
+                            <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_INFO_THRESHOLD"></span> :
+                        </label>
+                        <br>
+                        <label class="col-md-6 pt-5">
+                            <span> {{currentUsageSubscription.InfoThreshold}}%</span>
+                        </label>
+                    </div>
+                    <div class="form-group col-md-6  mt-8">
+                        <label class="col-md-6 control-label fw-bold">
+                            <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_WARN_THRESHOLD"></span> :
+                        </label>
+                        <br>
+                        <label class="col-md-6 pt-5">
+                            <span> {{currentUsageSubscription.WarnThreshold}}% </span>
+                        </label>
+                    </div>
+                    <div class="form-group col-md-6  mt-8">
+                        <label class="col-md-6 control-label fw-bold">
+                            <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_ERROR_THRESHOLD"></span> :
+                        </label>
+                        <br>
+                        <label class="col-md-6 pt-5">
+                            <span> {{currentUsageSubscription.ErrorThreshold}}% </span>
+                        </label>
+                    </div>
+                    <div class="form-group col-md-6 mt-8">
+                        <label class="col-md-6 control-label fw-bold">
+                            <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_DANGER_THRESHOLD"></span> :
+                        </label>
+                        <br>
+                        <label class="col-md-6 pt-5">
+                            <span> {{currentUsageSubscription.DangerThreshold}}% </span>
+                        </label>
+                    </div>
+                </div>
+                <div *ngIf="permissions.HasAzureGroups === 'Allowed'">
+                    <h4 class="caption-subject bold font-blue uppercase"><span
+                            translate="TRANSLATE.AZURE_GROUP_DETAILS"></span></h4>
+                    <div class="row ps-2">
+                        <div class="form-group col-md-6">
+                            <label class="col-md-6 control-label fw-bold">
+                                <span translate="TRANSLATE.AZURE_GROUPS_LABEL_TEXT_GROUP_NAME"></span> :
+                            </label>
+                            <br>
+                            <label class="col-md-6 pt-5">
+                                <span> {{currentUsageSubscription.GroupName}}</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-5 mt-5"
+                *ngIf="DefaultTermsAndConditionURL !== null && DefaultTermsAndConditionURL!=='' && ShowTermsAndConditionsForSubscriptionUpdate === 'true'
+                 && ((currentUsageSubscription.Status=='Active' && permissions.HasAzureStatusChange === 'Allowed' && currentUsageSubscription.OwnerEntity == 'Customer')
+                 || (currentUsageSubscription.Status=='Suspended' && permissions.HasAzureStatusChange === 'Allowed' && currentUsageSubscription.OwnerEntity == 'Customer'))">
+                <label class="form-check form-check-inline me-5 mt-2 mb-0 d-flex align-items-start flex-column">
+                    <div class="d-flex align-items-center">
+                        <input class="form-check-input" type="checkbox" value=""
+                            name="DefaultTermsAndConditionURLText" id="flexCheckDefault"
+                            [(ngModel)]="IsAgreedOnTermsAndCondition"
+                            [required]="isCheckboxRequired()" [ngbTooltip]="isCheckboxRequired() ? ('TRANSLATE.CHECK_THIS_BOX_TOOLTIP_TEXT'|translate) : null" title=""
+                            container="body" triggers="hover" />
+                        <span class="font ms-5 p-0 m-0 read-term" [innerHTML]="DefaultTermsAndConditionText"></span>
+                    </div>
+                
+                    <a class="ms-3 mt-0 p-0 fw-bold"
+                        href="{{DefaultTermsAndConditionURL}}" target="_blank"
+                        translate="TRANSLATE.CUSTOMER_ORDER_CART_DEFAULT_TERMS_AND_CONDITION_TEXT"></a>
+                </label>
+                <!--<span ng-show="formCart.form.$submitted &amp;&amp; formCart.form.DefaultTermsAndConditionURLText.$error.required" class="text-danger"><span />{{'TRANSLATE.CUSTOMER_ORDER_CART_TERMS_AND_CONDITION_IS_NOT_ENABLED_TEXT' | translate}}</span>-->
+            </div>
+
+            <button [disabled]="!readyToComplete"
+                *ngIf="currentUsageSubscription.Status=='Active' && permissions.HasAzureStatusChange === 'Allowed' && currentUsageSubscription.OwnerEntity == 'Customer'"
+                class="form-control btn btn-light-danger mt-8"
+                (click)="popUpPONumberSuspendSubscription(currentUsageSubscription)">
+                <span translate="TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_SUSPEND_SUBSCRIPTION" class="white "></span>
+            </button>
+            <button [disabled]="!readyToComplete"
+                *ngIf="currentUsageSubscription.Status=='Suspended' && permissions.HasAzureStatusChange === 'Allowed' && currentUsageSubscription.OwnerEntity == 'Customer'"
+                class="form-control btn btn-light-success mt-8"
+                (click)="popUpPONumberReActivateSubscription(currentUsageSubscription)">
+                <span translate="TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_REACTIVATE_SUBSCRIPTION" class="white "></span>
+            </button>
+        </div>
+    </div>
+    <div class="card card-custom gutter-b card-stretch" *ngIf="pageMode === 'edit'">
+        <div class="card-header">
+            <div class="card-title">
+                <h4 class="card-label"> <span translate="TRANSLATE.AZURE_SUBSCRIPTION_DETAILS"></span> </h4>
+            </div>
+        </div>
+        <hr />
+        <div class="card-body">
+            <form [formGroup]="azurePlanDetailsRegisterForm">
+                <div class="form-group"
+                    [ngClass]="{'has-error':buttonClicked && azurePlanDetailsRegisterForm.get('subscriptionName')?.errors?.required}">
+                    <label class="fw-semibold col-md-3 control-label pb-2">
+                        <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_SUBSCRIPTION_NAME"></span>
+                    </label>
+                    <div class="col-md-9">
+                        <input class="fw-normal form-control form-control-sm" type="text"
+                            formControlName="subscriptionName" />
+                    </div>
+                </div>
+                <div class="form-group pt-4" *ngIf="permissions.HasAzureGroups === 'Allowed'">
+                    <label class="col-md-3 fw-semibold control-label">
+                        <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_GROUP_NAME"></span>
+                    </label>
+                    <div class="col-md-9">
+                        <select class="form-control form-control-sm" formControlName="azureGroups">
+                            <option value="-1" translate="TRANSLATE.AZURE_REPORTS_LABEL_TEXT_SELECT_GROUP"></option>
+                            @for (group of groupDataSource; track $index) {
+                            <option [value]="group.Id" [translate]="'TRANSLATE.'+group.Name"></option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="m-heading-1 border-green m-bordered">
+                    <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6 mt-5">
+                        <ul>
+                            <li><span translate="TRANSLATE.AZURE_THRESHOLD_HELP_TEXT_FIRST"></span></li>
+                            <li><span translate="TRANSLATE.AZURE_THRESHOLD_HELP_TEXT_SECOND"></span></li>
+                            <li><span translate="TRANSLATE.AZURE_THRESHOLD_HELP_TEXT_THIRD"></span></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-group pt-4"
+                    [ngClass]="{'has-error':buttonClicked && azurePlanDetailsRegisterForm.get('monthlyBudget')?.errors?.required}">
+                    <label class="fw-semibold col-md-3 control-label pb-2">
+                        <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_MONTHLY_BUDGET"></span>
+                    </label>
+                    <div class="col-md-9">
+                        <div class="input-group mb-3 ">
+                            <span class="input-group-text" id="basic-addon1">{{CurrencySymbol}}</span>
+                            <input class="fw-normal form-control form-control-sm" type="number"
+                                formControlName="monthlyBudget" />
+                        </div>
+                    </div>
+                    @if(azurePlanDetailsRegisterForm.get('monthlyBudget')?.errors?.required &&
+                    (azurePlanDetailsRegisterForm.get('monthlyBudget')?.touched || buttonClicked)){
+                    <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                    }
+                    @if(azurePlanDetailsRegisterForm.get('monthlyBudget')?.errors?.min &&
+                    (azurePlanDetailsRegisterForm.get('monthlyBudget')?.touched || buttonClicked)){
+                    <span
+                        class="text-danger">{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_VALIDATION_MESSAGE_VALUE_SHOULD_BE_BETWEEN_0_AND_100'|translate}}</span>
+                    }
+                </div>
+                <div class="form-group pt-4"
+                    [ngClass]="{'has-error':buttonClicked && azurePlanDetailsRegisterForm.get('infoThreshold')?.errors?.required}">
+                    <label class="fw-semibold col-md-3 control-label pb-2">
+                        <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_INFO_THRESHOLD"></span>
+                    </label>
+                    <div class="col-md-9">
+                        <div class="input-group mb-3 ">
+                            <input class="fw-normal form-control form-control-sm" type="number"
+                                formControlName="infoThreshold" />
+                            <span class="input-group-text" id="basic-addon1">%</span>
+                        </div>
+                    </div>
+                    @if(azurePlanDetailsRegisterForm.get('infoThreshold')?.errors?.required &&
+                    (azurePlanDetailsRegisterForm.get('infoThreshold')?.touched || buttonClicked)){
+                    <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                    }
+                    @if(azurePlanDetailsRegisterForm.get('infoThreshold')?.errors?.min &&
+                    (azurePlanDetailsRegisterForm.get('infoThreshold')?.touched || buttonClicked)){
+                    <span
+                        class="text-danger">{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_VALIDATION_MESSAGE_VALUE_SHOULD_BE_BETWEEN_0_AND_100'|translate}}</span>
+                    }
+                </div>
+                <div class="form-group pt-4"
+                    [ngClass]="{'has-error':buttonClicked && azurePlanDetailsRegisterForm.get('warnThreshold')?.errors?.required}">
+                    <label class="fw-semibold col-md-3 control-label pb-2">
+                        <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_WARN_THRESHOLD"></span>
+                    </label>
+                    <div class="col-md-9">
+                        <div class="input-group mb-3 ">
+                            <input class="fw-normal form-control form-control-sm" type="number"
+                                formControlName="warnThreshold" />
+                            <span class="input-group-text" id="basic-addon1">%</span>
+                        </div>
+                    </div>
+                    @if(azurePlanDetailsRegisterForm.get('warnThreshold')?.errors?.required &&
+                    (azurePlanDetailsRegisterForm.get('warnThreshold')?.touched || buttonClicked)){
+                    <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                    }
+                    @if(azurePlanDetailsRegisterForm.get('warnThreshold')?.errors?.min &&
+                    (azurePlanDetailsRegisterForm.get('warnThreshold')?.touched || buttonClicked)){
+                    <span
+                        class="text-danger">{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_VALIDATION_MESSAGE_VALUE_SHOULD_BE_BETWEEN_0_AND_100'|translate}}</span>
+                    }
+                </div>
+                <div class="form-group pt-4"
+                    [ngClass]="{'has-error':buttonClicked && azurePlanDetailsRegisterForm.get('errorThreshold')?.errors?.required}">
+                    <label class="fw-semibold col-md-3 control-label pb-2">
+                        <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_ERROR_THRESHOLD"></span>
+                    </label>
+                    <div class="col-md-9">
+                        <div class="input-group mb-3 ">
+                            <input class="fw-normal form-control form-control-sm" type="number"
+                                formControlName="errorThreshold" />
+                            <span class="input-group-text" id="basic-addon1">%</span>
+                        </div>
+                    </div>
+                    @if(azurePlanDetailsRegisterForm.get('errorThreshold')?.errors?.required &&
+                    (azurePlanDetailsRegisterForm.get('errorThreshold')?.touched || buttonClicked)){
+                    <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                    }
+                    @if(azurePlanDetailsRegisterForm.get('errorThreshold')?.errors?.min &&
+                    (azurePlanDetailsRegisterForm.get('errorThreshold')?.touched || buttonClicked)){
+                    <span
+                        class="text-danger">{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_VALIDATION_MESSAGE_VALUE_SHOULD_BE_BETWEEN_0_AND_100'|translate}}</span>
+                    }
+                </div>
+                <div class="form-group pt-4"
+                    [ngClass]="{'has-error':buttonClicked && azurePlanDetailsRegisterForm.get('dangerThreshold')?.errors?.required}">
+                    <label class="fw-semibold col-md-3 control-label pb-2">
+                        <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_DANGER_THRESHOLD"></span>
+                    </label>
+                    <div class="col-md-9">
+                        <div class="input-group mb-3 ">
+                            <input class="fw-normal form-control form-control-sm" type="number"
+                                formControlName="dangerThreshold" />
+                            <span class="input-group-text" id="basic-addon1">%</span>
+                        </div>
+                    </div>
+                    @if(azurePlanDetailsRegisterForm.get('dangerThreshold')?.errors?.required &&
+                    (azurePlanDetailsRegisterForm.get('dangerThreshold')?.touched || buttonClicked)){
+                    <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                    }
+                    @if(azurePlanDetailsRegisterForm.get('dangerThreshold')?.errors?.min &&
+                    (azurePlanDetailsRegisterForm.get('dangerThreshold')?.touched || buttonClicked)){
+                    <span
+                        class="text-danger">{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_VALIDATION_MESSAGE_VALUE_SHOULD_BE_BETWEEN_0_AND_100'|translate}}</span>
+                    }
+                </div>
+                <div class="form-group row pt-4"
+                    *ngIf="permissions.HasPermissionToChangeIsManagedByPartner &&  isInheritedPartnerRole === true">
+                    <div class="col-md-3 text-left text-sm-left text-md-right text-lg-right text-start">
+                        <label class="fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.IS_MANAGEABLE_ONLY_BY_PARTNER"></label>
+                    </div>
+                    <div class="col-md-9">
+                        <label class="form-check form-check-inline">
+                            <input type="checkbox" class="form-check-input" formControlName="isManagedByPartnerInPurchasedProducts">
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group pt-4">
+                    <label class="col-md-3 fw-semibold control-label pb-2">
+                        <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                            ngbTooltip="{{'TRANSLATE.LABEL_NOTIFICATION_RECIPIENTS_INSTRUCTION' | translate}}">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                        </i>
+                        <span translate="TRANSLATE.LABEL_NOTIFICATION_RECIPIENTS"></span>
+                    </label>
+                    <div class="col-md-9">
+                        <input class="fw-normal form-control form-control-sm" type="text"
+                            formControlName="notificationRecipience" />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="card-footer">
+            <div class="form-actions text-end">
+                
+                <button type="button" class="btn btn-light btn-active-light-primary btn-sm me-2"
+                    *ngIf="permissions.HasEditInfo === 'Allowed'" (click)="cancel()"><span
+                        translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span></button>
+                        <button class="btn btn-primary btn-sm" *ngIf="permissions.HasEditInfo === 'Allowed'"
+                    (click)="saveUsageSubscriptionDetail()" appBusyLoader>
+                    {{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>

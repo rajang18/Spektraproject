@@ -1,0 +1,7 @@
+::ng-deep {
+    app-azure-usage-report {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}

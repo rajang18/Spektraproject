@@ -1,0 +1,129 @@
+<div class="row">
+  <div class="justify-content-end">
+    <div class="">
+      <!-- View By Options -->
+      <div class="view-options">
+        <div class="form-group row w-100 d-flex justify-content-between">
+          <div class="col col-md-6 pb-5 d-flex justify-content-start">
+            <a class="ms-2 btn btn-sm fw-bold btn-light-primary text-nowrap" (click)="
+                    businessListExpanded = !businessListExpanded; toggleAllRows()
+                  ">
+              @if(!businessListExpanded){
+              <i class="ki-outline ki-plus fs-2"></i>
+              } @else{
+              <i class="ki-outline ki-minus fs-2"></i>
+              }
+              <span>{{
+                businessListExpanded
+                ? ("TRANSLATE.COLLAPSE_ALL_PAYMENTS" | translate)
+                : ("TRANSLATE.EXPAND_ALL_PAYMENTS" | translate)
+                }}</span>
+            </a>
+          </div>
+          <div class="col col-md-6 pb-5 d-flex justify-content-end">
+            <div ngbDropdown class="d-flex align-items-center" autoClose="outside">
+              <button class="btn btn-outline-primary btn-sm mr-5 btn-light-primary" type="button" id="statusDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
+                <span translate="TRANSLATE.QUOTE_STATUS"></span>
+              </button>
+              <div ngbDropdownMenu aria-labelledby="statusDropdownButton">
+                <div class="row">
+                    <div class="col ml-5 menu-item my-0 mt-3 pe-5">
+                        <label  class="form-check form-check-inline ms-10" role="button">
+                            <input type="checkbox" class="form-check-input me-1" role="button" [(ngModel)]="allSelected" (click)="toggleAllSelection()">
+                            <span></span><strong> <span translate="TRANSLATE.QUOTE_ALL_SELECTION" class="coupon"></span></strong>
+                        </label><br/>
+                        @for (status of PaymentStatus; track $index) { 
+                          <div class='menu-item my-0 mt-3'>
+                            <label class="form-check form-check-inline ms-10" role="button"
+                            ng-init="status.selected = vm.allSelected">
+                            <input type="checkbox" class="form-check-input" [name]="status.Name" role="button" (click)="updateSelectedStatus(status.Value)" [checked]="checkedSelectedPaymentStatusList(status.Value)">
+                            <span></span> {{'TRANSLATE.' + status.Description | translate}}
+                        </label>
+                          </div>                  
+                        }
+                    </div>
+                </div><span></span><br />
+              </div>
+            </div>
+            <div class="ml-2 float-end" [appPermission]="'BTN_RECORD_ADVANCE_PAYMENT'">
+              <a class="fw-bold ">
+                <div ngbDropdown class="d-flex align-items-center" placement="bottom-right">
+                  <button class="btn btn-sm btn-lg btn-md btn-light-primary remove-caret ms-2" id="dropdownBasic1"
+                    ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_RECORD_ADVANCE_PAYMENT' | translate}}" data-toggle="tooltip"ngbDropdownToggle >
+                    <i class="ki-outline ki-plus fs-2"></i>
+                    {{'TRANSLATE.BUTTON_TEXT_RECORD_ADVANCE_PAYMENT' | translate}}
+                </button>
+                  <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+                    class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base w-250px">
+
+                    <div class='menu-item my-0' ngbDropdownItem>
+                      <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="recordAdvancePayment()">
+                        <span class="navi-icon">
+                          <i class="far fa-money-bill-alt"></i>
+                        </span>
+                        <span class="ml-2 ng-scope"
+                          translate="TRANSLATE.BTN_TEXT_RECORD_SINGLE_ADVANCED_PAYMENT"></span>
+                      </a>
+                    </div>
+
+                    <div class='menu-item my-0' ngbDropdownItem>
+                      <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="recordMultiplePayments()">
+                        <span class="navi-icon">
+                          <i class="ki-duotone ki-copy"></i>
+                        </span>
+                        <span class="ml-2 ng-scope"
+                          translate="TRANSLATE.BTN_TEXT_RECORD_MULTIPE_ADVANCED_PAYMENT"></span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <ng-template #iconTemplate let-data="adtData" let-row="userData">
+        <span>
+          @if(data?.InvoiceDetails?.Data?.length>0){ @if(!data.Collapse){
+          <i class="clicked-icon fa fa-plus link-font-icon mr-2"></i>
+          } @else{
+          <i class="clicked-icon fa fa-minus link-font-icon mr-2"></i>
+          } }
+        </span>
+      </ng-template>
+
+      <ng-template #remainingAmount let-row="adtData">
+        {{row.RemainingAmount | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces :
+        row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator}}
+      </ng-template>
+
+      <ng-template #usedAmount let-row="adtData">
+        {{row.UsedAmount | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces :
+        row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator}}
+      </ng-template>
+
+      <ng-template #paidAmount let-row="adtData">
+        {{row.PaidAmount | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces :
+        row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator}}
+      </ng-template>
+
+
+
+      <!-- Check if datatableConfig is defined and then render the table -->
+      @if (!!datatableConfig) {
+        <div class="h-30">
+          <div class="d-flex align-items-center position-relative my-1">
+            <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5"><span class="custom-path1"></span><span
+                class="custom-path2"></span></i> <input type="text" data-field="QualifiedName" data-action="filter"
+              class="header-input-field form-control form-control-solid w-200px ps-12"
+              placeholder="{{'TRANSLATE.CUSTOMER_SEARCH_SEARCH_OPTION'| translate}} {{'TRANSLATE.DISTRIBUTOR_OFFERS_TABLE_HEADER_TEXT_name'| translate}}">
+          </div>
+        </div>
+        <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" (tableReady)="onTableReady($event)"
+            [isNestedGrid]="true">
+          </app-c3-table>
+      }

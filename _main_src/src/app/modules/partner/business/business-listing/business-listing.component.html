@@ -1,0 +1,373 @@
+<ng-template #actionHeader>
+  <div class="header-actions d-flex align-items-center gap-1 gap-lg-1">
+    @if (state != 'ReloadInvoices' && selectedBillingPeriodId?.length!=0 && (Permissions.HasGenerateCSVForProfitabilityReport === 'Allowed' || Permissions.HasGetTaxSummaryReport === 'Allowed' || Permissions.HasGetTaxAmountsSummary === 'Allowed' || Permissions.HasGetInvoiceSummary === 'Allowed' || Permissions.HasGetInvoiceLineItemsReport === 'Allowed')) {
+      <a class="fw-bold ps-2">
+        <div ngbDropdown class="d-flex align-items-center dropdown mt-0" placement="bottom-right">
+          <button class="btn btn-sm btn-light-primary" id="dropdownBasic1" tittle="Customer Settings"
+            ngbDropdownToggle ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_REPORTS' | translate}}">
+            <i class="ki-outline ki-exit-down fs-2"></i><span translate="TRANSLATE.BUTTON_TEXT_REPORTS"></span>
+          </button>
+          <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+            class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base w-300px">
+            <div class='menu-item my-0' ngbDropdownItem
+              *ngIf="Permissions.HasGenerateCSVForProfitabilityReport === 'Allowed'">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="exportProfitability()">
+                <span class="ml-2 ng-scope">{{'TRANSLATE.CUSTOMER_BUTTON_PROFITABILITY_REPORT_LOADING' |
+                  translate}}</span>
+              </a>
+            </div>
+            <div class='menu-item my-0' ngbDropdownItem [appPermission]="'DOWNLOAD_PROFITABILITY_REPORT_BY_TENANT'">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="exportProfitabilityByTenant()">
+                <span class="ml-2 ng-scope">{{'TRANSLATE.CUSTOMER_BUTTON_PROFITABILITY_REPORT_BY_TENANT_LOADING' |
+                  translate}}</span>
+              </a>
+            </div>
+            <div class='menu-item my-0' ngbDropdownItem [appPermission]="'DOWNLOAD_PROFITABILITY_REPORT_BY_PRODUCT'">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2"
+                (click)="getProfitabilityReportByProduct()">
+                <span class="ml-2 ng-scope">{{'TRANSLATE.CUSTOMER_BUTTON_PROFITABILITY_REPORT_BY_PRODUCT_LOADING' |
+                  translate}}</span>
+              </a>
+            </div>
+            <div class='menu-item my-0' ngbDropdownItem *ngIf="Permissions.HasGetTaxSummaryReport === 'Allowed'">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="getTaxSummaryReport()">
+                <span class="ml-2 ng-scope">{{'TRANSLATE.CUSTOMER_BUTTON_TAX_SUMMARY_LOADING' | translate}}</span>
+              </a>
+            </div>
+            <div class='menu-item my-0' ngbDropdownItem *ngIf="Permissions.HasGetTaxAmountsSummary === 'Allowed'">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2"
+                (click)="getTaxSummarybySubscriptionReport()">
+                <span class="ml-2 ng-scope">{{'TRANSLATE.CUSTOMER_BUTTON_TAX_LINE_ITEMS_LOADING' |
+                  translate}}</span>
+              </a>
+            </div>
+            <div class='menu-item my-0' ngbDropdownItem
+              *ngIf="Permissions.HasGetInvoiceSummary === 'Allowed' && !isAllselected && selectedBillingPeriodId?.length==1">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="getInvoiceSummaryReport()">
+                <span class="ml-2 ng-scope">{{'TRANSLATE.CUSTOMER_BUTTON_INVOICE_SUMMARY_LOADING' |
+                  translate}}</span>
+              </a>
+            </div>
+            <div class='menu-item my-0' ngbDropdownItem
+              *ngIf="Permissions.HasGetInvoiceLineItemsReport === 'Allowed' && !isAllselected && selectedBillingPeriodId?.length==1">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="getInvoiceLineItemsReport()">
+                <span class="ml-2 ng-scope">{{'TRANSLATE.CUSTOMER_BUTTON_INVOICE_LINE_ITEMS_LOADING' |
+                  translate}}</span>
+              </a>
+            </div>
+            <div class='menu-item my-0' ngbDropdownItem
+              *ngIf="Permissions.HasMonthlyTurnoverReport === 'Allowed' && !isAllselected && selectedBillingPeriodId?.length==1">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="getMonthlyTurnoverReport()">
+                <span class="ml-2 ng-scope">{{'TRANSLATE.CUSTOMER_MONTHLY_TURNOVER_REPORT' | translate}}</span>
+              </a>
+            </div>
+            <div class='menu-item my-0' ngbDropdownItem
+              *ngIf="Permissions.HasExportBillingForecastReport === 'Allowed'  && !isAllselected && selectedBillingPeriodId?.length==1">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="getBillingForecastReport()">
+                <span class="ml-2 ng-scope">{{'TRANSLATE.BILLING_FORECAST_REPORT' | translate}}</span>
+              </a>
+            </div>
+            <div class='menu-item my-0' ngbDropdownItem
+              *ngIf="Permissions.HasExportInvoiceLineItemsWithTaxReport === 'Allowed' && !isAllselected && selectedBillingPeriodId?.length==1">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2 text-wrap"
+                (click)="getInvoiceLineItemsWithTaxesReport()">
+                <span class="ml-2 ng-scope">{{'TRANSLATE.INVOICE_LINE_ITEMS_WITH_TAX_REPORT' | translate}}</span>
+              </a>
+            </div>
+            <div class='menu-item my-0' ngbDropdownItem
+              *ngIf="Permissions.HasDownloadInvoiceLineItemsWithCommissionsReport === 'Allowed' && !isAllselected && selectedBillingPeriodId?.length==1">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2 text-wrap"
+                (click)="getInvoiceLineItemsWithCommissionsReport()">
+                <span class="ml-2 ng-scope">{{'TRANSLATE.CUSTOMER_BUTTON_INVOICE_LINE_ITEMS_WITH_COMMISSIONS_LOADING'
+                  |
+                  translate}}</span>
+              </a>
+            </div>
+            <!-- @if ( this.Permissions.HasCustomerAndResellerDetails === 'Allowed') {
+            <div class='menu-item my-0' ngbDropdownItem *ngIf="!isAllselected">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2"
+                [routerLink]="['/partner/downloadBulkInvoices']">
+                <span class="ml-2 ng-scope">{{'TRANSLATE.BULK_INVOICE_DOWNLOAD_HEADER' | translate}}</span>
+              </a>
+            </div>
+          }
+            <div class='menu-item my-0' ngbDropdownItem *ngIf="!isAllselected">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2"
+                (click)="moveTodownloadInvoicesPayment()">
+                <span class="ml-2 ng-scope">{{'TRANSLATE.CUSTOMER_VIEW_BUTTON_DOWNLOAD_INVOICES' |
+                  translate}}</span>
+              </a>
+            </div> -->
+            <div class='menu-item my-0' ngbDropdownItem
+            *ngIf="Permissions.HasGetGlobalInvoiceLineItemsReport === 'Allowed' && !isAllselected && selectedBillingPeriodId?.length==1">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2 text-wrap"
+                (click)="getGlobalInvoiceLineItemsReport()">
+                <span class="ml-2 ng-scope">{{'TRANSLATE.GLOBAL_INVOICE_LINE_ITEMS_REPORT' | translate}}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </a>
+    }
+  </div>
+</ng-template>  
+<div [ngClass]="state === 'RevenueAndCostSummery' ? '' : 'd-none'">
+  <!-- begin::Header -->
+  <div>
+    <div class="d-flex flex-wrap w-100 justify-content-between ps-18">
+      <!-- Dropdown Column -->
+      <div class="custom-tyeahead col-md-4 mb-2">
+        <div class="custom-dropdown mt-0" appClickOutSide (clickOutside)="billingPeriodDropDownClickOutside()">
+          <div class="d-flex">
+            <button
+              (click)="toggleDropdown(); $event.stopPropagation(); $event.preventDefault();"
+              class="btn-content btn btn-sm col-12 d-flex justify-content-between">
+              <span *ngIf="!isAllselected">{{ selectedBillingPeriodId?.length == 1 ? showSelectedFirstPeriod() : aLLPeriods }}</span>
+              <span *ngIf="isAllselected" translate="TRANSLATE.CUSTOMER_OPTION_ALL_PERIODS"></span>
+              <strong><i class="ki-duotone ki-down"></i></strong>
+            </button>
+            <a
+              class="ms-2 btn btn-sm fw-bold btn-light-primary h-35px refresh-btn"
+              ngbTooltip="{{ 'TRANSLATE.RELOAD_TOOLTIP_REVENUE' | translate }}"
+              (click)="reloadGrid(); $event.stopPropagation(); $event.preventDefault();">
+              <i class="ki-outline ki-arrows-circle fs-2"></i>
+            </a>
+          </div>
+    
+          <div
+            class="dropdown-content"
+            autoClose="outside"
+            [ngClass]="{'show':dropdownVisible}">
+            <label class="form-check form-check-inline me-1">
+              <input
+                type="checkbox"
+                class="form-check-input form-check-sm"
+                name="period"
+                [value]="'Select All'"
+                (change)="checkBillingPeriodChangeAllSelect($event); $event.stopPropagation(); $event.preventDefault();"
+                [checked]="isAllselected"
+              />
+              {{ 'TRANSLATE.CUSTOMER_OPTION_ALL_PERIODS' | translate }}
+            </label>
+            @for (periodData of billingPeriodsData; track periodData) {
+            <label class="form-check form-check-inline me-1">
+              <input
+                type="checkbox"
+                class="form-check-input form-check-sm"
+                name="period"
+                [value]="periodData.BillingPeriodId"
+                (change)="
+                  checkBillingPeriodChange($event, periodData.BillingPeriodId);
+                  $event.stopPropagation();
+                  $event.preventDefault();
+                "
+                [checked]="
+                  selectedBillingPeriodId.includes(periodData.BillingPeriodId)
+                "
+              />
+              {{ periodData.BillingStartDate | c3Date }} -{{ periodData.BillingEndDate | c3Date }}
+              ({{ periodData?.BillingId }})
+            </label>
+            }
+          </div>
+        </div>
+      </div>
+    
+      <!-- Action Buttons Column -->
+      <div class="action-right-btns d-flex flex-wrap justify-content-end col-lg max-width-60-per col-md-12">
+        <div ngbDropdown #dropdown="ngbDropdown" autoClose="outside" class="me-3" *ngIf="selectedBillingPeriodId?.length!=0">
+          <button
+            class="h-35px btn btn-secondary btn-sm btn-light-primary mb-4 d-flex align-items-center"
+            id="viewByDropdownButton"
+            data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false" ngbDropdownToggle >
+            <i class="ki-outline ki-filter fs-3"></i>
+            <span translate="TRANSLATE.REVENUE_AND_COST_SUMMARY_VIEWBY"></span>
+          </button>
+          <div ngbDropdownMenu aria-labelledby="viewByDropdownButton" class="w-175px text-wrap">
+            <div class="row">
+              <div class="col ml-5">
+                <label ngbDropdownItem class="form-check-label form-check">
+                  <input
+                    type="checkbox"
+                    class="form-check-input ms-2"
+                    [(ngModel)]="allSelected"
+                    (click)="toggleAllSelection()"
+                  />
+                  <span class="ms-3" translate="TRANSLATE.VIEW_ALL_SELECTION"></span>
+                </label>
+                @for (option of viewByOptionsData; track $index) {
+                <label ngbDropdownItem class="form-check-label form-check"
+                  [ngStyle]="{
+                    color: option.selected ? '#00688B' : 'auto',
+                    'white-space': 'nowrap'}" >
+                  <input type="checkbox" class="form-check-input ms-2" value="{{ option.data.val }}" (click)="toggleViewBySelection(option)" [(ngModel)]="option.selected" />
+                  <span class="ms-3">{{ option.label | translate }}</span>
+                </label>
+                }
+                <div class="text-end pe-4">
+                  <button class="btn btn-sm btn-primary" (click)="applyFilterReloadData(dropdown)" translate="TRANSLATE.BUTTON_TEXT_APPLY"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <a class="btn btn-sm btn-light-primary h-35px" *ngIf="!isAllselected && selectedBillingPeriodId?.length==1" (click)="reloadCustomersInvoices()" [appPermission]="'BTN_GENERATE_INVOICES'">
+          <span>{{ 'TRANSLATE.VIEWS_CUSTOMER_BUTTON_GENERATE_INVOICE' | translate }}</span>
+        </a>
+        @if (Permissions.HasGenerateCSVForProfitabilityReport === 'Allowed') {
+          <a *ngIf="!isAllselected && selectedBillingPeriodId?.length==1" class="ms-3 btn btn-sm btn-light-primary h-35px" (click)="moveTodownloadBulkInvoice()">
+            <span class="ml-2 ng-scope">{{ 'TRANSLATE.BULK_INVOICE_DOWNLOAD_HEADER' | translate }}</span>
+          </a>
+          <a *ngIf="!isAllselected && selectedBillingPeriodId?.length==1" class="ms-3 btn btn-sm btn-light-primary h-35px" (click)="moveTodownloadInvoicesPayment()" >
+            <span class="ml-2 ng-scope">{{ 'TRANSLATE.CUSTOMER_VIEW_BUTTON_DOWNLOAD_INVOICES' | translate }}</span>
+          </a>
+        }
+      </div>
+    </div>
+    
+  </div>
+
+  <div class="card-body">
+    <ng-template #iconTemplate let-data="adtData" let-row="userData">
+      <span>
+      @if(!isAllselected){
+        @if(!data.Collapse){
+          <i class="clicked-icon ki-duotone ki-plus text-primary fs-2"></i>
+        } @else{
+          <i class="clicked-icon ki-duotone ki-minus text-primary fs-2"></i>
+        }
+      }@else {
+        @if(selectViewBylist?.length == 0){}@else{
+          @if((selectViewBylist?.length==1 && selectViewBylist[0]=='Customer')){}@else{
+            @if(!data.Collapse){
+              <i class="clicked-icon ki-duotone ki-plus text-primary fs-2"></i>
+            } @else{
+              <i class="clicked-icon ki-duotone ki-minus text-primary fs-2"></i>
+            }
+          }
+        }
+      }
+    </span>
+     
+    </ng-template>
+    <ng-template #nameTemplate let-data="adtData" let-row="userData">
+      <div class="fw-semibold" [ngClass]="data.Name != translateService.instant('TRANSLATE.GRAND_TOTAL') ? '' : 'text-end'">{{ data?.Name }} 
+        <span class="fw-semibold" *ngIf="data.Entity !== 'Customer' && data.Name != translateService.instant('TRANSLATE.GRAND_TOTAL')'Grand Total'">({{
+          data?.Entity }})</span>
+      </div>
+    </ng-template>
+    <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+      <div class="d-flex align-items-end justify-content-end" *ngIf="!data?.isTotal">
+        <button (click)="viewInvoices(data)" ngbTooltip="{{'TRANSLATE.REVENUE_BUTTON_TOOLTIP_TEXT_VIEW_INVOICES' | translate}}" *ngIf="Permissions.HasGetInvoices === 'Allowed' && (isDefaultView || data.isShowInvoice)"
+          class="btn btn-icon btn-active-light-primary btn-sm w-auto" [ngClass]="toolbarButtonHeightClass" placement="top">
+          <span class="svg-icon svg-icon-primary svg-icon-sm">
+            <i class="ki-outline ki-bill text-primary fs-1"></i>
+          </span>
+        </button>
+        @if(Permissions.HasGetSubscriptionChangeHistory === 'Allowed' && data.Entity === 'Customer' && (isDefaultView ||
+        data.isShowInvoice)){
+        <button class="btn btn-icon btn-active-light-primary btn-sm w-auto" [ngClass]="toolbarButtonHeightClass" placement="top"
+          (click)="GoToSubscriptionChangeHistory(data)" ngbTooltip="{{'TRANSLATE.REVENUE_BUTTON_TOOLTIP_TEXT_VIEW_SUBSCRIPTION_HISTORY' | translate}}">
+          <span class="svg-icon svg-icon-primary svg-icon-sm">
+            <i class="ki-outline ki-time text-primary fs-3"></i>
+          </span>
+        </button>
+        }
+        @if(Permissions.HasGenerateInvoices === 'Allowed' && (selectedBillingPeriodId?.length == 1 || allSelected ==
+        false) && (isDefaultView || data.isShowInvoice)){
+        <button class="btn btn-icon btn-active-light-primary btn-sm w-auto" [ngClass]="toolbarButtonHeightClass"
+          (click)="GenerateCustomerInvoice(data);"  
+          [ngbTooltip]="tooltipVisible ? ('TRANSLATE.REVENUE_BUTTON_TOOLTIP_TEXT_REGENERATE_INVOICE' | translate) : ''"
+          *ngIf="!(selectedBillingPeriodId?.length > 1 || allSelected == true || selectedBillingPeriodId?.length == 0)" >
+          <span class="svg-icon svg-icon-primary svg-icon-sm">
+            <i class="ki-outline ki-arrows-loop text-primary fs-3"></i>
+          </span>
+        </button>
+        }
+
+      </div>
+      <div *ngIf="data?.isTotal">
+      </div>
+    </ng-template>
+    <ng-template #costonPartner let-data="adtData" let-emitter="captureEvents">
+      <span>
+        {{
+        data.CostOnPartner
+        | CurrencyFilter
+        : data?.CurrencySymbol
+        : data?.CurrencyDecimalPlaces
+        : data?.CurrencyThousandSeperator
+        : data?.CurrencyDecimalSeperator
+        }}</span>
+    </ng-template>
+    <ng-template #billedAmount let-data="adtData" let-emitter="captureEvents">
+      {{
+      data.BilledAmount
+      | CurrencyFilter
+      : data.CurrencySymbol
+      : data.CurrencyDecimalPlaces
+      : data.CurrencyThousandSeperator
+      : data.CurrencyDecimalSeperator
+      }}
+    </ng-template>
+    <ng-template #profit let-data="adtData" let-emitter="captureEvents">
+      {{
+      data.ProfitAmount
+      | CurrencyFilter
+      : data.CurrencySymbol
+      : data.CurrencyDecimalPlaces
+      : data.CurrencyThousandSeperator
+      : data.CurrencyDecimalSeperator
+      }}
+    </ng-template>
+    <!-- //table -->
+    <!-- <div class="d-flex align-items-center position-relative my-1 mb-0">
+      <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5"><span class="custom-path1"></span><span
+          class="custom-path2"></span></i> <input type="text" data-field="Name" data-action="filter"
+        class="header-input-field form-control form-control-solid w-200px ps-12" placeholder="{{'TRANSLATE.CUSTOMER_SEARCH_SEARCH_OPTION'| translate}} {{'TRANSLATE.DISTRIBUTOR_OFFERS_TABLE_HEADER_TEXT_NAME'| translate}}">
+    </div> -->
+    @if (!!datatableConfig) {
+    <div class="table-buisness">
+      <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" (tableReady)="onTableReady($event)"
+        (pageSizeChange)="onPageSizeChange($event)" [isNestedGrid]="true" [searchFilter]="false"
+        >
+      </app-c3-table>
+    </div>
+    }
+  </div>
+</div>
+<div class="form" *ngIf="state === 'ReloadInvoices'">
+  <div class="col-md-12">
+    <div class="card card-custom">
+      <div class="card-header">
+        <div class="row">
+          <span class="pull-left caption-subject font-dark sbold uppercase ms-20 mt-7"
+            translate="TRANSLATE.INVOICE_GENERATION_STATUS_TITLE"></span>
+        </div>
+      </div>
+      <div class="card-body form">
+        <div class="row form-group m-5" *ngFor="let row of customerInvoiceReloadingList">
+          <div data-title="'CUSTOMERS_TABLE_HEADER_TEXT_NAME' | translate" style="text-align:center;" class="col-md-2">
+            <span *ngIf="row.GenerationStatus === undefined || row.GenerationStatus === null"><i
+                class="fa fa-spin fa-spinner"></i></span>
+            <span *ngIf="row.GenerationStatus === 'Success'"><i class="ki-outline ki-check fs-1" style="color:green"></i></span>
+            <span *ngIf="row.GenerationStatus === 'Fail'"><i class="ki-outline ki-cross fs-1" style="color:red"></i></span>
+          </div>
+          <div data-title="'REVENUE_AND_COST_SUMMARY_COST_ON_PARTNER' | translate" style="text-align:left;"
+            header-class="'text-left'" class="col-md-10">
+            {{row.Name}} <span ng-if="row.Entity !== 'Customer'">({{row.Entity}})</span>
+          </div>
+        </div>
+        <div ng-if="vm.GenerationStatus === 'Completed'" class="row" (click)="BackToRevenueAndCostSummary()">
+          <div class="col-md-12">
+            <button class="btn btn-success pull-left">
+              <span translate="TRANSLATE.INVOICE_GENERATION_VIEW_BUTTON_BACK_TO_REVENUE_AND_COST_SUMMERY"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

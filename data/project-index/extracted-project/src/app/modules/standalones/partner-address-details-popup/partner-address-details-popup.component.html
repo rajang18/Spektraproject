@@ -1,0 +1,37 @@
+<div class="modal-dialog m-0 modal-dialog m-0-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><span translate="TRANSLATE.CHANGE_BILL_FROM_ADDRESS" ></span> 
+                <span class="text-primary"> : {{CustomerName}} </span></h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="cancel()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+            </div>
+        </div>      
+        <div class="modal-body" id="modal-body">
+            <div class="">
+                <div class="margin-bottom-15">
+                  @for (address of this.addressDetails; track address.AddressId; let index = $index) {
+                      <div class="mt-2">
+                              <div class="form-check pb-1">
+                                <input class="radiobtn me-4 form-check-input" type="radio" [value]="address.AddressId" [(ngModel)]="this.selectedAddressId" (change)="onChange(address)" [disabled]="address.ShouldDisable">
+                                  <label class="space-after" >{{( address.Line1 )| translate}}, </label> 
+                                  <label class="space-after" *ngIf="address.Line2" >{{( address.Line2 )| translate}}, </label> 
+                                  <label class="space-after" >{{( address.City )| translate}}, </label> 
+                                  <label class="space-after" >{{( address.State )| translate}}, </label> 
+                                  <label class="space-after" >{{( address.Country )| translate}}, </label> 
+                                  <label class="space-after" >{{( address.Zip )| translate}} </label> 
+                                  <sup *ngIf="address.BillFromAddressId === true" class="badge badge-light-primary">{{'TRANSLATE.PARTNER_AADDRESS_DEFAULT_TAG_LEBEL_TEXT' | translate}}</sup>
+                                  <sup *ngIf="address.ShouldDisable === true" class="badge badge-danger">{{'TRANSLATE.PARTNER_AADDRESS_DELETED_TAG_LEBEL_TEXT' | translate}}</sup>
+                              </div>
+                      </div>
+                  }
+              </div>
+        </div>
+        <div class="modal-footer">
+            <button  type="button" class="btn btn-sm btn-light-primary" data-dismiss="modal" (click)="Save()" *ngIf="(isaddressChanged === true && isMarkAsDefault === true)" [appPermission]="'EDIT_CUSTOMER_ADDRESS'">{{'TRANSLATE.PARTNER_ADDRESS_BILL_FROM_MARK_DEFAULT' | translate}}</button>
+            <a type="button" class="btn btn-sm btn-light btn-active-light-primary" data-dismiss="modal" (click)="cancel()">
+                <span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span></a>
+            <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal" (click)="this.isMarkAsDefault === true ? tempSave() : Save()" [appPermission]="'EDIT_CUSTOMER_ADDRESS'">{{'TRANSLATE.PARTNER_ADDRESS_BILL_FROM_SAVE' | translate}}</button>
+        </div>
+    </div>
+</div>

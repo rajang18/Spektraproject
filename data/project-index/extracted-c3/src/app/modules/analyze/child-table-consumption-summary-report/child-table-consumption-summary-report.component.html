@@ -1,0 +1,16 @@
+
+<div class="ps-12 ">
+
+
+@if (!!datatableConfig) {
+    <div class="table-buisness position-relative">
+      <app-c3-table
+        [reload]="reloadEvent"
+        [datatableConfig]="datatableConfig"
+        [searchFilter]="false"
+        [isPaginationHide]="true"
+      >
+      </app-c3-table>
+    </div>
+    }
+</div>

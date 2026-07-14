@@ -1,0 +1,438 @@
+<ng-template #actionHeader>
+  <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+    <button type="button" class="btn btn-sm fw-semibold btn-light-primary" (click)="backToPartnerOffer()">
+      <i class="ki-outline ki-to-left fs-2"></i><span translate="TRANSLATE.DISTRIBUTOR_OFFERS_CAPTION_BUTTON_TEXT_BACK_TO_DISTRIBUTOR_OFFERS"></span>
+    </button>
+  </div>
+</ng-template>
+
+<div class="card">
+  <div class="card-body">
+    @if(isDataLoaded){
+    <form [formGroup]="distributorOfferRegisterForm">
+      <div class="form-group row mt-7">
+        <div class="col-md-3 col-form-label">
+          <label class="required fw-semibold fs-6 mb-2 text-start"
+                 translate="TRANSLATE.DISTRIBUTOR_OFFERS_LABEL_TEXT_PROVIDER"></label>
+          <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" [ngbTooltip]="'TRANSLATE.BULK_ONBOARDING_RESELLERS_LABEL_TEXT_PROVIDER_TOOLTIPS' | translate">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+        </div>
+        <div class="col-md-5">
+          <select class="form-select disabled-select form-select-sm fw-bold"
+                  formControlName="providerName">
+            @for(option of providers; track $index){
+            <option [value]="option.ID">
+              {{'TRANSLATE.'+option.Description | translate}}
+            </option>
+            }
+          </select>
+          @if(distributorOfferRegisterForm.get('providerName')?.errors?.required &&
+          (buttonClicked || distributorOfferRegisterForm.get('providerName')?.touched)){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+
+      </div>
+      <div class="form-group row mt-7">
+        <div class="col-md-3 col-form-label">
+          <label class="required fw-semibold fs-6 mb-2  text-start" translate="TRANSLATE.DISTRIBUTOR_OFFERS_LABEL_TEXT_CATEGORY"></label>
+        </div>
+        <div class="col-md-5">
+          <select class="form-select disabled-select form-select-sm fw-bold" formControlName="category" (change)="categoryChange()">
+            @for(option of providerCategories; track $index){
+            <option [value]="option.ID">
+              {{'TRANSLATE.'+option.CategoryDescriptionKey | translate}}
+            </option>
+            }
+          </select>
+          @if(distributorOfferRegisterForm.get('category')?.errors?.required &&
+          (buttonClicked || distributorOfferRegisterForm.get('category')?.touched)){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      <div class="form-group row mt-7" [appPermission]="'GET_SUBCATEGORIES_FILTER'">
+        <div class="col-md-3 col-form-label">
+          <label class="fw-semibold fs-6 mb-2  text-start"
+                 translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_SUBCATEGORY"></label>
+        </div>
+        <div class="col-md-5">
+         <ng-select class="form-control p-0"
+           formControlName="subCategoryId"
+           [placeholder]="'TRANSLATE.PLACEHOLDER_FOR_SUBCATEGORY_DROPDOWN' | translate">
+  @for(option of subCategories; track $index){
+    <ng-option [value]="option.Id">
+      {{option.Name | translate}}
+    </ng-option>
+  }
+</ng-select>
+
+
+          <!-- @if(distributorOfferRegisterForm.get('subCategory')?.errors?.required &&
+          (buttonClicked || distributorOfferRegisterForm.get('subCategory')?.touched)){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          } -->
+        </div>
+      </div>
+      <div class="form-group row mt-7">
+        <div class="col-md-3 col-form-label">
+          <label class="required fw-semibold fs-6 mb-2 text-start"
+                 translate="TRANSLATE.DISTRIBUTOR_OFFERS_LABEL_TEXT_CONSUMPTION_TYPE">
+          </label>
+        </div>
+        <div class="col-md-5">
+          <select class="form-select disabled-select form-select-sm fw-bold"
+                  formControlName="consumptionType" (change)="filterBillingCycle()">
+            <!-- <option value="" >Please select a consumption type.</option> -->
+            @for(option of consumptionTypes; track $index){
+            <option [value]="option.ID">
+              {{'TRANSLATE.'+option.Description | translate}}
+            </option>
+            }
+          </select>
+          @if(distributorOfferRegisterForm.get('consumptionType')?.errors?.required &&
+          (buttonClicked || distributorOfferRegisterForm.get('consumptionType')?.touched)){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+
+      <div class="form-group row mt-7">
+        <div class="col-md-3 col-form-label ">
+          <label class="required fw-semibold fs-6 mb-2  text-start" translate="TRANSLATE.DISTRIBUTOR_OFFERS_LABEL_TEXT_NAME">
+          </label>
+        </div>
+        <div class="col-md-5">
+          <input type="text" formControlName="name" [disabled]="isEditMode || (DistributorOfferDetails?.IsActive === false) || !(Permissions.HasSaveOrUpdateDistributorOffer === 'Allowed')"
+                 class="form-control form-control-sm " />
+
+          @if(distributorOfferRegisterForm.get('name')?.errors?.required &&
+          (buttonClicked || distributorOfferRegisterForm.get('name')?.touched)){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      <div class="form-group row mt-7">
+        <div class="col-md-3 col-form-label">
+          <label class="required fw-semibold fs-6 mb-2  text-start"
+                 translate="TRANSLATE.DISTRIBUTOR_OFFERS_LABEL_TEXT_DESCRIPTION"></label>
+        </div>
+        <div class="col-md-5">
+          <textarea type="text" formControlName="description" placeholder="{{'TRANSLATE.PLACEHOLDER_ENTER_TEXT' | translate}}"
+                    class="form-control form-control-sm " rows="6" [disabled]="isEditMode || (DistributorOfferDetails?.IsActive === false) || !(Permissions.HasSaveOrUpdateDistributorOffer === 'Allowed')">
+                        </textarea>
+          @if(distributorOfferRegisterForm.get('description')?.errors?.required &&
+          (buttonClicked || distributorOfferRegisterForm.get('description')?.touched)){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+
+      <div class="form-group row mt-7">
+        <div class="col-md-3 col-form-label">
+          <label class="fw-semibold fs-6 mb-2  text-start"
+                 translate="TRANSLATE.DISTRIBUTOR_OFFERS_LABEL_TEXT_PRODUCT_ICON"></label>
+        </div>
+        <div class="col-md-5">
+          <!-- <input type="file" class="file-input" (change)="onFileSelected($event)" #fileUpload> -->
+          <div class="input-group mb-3">
+            <input type="file" class="form-control" id="inputGroupFile02" (change)="onFileSelected($event)" [disabled]="isView">
+            <label class="input-group-text" for="inputGroupFile02"><span class="buttonText"> <i class="ki-outline ki-folder" aria-hidden="true"></i> </span></label>
+          </div>
+          <span class="help-block" translate="TRANSLATE.CUSTOM_ICON_HELP_TEXT"></span>
+          <!-- <img *ngIf="url !== null" [src]="url" height="200"> <br/> -->
+        </div>
+      </div>
+      @if(url != null){
+      <div class="form-group row mt-7">
+        <div class="col-md-3 col-form-label">
+          <label class="fw-semibold fs-6 mb-2  text-start"
+                 translate="TRANSLATE.NEW_DISTRIBUTOR_PRODUCT_ICON"></label>
+        </div>
+        <div class="col-md-5">
+          <img [src]="url" width="120">
+          <button class=" ms-4 btn btn-danger btn-xs" (click)="ClearImage()"><i class="fa fa-trash"></i> <span translate="TRANSLATE.REMOVE_PARTNER_PRODUCT_ICON"></span></button>
+        </div>
+      </div>
+      }
+      @if (distributorOfferRegisterForm.get('ImageUrl')?.value) {
+      <div class="form-group row mt-7">
+        <div class="col-md-3 col-form-label">
+          <label class="fw-semibold fs-6 mb-2 text-start"
+                 translate="TRANSLATE.CURRENT_DISTRIBUTOR_PRODUCT_ICON"></label>
+        </div>
+        <div class="col-md-5">
+          <img [src]="distributorOfferRegisterForm.get('ImageUrl')?.value" width="120" />
+          <button class="ms-4 btn btn-danger btn-xs" (click)="ClearImage()"><i class="fa fa-trash"></i> <span translate="TRANSLATE.REMOVE_PARTNER_PRODUCT_ICON"></span></button>
+        </div>
+      </div>
+      }
+
+      @if(selectedCategory[0]?.Name !== 'LicenseSupported'){
+      <div class="form-group row mt-7">
+        <div class="col-md-3 col-form-label">
+          <label class="required fw-semibold fs-6 mb-2 text-start"
+                 translate="TRANSLATE.DISTRIBUTOR_BUNDLE_CREATION_LABEL_TEXT_TERM_DURATION"></label>
+        </div>
+        <div class="col-md-5">
+          <select [ngClass]="{'disabled-select':isEditMode}" class="form-select  form-select-sm fw-bold"
+                  formControlName="termDuration" (change)="termDurationChange()">
+            @for(option of termDuration; track $index){
+            <option [value]="option.validityData" [disabled]="isEditMode">
+              {{'TRANSLATE.'+option.validityDataDescriptionValue | translate}}
+            </option>
+            }
+          </select>
+          @if(distributorOfferRegisterForm.get('termDuration')?.errors?.required &&
+          (buttonClicked || distributorOfferRegisterForm.get('termDuration')?.touched)){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      }
+      <div class="form-group row mt-7">
+        <div class="col-md-3 col-form-label">
+          <label class="required fw-semibold fs-6 mb-2 text-start"
+                 translate="TRANSLATE.DISTRIBUTOR_OFFERS_LABEL_TEXT_BILLING_CYCLE"></label>
+        </div>
+        <div class="col-md-5">
+          <select [ngClass]="{'disabled-select':isEditMode}" class="form-select  form-select-sm fw-bold"
+                  formControlName="billingCycle" (change)="billingCycleChange($event)">
+            <option value="" disabled selected>{{"TRANSLATE.CUSTOM_OFFERS_SELECT_BILLING_CYCLE" | translate}}</option>
+            @for(option of billingCycles; track $index){
+            <option [value]="option.BillingCycleId" [disabled]="isEditMode">
+              {{'TRANSLATE.'+option.BillingCycleDescription | translate}}
+            </option>
+            }
+          </select>
+          @if(distributorOfferRegisterForm.get('billingCycle')?.errors?.required &&
+          (buttonClicked || distributorOfferRegisterForm.get('billingCycle')?.touched)){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      <div class="form-group row mt-7">
+        <div class="col-md-3 col-form-label">
+          <label class="required fw-semibold fs-6 mb-2 text-start"
+                 translate="TRANSLATE.DISTRIBUTOR_OFFERS_LABEL_TEXT_BILLING_Type"></label>
+        </div>
+        <div class="col-md-5">
+          <select [ngClass]="{'disabled-select':isEditMode}" class="form-select  form-select-sm fw-bold"
+                  formControlName="billingType">
+            <!-- <option value="">Please select a billing type.</option> -->
+            @for(option of billingTypes; track $index){
+            <option [value]="option.Id" [disabled]="isEditMode">
+              {{'TRANSLATE.'+option.Description | translate}}
+            </option>
+            }
+          </select>
+          @if(distributorOfferRegisterForm.get('billingType')?.errors?.required &&
+          (buttonClicked || distributorOfferRegisterForm.get('billingType')?.touched)){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      @if(selectedConsumptionType?.Name?.toLowerCase() !== 'usage' && selectedCategory[0]?.Name !== 'LicenseSupported'){
+      <div class="form-group row mt-7">
+        <div class="col-md-3 col-form-label">
+          <label class="fw-semibold fs-6 mb-2 text-start"
+                 translate="TRANSLATE.DISTRIBUTOR_OFFERS_LABEL_TEXT_IMMEDIATE_PROVISONING"></label>
+        </div>
+        <div class="col-md-5 d-flex align-items-center">
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" [disabled]="isEditMode" formControlName="isImmediateProvisioning">
+          </div>
+        </div>
+      </div>
+      }
+      <div class="form-group row mt-7">
+        <div class="col-md-3 col-form-label">
+          <label class="required fw-semibold fs-6 mb-2  text-start"
+                 translate="TRANSLATE.DISTRIBUTOR_OFFERS_LABEL_TEXT_SALE_TYPE"></label>
+        </div>
+        <div class="col-md-5">
+          <select [ngClass]="{'disabled-select':isEditMode}" class="form-select  form-select-sm fw-bold"
+                  formControlName="saleType">
+            <!-- <option value="">Please select a sale type.</option> -->
+            @for(option of saleTypes; track $index){
+            <option [value]="option.ID" [disabled]="isEditMode">
+              {{'TRANSLATE.'+option.Description | translate}}
+            </option>
+            }
+          </select>
+          @if(distributorOfferRegisterForm.get('saleType')?.errors?.required &&
+          (buttonClicked || distributorOfferRegisterForm.get('saleType')?.touched)){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      <div class="form-group row mt-7">
+        <div class="col-md-3 col-form-label">
+          <label class="required fw-semibold fs-6 mb-2  text-start"
+                 translate="TRANSLATE.DISTRIBUTOR_OFFERS_LABEL_TEXT_COST_PRICE"></label>
+          <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" [ngbTooltip]="'TRANSLATE.CUSTOM_OFFERS_TOOLTIP_TEXT_COST_PRICE' | translate">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+        </div>
+        <div class="col-md-5">
+          <span class="input-group">
+            <span class="input-group-prepend">
+              <span class="input-group-text">
+                {{currencyDetails.CurrencySymbol}}
+              </span>
+            </span>
+            <input type="number" [disabled]="isEditMode || (DistributorOfferDetails?.IsActive === false) || !(Permissions.HasSaveOrUpdateDistributorOffer === 'Allowed')" formControlName="costPrice" class="form-control form-control-sm ">
+          </span>
+          @if(distributorOfferRegisterForm.get('costPrice')?.errors?.required &&
+          (buttonClicked || distributorOfferRegisterForm.get('costPrice')?.touched)){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      <div class="form-group row mt-7">
+        <div class="col-md-3 col-form-label">
+          <label class="required fw-semibold fs-6 mb-2  text-start"
+                 translate="TRANSLATE.DISTRIBUTOR_OFFERS_LABEL_TEXT_SALE_PRICE"></label>
+          <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" [ngbTooltip]="'TRANSLATE.CUSTOM_OFFERS_TOOLTIP_TEXT_SALE_PRICE' | translate">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+        </div>
+        <div class="col-md-5">
+          <span class="input-group">
+            <span class="input-group-prepend">
+              <span class="input-group-text">
+                {{currencyDetails.CurrencySymbol}}
+              </span>
+            </span>
+            <input type="number" [disabled]="isEditMode || (DistributorOfferDetails?.IsActive === false) || !(Permissions.HasSaveOrUpdateDistributorOffer === 'Allowed')" formControlName="salePrice" class="form-control form-control-sm">
+          </span>
+          @if(distributorOfferRegisterForm.get('salePrice')?.errors?.required &&
+          (buttonClicked || distributorOfferRegisterForm.get('salePrice')?.touched)){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      <div class="form-group row mt-7">
+        <div class="col-md-3 col-form-label">
+          <label class="required fw-semibold fs-6 mb-2  text-start"
+                 translate="TRANSLATE.DISTRIBUTOR_OFFERS_LABEL_TEXT_CHARGE_PERIODS"></label>
+          <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" [ngbTooltip]="'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CHARGE_PERIODS_HELP_TEXT' | translate">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+        </div>
+        <div class="col-md-5">
+          <select [ngClass]="{ 'disabled-select': isEditMode }" class="form-select form-select-sm fw-bold"
+                  formControlName="billingPeriodType" [disabled]="IsDisabledCOBillingPeriodType || isEditMode">
+            <!-- <option value="">Please select a billing period type.</option> -->
+            @for(option of billingPeriodType; track $index){
+            <option [value]="option.ID">
+              {{'TRANSLATE.'+option.NameKey | translate}}
+            </option>
+            }
+          </select>
+          @if(distributorOfferRegisterForm.get('billingPeriodType')?.errors?.required &&
+          (buttonClicked || distributorOfferRegisterForm.get('billingPeriodType')?.touched)){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      <div class="form-group row mt-7">
+        <div class="col-md-3 col-form-label">
+          <label class="required fw-semibold fs-6 mb-2  text-start"
+                 translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_ON_PURCHASE_BILLING_ACTION"></label>
+          <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" [ngbTooltip]="'TRANSLATE.DISTRIBUTOR_OFFER_HELP_TEXT' | translate">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+        </div>
+        <div class="col-md-5">
+          <select [ngClass]="{ 'disabled-select': isEditMode || IsDisabledPurchaseAction }" class="form-select  form-select-sm fw-bold"
+                  [disabled]="isEditMode || IsDisabledPurchaseAction"
+                  formControlName="onPurchaseBillingActionName" (change)="ChangeBillingActionsForPurchase()">
+            <!-- <option value="">Please select a billing actions for purchase.</option> -->
+            @for(option of BillingActionsForPurchase; track $index){
+            <option [value]="option.ID">
+              {{'TRANSLATE.'+option.NameKey | translate}}
+            </option>
+            }
+          </select>
+          @if(distributorOfferRegisterForm.get('onPurchaseBillingActionName')?.errors?.required &&
+          (buttonClicked || distributorOfferRegisterForm.get('onPurchaseBillingActionName')?.touched)){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      <div class="form-group row mt-7">
+        <div class="col-md-3 col-form-label">
+          <label class="required fw-semibold fs-6 mb-2  text-start"
+                 translate="TRANSLATE.DISTRIBUTOR_OFFERS_LABEL_TEXT_ON_RELEASE_BILLING_ACTION"></label>
+          <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" [ngbTooltip]="'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_ON_RELEASE_BILLING_ACTION_HELP_TEXT' | translate">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+        </div>
+        <div class="col-md-5">
+          <select [ngClass]="{ 'disabled-select': isEditMode }" class="form-select  form-select-sm fw-bold"
+                  formControlName="onReleaseBillingActionName" [disabled]="isEditMode || IsDisabledReleaseAction">
+            <!-- <option value="">Please select a billing actions for release.</option> -->
+            @for(option of BillingActionsForRelease; track $index){
+            <option [value]="option.ID">
+              {{'TRANSLATE.'+option.NameKey | translate}}
+            </option>
+            }
+          </select>
+          @if(distributorOfferRegisterForm.get('onReleaseBillingActionName')?.errors?.required &&
+          (buttonClicked || distributorOfferRegisterForm.get('onReleaseBillingActionName')?.touched)){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      <div class="form-group row mt-7">
+        <div class="col-md-3 col-form-label">
+          <label class="fw-semibold fs-6 mb-2  text-start"
+                 translate="TRANSLATE.DISTRIBUTOR_OFFERS_LABEL_TEXT_AUTO_RENEWAL"></label>
+        </div>
+        <div class="col-md-5 d-flex align-items-center">
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" [disabled]="isEditMode" formControlName="isAutoRenewal">
+          </div>
+
+        </div>
+      </div>
+      <div class="form-group row mt-7">
+        <div class="col-md-3 col-form-label  text-start">
+          <label class="fw-semibold fs-6 mb-2"
+                 translate="TRANSLATE.DISTRIBUTOR_OFFERS_LABEL_TEXT_BUNDLING"></label>
+        </div>
+        <div class="col-md-5 d-flex align-items-center">
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" formControlName="isAvailableForBundling">
+          </div>
+        </div>
+      </div>
+    </form>
+    }
+    @if (this.view != 'view') {
+    <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3 mt-2">
+      <button type="button" class="btn btn-primary" (click)="saveCustomOffer()" [appPermission]="'ADD_DISTRIBUTOR_OFFERS'" appBusyLoader>
+        <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+      </button>
+
+    </div>
+    }
+  </div>
+</div>
+<swal #successSwal [swalOptions]="swalOptions" [title]="successMsg" icon="success" [focusCancel]="true"
+      [customClass]="{confirmButton: 'btn btn-success'}">
+</swal>

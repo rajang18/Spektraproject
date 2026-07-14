@@ -1,0 +1,108 @@
+<div class="card card-custom gutter-b card-stretch card-border">
+    <div class="card-header shop-item-title pt-2 shop-nce-card flex-nowrap">
+        <div class="card-title ms-0">
+            @if (product.ImageUrl) 
+            {
+                <div class="symbol">
+                    <img src="{{product.ImageUrl}}">
+                </div>
+            }
+            @if (!product.ImageUrl) 
+            {
+                <div class="symbol symbol-45 mr-3 pt-1">
+                    <span class="symbol-label symbol-label font-size-h3 bg-dark text-white">
+                        {{product.Name | formatforinitials}} 
+                    </span>
+                </div>
+            }
+            
+        </div>
+        <div class="card-toolbar text-right pt-0">
+            <div>
+                <div class="fs-5 text-info text-end text-end">
+                    <span class="text-danger" *ngIf="product.Discount != null && product.Discount > 0">
+                        <small>
+                            <span *ngIf="product.DiscountType == 'Percentage'">
+                                {{product.Discount}}%
+                            </span>
+                            <span *ngIf="product.DiscountType != 'Percentage'">
+                                {{product.Discount | CurrencyFilter : product.CurrencySymbol :
+                                product.CurrencyDecimalPlaces :
+                                product.CurrencyThousandSeperator : product.CurrencyDecimalSeperator }}
+                            </span>
+                            <span translate="TRANSLATE.LBL_OFF"></span>
+                        </small>
+                    </span>
+                </div>
+                <p>
+                    <span *ngIf="product.BillingCycleName !== null && product.BillingCycleName !== ''">
+                        <span *ngIf="product.BillingCycleName !== null && product.BillingCycleName !== ''"
+                            class="label fw-bold label-inline text-white badge ms-md-2" [ngClass]="{
+                                'bg-warning': product.BillingCycleName?.toLowerCase() === 'monthly',
+                                'bg-success': product.BillingCycleName?.toLowerCase() === 'annual',
+                                'bg-dark': product.BillingCycleName?.toLowerCase() === 'triennial',
+                                'bg-info': product.BillingCycleName?.toLowerCase() === 'onetime'
+                                }"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}"
+                            [translate]="'TRANSLATE.'+product.BillingCycleDescription"></span>
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+    <hr class="shop-tile-ruler" />
+    <div class="card-body p0 form">
+        <form class="form" role="form">
+            <div class="form-body pt0">
+                <!-- Product Name-->
+                <div class="row product-name-section">
+                    <div class="col-md-12">
+                        <span class="fw-bold text-gray-900">
+                            <a class="text-gray-900 cursor-pointer" [innerHTML]="product.Name | limitLengthWithoutDot: 35"
+                              ngbTooltip="{{product.Name}}"
+                              tooltipPlacement="bottom" (click)="callOnAction('offerDetails')"></a>
+                            @if (product.Name != null && product.Name.length > 70) {
+                            <span>...</span>
+                            }
+                          </span>
+                        <div>
+                            <span class="text-success linked-p-name-text">
+                                &nbsp;
+                                <!-- No linked subscriptions for now for Azure -->
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Detail -->
+                <div class="row shop-item-detail">
+                    <div class="col-md-12">
+                        <span [innerHTML]="product.Description | limitLengthWithoutDot: 150" class="p-detail-text"></span>
+                        <a (click)="callOnAction('offerDetails')" class="text-primary cursor-pointer"
+                             *ngIf="product.Description !=null && product.Description.length > 150" style="cursor: pointer;">
+                            {{'TRANSLATE.SHOP_TILE_HYPERLINK_READ_MORE' | translate}}
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="shop-item-footer shop-microsoft-card">
+                <!-- Quantity and Tags-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="input-group mb-3 input-group-sm">
+                            <div class="input-group-append">
+                                <!-- (click)="callPopup('addtocart');" -->
+                                <button type="button" class="btn btn-sm btn-success"
+                                    *ngIf="saveToCart === 'Allowed'" 
+                                    (click)="callOnAction('addtocart',true);" appBusyLoader>
+                                    {{'TRANSLATE.SHOP_PAGE_BUTTON_TEXT_ADD_TO_CART' | translate }} 
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

@@ -1,0 +1,37 @@
+<ng-template #actionHeader>
+    <button type="button" class="btn btn-light-primary btn-sm fw-semibold me-2" busy="" busy-add-classes="disabled" not-busy-remove-classes="disabled" (click)="backToInvoices()">
+        <i class="ki-outline ki-to-left fs-2"></i>
+        {{'TRANSLATE.INVOICE_INVOICE_BUTTON_BACK_TO_INVOICES' | translate }}
+    </button>
+    @if(orderId){
+    <a class="btn btn-light-primary btn-sm fw-semibold"  busy="" busy-add-classes="disabled" not-busy-remove-classes="disabled" (click)="goToOrdersPage()">
+        <i class="ki-outline ki-to-left fs-2"></i>
+        {{'TRANSLATE.CUSTOMER_PRODUCTS_BUTTON_TEXT_BACK_TO_ORDERS' | translate }}
+    </a>
+    }
+</ng-template>
+
+
+
+<div class="col-md-12">
+    <div class="card card-custom">
+        <div class="card-header card-header-stretch mt-2 border-bottom">
+                <ul class="nav nav-stretch nav-line-tabs border-transparent fs-5 fw-bold">
+                    @for (item of tabs; track $index) {
+                        <li class="nav-item" ng-repeat="t in vm.tabs" (click)="swtichTab(item)" *ngIf="item.visible">
+                            <a class="nav-link" [ngClass]="{'active text-primary':item.name === selectedTab}" data-toggle="tab" *ngIf="item.visible">{{item.heading}}</a>
+                        </li>
+                    }
+                   
+                </ul>
+        </div>
+        <div class="card-body">
+            <div class="tab-content">
+                <div class="tab-pane fade show active">
+                    <router-outlet></router-outlet>
+                    
+                </div>
+            </div>
+        </div>
+    </div>   
+</div>

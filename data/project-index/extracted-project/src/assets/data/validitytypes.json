@@ -1,0 +1,14 @@
+[
+    {
+      "ID": 1,
+      "Name": "Month(s)",
+      "NameKey": "VALIDITY_TYPE_NAME_MONTHS",
+      "Description": "VALIDITY_TYPE_DESC_MONTHS"
+    },
+    {
+      "ID": 2,
+      "Name": "Year(s)",
+      "NameKey": "VALIDITY_TYPE_NAME_YEARS",
+      "Description": "VALIDITY_TYPE_DESC_YEARS"
+    }
+  ]

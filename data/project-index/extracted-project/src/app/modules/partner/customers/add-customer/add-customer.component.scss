@@ -1,0 +1,11 @@
+::ng-deep {
+    app-add-customer {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+
+        // .ng-select .ng-select-container .ng-placeholder {
+        //     color: black !important;
+        // }
+    }
+}

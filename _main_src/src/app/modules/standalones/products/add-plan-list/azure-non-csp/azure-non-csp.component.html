@@ -1,0 +1,63 @@
+<div class="card card-border" style="margin-bottom: 0px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px;padding-right: 10px;">
+    <div class="card-body p-3">
+        <div class="row">
+            <div class="col-md-10">
+                <div class="row">
+                    <div [ngClass]="{'col-md-7 ml-3': product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE || product.BillingTypeName.toLowerCase() != cloudHubConstants.BILLING_TYPE_PRICE}">
+                        <strong class="ms-1">{{product.Name}}</strong>
+                        <br />
+                        <span class="label fw-bold label-inline text-white badge ms-md-2" [ngClass]="{
+                            'bg-warning': product.BillingCycleName?.toLowerCase() === 'monthly',
+                            'bg-success': product.BillingCycleName?.toLowerCase() === 'annual',
+                            'bg-dark': product.BillingCycleName?.toLowerCase() === 'triennial',
+                            'bg-info': product.BillingCycleName?.toLowerCase() === 'onetime'
+                            }"> {{'TRANSLATE.'+product.BillingCycleDescriptionKey | translate}} </span>
+                        @if(product.ProviderSettings && product.ProviderSettings.ProviderCategory) {
+                        <span class="label label-light-primary font-weight-bold badge"> {{product.ProviderSettings.ProviderCategory | translate}} </span>
+                        }
+                        @if(product.PlanProductMacroName != null) {
+                        <span class="label label-light-warning font-weight-bold badge" title="{{'TRANSLATE.PLAN_MACRO_DETAILS_LABEL_TEXT' | translate}}"> {{product.PlanProductMacroName | translate}}
+                            @if(product.PlanProductMacroValue != null && product.PlanProductMacroValue != 0) {
+                            <span>({{product.PlanProductMacroValue | translate}})
+                            </span>
+                            }
+                        </span>
+                        }
+                    </div>
+                    @if(product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE) {
+                    <div class="col-md-2 text-end">
+                        <span>{{'TRANSLATE.LABLE_TEXT_COST_TO_PARTNER' | translate}}</span>
+                        <br />
+                        <strong>{{product.PriceforPartner | CurrencyFilter : product.CurrencySymbol :
+                            product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                            product.CurrencyDecimalSeperator }}</strong>
+                    </div>
+                    <div class="col-md-2 text-end">
+                        <span>{{'TRANSLATE.LABEL_TEXT_RETAIL_PRICE' | translate}}</span>
+                        <br />
+                        <strong>{{product.ProviderSellingPrice | CurrencyFilter : product.CurrencySymbol :
+                            product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                            product.CurrencyDecimalSeperator }}</strong>
+                    </div>
+                    }
+                    <div class="col-md-2">
+                        <span>{{'TRANSLATE.LABEL_TEXT_BILLING_TYPE' | translate}}</span>
+                        <br />
+                        <strong>{{ product.BillingTypeName }}</strong>
+                    </div>
+                    @if(product.BillingTypeName.toLowerCase() !== cloudHubConstants.BILLING_TYPE_PRICE){}
+                    <div class="col-md-2">&nbsp;</div>
+                </div>
+            </div>
+            <div class="col-md-2 text-right text-end">
+                <div class="actions"  *ngIf="product.Settings.IsAddon == 'false'" [appPermission]="'SAVE_PLAN'" [hidden]="!showAddButton">
+                    <div class="btn-group">
+                        <a (click)="callOnAction(product, 'addtoplan');" class="btn btn-primary btn-sm" href="javascript:void(0)" [hidden]="!showAddButton">
+                            {{'TRANSLATE.BUTTON_TEXT_ADD' | translate}}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,97 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm btn-lg btn-md btn-xs fw-semibold btn-light-primary text-nowrap"
+            (click)="backToList()">
+            <i class="ki-outline ki-to-left fs-2">
+            </i> <span translate="TRANSLATE.USERS_VIEWLICENSES_EDITLICENSES_BUTTON_TEXT_BACK_TO_USERS"></span>
+        </button>
+    </div>
+</ng-template>
+@if (permissions.HasAccessUserLicenseTrackingView === 'Allowed') {
+<div class="card" *ngIf="this.permissions.HasAccessUserLicenseTrackingView === 'Allowed'">
+    <div class="card-body overflow-auto">
+        <ng-template #name let-data="adtData" let-emitter="captureEvents">
+            <div>
+                <span class="fw-semibold">
+                    <span *ngIf="data.IsProcessInProgress === true"><i class="fa fa-spin fa-spinner"></i></span>
+                    <input class="form-check-input me-1" type="checkbox" *ngIf="data.IsProcessInProgress === false"
+                        [(ngModel)]="data.IsOfferAssigned"
+                        (change)="AddToUpdateModel(data)">
+                    {{data.PurchasedProductName}}
+                    <sup *ngIf="data.IsAddon"><span translate="USER_LICENSE_MANAGEMENT_SUPERTEXT_ADDON"
+                            class="badge badge-primary"></span></sup>
+                    <br />
+                    <span class="form-check" *ngIf="data.LinkedProductName !==undefined && data.LinkedProductName !== null">
+                        <span class="small"
+                            *ngIf="data.LinkedProductName !==undefined && data.LinkedProductName !== null">
+                            &nbsp;&nbsp; {{data.LinkedProductName}}
+                        </span>
+                        <sup *ngIf="data.LinkedProductName !==undefined && data.LinkedProductName !== null">
+                            <span translate="USER_LICENSE_MANAGEMENT_SUPERTEXT_Linked"
+                                class="badge badge-primary"></span>
+                        </sup>
+                    </span>
+                </span>
+            </div>
+        </ng-template>
+        <ng-template #summary let-data="adtData" let-emitter="captureEvents">
+            <span
+                [innerHTML]="'TRANSLATE.USERS_BULKUSERUPLOADSTATUS_REMAINING_OUTOF' | translate :{AvailableUnits: data.AvailableLicenses,TotalUnits: data.TotalLicense}">
+            </span>
+            &nbsp; <a *ngIf="!data.IsOfferAssigned && data.AvailableUnits <=0"><span
+                    translate="TRANSLATE.USERS_BUY_MORE"></span></a>
+        </ng-template>
+        <ng-container *ngIf="datatableConfig">
+
+            <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" [searchFilter]="false">
+            </app-c3-table>
+
+
+        </ng-container>
+        <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3">
+            <button type="button" class="btn btn-primary btn-sm" (click)="updateLicencesLicenseTracking()"
+                [appPermission]="'ASSIGN_PROVIDER_LICENSES_TO_PROVIDER_CUSTOMER_USER'">
+                {{ 'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate }}
+            </button>
+        </div>
+    </div>
+</div>
+}@else if(this.permissions.HasAccessUserLicenseTrackingView === 'Denied') {
+
+<div class="card">
+    <div class="card-body overflow-auto">
+        <ng-template #name let-data="adtData" let-emitter="captureEvents">
+            <div>
+                <span class="form-check fw-semibold">
+                    <input class="form-check-input me-2" type="checkbox" [(ngModel)]="data.IsOfferAssigned"
+                        [disabled]="(!data.IsOfferAssigned && data.AvailableUnits <=0) || permissions.HasLicenseAssignment !== 'Allowed'"
+                        (change)="ChangeAssignment(data.ProductSku.Id)">
+                    {{data.ProductSku.Name}}
+                </span>
+            </div>
+        </ng-template>
+        <ng-template #summary let-data="adtData" let-emitter="captureEvents">
+            <div>
+                <span class="me-2"
+                    [innerHTML]="'TRANSLATE.USERS_BULKUSERUPLOADSTATUS_REMAINING_OUTOF' | translate :{AvailableUnits: data.AvailableUnits,TotalUnits: data.TotalUnits}">
+                </span>
+                <a [routerLink]="['/customer/products']" *ngIf="!data.IsOfferAssigned && data.AvailableUnits <= 0">
+                    <span translate="TRANSLATE.USERS_BUY_MORE"></span></a>
+            </div>
+        </ng-template>
+        <ng-container *ngIf="datatableConfig">
+
+            <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" [searchFilter]="false">
+            </app-c3-table>
+
+
+        </ng-container>
+        <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3">
+            <button type="button" class="btn btn-primary btn-sm" (click)="UpdateLicences()"
+                [appPermission]="'ASSIGN_PROVIDER_LICENSES_TO_PROVIDER_CUSTOMER_USER'">
+                {{ 'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate }}
+            </button>
+        </div>
+    </div>
+</div>
+}

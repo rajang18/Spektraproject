@@ -1,0 +1,7 @@
+::ng-deep {
+    app-address-row {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}

@@ -1,0 +1,22 @@
+<div class="m-4">
+    <ng-container *ngIf="!!datatableConfig2">
+        <app-c3-table [reload]="reloadEvent3"
+            [datatableConfig]="datatableConfig2">
+        </app-c3-table>
+    </ng-container>
+</div>
+
+<ng-template #statusTemplate let-row="adtData" let-emitter="captureEvents">
+    <div>
+        <span *ngIf="row.Status === 'Success'" translate="TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_SUCCESS"></span>
+        <span class="text-warning" *ngIf="row.Status === 'Warning'" translate="TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_WARNING"></span>
+        <span *ngIf="row.Status === 'Failed'" translate="TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_FAILED"></span>
+        <span class="text-danger" *ngIf="row.Status === 'Error'" translate="TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_ERROR"></span>
+        <span *ngIf="row.Status === 'Queued'" translate="TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_QUEUED"></span>
+        <span *ngIf="row.Status === 'In Progress'" translate="TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_IN_PROGRESS"></span>
+        <span class="text-danger" *ngIf="row.Status === 'Abandoned'" translate="TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_ABANDONED"></span>
+        <span *ngIf="row.Status === 'Processing'" translate="TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_IN_PROGRESS"></span>
+        <span class="text-danger" *ngIf="row.Status === 'Stopped'" translate="TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_STOPPED"></span>
+        <span class="text-warning" *ngIf="row.Status === 'Deactivated'">{{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_DEACTIVATED' | translate}}</span>
+    </div>
+</ng-template>

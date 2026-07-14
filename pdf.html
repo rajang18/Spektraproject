@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>redBus Ticket - Abhinav Tyagi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+        .ticket-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 25px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #d84e55;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #d84e55;
+        }
+        .ticket-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #555;
+            text-align: right;
+        }
+        .greeting {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        .pnr-box {
+            background-color: #f9f9f9;
+            border: 1px dashed #bbb;
+            padding: 10px;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .section-title {
+            background-color: #f1f1f1;
+            padding: 6px 10px;
+            font-weight: bold;
+            font-size: 14px;
+            margin-top: 20px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            border-left: 3px solid #d84e55;
+        }
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            font-size: 14px;
+        }
+        .detail-item strong {
+            display: block;
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 3px;
+        }
+        .detail-item span {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .policy-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+        .policy-table th, .policy-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .policy-table th {
+            background-color: #f9f9f9;
+        }
+        .terms {
+            font-size: 11px;
+            color: #777;
+            line-height: 1.5;
+            margin-top: 20px;
+        }
+        .terms ol {
+            padding-left: 15px;
+            margin-top: 5px;
+        }
+        .print-btn {
+            display: block;
+            width: 100%;
+            max-width: 200px;
+            margin: 20px auto 0 auto;
+            padding: 10px;
+            background-color: #d84e55;
+            color: white;
+            text-align: center;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        @media print {
+            body { background: none; padding: 0; }
+            .ticket-container { box-shadow: none; border: none; max-width: 100%; padding: 0; }
+            .print-btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="ticket-container">
+    <div class="header">
+        <div class="logo">redBus</div>
+        <div class="ticket-title">Ticket Information</div>
+    </div>
+
+    <div class="greeting">
+        <strong>Alwar to Gurugram (Gurgaon)</strong> on Thursday, July 9, 2026[cite: 1]
+    </div>
+    <div style="margin-bottom: 15px; font-size: 14px;">Hey Abhinav Tyagi,</div>
+
+    <div class="pnr-box">
+        <strong>Ticket Number:</strong> TV8324824412 &nbsp;|&nbsp; <strong>PNR No:</strong> 1226457[cite: 1]
+        <br><br>
+        Thank you for booking your bus ticket with redBus. Here are the ticket details for your upcoming trip from Alwar to Gurugram (Gurgaon) on Thursday, July 9, 2026.[cite: 1]
+    </div>
+
+    <div class="section-title">Ticket Details</div>
+    <div class="details-grid">
+        <div class="detail-item">
+            <strong>JOURNEY DATE AND TIME</strong>
+            <span>09/07/2026, 06:30 AM</span>
+        </div>
+        <div class="detail-item">
+            <strong>TRAVELS</strong>
+            <span>Goldline Super Deluxe[cite: 1]</span>
+            <div style="font-size:12px; color:#555;">A/C Seater/Sleeper (2+1)[cite: 1]</div>
+        </div>
+        <div class="detail-item">
+            <strong>TICKET PRICE</strong>
+            <span style="color: #d84e55;">Rs. 1059.00</span>
+            <div style="font-size:11px; color:#777;">(inclusive of GST)[cite: 1]</div>
+        </div>
+        <div class="detail-item">
+            <strong>SEAT NO</strong>
+            <span>S3[cite: 1]</span>
+        </div>
+    </div>
+
+    <div class="section-title">Route Details</div>
+    <div class="details-grid">
+        <div class="detail-item">
+            <strong>BOARDING POINT</strong>
+            <span>Alwar</span>
+            <div style="font-size:12px; color:#555; margin-top:3px;">
+                Main Bus Stand, Alwar<br>
+                Landmark: Main Bus Stand<br>
+                Contact: 8159848477, 9166681239[cite: 1]
+            </div>
+        </div>
+        <div class="detail-item">
+            <strong>DROPPING POINT</strong>
+            <span>Gurugram (Gurgaon)[cite: 1]</span>
+            <div style="font-size:12px; color:#555; margin-top:3px;">
+                RAJIV CHOWK Starting Flyover[cite: 1]<br>
+                <strong>DROPPING DATE & TIME:</strong><br>
+                09/07/2026, 08:30 AM
+            </div>
+        </div>
+    </div>
+
+    <div class="section-title">Passenger Details</div>
+    <table class="policy-table" style="margin-top: 0;">
+        <thead>
+            <tr>
+                <th>Passenger Name</th>
+                <th>Age & Gender</th>
+                <th>Seat Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Abhinav Tyagi</td>
+                <td>27 Yrs, MALE[cite: 1]</td>
+                <td>S3[cite: 1]</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="section-title">Cancellation Policy</div>
+    <table class="policy-table">
+        <thead>
+            <tr>
+                <th>Cancellation Time</th>
+                <th>Cancellation Charges</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Before 2nd Jul 06:30 AM</td>
+                <td>Rs. 105.90 (10%)</td>
+            </tr>
+            <tr>
+                <td>After 2nd Jul 06:30 AM & Before 6th Jul 06:30 AM</td>
+                <td>Rs. 105.90 (10%)</td>
+            </tr>
+            <tr>
+                <td>After 6th Jul 06:30 AM & Before 8th Jul 06:30 AM</td>
+                <td>Rs. 317.70 (30%)</td>
+            </tr>
+            <tr>
+                <td>After 8th Jul 06:30 AM & Before 8th Jul 06:30 PM</td>
+                <td>Rs. 529.50 (50%)</td>
+            </tr>
+            <tr>
+                <td>After 8th Jul 06:30 PM & Before 9th Jul 06:30 AM</td>
+                <td>Rs. 1059.00 (100%)</td>
+            </tr>
+        </tbody>
+    </table>
+    <div style="font-size: 11px; color: #666; margin-top: 5px;">
+        • Cancellation charges are computed on a per-seat basis.[cite: 1]<br>
+        • Cancellation charges mentioned above exclude GST.[cite: 1]
+    </div>
+
+    <div class="section-title">Terms and Conditions</div>
+    <div class="terms">
+        <ol>
+            <li>redBus is an online ticketing platform. It does not operate bus services of its own.[cite: 1]</li>
+            <li>The departure time mentioned on the ticket is a tentative timing. However, the bus will not leave the source before the time mentioned.[cite: 1]</li>
+            <li>Passengers are required to furnish a digital copy of the e-ticket and a valid identity proof at the time of boarding.[cite: 1]</li>
+            <li>Each passenger is allowed to carry one bag of up to 10 kgs and one personal item of up to 5 kgs.[cite: 1]</li>
+            <li>Cancellation of this ticket is NOT allowed after the bus departure time.[cite: 1]</li>
+        </ol>
+    </div>
+</div>
+
+<button class="print-btn" onclick="window.print()">Save as PDF / Print</button>
+
+</body>
+</html>

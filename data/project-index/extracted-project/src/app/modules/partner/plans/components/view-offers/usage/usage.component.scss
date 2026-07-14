@@ -1,0 +1,6 @@
+.manage-screen-cards {
+    position: relative;
+    height: calc(94vh - (var(--bs-app-footer-height) + var(--bs-app-header-height) + var(--bs-app-toolbar-height) + 100px));
+    overflow-y: auto;
+    overflow-x: hidden;
+}

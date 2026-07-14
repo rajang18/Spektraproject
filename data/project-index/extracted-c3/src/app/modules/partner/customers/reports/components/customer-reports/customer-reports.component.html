@@ -1,0 +1,51 @@
+<div class="card card-custom">
+  <!-- begin::Header -->
+  <div class="card-header card-header-stretch overflow-auto">
+    <ul class="nav nav-stretch nav-line-tabs fw-bold border-transparent flex-nowrap" role="tablist">
+      <li class="nav-item">
+        <a
+          routerLink="productreports"
+          routerLinkActive="active"
+          class="nav-link cursor-pointer"
+          role="tab"
+        >
+        {{'TRANSLATE.CUSTOMER_REPORT_WITH_PURCHASED_PRODUCTS_TITLE' | translate}}       
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          routerLink="licensechangereport"
+          routerLinkActive="active"
+          class="nav-link cursor-pointer"
+          role="tab"
+        >
+        {{'TRANSLATE.MENU_LICENSE_CHANGE' | translate}}       
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          routerLink="licensesummaryreport"
+          routerLinkActive="active"
+          class="nav-link cursor-pointer"
+          role="tab"
+        >
+        {{'TRANSLATE.MENU_LICENSE_SUMMARY_REPORT' | translate}}       
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          routerLink="subscriptionhistory"
+          routerLinkActive="active"
+          class="nav-link cursor-pointer"
+          role="tab"
+        >
+        {{'TRANSLATE.SUBSCRIPTION_HISTORY_PORTLET_HEADER_SUBSCRIPTION_HISTORY' | translate}}       
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="card-body">
+    <router-outlet></router-outlet>
+  </div>
+</div>

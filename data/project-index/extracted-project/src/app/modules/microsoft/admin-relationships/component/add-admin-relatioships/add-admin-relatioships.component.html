@@ -1,0 +1,343 @@
+<ng-template #actionHeader>
+  <div class="header-actions d-flex align-items-center gap-1 gap-lg-1">
+    <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="showHelpText = !showHelpText">
+      <span translate="TRANSLATE.CHANGE_PLAN_HELP"></span>&nbsp;
+      <i class="fa fa-question-circle"></i>
+    </button>
+    <button type="button" class="btn btn-sm fw-bold btn-light-primary ms-2" (click)="backToAdminRelatiosnhipsList()"
+      appBusyLoader>
+      <i class="ki-outline ki-to-left fs-2"></i>{{'TRANSLATE.BACK_TO_ADMIN_RELATIONSHIPS' | translate}}
+    </button>
+  </div>
+</ng-template>
+<div class="card mb-7" *ngIf="showHelpText && pageType == 'form'">
+  <div class="card-body overflow-auto">
+    <div class="m-heading-1 border-green m-bordered">
+      <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+        <div class="card-title mb-5">
+          <h6 class="card-label"><span translate="TRANSLATE.ADMIN_RELATIONSHIPS_FORM_INSTRUCTION"></span></h6>
+        </div>
+        <div class="row m-heading-1 border-green m-bordered ms-5">
+          <ol>
+            <li>
+              <span translate="TRANSLATE.ADMIN_RELATIONSHIPS_FORM_INSTRUCTION_PART_1"></span>
+            </li>
+          </ol>
+        </div>
+        <div>
+          <span class="text-dark font-size-lg"
+            [innerHTML]="'TRANSLATE.ADMIN_RELATIONSHIPS_FORM_INSTRUCTION_NOTE' | translate"></span>
+          <span translate="TRANSLATE.ADMIN_RELATIONSHIPS_FORM_INSTRUCTION_NOTE_1"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card mb-7" *ngIf="showHelpText && pageType == 'details'">
+  <div class="card-body overflow-auto">
+    <div class="m-heading-1 border-green m-bordered">
+      <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+        <div class="card-title mb-5">
+          <h6 class="card-label"><span
+              [innerHTML]="'TRANSLATE.ADMIN_RELATIONSHIPS_FORM_INSTRUCTION_NOTE' | translate"></span></h6>
+        </div>
+        <div class="row m-heading-1 border-green m-bordered ms-5">
+          <ul>
+            <li>
+              <span translate="TRANSLATE.ADMIN_RELATIONSHIPS_FORM_INSTRUCTION_PART_2"></span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="pageType == 'form'">
+  <div class="card">
+    <div class="card-body">
+      @if (isPartnerLevel) {
+      <div class="row form-group mb-7">
+        <div class="col-md-3 text-start">
+          <label class="fw-semibold fs-6 mt-2">
+            <span translate="TRANSLATE.AZURE_REPPORT_CUSTOMERS"></span> <span class="text-danger me-1">
+              *</span>
+            <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+              ngbTooltip="{{'TRANSLATE.AZURE_REPPORT_CUSTOMERS_TOOLTIP' | translate}}">
+              <span class="path1"></span>
+              <span class="path2"></span>
+              <span class="path3"></span>
+            </i>
+          </label>
+        </div>
+        <div class="col-md-5 pt-1 ps-2">
+          <ng-select [(ngModel)]="currentC3CustomerId" (change)="onCustomerChange();hideCursorInNgSelect()">
+            @for (item of allCustomers; track $index) {
+            <ng-option [value]="item.C3Id">{{item.Name}}</ng-option>
+            }
+          </ng-select>
+        </div>
+      </div>
+      }
+      <div class="form-group row mb-7">
+        <div class="col-md-3 text-start">
+          <label class="fw-semibold fs-6 mt-2">
+            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_TENANTS"></span> <i
+              class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+              ngbTooltip="{{'TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_MICROSOFT_TENANT_SELECTOR' | translate}}">
+              <span class="path1"></span>
+              <span class="path2"></span>
+              <span class="path3"></span>
+            </i>
+          </label>
+        </div>
+        <div class="col-md-5 pt-1 ps-2">
+          <ng-select [disabled]="tenants.length <2" [(ngModel)]="selectedServiceProviderCustomer"
+            [compareWith]="compareItems">
+            <ng-option *ngFor="let item of tenants;" [value]="item">
+              {{item.CustomerName}}
+              ({{item.CustomerRefId}})</ng-option>
+          </ng-select>
+        </div>
+      </div>
+      <form [formGroup]="addRelationshipForm">
+        <div class="form-group row">
+          <div class="form-group row mb-7">
+            <div class="col-md-3 text-start">
+              <label class="fw-semibold fs-6 mt-2"
+                translate="TRANSLATE.ADMIN_RELATIONSHIPS_FORM_LABLE_ADMIN_RELATIONSHIP_NAME">
+                <span class="text-danger ms-1">*</span>
+                <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" aria-hidden="true"
+                  ngbTooltip="{{'TRANSLATE.ADMIN_RELATIONSHIPS_FORM_LABLE_ADMIN_RELATIONSHIP_NAME_TOOLTIP' | translate}}">
+                  <span class="path1"></span>
+                  <span class="path2"></span>
+                  <span class="path3"></span></i>
+              </label>
+            </div>
+            <div class="col-md-5 mt-1">
+              <input type="text" class="form-control form-control-sm form-control mb-1"
+                formControlName="addRelationshipName"
+                placeholder="{{'TRANSLATE.ADMIN_RELATIONSHIPS_FORM_PLACEHOLDER_LABLE_ADMIN_RELATIONSHIP_NAME' | translate}}"
+                (blur)="validateDisplayName()" (keyup)="validatingUniqueName = true">
+              @if(addRelationshipForm.get('addRelationshipName').valid && !validatingUniqueName){
+              @if(uniqueDisplayName && validateName && validateName.length > 0){
+              <span class="d-flex align-items-center mt-1"><i
+                  class="ki-outline ki-check-circle fs-3 text-success me-1"></i>
+                {{validateName}}
+                {{'TRANSLATE.ADMIN_RELATIONSHIPS_FORM_LABLE_UNIQUE_ADMIN_RELATIONSHIP_NAME_IS_AVAILABLE' |
+                translate}}</span>
+              }
+              @if(!uniqueDisplayName && validateName && validateName.length > 0) {
+              <span class="d-flex align-items-center mt-1"><i
+                  class="ki-outline ki-cross-circle fs-3 text-danger me-1"></i>
+                {{validateName}}
+                {{'TRANSLATE.ADMIN_RELATIONSHIPS_FORM_LABLE_UNIQUE_ADMIN_RELATIONSHIP_NAME_IS_NOT_AVAILABLE' |
+                translate}}
+              </span>
+              }
+              }
+              @if(addRelationshipForm.get('addRelationshipName')?.errors?.required
+              &&(addRelationshipForm.get('addRelationshipName')?.touched ||
+              isSubmit)){
+              <span class="text-danger">{{'TRANSLATE.REQUIRED_FIELD_TEXT'
+                | translate}}</span>
+              }
+              @if(addRelationshipForm.get('addRelationshipName')?.errors?.maxlength){
+              <span
+                class="text-danger">{{'TRANSLATE.ADMIN_RELATIONSHIPS_FORM_LABLE_ADMIN_RELATIONSHIP_NAME_MIN_AND_MAX_WARNING'
+                | translate}}</span>
+              }
+            </div>
+          </div>
+          <div class="form-group row mb-7">
+            <div class="col-md-3 text-start">
+              <label class="required fw-semibold fs-6 mt-2"
+                translate="TRANSLATE.ADMIN_RELATIONSHIPS_FORM_LABLE_DURATION"></label>
+            </div>
+            <div class="col-md-5">
+              <input type="number" class="form-control form-control-sm form-control mb-1" formControlName="duration"
+                min="1">
+              @if(addRelationshipForm.get('duration')?.errors?.required
+              &&(addRelationshipForm.get('duration')?.touched ||
+              isSubmit)){
+              <span class="text-danger">{{'TRANSLATE.REQUIRED_FIELD_TEXT' | translate}}</span>
+              }
+              @if(addRelationshipForm.get('duration')?.errors?.min){
+              <span class="text-danger">{{'TRANSLATE.ADMIN_RELATIONSHIPS_FORM_LABLE_DURATION_MIN_WARNING' |
+                translate}}</span>
+              }
+              @if(addRelationshipForm.get('duration')?.errors?.max){
+              <span class="text-danger">{{'TRANSLATE.ADMIN_RELATIONSHIPS_FORM_LABLE_DURATION_MAX_WARNING' |
+                translate}}</span>
+              }
+              @if(addRelationshipForm.get('duration')?.errors?.pattern){
+              <span class="text-danger">{{'TRANSLATE.ADMIN_RELATIONSHIPS_FORM_LABLE_DURATION_PATTERN_WARNING' | translate:
+                {nearestMinValue: math.floor(addRelationshipForm.get('duration')?.value),
+                nearestMaxValue:math.ceil(addRelationshipForm.get('duration')?.value) } }}</span>
+              }
+            </div>
+          </div>
+          <div class="form-group row mb-7">
+            <div class="col-md-3 text-start">
+              <label class="fw-semibold fs-6 mt-3"
+                translate="TRANSLATE.ADMIN_RELATIONSHIPS_FORM_LABLE_REQUESTED_MICROSOFT_ENTRA_ROLE">
+                <span class="text-danger ms-1">*</span>
+                <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" aria-hidden="true"
+                  ngbTooltip="{{'TRANSLATE.ADMIN_RELATIONSHIPS_FORM_LABLE_REQUESTED_MICROSOFT_ENTRA_ROLE_TOOLTIP' | translate}}">
+                  <span class="path1"></span>
+                  <span class="path2"></span>
+                  <span class="path3"></span></i>
+              </label>
+            </div>
+            <div class="col-md-5 mt-1">
+              <button class="btn btn-light-primary btn-sm mb-2"
+                (click)="selectMicrosoftEntraRoles()">{{'TRANSLATE.ADMIN_RELATIONSHIPS_FORM_BUTTON_SELECT_MICROSOFT_ENTRA_ROLES'
+                | translate}}</button><br />
+              <span class="text-gray-500 fs-8"
+                *ngIf="selectedEntraRoles.length == 0">{{'TRANSLATE.ADMIN_RELATIONSHIPS_FORM_LABLE_NO_MICROSOFT_ENTRA_ROLES_SELECTED'
+                | translate}}</span>
+              <span *ngIf="selectedEntraRoles.length > 0">{{selectedEntraRolesNames}}</span><br />
+              @if(selectedEntraRoles.length == 0
+              && isSubmit){
+              <span class="text-danger">{{'TRANSLATE.REQUIRED_FIELD_TEXT' | translate}}</span>
+              }
+              @if(entraRoleGlobalAdministartionExist){
+              <span class="d-flex align-items-center text-danger">
+                <i class="ki-outline ki-information fs-5 me-1 text-danger"></i><span>{{'TRANSLATE.ADMIN_RELATIONSHIPS_FORM_MICROSOFT_ENTRA_ROLE_GLOABAL_ADMINISTRATION_WARNING'
+                  | translate}}</span>
+              </span> }
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-md-3 text-start">
+              <label class="fw-semibold fs-6 mt-2" translate="TRANSLATE.ADMIN_RELATIONSHIPS_FORM_LABLE_AUTO_EXTEND">
+              </label>
+            </div>
+            <div class="col-md-5 mt-3">
+              <div class="form-check mb-2">
+                <input type="checkbox" class="form-check-input" formControlName="autoExtend">
+              </div>
+              @if(addRelationshipForm.get('autoExtend')?.value == true){
+              <span class="d-flex align-items-center">
+                <i class="ki-outline ki-information-2 fs-5 me-1"></i><span>{{'TRANSLATE.ADMIN_RELATIONSHIPS_FORM_LABLE_AUTO_EXTEND_INFO'
+                  | translate}}</span>
+              </span>
+              }
+              @if(entraRoleGlobalAdministartionExist){
+              <span class="d-flex align-items-center text-danger">
+                <i class="ki-outline ki-information fs-5 me-1 text-danger"></i><span>{{'TRANSLATE.ADMIN_RELATIONSHIPS_FORM_MICROSOFT_ENTRA_ROLE_GLOABAL_ADMINISTRATION_WARNING_1'
+                  | translate}}</span>
+              </span>
+              }
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3">
+      <button type="button" class="btn btn-secondary btn-sm me-2" (click)="backToAdminRelatiosnhipsList()"
+        appBusyLoader>
+        <span translate="TRANSLATE.ADMIN_RELATIONSHIPS_FORM_BUTTON_CANCEL"></span>
+      </button>
+      <button type="button" class="btn btn-primary btn-sm me-2" (click)="submit()" appBusyLoader>
+        <span translate="TRANSLATE.ADMIN_RELATIONSHIPS_FORM_BUTTON_FINALIZE"></span>
+      </button>
+    </div>
+  </div>
+</div>
+<div *ngIf="pageType == 'details'">
+  <div class="card">
+    <div class="card-body">
+      <div class="mb-7">
+        <label class="fw-semibold fs-6 mt-2"
+          translate="TRANSLATE.ADMIN_RELATIONSHIPS_FORM_LABLE_ADMIN_RELATIONSHIP_NAME">
+        </label>
+        <div>
+          {{adminRelationhipDetails.displayName}}
+        </div>
+      </div>
+      <div class="mb-7">
+        <label class="fw-semibold fs-6 mt-2" translate="TRANSLATE.ADMIN_RELATIONSHIPS_FORM_LABLE_DURATION">
+        </label>
+        <div>
+          {{adminRelationhipDetails.durationInDays}}   
+        </div>
+      </div>
+      <div class="mb-7">
+        <label class="fw-semibold fs-6 mt-2"
+          translate="TRANSLATE.ADMIN_RELATIONSHIPS_FORM_LABLE_REQUESTED_MICROSOFT_ENTRA_ROLE">
+        </label>
+        <div *ngIf="microsoftEntraRolesForDetails.length >0">
+          {{ commaSeparatedNames }} 
+        </div>
+      </div>
+      <div class="mb-7">
+        <label class="fw-semibold fs-6 mt-2" translate="TRANSLATE.ADMIN_RELATIONSHIPS_FORM_LABLE_AUTO_EXTEND">
+        </label>
+        <div *ngIf="adminRelationhipDetails.autoExtendDuration == 'P180D'">
+          {{'TRANSLATE.ADMIN_RELATIONSHIPS_FORM_LABLE_AUTO_EXTEND_YES' | translate}}
+        </div>
+        <div *ngIf="adminRelationhipDetails.autoExtendDuration == 'PT0S'">
+          {{'TRANSLATE.ADMIN_RELATIONSHIPS_FORM_LABLE_AUTO_EXTEND_NO' | translate}}
+        </div>
+      </div>
+      <div>
+        <label class="fw-semibold fs-6 mt-2" translate="TRANSLATE.ADMIN_RELATIONSHIPS_FORM_LABLE_REQUEST">
+        </label>
+        <textarea [(ngModel)]="requestMessage" (change)="onRequestMessageChange()" rows="16"
+          class="mt-2 form-control textarea-autoresizing"></textarea>
+        <div class="form-group row float-end mt-2">
+          <div class="col-md-12">
+            <div class="float-right">
+              <a class="btn btn-sm btn-light-primary me-2" (click)="confirmCopy()">
+                <i class="ki-outline ki-copy fs-6 "></i>
+                <span translate="TRANSLATE.BTN_TEXT_COPY_TO_CLIPBOARD"></span>
+              </a>
+              <a class="btn btn-sm btn-light-primary"
+                href="mailto:?subject={{emailSubject}}&amp;body={{encodedrequestMessage}}" data-bi-id="OpenInEmailLink"
+                data-bi-name="OpenInEmailLink" data-bi-slot="4009">
+                <i class="ki-outline ki-sms fs-6"></i>
+                <span translate="TRANSLATE.BTN_TEXT_OPEN_IN_EMAIL"></span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3">
+      <button type="button" class="btn btn-primary btn-sm me-2" (click)="backToAdminRelatiosnhipsList()" appBusyLoader>
+        <span translate="TRANSLATE.ADMIN_RELATIONSHIPS_FORM_BUTTON_DONE"></span>
+      </button>
+    </div>
+  </div>
+</div>
+<ng-template #micosoftEntraRoles let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modal-title"><span
+          translate="TRANSLATE.ADMIN_RELATIONSHIPS_MICROSOFT_ENTRA_ROLES_POPUP_TITLE"></span></h3>
+      <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="cancel()" data-bs-dismiss="modal">
+        <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+      </div>
+    </div>
+    <div class="modal-body">
+      <span class="fw-bold">{{'TRANSLATE.ADMIN_RELATIONSHIPS_MICROSOFT_ENTRA_ROLES_POPUP_SUB_TITLE' |
+        translate}}</span><br>
+      <a href="https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/permissions-reference#available-roles"
+        target="_blank">{{'TRANSLATE.ADMIN_RELATIONSHIPS_MICROSOFT_ENTRA_ROLES_POPUP_LABLE_LEARN_MORE_ABOUT_MICROSOFT_ENTRA_ROLES'
+        | translate}}</a>
+      <ng-container *ngIf="datatableConfig">
+        <div class="card-body mt-2 entrrole-list" infiniteScroll [infiniteScrollDistance]="0.3"
+          [infiniteScrollThrottle]="50" [scrollWindow]="false">
+          <app-c3-table [datatableConfig]="datatableConfig" [selection]="true" (onSelection)="handleSelection($event)" [hideSelectAllLabel]="true">
+          </app-c3-table>
+        </div>
+      </ng-container>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-light btn-active-light-primary" (click)="cancel()"
+        translate="TRANSLATE.ADMIN_RELATIONSHIPS_MICROSOFT_ENTRA_ROLES_POPUP_BUTTON_CANCEL" tabindex="-1"></button>
+      <button type="button" class="btn btn-primary btn-sm" (click)="modal.close()"
+        translate="TRANSLATE.ADMIN_RELATIONSHIPS_MICROSOFT_ENTRA_ROLES_POPUP_BUTTON_SAVE" tabindex="-1"></button>
+    </div>
+  </div>
+</ng-template>

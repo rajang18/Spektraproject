@@ -1,0 +1,273 @@
+<ng-template #ownershipDetailsPopover>
+    <div [innerHTML]="ownerShipDetails">
+    </div>
+</ng-template>
+
+<div class="card-header col-md-12 mt-2 ">
+    <div class="actions col-md-12 text-lg-right text-sm-end">
+    <button *ngIf="pageMode === 'RenewalManager'" type="button" class="btn btn-sm fw-bold btn-light-primary me-2"
+        (click)="showHelpText = !showHelpText">
+        <span translate="TRANSLATE.CHANGE_PLAN_HELP"></span>&nbsp;
+        <i class="ki-outline ki-question-2"></i>
+    </button>
+    <a class="btn btn-light-primary btn-xs btn-sm btn-md btn-lg me-2" *ngIf="pageMode === 'RenewalManager'"
+        (click)="switchTable('RenewalManagerHistory');">
+        {{'TRANSLATE.CUSTOMER_SUBSCRIPTION_RENEWAL_CONSENT_HISTORY_BTN' | translate}}
+    </a>
+    <!-- <a class="btn btn-primary btn-xs btn-sm btn-md btn-lg me-2" *ngIf="pageMode === 'RenewalManager'"
+        (click)="backToProducts()">
+        <i class="ki-outline fs-2 ki-to-left"></i>
+        {{'TRANSLATE.CUSTOMER_SUBSCRIPTION_RENEWAL_CONSENT_BACK_TO_PRODUCT_BTN' | translate}}
+    </a> -->
+
+    <a class="btn btn-light-primary btn-xs btn-sm btn-md btn-lg me-2" *ngIf="pageMode === 'RenewalManagerHistory'"
+        (click)="downloadHistory()"
+        ngbTooltip="{{'TRANSLATE.CUSTOMER_SUBSCRIPTION_RENEWAL_CONSENT_HISTORY_DOWNLOAD_BTN_TOOLTIP' | translate}}"
+        tooltip-placement="bottom">
+        <i class="ki-outline ki-exit-down"></i>
+    </a>
+    <a class="btn btn-primary btn-xs btn-sm btn-md btn-lg me-2" *ngIf="pageMode === 'RenewalManagerHistory'"
+        (click)="switchTable('RenewalManager');">
+        <i
+            class="ki-outline fs-2 ki-to-left"></i>{{'TRANSLATE.CUSTOMER_SUBSCRIPTION_RENEWAL_CONSENT_HISTORY_BACK_TO_RENEWAL_MNG_BTN'
+        | translate}}
+    </a>
+</div>
+</div>
+
+@if (pageMode === 'RenewalManager')
+{
+<div>
+    <div class="row mb-7" *ngIf="showHelpText">
+        <div class="col-md-12">
+            <div class="card card-custom gutter-b">
+                <div class="card-body">
+                    <div class="m-heading-1 border-green m-bordered">
+                        <div
+                            class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+                            <div class="card-title">
+                                <h6 class="card-label"><span
+                                        translate="TRANSLATE.USERS_UPLOAD_FORM_INSTRUCTIONS"></span>
+                                </h6>
+                            </div>
+                            <div class="row m-heading-1 border-green m-bordered">
+                                <ol class="ms-5">
+                                    <li>
+                                        <span translate="TRANSLATE.CUSTOMER_RENEWAL_CONSENT_INSTRUCTIONS_PART_1"></span>
+                                    </li>
+                                    <li>
+                                        <span translate="TRANSLATE.CUSTOMER_RENEWAL_CONSENT_INSTRUCTIONS_PART_2"></span>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card card-custom gutter-b">
+            <div class="card-body">
+                @if (!!datatableConfig) {
+                <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+                </app-c3-table>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+<ng-template #propertiespills let-data="adtData" let-emitter="captureEvents">
+    <span class="m-0 break-word">
+        <p class="fw-semibold">
+            {{data.ProductName}}
+            <span
+                *ngIf="data.ProductForTrial != null && data.ProductForTrial != undefined && data.ProductForTrial != ''"
+                class="text-warning shop-nce-addon">
+                <span translate="TRANSLATE.PLAN_MANAGE_TRAIL_OFFER_SYMBOL_TRAIL_OFFER"></span>
+            </span>
+        </p>
+
+        <span class="label label-sm label-inline label-warning badge bg-warning"
+            *ngIf="data.Term && data.Term != null && data.Term.length > 1 && data.ValidityType == 'Month(s)'"
+            tooltip-placement="top"
+            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+            {{data.Term}}</span>
+        <span class="label label-warning font-weight-bold label-inline text-white badge bg-warning"
+            *ngIf="data.ValidityType === 'Year(s)' || data.ValidityType === 'Year'"
+            [ngClass]="{'labelcolor':data.BillingCycleName == 'Monthly','TermLabelColor': data.BillingCycleName == 'Annual'}"
+            tooltip-placement="top"
+            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}"> @if(data.Validity == 1){
+                {{data.Validity}} {{(data.ValidityType === 'Year(s)' ? 'TRANSLATE.TERM_DURATION_DESC_YEAR' : 'TRANSLATE.VALIDITY_TYPE_DESC_YEARS') | translate}}
+              }</span>
+        <span class="label font-weight-bold label-inline text-white badge"
+            *ngIf="data.BillingCycleName"
+            [ngClass]="{
+                'bg-warning': data.BillingCycleName?.toLowerCase() === 'monthly',
+                'bg-success': data.BillingCycleName?.toLowerCase() === 'annual',
+                'bg-dark': data.BillingCycleName?.toLowerCase() === 'triennial',
+                'bg-info': data.BillingCycleName?.toLowerCase() === 'onetime'
+            }"
+            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}">
+            {{'TRANSLATE.'+data.BillingCycleDescription | translate}}</span>
+        <span class="label label-sm label-inline label-success" style="display: block; width: min-content;height:auto"
+            *ngIf="data.ProviderName" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_PROVIDER' | translate}}">
+            {{data.ProviderName}}</span>
+        <span class="label label-info font-weight-bold label-inline text-white badge bg-info"
+            *ngIf="data.ProviderCategory!== null && data.ProviderCategory!== ''"
+            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_SERVICE_TYPE' | translate}}">
+            {{data.ProviderCategory}}</span>
+        <span class="label label-info font-weight-bold label-inline text-white badge bg-info" *ngIf="data.Category"
+            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}">
+            {{data.Category == 'OnlineServicesNCE'?'NCE':('TRANSLATE.'+data.CategoryDescription | translate)}}</span>
+        <span *ngIf="data.SubCategoryName !== null && data.SubCategoryName !== ''"
+             ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_SUBCATEGORY' | translate}}"
+             class="badge badge-danger badge fw-semibold label-inline ms-2" [appPermission]="'GET_SUBCATEGORIES_PILLS'">
+           {{data.SubCategoryName}}
+        </span>
+        <span class="label label-info font-weight-bold label-inline text-white badge bg-info" *ngIf="data.MarketCode"
+            ngbTooltip="{{data.Region}}">{{data.MarketCode}}</span>
+
+    </span>
+</ng-template>
+<ng-template #priceCurrencyFilter let-data="adtData">
+    <div>
+        {{data.Price | CurrencyFilter : data.CurrencySymbol : data.CurrencyDecimalPlaces :
+        data.CurrencyThousandSeperator : data.CurrencyDecimalSeperator}}
+    </div>
+</ng-template>
+<ng-template #quantityTemplate let-data="adtData">
+    <div>
+        {{data.Quantity}}
+        @if(data.Ownership != null){
+        <sup>
+            <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" aria-hidden="true" popoverAppendToBody="true" triggers="mouseenter:mouseleave" [ngbPopover]="ownershipDetailsPopover" [container]="'body'"  placement="right" popoverClass="popover-max-width" (mouseover)="getOwnerShipDetails(data)">
+                <span class="path1"></span>
+                <span class="path2"></span>
+                <span class="path3"></span>
+            </i>
+        </sup>
+        }
+    </div>
+</ng-template>
+<ng-template #providerEffectiveEndDate let-data="adtData" let-emitter="captureEvents">
+    <div>
+        {{data.ProviderEffectiveEndDate | c3Date}}
+    </div>
+</ng-template>
+
+<ng-template #actions let-data="adtData" let-emitter="captureEvents">
+    <div class="d-flex justify-content-center">
+        <div class="d-flex align-items-center me-3" (click)="customerConsentOnSubscriptionRenewal(data,true)">
+            <a [appPermission]="'SAVE_CUSTOM_OFFER_RENEWAL_CONSENT'"
+                class="btn btn-success btn-xs btn-sm btn-md btn-lg mr-2 text-center">
+                {{'TRANSLATE.CUSTOMER_SUBSCRIPTION_RENEWAL_CONSENT_ACTION_BUTTON_ACCEPT_TEXT' | translate}}
+            </a>
+        </div>
+        <div class="d-flex align-items-center" (click)="customerConsentOnSubscriptionRenewal(data,false)">
+            <a [appPermission]="'SAVE_CUSTOM_OFFER_RENEWAL_CONSENT'"
+                class="btn btn-light-danger btn-xs btn-sm btn-md btn-lg mr-2 text-center">
+                {{'TRANSLATE.CUSTOMER_SUBSCRIPTION_RENEWAL_CONSENT_ACTION_BUTTON_REJECT_TEXT' | translate}}
+            </a>
+        </div>
+    </div>
+
+</ng-template>
+
+<ng-template #actions2 let-data="adtData" let-emitter="captureEvents">
+    <!-- {{data | json}} -->
+    <span>{{'TRANSLATE.'+data.Action | translate}}</span>
+</ng-template>
+
+<ng-template #noDataTemplate>
+    <tr *ngIf="isGridDataLoading === false">
+        <td colspan="5">
+            <span translate="TRANSLATE.MESSAGE_NO_RECORDS_FOUND_USAGE"></span>
+        </td>
+    </tr>
+</ng-template>
+
+<ng-template #gridLoadingDataMessage>
+    <tr *ngIf="isGridDataLoading === true">
+        <td colspan="5">
+            <h3><strong>{{gridLoadingDataMessage}}</strong></h3>
+        </td>
+    </tr>
+</ng-template>
+
+
+@if (pageMode === 'RenewalManagerHistory' )
+{
+<div class="card">
+    <div class="card card-custom gutter-b">
+        <div class="card-body">
+            @if (!!datatableConfig2) {
+            <app-c3-table [reload]="reloadEvent2" [datatableConfig]="datatableConfig2">
+            </app-c3-table>
+            }
+        </div>
+    </div>
+</div>
+}
+
+<ng-template #propertiespills2 let-data="adtData" let-emitter="captureEvents">
+    <div>
+        <span class="label label-light-info font-weight-bold label-inline text-white badge bg-info ms-md-2">
+            {{data.CategoryName}} </span>
+        <span class="label label-light-danger font-weight-bold label-inline text-white badge bg-danger ms-md-2">
+            {{data.BillingTypeName}} </span>
+        <span *ngIf="data.ProductForTrial == null || data.ProductForTrial == undefined">
+            <span class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2"
+                *ngIf="data.ValidityType!=null && data.ValidityType == 'Month(s)'"> {{data.Validity}} {{data.Validity >
+                1? data.ValidityType:data.ValidityType.replace('(s)','')}} </span>
+        </span>
+        <span *ngIf="data.ProductForTrial == null || data.ProductForTrial == undefined">
+            <span class="label label-warning font-weight-bold label-inline text-white badge ms-md-2" aria-hidden="true"
+                *ngIf="data.ValidityType === 'Year(s)' || data.ValidityType === 'Year'"
+                [ngClass]="{'bg-danger':data.BillingCycleName == 'Monthly','bg-success': data.BillingCycleName == 'Annual'}">
+                {{data.Validity}} {{data.Validity > 1? data.ValidityType:data.ValidityType.replace('(s)','') }}</span>
+        </span>
+        <span *ngIf="data.ProductForTrial != null && data.ProductForTrial != undefined">
+            <span class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2"
+                aria-hidden="true"> {{data.NoOfDaysForFreeCancelation}} {{'TRIAL_PERIOD_DAYS_TEXT'| translate }}</span>
+        </span>
+        <span class="label label-dark font-weight-bold label-inline text-white badge bg-dark ms-md-2"
+            *ngIf="data.ProductForTrial == null || data.ProductForTrial == undefined"> {{data.BillingCycleName}}</span>
+        <span class="label label-success font-weight-bold label-inline text-white badge bg-success ms-md-2">
+            {{data.ConsumptionType}}</span>
+    </div>
+</ng-template>
+
+<ng-template #providerEffectiveEndDate2 let-data="adtData" let-emitter="captureEvents">
+    <div>
+        {{data.CreateDate | c3Date}}
+    </div>
+</ng-template>
+
+
+<ng-template #subscriptionProductName2 let-data="adtData">
+    <div>
+        <p class="m-0 break-word fw-semibold">
+            <span class="d-block">{{data.ProductName}}</span>
+            <span class=" d-block" style="color:#999999">{{data.ProviderProductId}}</span>
+        </p>
+    </div>
+</ng-template>
+
+<ng-template #noDataTemplate2>
+    <div *ngIf="isGridDataLoading === false">
+        <div colspan="5">
+            <span translate="TRANSLATE.MESSAGE_NO_RECORDS_FOUND_USAGE"></span>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #gridLoadingDataMessage2>
+    <div *ngIf="isGridDataLoading === true">
+        <div colspan="5">
+            <h3><strong>{{gridLoadingDataMessage}}</strong></h3>
+        </div>
+    </div>
+</ng-template>

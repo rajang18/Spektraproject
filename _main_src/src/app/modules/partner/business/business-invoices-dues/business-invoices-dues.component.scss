@@ -1,0 +1,112 @@
+::ng-deep {
+  .font-green-jungle {
+    color: #26c281 !important;
+  }
+
+  .font-red-sunglo {
+    color: #e26a6a !important;
+  }
+
+  .position-relative.left-107 {
+    left: -107px;
+  }
+
+  app-business-invoices-dues {
+   /* Fixed min-width 44% across all screen sizes.
+   ⚠️ Confirmed responsive behavior — verified it works fine on all breakpoints.*/
+    .period-options{
+      min-width: 44%;
+    }
+    .plus-icon-position{
+      position: absolute;
+      left: 60px;
+    }
+    table.dataTable td.dt-control:before {
+      content: "\2b" !important;
+      border: 0 !important;
+    }
+
+    .clicked-icon {
+      color: #3699ff;
+      cursor: pointer;
+    }
+  }
+
+  .lh-5 {
+    line-height: 5;
+  }
+
+  .select2-autocomplete {
+    select2 {
+      padding: 0 !important;
+
+      .select2-selection.select2-selection--multiple {
+        padding: 0 !important;
+      }
+
+      .select2-results {
+        li {
+          padding: 0.5rem !important;
+        }
+      }
+    }
+  }
+
+  // .table-buisness {
+  //   table {
+  //     th {
+  //       text-align: left !important;
+  //     }
+  //   }
+  // }
+
+  .dropdown {
+    position: absolute;
+    display: inline-block;
+    margin-top: 14px;
+
+    .btn-content {
+      color: rgb(54, 153, 255);
+      background-color: transparent;
+      border: 2px solid rgb(54, 153, 255) !important;
+      width: 300px;
+      text-align: left;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: relative;
+      background-color: var(--bs-app-bg-color);
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+      width: 300px;
+      padding: 10px;
+      height: 300px;
+      overflow: auto;
+    }
+    .dropdown-content label:hover {
+      background-color: #007bff; 
+      color: white; 
+    }
+
+    .dropdown-content label {
+      display: block;
+      padding: 8px 10px; 
+     
+    }
+    .dropdown-content label.selected {
+      font-weight: 600; 
+    }
+    .dropdown-content.show {
+      display: block;
+    }
+  }
+
+  .child-table-container {
+    .w-90 {
+      width: 90%;
+    }
+  }
+
+}

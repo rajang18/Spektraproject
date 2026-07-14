@@ -1,0 +1,152 @@
+<ng-template #actionHeader>
+    <a class="btn btn-light-primary btn-sm fw-semibold" (click)="backToCustomers()" >
+        <i class="ki-outline ki-to-left fs-2"></i>{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_BUTTON_TEXT_BACK_TO_CUSTOMERS' | translate}}
+    </a>
+</ng-template>
+<div block-ui="block">
+    <div class="row mt-8" ng-scope>
+        @if ((entityName?.toLowerCase() === entityEnum.Partner.toLowerCase() || (entityName?.toLowerCase() === entityEnum.Reseller.toLowerCase() && hasSupportForResellersWithMPNID === 'Yes' && canProceedForBulkOnboardingResellerCustomers === true))) {
+            <div class="col-md-12">
+
+                <!--Portlet that contains the form for Customer Currency and Plans-->
+                @if (customerC3Id === null) {
+                    <div class="portlet light bordered">
+                        <div class="portlet-title mt-4">
+                            <div class="caption">
+                                <h6 class="caption-subject fw-semibold uppercase"><span translate="TRANSLATE.CUSTOMER_ONBOARDING_HEADER_TEXT_PLAN_DETAILS"></span></h6>
+                            </div>
+                        </div>
+                        <div class="portlet-body mt-5">
+                            <div class="row">
+                                <form name="vm.frmCustomerCurrencyandPlans" [formGroup]="frmCustomerCurrencyandPlans" role="form" class="form col-md-12" novalidate>
+                                    <div class="form-body">
+                                        <!--Customer Currency Code Dropdown-->
+                                        <div class="form-group row" ng-class="{'has-error':(vm.frmCustomerCurrencyandPlans.bulkOnboardCustomers_CurrencyCode.$error.required) &amp;&amp; (vm.frmCustomerCurrencyandPlans.bulkOnboardCustomers_CurrencyCode.$dirty)}">
+                                            <label class="col-md-2 col-form-label text-start text-sm-start text-md-start text-lg-start" >
+                                                <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_CUSTOMER_CURRENCY_CODE"></span><span class="text-danger"> *</span>
+                                            </label>
+                                            <div class="col-md-5">
+                                                <ng-select formControlName="selectedCurrencyCode" name="selectedCurrencyCode" 
+                                                placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_CURRENCY_CODE_DROPDOWN' | translate }}" (change)="onCurrencyChange()">
+                                                @for (item of partnerSupportedCurrencies; track $index) {
+                                                <ng-option [value]="item">{{ item.CurrencyCode }}</ng-option>
+                                                }
+                                            </ng-select>
+                                            @if (frmCustomerCurrencyandPlans.get('selectedCurrencyCode')?.errors?.required && frmCustomerCurrencyandPlans.get('selectedCurrencyCode')?.touched) {
+                                                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                                            }
+                                                
+                                            </div>
+                                        </div>
+                                        <!--Plans Dropdown-->
+                                        <div class="form-group row mt-5" ng-class="{'has-error':(vm.frmCustomerCurrencyandPlans.bulkOnboardCustomers_Planid.$error.required) &amp;&amp; (vm.frmCustomerCurrencyandPlans.bulkOnboardCustomers_Planid.$dirty)}">
+                                            <label class="col-md-2 col-form-label text-md-start text-lg-start text-start text-sm-start" >
+                                                <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_PLAN"></span><span class="text-danger"> *</span>
+                                            </label>
+                                            <div class="col-md-5">
+                                                <ng-select formControlName="selectedPlan" name="selectedPlan" placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_INPUT_FIELD_TO_SEARCH_A_PLAN'| translate}}" (change)="onPlanChange()">
+                                                    @for (item of plans; track $index) {
+                                                    <ng-option [value]="item.InternalPlanId">{{ item.Name }}</ng-option>
+                                                    }
+                                                  </ng-select>
+                                                  @if (frmCustomerCurrencyandPlans.get('selectedPlan')?.errors?.required && frmCustomerCurrencyandPlans.get('selectedPlan')?.touched) {
+                                                    <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                                                  }
+                                            </div>
+                                        </div>
+                                        <br />
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+                
+    
+                <!--The Portlet that contains the grid of the Customers that are to be onboarded-->
+                @if (customerC3Id !== null || (customerC3Id === null && frmCustomerCurrencyandPlans.valid)){
+                    <div class="portlet light bordered">
+                 
+                        <div class="caption mt-4">
+                            <h6 class="caption-subject fw-semibold uppercase"><span translate="TRANSLATE.CUSTOMER_ONBOARDING_HEADER_TEXT_CUSTOMERS"></span></h6>
+                        </div>
+                    
+                    <div class="portlet-body mt-4">
+                        <!-- <form name="frmBulkOnboardCustomers" #frmBulkOnboardCustomers="ngForm" role="form" class="form" novalidate> -->
+                            @if (selectedCustomersList?.length>0) {
+                                <div class="row m-0">
+                                    <div class="btn btn-sm btn-light-info col-md-3 fw-semibold ">
+                                        <span [innerHTML]="'TRANSLATE.BULK_ONBOARD_CUSTOMERS_SELECTED_COUNT_OUT_OF_TOTAL_CUSTOMERS' | translate :{selectedCustomers: selectedCustomersList?.length, totalCustomers: nonOnboardedCustomers?.length}">
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+                            
+                            <div class="container-fluid">
+                                <div class="table-responsive table-responsive-sm table-responsive-md table-responsive-lg">
+
+                                    <ng-template #firstColCheckboxes let-data="adtData">
+                                        <div>
+                                            <div class="d-flex justify-content-center">
+                                                <label class="pb-2 form-check checkbox checkbox-outline checkbox-outline-2x control-label">
+                                                    <input type="checkbox" class="checkbox form-check-input" [id]="'checkCustomer'+data.Id" [(ngModel)]="data.IsSelectedForOnboarding" (change)="updateSelectedList(data)" />
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </ng-template>
+    
+                                    <ng-template #fourthColBillingEmail let-data="adtData">
+                                        <div>
+                                            @if (data?.IsSelectedForOnboarding) {
+                                                <input ng-if="customer.IsSelectedForOnboarding" type="email" name="bulkOnboardCustomers_Billing_Email_{{data.UniqueKey}}" class="form-control form-control-sm" placeholder="{{'TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_BILLING_EMAIL' | translate}}" [(ngModel)]="data.Email"  (change)="onEmailUpdate(data);"/>
+                                                <span id="bulkOnboardCustomers_Billing_Email_{{data.UniqueKey}}" style="display: none;" class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_PLEASE_ENTER_A_VALID_EMAIL"></span></span>
+                                            }
+                                        </div>
+                                    </ng-template>
+                                    <ng-container *ngIf="!!datatableConfig">
+                                        @if(shouldShow && isloading){
+                                            <!-- [selection]="true" (onSelection)="handleSelection($event)" -->
+                                        <app-c3-table [datatableConfig]="datatableConfig" [searchFilter]="false" [selection]="true" (onSelection)="handleSelection($event)" (selectAllchecked)="getAllCustomers($event)">
+                                        </app-c3-table>
+                                        }            
+                                    </ng-container>
+                                </div>
+                            </div>
+                            @if (loadingCSPCustomers === false) {
+                                <hr [appPermission]="'SUBMITBULKONBOARDCUSTOMERSREQUEST'"  />
+                            }
+                            
+                            <div class="row mt-4 float-end" style="text-align:end">
+                                @if (loadingCSPCustomers === false) {
+                                    <button [appPermission]="'SUBMITBULKONBOARDCUSTOMERSREQUEST'" class="btn btn-primary btn-sm" (click)="bulkOnBoardCustomers()" appBusyLoader>
+                                        <!-- <busy-message><i class="fa fa-spinner fa-spin"></i> <span translate="TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT" /></busy-message> -->
+                                        <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+                                    </button>
+                                }
+                                
+                            </div>
+                        <!-- </form> -->
+                    </div>
+                </div>
+                }
+                
+            </div>
+        }
+
+        @if (entityName?.toLowerCase() === entityEnum.Reseller.toLowerCase() && canProceedForBulkOnboardingResellerCustomers === false) {
+            <div class="col-md-12">
+                <div class="portlet light bordered margin-left-20 margin-right-20">
+                    <div class="portlet-body">
+                        <div class="bs-callout bs-callout-warning">
+                            <h4 class="block" translate="TRANSLATE.BULK_ONBOARDING_MICROSOFT_CSP_CUSTOMERS_IS_NOT_ALLOWED_FOR_RESELLER_TITLE"></h4>
+                            <p translate="TRANSLATE.BULK_ONBOARDING_MICROSOFT_CSP_CUSTOMERS_IS_NOT_ALLOWED_FOR_RESELLER"> </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        
+
+    </div>
+</div>

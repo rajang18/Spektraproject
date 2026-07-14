@@ -1,0 +1,217 @@
+@if(isLoading){
+    <app-loader></app-loader>
+  }
+@if(_publicSignupService.publicSignupSharedScope)
+{
+<!-- Begin Header-section -->
+<section>
+    <div class="header-top">
+        <!-- begin nav bar -->
+        <nav class="custom-nav navbar navbar-expand-lg fixed-top">
+            <div class="container-fluid p-lg-0">
+                @if(!isImageLoading){
+                    <img height="60" width="250"
+                    [src]="_publicSignupService.publicSignupSharedScope.PUBLIC_SIGNUP_LOGO_PATH ? signUpLogoPath : welcomeLogoPath">
+                }
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse flex-grow-0" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex gap-3">
+                        <div class="nav-item mt-2" *ngIf="_publicSignupService?.publicSignupSharedScope?.PublicSignupCloudlabsWebsite">
+                            <a href="javascript:void(0)" class="text-light nav-item text-hover-primary" (click)="gotToCloudlabsWebsite()"><span translate="TRANSLATE.PUBLIC_SIGNUP_CLOUDLABS_WEBSITE"></span></a>
+                        </div>
+                        <div class="nav-item mt-2" *ngIf="_publicSignupService.publicSignupSharedScope.PublicSignupAdminPortal">
+                            <a href="javascript:void(0)" class="text-light nav-item text-hover-primary" (click)="gotToAdminPortal()"><span translate="TRANSLATE.PUBLIC_SIGNUP_ADMIN_PORTAL"></span> </a>
+                        </div>
+                        <div class="nav-item mt-2" *ngIf="_publicSignupService.publicSignupSharedScope.PublicSignupLearnerPortal">
+                            <a href="javascript:void(0)" class="text-light nav-item text-hover-primary" (click)="gotToLearnerPortal()"><span translate="TRANSLATE.PUBLIC_SIGNUP_LEARNER_PORTAL"></span></a>
+                        </div>
+                        <div class="nav-item mt-2" *ngIf="_publicSignupService.publicSignupSharedScope.PublicSignupSupport">
+                            <a href="javascript:void(0)" class="text-light nav-item text-hover-primary" (click)="gotToPublicSignupSupport()"><span translate="TRANSLATE.PUBLIC_SIGNUP_SUPPORT"></span></a>
+                        </div>
+
+                        <!-- Language Dropdown -->
+                        <div class="d-flex align-items-center" ngbDropdown [ngClass]="toolbarButtonMarginClass">
+                            <div [ngClass]="toolbarButtonHeightClass" data-kt-menu-trigger="{default: 'click'}" data-kt-menu-attach="parent"
+                                 data-kt-menu-placement="bottom-start" class="btn btn-icon  btn-active-light-primary bg-none btn-dropdown btn-lg me-1"
+                                 data-bs-toggle="dropdown" aria-expanded="false" [ngbTooltip]="langs.length > 1 ? ('TRANSLATE.LANGUAGE_SELECTION_TOOLTIP' | translate) : ('TRANSLATE.BUTTON_LANG_EN' | translate)">
+                              <img class="h-20px w-20px rounded" [src]="getFlagImgPath(language)" id="dropdownBasic1" ngbDropdownToggle>
+                              @if(langs.length>1){
+                                <i class="ki-duotone ki-down ms-2 fs-6"></i>
+                              }
+                            </div>
+                            @if(langs.length>1){
+                              <div ngbDropdownMenu aria-labelledby="dropdownBasic1" [ngClass]="language != 'en' ? 'w-250px':'w-200px'" class='menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base dropdown-menu-right'
+                                  data-kt-menu='true'>
+                                @for(item of langs; track $index){
+                                <div class='menu-item my-0' (click)="selectLanguage(item)">
+                                  <a *ngIf="item === 'en-us' || item === 'en'" (click)="selectLanguage(item)" class="menu-link px-3 py-2 d-flex align-items-center gap-3">
+                                    <span class="menu-icon d-flex gap-3 w-100 justify-content-start">
+                                      <img class="h-20px w-20px rounded" src="./assets/media/flags/united-states.svg">
+                                      <span class="navi-text">English</span>
+                                    </span>
+                                </a>
+                                <a *ngIf="item === 'es'" (click)="selectLanguage(item)" class="menu-link px-3 py-2 d-flex align-items-center gap-3">
+                                  <span class="menu-icon d-flex gap-3 w-100 justify-content-start">
+                                    <img class="h-20px w-20px rounded" src="./assets/media/flags/spain.svg">
+                                    <span class="navi-text">Spanish</span>
+                                    <span class="navi-text" *ngIf="language != 'en'">(<span translate="TRANSLATE.BUTTON_LANG_ES"></span>)</span>
+                                  </span>
+                                </a>
+                                <a *ngIf="item === 'cn' || item === 'ch'" (click)="selectLanguage(item)" class="menu-link px-3 py-2 d-flex align-items-center gap-3">
+                                  <span class="menu-icon d-flex gap-2 w-100 justify-content-start">
+                                    <img class="h-20px w-20px rounded" src="./assets/media/flags/china.svg">
+                                    <span class="navi-text">Chinese</span>
+                                    <span class="navi-text" *ngIf="language != 'en'">(<span translate="TRANSLATE.BUTTON_LANG_CN"></span>)</span>
+                                  </span>
+                                </a>
+                                <a *ngIf="item === 'tw'" (click)="selectLanguage(item)" class="menu-link px-3 py-2 d-flex align-items-center gap-3">
+                                  <span class="menu-icon d-flex gap-2 w-100 justify-content-start">
+                                    <img class="h-20px w-20px rounded" src="./assets/media/flags/taiwan.svg">
+                                    <span class="navi-text">Taiwanese</span>
+                                    <span class="navi-text" *ngIf="language != 'en'">(<span translate="TRANSLATE.BUTTON_LANG_TW"></span>)</span>
+                                  </span>
+                                </a>
+                                <a *ngIf="item === 'fr'" (click)="selectLanguage(item)" class="menu-link px-3 py-2 d-flex align-items-center gap-3">
+                                  <span class="menu-icon d-flex gap-2 w-100 justify-content-start">
+                                    <img class="h-20px w-20px rounded" src="./assets/media/flags/france.svg">
+                                    <span class="navi-text">French</span>
+                                    <span class="navi-text" *ngIf="language != 'en'">(<span translate="TRANSLATE.BUTTON_LANG_FR"></span>)</span>
+                                  </span>
+                                </a>
+                                <a *ngIf="item === 'th'" (click)="selectLanguage(item)" class="menu-link px-3 py-2 d-flex align-items-center gap-3">
+                                  <span class="menu-icon d-flex gap-2 w-100 justify-content-start">
+                                    <img class="h-20px w-20px rounded" src="./assets/media/flags/thailand.svg">
+                                    <span class="navi-text">Thai</span>
+                                    <span class="navi-text" *ngIf="language != 'en'">(<span translate="TRANSLATE.BUTTON_LANG_TH"></span>)</span>
+                                  </span>
+                                </a>
+                                <a *ngIf="item === 'tr'" (click)="selectLanguage(item)" class="menu-link px-3 py-2 d-flex align-items-center gap-3">
+                                  <span class="menu-icon d-flex gap-2 w-100 justify-content-start">
+                                    <img class="h-20px w-20px rounded" src="./assets/media/flags/turkey.svg">
+                                    <span class="navi-text">Turkish</span>
+                                    <span class="navi-text" *ngIf="language != 'en'">(<span translate="TRANSLATE.BUTTON_LANG_TR"></span>)</span>
+                                  </span>
+                                </a>
+                                <a *ngIf="item === 'de'" (click)="selectLanguage(item)" class="menu-link px-3 py-2 d-flex align-items-center gap-3">
+                                  <span class="menu-icon d-flex gap-2 w-100 justify-content-start">
+                                    <img class="h-20px w-20px rounded" src="./assets/media/flags/germany.svg">
+                                    <span class="navi-text">German</span>
+                                    <span class="navi-text" *ngIf="language != 'en'">(<span translate="TRANSLATE.BUTTON_LANG_DE"></span>)</span>
+                                  </span>
+                                </a>
+                                <a *ngIf="item === 'it'" (click)="selectLanguage(item)" class="menu-link px-3 py-2 d-flex align-items-center gap-3">
+                                  <span class="menu-icon d-flex gap-2 w-100 justify-content-start">
+                                    <img class="h-20px w-20px rounded" src="./assets/media/flags/italy.svg">
+                                    <span class="navi-text">Italian</span>
+                                    <span class="navi-text" *ngIf="language != 'en'">(<span translate="TRANSLATE.BUTTON_LANG_IT"></span>)</span>
+                                  </span>
+                                </a>
+                                <a *ngIf="item === 'sk'" (click)="selectLanguage(item)" class="menu-link px-3 py-2 d-flex align-items-center gap-3">
+                                  <span class="menu-icon d-flex gap-2 w-100 justify-content-start">
+                                    <img class="h-20px w-20px rounded" src="./assets/media/flags/slovakia.svg">
+                                    <span class="navi-text">Slovak</span>
+                                    <span class="navi-text" *ngIf="language != 'en'">(<span translate="TRANSLATE.BUTTON_LANG_SK"></span>)</span>
+                                  </span>
+                                </a>
+                                </div>
+                                }
+                              </div>
+                            }
+                          </div>
+
+                        <div class="btn btn-icon btn-sm custom-cart-button position-relative" *ngIf="getIfLogScreen()"
+                            (click)="gotoCart()">
+                            @if (_publicSignupService.cartCount > 0){
+                            <span
+                                class="position-absolute top-20 start-100 translate-middle badge rounded-circle bg-light"
+                                style="transform: translate(-50%, -50%);">
+                                {{_publicSignupService.cartCount}}
+                            </span>
+                            <span class="pulse-ring"></span>
+                            }
+                            <a rel="noopener noreferrer" class="link-to-support" tabindex="0">
+                                <span class="svg-icon d-flex align-items-center">
+                                    <i class="ki-outline ki-handcart text-white" ngbTooltip="{{'TRANSLATE.PUBLIC_SIGNUP_GO_TO_CART' | translate}}"
+                                    ></i>
+                                 </span>
+                            </a>
+                        </div>
+
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- begin alert-section -->
+            @if(publicSignupPlanName && isSignupState){
+                <ngb-alert class='landig-page-notification m-0' *ngIf="!close" [dismissible]="true" (closed)="closed()">
+                    <span class="notification-text">
+                        {{'TRANSLATE.CUSTOMER_PUBLIC_SIGHNUP_PLAN_NAME_ALERT' | translate}} -
+                        <strong> {{publicSignupPlanName}} </strong></span>
+                    <div class="alert-text text-center"
+                        *ngIf="publicSignupPlanName == '' || publicSignupPlanName == undefined || publicSignupPlanName === null">
+                        <span class="spinner spinner-primary spinner-lg mr-15" style="color:white !important"></span>
+                    </div>
+                </ngb-alert>
+            }
+          
+            <!-- End alert-section -->
+
+        <!-- End nav bar -->
+        <!--Begin header-main-part-->
+        <div class="container-fluid search-header-section" *ngIf="getIfPlanScreen()">
+            <div class="row mt-20">
+                <div class="header-description d-flex  align-items-center col-lg-7">
+                    <div class="d-flex flex-column gap-2" style="width:80%">
+                        @if(_publicSignupService?.publicSignupSharedScope?.PublicSignupBannerMainHeading){
+                            <span class="text-white fs-1  header-description-text1">{{_publicSignupService?.publicSignupSharedScope?.PublicSignupBannerMainHeading}}</span>
+                        } 
+                        @else {
+                            <span class="text-white fs-1  header-description-text1">Find apps in Market Place</span>
+                        }
+                        @if(_publicSignupService?.publicSignupSharedScope?.PublicSignupBannerParagraphHeading){
+                            <span class="text-white fs-1  header-description-text1">{{_publicSignupService?.publicSignupSharedScope?.PublicSignupBannerParagraphHeading}}</span>
+                        }
+                        @else {
+                            <span class="text-white fs-7 header-description-text2">One-stop shop for all your business needs</span>
+                        }
+                        <div class="d-grid align-items-center position-relative my-1">
+                            <input type="text" class="header-input-field form-control form-control-sm"
+                                [(ngModel)]="_publicSignupService.searchKeyword" (input)="filterBySearchKeyword(_publicSignupService.searchKeyword)"
+                                placeholder="Search...">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="dashboard-logo col-lg-5 text-end">
+                    <img src="../../../../assets/media/svg/public signup landing img.svg" style="width: 450px;">
+                </div>
+            </div>
+        </div>
+        <!-- End header-main-part -->
+    </div>
+</section>
+<!-- End Header-section -->
+<section> 
+    <router-outlet></router-outlet>
+</section>
+<!-- footer -->
+<footer class="fixed-bottom pb-4 bg-white" *ngIf="ShowFooterAcrossAllPages == 'true'">
+    <div class="d-flex justify-content-between">
+        <div class="text-md-start text-sm-center ps-10">
+            <span class="me-1">{{currentDateStr}}&copy;</span>
+            <a [href]="userSettingsData?.CompanyUrl" target="_blank" class="text-primary-00">{{userSettingsData?.ContactCompanyName}}</a>
+            <span class="me-1">{{'TRANSLATE.FOOTER_TEXT_1_ALL_RIGHTS_RESERVED' | translate}}</span>
+        </div>
+        <!--end::Copyright-->
+        <div class="text-md-end text-sm-center me-12">
+          <span class="me-1">{{'TRANSLATE.FOOTER_TEXT_1_POWERED_BY' | translate}}</span>
+            <a [href] ="userSettingsData?.PoweredByCompanyURL" target="_blank" class="text-primary-00">{{userSettingsData?.PoweredByCompanyName}}</a>
+        </div>
+    </div>
+</footer>
+}

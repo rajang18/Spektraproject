@@ -1,0 +1,214 @@
+<ng-template #actionHeader>
+  <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+    <a class="btn btn-sm btn-lg btn-md btn-xs fw-semibold btn-light-primary text-nowrap" (click)="downloadGridReport()"
+      [appPermission]="'BTN_PLAN_OFFERS_GRID_DOWNLOADABLE_REPORTS'"
+      ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_DOWNLOAD_PLAN' | translate}}">
+      <i class="ki-outline ki-exit-down fs-2"></i>
+    </a>
+    <a class="btn btn-sm btn-lg btn-md btn-xs fw-semibold btn-light-primary text-nowrap"
+      (click)="addMissingOffersToAllPlan('Add')" [appPermission]="'BTN_ADD_MISSING_OFFERS_TO_PLANS'">
+      {{'TRANSLATE.PARTNER_ADD_MISSING_OFFERS_TO_ALL_PLAN_BUTTON' | translate}}
+    </a>
+    <a class="btn btn-sm btn-lg btn-md btn-xs fw-semibold btn-light-primary text-nowrap"
+      (click)="goToProductCatalogue()" [appPermission]="'GET_PRODUCT_CATALOGUE'">
+      {{'TRANSLATE.productcatalogue' | translate}}
+    </a>
+    <a class="btn btn-sm btn-lg btn-md btn-xs fw-semibold btn-light-primary text-nowrap" (click)="loadpromotions()"
+      [appPermission]="'BTN_LOAD_PROMOTIONS'">
+      {{'TRANSLATE.PLAN_MANAGE_ADD_CAPTION_3_LOAD_PROMOTIONS' | translate}}
+    </a>
+
+  </div>
+</ng-template>
+
+<div class="card">
+  <div class="card-body pt-0 overflow-auto">
+    <!-- Enable name field -->
+    <ng-template #nameTemplate let-data="adtData" let-row="userData">
+      <app-edit-column [data]="data" [field]="row?.field" (enableEdit)="enableEditField($event)"></app-edit-column>
+    </ng-template>
+
+    <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+      <div class="d-flex justify-content-center">
+        @if(data.PlanStatus === 'Error'){
+        <div>
+          <span translate="TRANSLATE.ERROR_MESSAGE_FAILED_TO_CREATE_NEW_PLAN"></span>
+        </div>
+        }
+        @if(data.PlanStatus === 'Pending' || data.PlanStatus === 'In Progress' || data.PlanStatus === 'Creating'){
+        <a class="btn green-sharp btn-circle btn-icon-only tooltips button-no-padding">
+          <span class="svg-icon svg-icon-primary svg-icon-2x">
+            <i class="ki-outline ki-loading text-primary fs-1"
+              ngbTooltip="{{'TRANSLATE.PARTNER_PLANS_BUTTON_TOOLTIP_PLAN_CREATION_IS_IN_PROGRESS' | translate}}">
+            </i>
+          </span>
+        </a>
+        }
+        @if(data.PlanStatus === 'Pending' || data.PlanStatus === 'In Progress' || data.PlanStatus === 'Updating'){
+        <a class="btn green-sharp btn-circle btn-icon-only tooltips button-no-padding">
+          <span class="svg-icon svg-icon-primary svg-icon-2x">
+            <i class="ki-outline ki-loading text-primary fs-1" (click)="addMissingOffersToAllPlan('Status')"
+              ngbTooltip="{{'TRANSLATE.PARTNER_PLANS_BUTTON_TOOLTIP_PLAN_UPDATION_IS_IN_PROGRESS' | translate}}">
+            </i>
+          </span>
+        </a>
+        }
+        @if(data.PlanStatus === 'Success'){
+        <!-- Add your action buttons or other elements here -->
+        <div class="d-flex align-items-center">
+          <div class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto" [appPermission]="'EDIT_PLAN'"
+            [ngClass]="toolbarButtonHeightClass" (click)="editPlanDetails(data,'edit')">
+            <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+              <i class="ki-outline ki-pencil text-primary" placement="top"
+                ngbTooltip="{{'TRANSLATE.PLAN_OVERRIDE_CAPTION_1_EDIT_PLAN' | translate}}">
+                <!-- <span class="path1"></span>
+                <span class="path2"></span> -->
+              </i>
+            </span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center">
+          <div class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto" [appPermission]="'SAVE_PLAN'"
+            [ngClass]="toolbarButtonHeightClass" (click)="planCurrencyConversion(data)">
+            <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20pxx">
+              <i class="ki-outline ki-bill text-primary" placement="top"
+                ngbTooltip="{{'TRANSLATE.SETTINGS_HEADING_TEXT_CURRENCY_CONVERSION' | translate}}">
+              </i>
+            </span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center">
+          <div class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto" [appPermission]="'SAVE_PLAN'"
+            [ngClass]="toolbarButtonHeightClass" (click)="deletePlan(data)">
+            <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+              <i class="ki-outline ki-trash text-primary" placement="top"
+                ngbTooltip="{{'TRANSLATE.SETTINGS_HEADING_TEXT_DELETE_PLAN' | translate}}">
+              </i>
+            </span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center">
+          <div class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto" [appPermission]="'CLONE_PLAN'" placement="top"
+            [ngClass]="toolbarButtonHeightClass" (click)="editPlanDetails(data,'clone')" ngbTooltip="{{'TRANSLATE.PARTNER_PLANS_BUTTON_TOOLTIP_CLONE_PLAN' | translate}}">
+            <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+              <i class="ki-outline ki-copy text-primary"></i>
+            </span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center" (click)="planProductsSeatLimit(data)">
+          <div class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto" [appPermission]="'SAVE_PLAN'"
+            [ngClass]="toolbarButtonHeightClass">
+            <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+              <i class="ki-outline ki-handcart text-primary" placement="top"
+                ngbTooltip="{{'TRANSLATE.PARTNER_PLANS_BUTTON_TOOLTIP_SEAT_LIMITS' | translate}}"></i>
+            </span>
+          </div>
+        </div>
+        }
+      </div>
+    </ng-template>
+
+    <div class="col-md-12 d-flex justify-content-between my-1 flex-wrap">
+      <div class="d-flex align-items-center position-relative my-1">
+        <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5"><span class="custom-path1"></span><span
+            class="custom-path2"></span></i> <input type="text" data-field="Name" data-action="filter"
+          class="header-input-field form-control form-control-solid w-300px ps-12" placement="top"
+          placeholder="{{'TRANSLATE.CUSTOMER_SEARCH_SEARCH_OPTION'| translate}} {{'TRANSLATE.CUSTOMER_SEARCH_CUSTOMER_name'| translate}}">
+        <!--begin::Card title-->
+      </div>
+
+      <div class="my-1">
+        <button type="button" class="btn btn-sm btn-primary remove-caret text-nowrap" (click)="addPlanDetails()"
+          [appPermission]="'SAVE_PLAN'" appBusyLoader>
+          <i class="ki-duotone ki-plus fs-2"></i>
+          {{'TRANSLATE.PLAN_MANAGE_ADD_CAPTION_2_ADD_NEW_PLAN' | translate}}
+        </button>
+      </div>
+    </div>
+
+    <!-- Check if datatableConfig is defined and then render the table -->
+    <ng-container *ngIf="datatableConfig">
+      <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" [isNestedGrid]="true" [isPagination]="true" (tableReady)="onTableReady($event)">
+      </app-c3-table>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #value let-data="adtData" let-row="userData">
+  @if(data.MacroValue != 0){
+  <div>
+    <span>{{data.MacroValue}}</span>
+  </div>
+  }
+</ng-template>
+
+<ng-template #providerSelectionModel>
+  <div id="providerSelectionModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle">
+    <div role="document" class="modal-dialog m-0 modal-dialog m-0-centered">
+      <div class="modal-content">
+        <div class="modal-header pe-3">
+          <h2 id="exampleModalLongTitle">
+            {{'TRANSLATE.PLAN_MANAGE_ADD_CAPTION_3_LOAD_PROMOTIONS_MODEL_HEADER_TEXT'|translate}}
+          </h2>
+          <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModalPopup()" data-bs-dismiss="modal">
+            <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="card-body">
+            <div class="form form-horizontal" role="form" name="vm.frmProviderDetails" novalidate>
+              <div class="form-group row mb-5">
+                <div class="col-md-3 text-start text-sm-start text-md-left text-lg-left text-xl-left col-form-label">
+                  <span translate="TRANSLATE.LOAD_PROMOTIONS_LBL_TEXT_PROVIDER"></span>
+                  <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                    ngbTooltip="{{'TRANSLATE.LOADPROMOTION_PROVIDER_TOOLTIP' | translate}}">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                  </i>
+                </div>
+                <div class="col-md-9">
+                  <ng-select [(ngModel)]="selectedProvider" name="providers"
+                    [disabled]="selectedProvider?.Name === 'Microsoft'">
+                    @for (item of Providers; track $index) {
+                    <ng-option [value]="item" (change)="onProviderChange(item)">{{item.Name}}</ng-option>
+                    }
+
+                  </ng-select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-md-3 text-start text-sm-start text-md-left text-lg-left text-xl-left col-form-label">
+                  <span translate="TRANSLATE.LOAD_PROMOTIONS_LBL_TEXT_CATEGORY"></span>
+                  <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                    ngbTooltip="{{'TRANSLATE.LOADPROMOTION_CATEGORY_TOOLTIP' | translate}}">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                  </i>
+                </div>
+                <div class="col-md-9">
+                  <ng-select [(ngModel)]="selectedCategory" name="categories"
+                    [disabled]="selectedCategory?.Name == 'OnlineServicesNCE'">
+                    @for (item of Categories; track $index) {
+                    <ng-option [value]="item" (change)="onCategoryChange(item)">{{item.Name}}</ng-option>
+                    }
+
+                  </ng-select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm custom-cancel-btn" (click)="closeModalPopup()">
+            {{'TRANSLATE.PLAN_MANAGE_ADD_CAPTION_3_LOAD_PROMOTIONS_MODEL_CLOSE_BUTTON_TEXT' | translate}}
+          </button>
+          <button type="button" class="btn btn-sm btn-primary" (click)="placeQueueMessageToLoadPromotions()">
+            {{'TRANSLATE.PLAN_MANAGE_ADD_CAPTION_3_LOAD_PROMOTIONS_MODEL_SUBMIT_BUTTON_TEXT' | translate}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

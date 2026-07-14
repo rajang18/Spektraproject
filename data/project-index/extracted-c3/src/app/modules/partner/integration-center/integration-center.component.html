@@ -1,0 +1,40 @@
+@if(isloaded){
+    @if (activeServiceDetail === 'Dynamics365BusinessCentral' && hasAnyPermission) {
+    <div class="card card-custom">    
+        <div class="card-header card-header-stretch overflow-auto" *ngIf="!isHideTabsRoute">
+            <ul class="nav nav-stretch nav-line-tabs fw-bold border-transparent flex-nowrap" role="tablist">
+                @for(tab of tabsList; track $index)
+                { 
+                <li class="nav-item">
+                    <a [routerLink]="tab.link" 
+                       routerLinkActive="active"  
+                       #rla="routerLinkActive" 
+                       [ngClass]="{ 'text-primary fw-bolder': rla.isActive }"
+                       [style.pointer-events]="isSyncing ? 'none' : 'auto'"
+                       [style.opacity]="isSyncing ? '0.5' : '1'"
+                       [routerLinkActiveOptions]="{ exact: true }"
+                       class="nav-link cursor-pointer" 
+                       role="tab">
+                        {{ tab.label | translate }}
+                    </a>
+                </li>
+                }
+            </ul>
+        </div>
+        <div class="card-body p-0">
+            <router-outlet></router-outlet>
+        </div>
+        </div>
+} @else {
+    <div class="card card-custom">
+        <div class="card-body">
+            <div class="p-10 text-center bg-light rounded mt-5">
+                <p class="text-danger fw-bold fs-5 mb-0" translate="TRANSLATE.BUSINESS_CENTRAL_DISABLED_MESSAGE"></p>
+            </div>
+        </div>
+    </div>
+}
+}
+@else{
+      <app-loader></app-loader>
+}

@@ -1,0 +1,125 @@
+<div class="model">
+    <div>
+        <div type="text/ng-template">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary" id="modal-title"><span
+                        translate="TRANSLATE.TITLE_ROLE_SELECT"></span></h3>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form [formGroup]="userForm">
+                            <div class="form-group">
+                                <label>
+                                    <span translate="TRANSLATE.USERS_ADD_OR_EDIT_TEXT_BOX_LABEL_FIRST_NAME"></span>
+                                </label>
+                                <div>
+                                    <input type="text" class="form-control mt-1" formControlName="firstName" />
+                                </div>
+                            </div>
+                            <div class="form-group mt-6">
+                                <label>
+                                    <span translate="TRANSLATE.USERS_ADD_OR_EDIT_TEXT_BOX_LABEL_LAST_NAME"></span>
+                                </label>
+                                <div>
+                                    <input type="text" class="form-control mt-1" formControlName="lastName" />
+                                </div>
+                            </div>
+                            <div class="form-group mt-6">
+                                <label>
+                                    <span translate="TRANSLATE.USERS_ADD_OR_EDIT_TEXT_BOX_LABEL_EMAIL"></span><span
+                                        class="text-danger"> *</span>
+                                </label>
+                                <div>
+                                    <input type="email" class="form-control mt-1" formControlName="emailAdderss" />
+                                </div>
+                            </div>
+                            <div class="form-group mt-6" *ngIf="RoleName === 'Customer' || RoleName === 'Site'">
+                                <label class="mb-1">
+                                    {{ 'TRANSLATE.CUSTOMER_USERS_FORM_LABEL_ROLE_TYPE' | translate }}<span
+                                        class="text-danger"> *</span>
+                                </label>
+                                <!-- <select name="roleType" required ng-options="x.ID as x.Description | translate for x in RoleTypes" class="editable-input form-control" ng-change="ChangeInUserRoleType(User.RoleType)"></select> -->
+                                <ng-select formControlName="roleType" (change)="changeInUserRoleType()" [tabIndex]="-1">
+                                    @for(x of this.RoleTypes; track $index){
+                                    <ng-option [value]="x.ID">{{x.Description}}</ng-option>
+                                    }
+                                </ng-select>
+                                @if(userForm.get('roleType')?.errors?.required &&
+                                (userForm.get('roleType')?.touched || buttonClicked)){
+                                <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                                }
+                            </div>
+                            <div class="form-group mt-6"
+                                *ngIf="RoleName == 'Customer' && EntityNameForRoles !='Customer'">
+                                <label class="control-label mb-1">
+                                    {{ 'TRANSLATE.CUSTOMER_USERS_FORM_LABEL_SITE' | translate }} <span
+                                        class="text-danger"> *</span>
+                                </label>
+                                <!-- <select required ng-disabled="User.RoleType == ''" ng-change="GetSiteDepartments()" ng-model="User.C3SiteID" name="site" ng-options="x.C3SiteID as x.Name | translate for x in Sites" class="editable-input form-control"></select> -->
+                                <ng-select formControlName="C3SiteID" (change)="getSiteDepartments()">
+                                    @for(x of this.Sites; track $index){
+                                    <ng-option [value]="x.C3SiteID"
+                                        >{{x.Name}}</ng-option>
+                                    }
+                                </ng-select>
+                                @if(userForm.get('C3SiteID')?.errors?.required &&
+                                (userForm.get('C3SiteID')?.touched || buttonClicked)){
+                                <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                                }
+                            </div>
+                            <div class="form-group mt-6"
+                                *ngIf="(RoleName == 'Customer' || RoleName == 'Site') && EntityNameForRoles !='Customer' && EntityNameForRoles !='Site'">
+                                <label class="mb-1">
+                                    {{ 'TRANSLATE.CUSTOMER_USERS_FORM_LABEL_DEPARTMENT' | translate }} <span
+                                        class="text-danger"> *</span>
+                                </label>
+                                <!-- <select ng-model="User.C3DepartmentSitesID" required name="department" ng-options="x.C3DepartmentSitesID as x.Name | translate for x in SiteDepartments" class="editable-input form-control" ng-disabled="User.C3SiteID == null && RoleName  != 'Site' " ></select> -->
+                                <ng-select formControlName="department">
+                                    @for(x of this.SiteDepartments; track  x.C3DepartmentSitesID){
+                                    <ng-option [value]="x.C3DepartmentSitesID">{{x.Name}}</ng-option>
+                                    }
+                                </ng-select>
+                                @if(userForm.get('department')?.errors?.required &&
+                                (userForm.get('department')?.touched ||buttonClicked)){
+                                <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                                }
+                            </div>
+                            <div class="form-group mt-6">
+                                <div>
+                                    @for (roles of this.Roles; track roles.ID; let index = $index) {
+                                    <div class="mt-2">
+                                        <div>
+                                            <input class="radiobtn me-3" type="radio" [value]="roles.Name"
+                                                formControlName="roleName">
+
+                                            <label class="">{{('TRANSLATE.' + roles.Description )| translate}}</label>
+
+                                            <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                                                ngbTooltip="{{('TRANSLATE.' + roles.Description + '_DESCRIPTION') | translate}}">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i>
+                                        </div>
+                                    </div>
+                                    }
+                                    @if(userForm.get('roleName')?.errors?.required &&
+                                    (userForm.get('roleName')?.touched || buttonClicked)){
+                                    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                                    }
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer mt-3">
+                <a class="btn btn-secondary btn-sm me-2" (click)="closeModalPopup()"><span
+                        translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span></a>
+                <a class="btn btn-primary btn-sm" (click)="ok()"> <span translate="TRANSLATE.BUTTON_TEXT_OK">
+                    </span></a>
+            </div>
+        </div>
+    </div>
+</div>

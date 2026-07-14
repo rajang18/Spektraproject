@@ -1,0 +1,28 @@
+
+
+.five-products-by-revenue-png {
+    height: 300px;
+    overflow: auto;
+
+}
+#five-products-by-revenue-png{
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    padding-right: 2.25rem;
+}
+
+::ng-deep{
+    app-revenue-top-products{
+        .opacity-8{
+            opacity: 0.8;
+        }
+        .loader-indicater{
+            position: absolute;
+            margin: auto;
+            top: 50%;
+            left: 41%;
+            // z-index: 999999;
+        }
+    }
+}

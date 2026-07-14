@@ -1,0 +1,67 @@
+<div class="card card-custom  card-stretch bgi-no-repeat bgi-size-cover bgi-position-y-top bgi-position-x-center" [ngClass]="bgColor" (click)="openCustomersList()"
+    style="cursor: pointer;">
+    <div class="card-body p0" style="height:150px;">
+        <div class="d-flex align-items-center justify-content-between flex-grow-1">
+            <span class="svg-icon svg-icon-4x svg-icon-white">
+                @if(cardType !== cardsTypes.customers){
+                <i class="ki-outline ki-people fs-3x">
+                    <!-- <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                    <span class="path4"></span> -->
+                </i>
+                }
+                @else {
+                    <i class="ki-outline ki-profile-user fs-3x"></i>
+                }
+            </span>
+            <div class="d-flex flex-column text-right">
+                @if(cardType === cardsTypes.customers){
+                <span class="fw-bolder text-white fs-2 text-end ">{{customersCount?.Data?.CustomerCount}}</span>
+                }
+                @else{
+                <span class="fw-bolder text-white fs-2 text-end ">{{resellersCount?.Data?.ResellerCount}}</span>
+                }
+                <span class=" text-white fs-4">
+                    @if(cardType === cardsTypes.customers){
+                    <span translate="TRANSLATE.PARTNER_DASHBOARD_TILE_CUSTOMERS"></span>
+                    }
+                    @else{
+                    <span translate="TRANSLATE.PARTNER_DASHBOARD_TILE_RESELLERS"></span>
+                    }
+                </span>
+            </div>
+        </div>
+        <div class="d-flex flex-row mt-4 gap-2">
+            <span class="d-flex align-items-center">
+                <i class="ki-duotone ki-arrow-down">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                </i>
+                @if(cardType === cardsTypes.customers){
+                <span
+                    class="fw-bolder text-white fs-3">{{customersCount?.Data?.DeletedCustomerCountInCurrentMonth}}</span>
+
+                }
+                @else{
+                <span
+                    class="fw-bolder text-white fs-3">{{resellersCount?.Data?.DeletedResellerCountInCurrentMonth}}</span>
+
+                }
+            </span>
+            <span class="d-flex align-items-center">
+                <i class="ki-duotone ki-arrow-up">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                </i>
+                @if(cardType === cardsTypes.customers){
+                <span class="fw-bolder text-white fs-3">{{customersCount?.Data?.NewCustomerCountInCurrentMonth}}</span>
+                }
+                @else{
+                <span class="fw-bolder text-white fs-3">{{resellersCount?.Data?.NewResellerCountInCurrentMonth}}</span>
+
+                }
+            </span>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+.label.label-light-danger {
+    color: #F64E60;
+    background-color: #FFE2E5;
+}
+
+.label.label-success {
+    color: #ffffff;
+    background-color: #1BC5BD;
+}
+.symbol {
+    display: inline-block;
+    flex-shrink: 0;
+    position: relative;
+    border-radius: .200rem;
+    margin-top: 1rem;
+}   
+
+.symbol .symbol-label{
+    width: 40px;
+    height: 40px;
+}
+
+.badge {
+    --bs-badge-padding-x: .4rem;
+    --bs-badge-padding-y: .300rem;
+    --bs-badge-font-size: .80rem;
+    --bs-badge-font-weight: 500;
+}

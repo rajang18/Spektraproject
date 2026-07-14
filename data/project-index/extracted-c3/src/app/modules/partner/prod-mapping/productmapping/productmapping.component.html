@@ -1,0 +1,105 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="back()">
+            <i class="ki-outline ki-to-left fs-2"></i>
+            <span translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_BTN_TEXT_BACK_TO_SUBSCRIPTION_HISTORY"></span>
+        </button>
+        <button type="button" class="btn btn-sm fw-bold btn-primary" (click)="createNewPSAProduct()">
+            <i class="fa fa-plus"></i>{{'TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_BTN_TEXT_NEW_PRODUCT' | translate}}
+        </button>
+    </div>
+</ng-template>
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12">
+                <ng-template #propertiespills let-data="adtData" let-emitter="captureEvents">
+                    <div>
+                      <strong><span>{{data.ProductVarientName}}</span></strong> 
+                      <br/>
+                    <span class="label label-warning fw-bold label-inline text-white badge bg-warning" aria-hidden="true" *ngIf="data.ValidityType === 'Month(s)'"
+                        ngbTooltip ="{{'TRANSLATE.DOWNLOAD_COLUMN_PLAN_OFFER_TERM_DURATION' | translate}}">
+                        {{ data.Validity }}
+                        {{ (data.Validity === 1 ? (data.ValidityType === 'Month(s)' ? 'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') : 'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                    </span>
+                    <span class="label label-warning fw-bold label-inline text-white badge bg-warning"
+                        *ngIf="data.ValidityType === 'Year(s)' || data.ValidityType === 'Year'"
+                        [ngClass]="{'labelcolor': data.BillingCycle === 'Monthly', 'TermLabelColor': data.BillingCycle === 'Annual'}"
+                        ngbTooltip ="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                        {{ data.Validity }}
+                        {{ (data.Validity === 1 ? (data.ValidityType === 'Month(s)' ? 'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') : 'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                    </span>
+                         <span class="label fw-bold label-inline text-white badge"
+                        [ngClass]="{
+                            'bg-warning': data.BillingCycle?.toLowerCase() === 'monthly',
+                            'bg-success': data.BillingCycle?.toLowerCase() === 'annual',
+                            'bg-dark': data.BillingCycle?.toLowerCase() === 'triennial',
+                            'bg-info': data.BillingCycle?.toLowerCase() === 'onetime'
+                        }" aria-hidden="true" 
+                        ngbTooltip="{{'TRANSLATE.CUSTOMER_PURCHASED_PRODUCT_MAPPING_TEXT_BILLING_CYCLE' | translate}}">
+                            {{'TRANSLATE.' + data.BillingCycleDescriptionKey | translate}}
+                        </span>
+                        @if(data.CategoryName != 'OnlineServicesNCE' && data.CategoryName != 'ReservedInstances'){
+                        <span class="label label-light-info fw-bold label-inline badge" ngbTooltip="{{'TRANSLATE.LABEL_TEXT_CATEGORY' | translate}}">
+                            {{'TRANSLATE.' + data.CategoryDescriptionKey | translate}}
+                        </span>
+                        }
+                        @if(data.CategoryName == 'ReservedInstances'){
+                        <span class="label label-light-info fw-bold label-inline badge" ngbTooltip="{{'TRANSLATE.LABEL_TEXT_CATEGORY' | translate}}">
+                            {{'TRANSLATE.CATEGORY_DESCRIPTION_RESERVED_INSTANCE' | translate}}
+                        </span>
+                        }
+
+                        @if(data.CategoryName == 'OnlineServicesNCE'){
+                        <span class="label label-light-info fw-bold label-inline badge" ngbTooltip="{{'TRANSLATE.LABEL_TEXT_CATEGORY' | translate}}">
+                            {{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE' | translate}}
+                        </span>
+                        }                      
+
+                        <span *ngIf="data.CurrencyCode !== null  && data.CurrencyCode !== undefined" class="label label-inline label-success badge" ngbTooltip ="{{'TRANSLATE.PRODUCT_COMMISSION_EARNING_DETAILS_TABLE_HEADER_TEXT_CURRENCY_CODE' | translate}}">{{data.CurrencyCode | translate}}</span>
+
+                        <span class="label label-inline ng-binding label-success badge" *ngIf="data.SupportedMarketCode !== undefined && data.SupportedMarketCode !== null" ngbTooltip ="{{'TRANSLATE.PRODUCT_VARIENTS_MAPPING_TOOLTIP_TEXT_SUPPORTED_MARKET_CODE' | translate}}">
+                            {{data.SupportedMarketCode | translate}}
+                        </span>
+                        <span *ngIf="data.IsESTOffer" class="badge EST-Pill-styling text-white" ngbTooltip="{{'TRANSLATE.CATEGORY_PILL_EST_TOOLTIP' | translate }}">{{ 'TRANSLATE.CATEGORY_PILL_NAME_EST' | translate}}</span>
+                    </div>
+                </ng-template>
+
+                <ng-template #textBox let-data="adtData" let-emitter="captureEvents">
+                    <div>
+            
+                        <input type="text" class="col-md-5 form-control form-control-sm text-start" 
+                            [class]="themeMode.mode.getValue() == 'light' && data.ContractServiceName != null ? 'text-dark' : 'custom'"
+                            placeholder="{{'TRANSLATE.PSA_PRODUCT_MAPPING_SELECT_SERVICE'|translate}}" 
+                            disabled 
+                            [(ngModel)]="data.ContractServiceName"
+                            name="textBox">
+                        <!-- <input type="radio" [(ngModel)]="data.IsSelected" [value]="true" name="radio" (change)="updateSelectedList(data)" required> -->
+                    </div>
+                </ng-template>
+                <ng-container *ngIf="!!activeProductsDatatableConfig">
+                    <app-c3-table [datatableConfig]="activeProductsDatatableConfig" [reload]="reloadEvent" [searchFilter]=false>
+                    </app-c3-table>
+                </ng-container>
+                <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+                    <div class="text-center">
+                        <a class="btn btn-light-primary btn-sm btn-lg btn-xs mr-2" (click)="getExternalProductsForMapping(data)"
+                            *ngIf="data.MappedExternalProductId == undefined && data.MappedExternalProductId == null">
+                            <span translate="TRANSLATE.SELECT_DEFAULT_OPTION_SELECT"
+                                ></span>
+                        </a>
+                        <a class="btn btn-light-danger btn-sm btn-lg btn-xs mr-2"
+                            *ngIf="data.MappedExternalProductId !== undefined && data.MappedExternalProductId !== null" (click)="unMapProductVariant(data.MappedExternalProductId, data.ProductVarientId)">
+                            <span translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_BTN_TEXT_RELEASE" ></span>
+                        </a>
+                    </div>
+                </ng-template>
+                <div class=" text-end mt-5" [appPermission]="'MANAGE_ENTITY_AND_PRODUCT_MAPPING'">
+                    <a class="btn btn-primary btn-xs mr-2"  (click)="Savemapping()" appBusyLoader>
+                        <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

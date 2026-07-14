@@ -1,0 +1,638 @@
+<div *ngIf="product">
+    <div class="card card-custom gutter-b">
+        <div class="card-body">
+            <!--begin::Top-->
+            <div class="d-flex">
+                <!--begin::Pic-->
+                <div class="flex-shrink-0 mr-7">
+                    @if (product.ImageUrl) {
+                    <div class="symbol symbol-50 symbol-lg-120 symbol-light-danger text-center">
+                        <img [src]="product.ImageUrl" alt="product-image">
+                    </div>
+                    }
+                    @if (!product.ImageUrl) {
+                    <div class="pl-9 mb-2 symbol symbol-50 symbol-lg-120 symbol-circle symbol-dark">
+                        <span class="font-size-h3 symbol-label font-weight-boldest">
+                            {{product.ProductSubscriptionName | formatforinitials}}
+                        </span>
+                    </div>
+                    }
+                    <!-- Increase/Decrease is also available for license tracking true t resolve the deadlock while assigning seats to site/department when no free seats at parent level.-->
+                    <div class="text-center">
+                        @if (product.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_ACTIVE) {
+                        @if (isQuantityDisabledByRole) {
+                        <div class="input-group" style="width: 70%;">
+                            <div class="input-group-prepend">
+                                <button class="input-group-text line-height-0 py-0 h-100 custom-border-left disabled-btn" disabled aria-label="Decrease quantity">
+                                    <i class="ki-duotone ki-minus"></i>
+                                </button>
+                            </div>
+                            <input class="form-control text-center" type="number" pattern="\d*" [value]="product.Quantity"
+                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_LABEL_QUANTITY' | translate}}: {{product.Quantity}}"
+                                disabled />
+                            <div class="input-group-append">
+                                <button class="input-group-text line-height-0 py-0 h-100 custom-border-right disabled-btn" disabled aria-label="Increase quantity">
+                                    <i class="ki-duotone ki-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        } @else {
+                        <div class="input-group" style="width: 70%;">
+                            <div class="input-group-prepend">
+                                <button class="input-group-text line-height-0 py-0 h-100 custom-border-left"
+                                    (click)="updateQuantity(product,false)"
+                                    [disabled]="!canUpdateProduct || product.Quantity<=0 || (Permissions.HasAccessUserLicenseTrackingView === 'Allowed' && product.Quantity<= currentQuantity)" appBusyLoader [isIconOnly]="true" aria-label="Decrease quantity">
+                                    <i class="ki-duotone ki-minus"></i>
+                                </button>
+                            </div>
+                            <input class="form-control text-center" oninput="this.value = Math.abs(this.value)"
+                                type="number" (keyup)="hideDecimal()" pattern="\d*" [(ngModel)]="product.Quantity"
+                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_LABEL_QUANTITY' | translate}}: {{product.Quantity}}"
+                                [disabled]="Permissions.HasAccessUserLicenseTrackingView === 'Allowed' || !canUpdateProduct" />
+                            <div class="input-group-append">
+                                <button class="input-group-text line-height-0 py-0 h-100 custom-border-right"
+                                    (click)="updateQuantity(product,true)" [ngClass]="{'disabled': !canUpdateProduct}" [disabled]="!canUpdateProduct" appBusyLoader [isIconOnly]="true" aria-label="Increase quantity">
+                                    <i class="ki-duotone ki-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        }
+                        }
+                    </div>
+                </div>
+                <!--end::Pic-->
+                <!--begin: Info-->
+                <!--end::Info-->
+            </div>
+            <div class="d-flex flex-wrap">
+                <!--begin::Description-->
+                <div class="flex-grow-1 font-weight-bold text-dark-50 py-2 py-lg-2 mr-5">
+                    <div
+                        class="table-scrollable table-scrollable-borderless table-borderless table-responsive table-responsive-sm table-responsive-lg table-responsive-xl">
+                        <table class="table table-sm table-condensed table-hover">
+                            <tbody>
+                                <tr style="background-color: unset !important;">
+                                    <td colspan="2">
+                                        <span *ngIf="product.IsEdit != true" tooltip-append-to-body="true"
+                                            tooltip-class="text-capitalize"
+                                            ngbTooltip="{{product.Segment != null ? product.ProductSubscriptionName + ' - ' + product.Segment : product.ProductSubscriptionName }}"
+                                            class="fs-5 fw-bold">
+                                            {{product.ProductSubscriptionName | limitLength: 60}}
+                                            <span
+                                                *ngIf="product.ProductSubscriptionName != null && product.ProductSubscriptionName.length > 60">...</span>
+                                        </span>
+                                        <a class="btn btn-icon"
+                                            *ngIf="product.IsEdit != true && Permissions.HasSaveProductChanges ==='Allowed' && product.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_ACTIVE "
+                                            (click)="product.IsEdit = true;setProductName()">
+                                            <i class="ki-outline fs-4 text-primary ki-pencil" aria-hidden="true"
+                                                data-toggle="tooltip" data-placement="top"
+                                                ngbTooltip="{{'TRANSLATE.TOOLTIP_TEXT_EDIT_NAME'|translate}}">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                            </i>
+                                        </a>
+                                        <div class="row"
+                                            *ngIf="product.IsEdit === true && Permissions.HasSaveProductChanges ==='Allowed'">
+                                            <div class="col" *ngIf="Permissions.HasSaveProductChanges ==='Allowed'">
+                                                <input type="text" [(ngModel)]="product.ProductNameToUpdate"
+                                                    name="productNameToUpdate" class="form-control"
+                                                    ng-init="product.ProductNameToUpdate = product.ProductSubscriptionName">
+                                            </div>
+                                            <div class="btn-group col-md-1 p-0">
+                                                <a class="btn btn-icon"
+                                                    *ngIf="Permissions.HasSaveProductChanges ==='Allowed'"
+                                                    (click)="updateProductName(product, 'Name', product.ProductSubscriptionName)"
+                                                    ng-show="product.IsEdit === true">
+                                                    <i class="ki-outline ki-check fs-1 text-success"></i>
+                                                </a>
+                                                <a class="btn btn-icon"
+                                                    *ngIf="Permissions.HasSaveProductChanges ==='Allowed' && product.IsEdit === true"
+                                                    (click)="product.IsEdit = false;product.ProductNameToUpdate=product.ProductSubscriptionName;" ng-show="product.IsEdit === true">
+                                                    <i class="ki-outline ki-cross fs-1 text-danger"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <a
+                                            *ngIf="product.IsEdit === true && Permissions.HasSaveProductChanges ==='Denied'">
+                                            <span
+                                                [innerHTML]="product.ProductSubscriptionName | limitLength: 80"></span>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="d-flex align-items-center flex-wrap justify-content-between">
+                                            <!--begin::Description-->
+                                            <div
+                                                class="flex-grow-1 fw-bold text-dark-50 py-2 py-lg-2 mr-5 description-color">
+                                                @if (!showCompleteDescription) {
+                                                <div>
+                                                    <span [innerHTML]="product.Description| limitLength: 40"></span>
+                                                    <span
+                                                        *ngIf="product.Description !=null && product.Description.length > 40"></span>
+                                                    <a class="bold text-primary cursor-pointer ps-1"
+                                                        *ngIf="product.Description !=null && product.Description.length > 40"
+                                                        (click)="readMoreDescription()"><small>{{'TRANSLATE.PRODUCT_DETAILS_READ_MORE_LINK_TEXT'
+                                                            | translate}}</small></a>
+                                                </div>
+                                                }
+
+                                                @if (showCompleteDescription) {
+                                                <div>
+                                                    <span style="word-break: break-word" width="100"
+                                                        [innerHTML]="product.Description"></span>
+                                                    <a class="bold text-primary cursor-pointer ps-1"
+                                                        *ngIf="product.Description !=null && product.Description.length > 40"
+                                                        (click)="readLessDescription()"><small>{{'TRANSLATE.PRODUCT_DETAILS_READ_LESS_LINK_TEXT'
+                                                            | translate}}</small></a>
+                                                </div>
+                                                }
+
+                                            </div>
+                                            <!--end::Description-->
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="product.ProviderSettings && product.ProviderSettings.ProviderCategory">
+                                    <td class="fw-bold">
+                                        {{'TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_LABEL_TEXT_CATEGORY' | translate}}
+                                    </td>
+                                    <td><strong>{{product.ProviderSettings.ProviderCategory | translate}}</strong></td>
+                                </tr>
+                                <tr *ngIf="product.ProviderProductId">
+                                    <td class='fw-bold'>{{'TRANSLATE.CUSTOMER_PRODUCTS_LIST_TITLE_SUBSCRIPTION_ID' |
+                                        translate}}</td>
+                                    <td>
+                                        <span>{{product.ProviderProductId}}</span>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="product.DomainName">
+                                    <td class="fw-bold">{{'TRANSLATE.CUSTOMER_PRODUCTS_LIST_TITLE_DOMAIN' | translate}}
+                                    </td>
+                                    <td>
+                                        <span>{{product.DomainName}}</span>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="product.BillingCycleName">
+                                    <td class="fw-bold">
+                                        {{'TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_LABEL_TEXT_BILLING_CYCLE' |
+                                        translate}}
+                                    </td>
+                                    <td>
+                                        <span>{{'TRANSLATE.' + product.BillingCycleDescription | translate}} &nbsp; <a
+                                                class="bold font-green"
+                                                *ngIf="Permissions.HasUpdateBillingCycle && product.ConsumptionTypeId === 1 && (product.BillingCycleId === 1 || product.BillingCycleId === 2)&& product.LinkedSubscriptionId===null && product.ProviderName==='Microsoft' && product.OldQuantity===product.CummulativeQuantity "
+                                                (click)="changeBillingCycle(product)"><small>{{'TRANSLATE.CUSTOMER_PRODUCT_BILLING_CYCLE_CHANGE_LINK_TEXT'
+                                                    | translate}}</small></a></span>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="product.AutoRenewDate">
+                                    <td class="fw-bold">{{'TRANSLATE.CUSTOMER_PRODUCTS_COMMITMENT_END_DATE' |
+                                        translate}}</td>
+                                    <td>
+                                        <p>{{product.AutoRenewDate | dateTimeFilter:globalDateTimeFormat}}</p>
+                                    </td>
+                                </tr>
+                                <tr
+                                    *ngIf="product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE">
+                                    <td class="fw-bold">
+                                        {{'TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_LABEL_TEXT_UNIT_PRICE' |
+                                        translate}}</td>
+                                    <td>
+                                        <p class="mb-0">
+                                            <span class=" ">{{product.FinalSalePrice | CurrencyFilter :
+                                                product.CurrencySymbol :
+                                                product.CurrencyDecimalPlaces :
+                                                product.CurrencyThousandSeperator :
+                                                product.CurrencyDecimalSeperator}}</span>
+                                            <span *ngIf="product.Discount != null && product.Discount > 0">
+                                                <span class="ng-binding mx-1 strike-through text-danger">
+                                                    {{product.OriginlaSalePrice | CurrencyFilter :
+                                                    product.CurrencySymbol :
+                                                    product.CurrencyDecimalPlaces :
+                                                    product.CurrencyThousandSeperator :
+                                                    product.CurrencyDecimalSeperator}}</span>
+                                            </span>
+                                        </p>
+                                    </td>
+                                </tr>
+                                <tr
+                                    *ngIf="product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE && (product.Discount != null && product.Discount > 0)">
+                                    <td class="fw-bold">
+                                        {{'TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_LABEL_TEXT_DISCOUNT' | translate}}
+                                    </td>
+                                    <td>
+                                        <span>
+                                            <span
+                                                *ngIf="product.DiscountType == 'Percentage'">{{product.Discount}}%</span>
+                                            <span *ngIf="product.DiscountType != 'Percentage'">
+                                                {{product.Discount | CurrencyFilter :
+                                                product.CurrencySymbol :
+                                                product.CurrencyDecimalPlaces :
+                                                product.CurrencyThousandSeperator :
+                                                product.CurrencyDecimalSeperator }}</span>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr
+                                    *ngIf="product.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_SUSPENDED || Permissions.HasAccessUserLicenseTrackingView === 'Allowed'">
+                                    <td class="fw-bold">{{'TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_LABEL_QUANTITY' |
+                                        translate}}</td>
+                                    <td><span>{{product.Quantity}}</span></td>
+                                </tr>
+                                <tr
+                                    *ngIf="product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE">
+                                    <td class="fw-bold">{{'TRANSLATE.COUPON_OWNERSHIPS_PLAN_OFFERS_EFFECTIVE_PRICE' |
+                                        translate}}</td>
+                                    <td class="font-red"><span>
+                                            {{product.Quantity * product.FinalSalePrice | CurrencyFilter :
+                                            product.CurrencySymbol :
+                                            product.CurrencyDecimalPlaces :
+                                            product.CurrencyThousandSeperator :
+                                            product.CurrencyDecimalSeperator}}</span></td>
+                                </tr>
+                                <tr *ngIf="Permissions.HasPermissionToChangeIsManagedByPartner &&  isInheritedPartnerRole === true">
+                                    <td class="fw-bold">{{'TRANSLATE.IS_MANAGEABLE_ONLY_BY_PARTNER' | translate}}</td>
+                                    <td *ngIf="showCheckBox == false" class="pt-3">
+                                        <a href="javascript:void(0)" editable-checkbox="IsManagedByPartnerInPurchasedProducts"
+                                            (click)="toggleCheckBox(showCheckBox,isManagedByPartnerInPurchasedProducts)" buttons="no">
+                                            {{
+                                            isManagedByPartnerInPurchasedProducts &&
+                                            'TRANSLATE.MANAGE_CUSTOMER_PRODUCTS_INFO_TEXT_YES' ||
+                                            'TRANSLATE.MANAGE_CUSTOMER_PRODUCTS_INFO_TEXT_NO' | translate
+                                            }}
+                                        </a>
+                                    </td>
+                                    <td *ngIf="showCheckBox" class="pt-3">
+                                        <input #isManagedByPartnerInPurchasedProduct type="checkbox" id="isManagedByPartnerInPurchasedProduct"
+                                            [(ngModel)]="isManagedByPartnerInPurchasedProducts"
+                                            (click)="toggleCheckBox(showCheckBox,isManagedByPartnerInPurchasedProduct.checked)">
+                                    </td>
+                                
+                                    <!-- <a href="#" editable-checkbox="IsManagedByPartnerInPurchasedProducts" buttons="no">
+                                            {{ IsManagedByPartnerInPurchasedProducts && 'MANAGE_CUSTOMER_PRODUCTS_INFO_TEXT_YES' || 'MANAGE_CUSTOMER_PRODUCTS_INFO_TEXT_NO' | translate }}
+                                        </a> -->
+                                </tr>
+
+                                <tr
+                                    *ngIf="Permissions.HasAutoReleasePermission && Permissions.HasManageProductAutoRelease === 'Allowed' && product.Status.toLowerCase() != cloudHubConstants.SUBSCRIPTION_STATUS_SUSPENDED && product.IsCustomerLevel && product.LinkedSubscriptionId==null">
+                                    <td class="fw-bold">
+                                        {{'TRANSLATE.MANAGE_CUSTOMER_PRODUCTS_IS_CONSIDER_IN_AUTO_RELEASE' | translate}}
+                                    </td>
+                                    <td>
+                                        <span>
+                                            {{ product.IsAvailableForAutoRelease &&
+                                            'TRANSLATE.MANAGE_CUSTOMER_PRODUCTS_INFO_TEXT_YES' ||
+                                            'TRANSLATE.MANAGE_CUSTOMER_PRODUCTS_INFO_TEXT_NO' | translate }}
+                                        </span>
+                                        <!-- <a href="#" editable-checkbox="product.IsAvailableForAutoRelease" buttons="no" onaftersave="ChangeIsAvailable(Product)">
+                                                {{ product.IsAvailableForAutoRelease && 'MANAGE_CUSTOMER_PRODUCTS_INFO_TEXT_YES' || 'MANAGE_CUSTOMER_PRODUCTS_INFO_TEXT_NO' | translate }}
+                                        </a> -->
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!--end::Description-->
+            </div>
+            <!--end::Top-->
+            <div class="clearfix margin-top-20"></div>
+            <ul class="nav nav-tabs" *ngIf="product.LinkedSubscriptionId || (product.Addons && product.Addons.length)">
+                <li class="nav-item" *ngIf="product.Addons && product.Addons.length">
+                    <a [ngClass]="{'active': product.Addons && product.Addons.length > 0}" class="nav-link"
+                        id="AddonTabLink" data-toggle="tab" href="javascript:void(0)">
+                        <span class="nav-text"
+                            translate="TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_LABEL_TEXT_ADDONS"></span>
+                    </a>
+                </li>
+                <li class="nav-item" *ngIf="product.LinkedSubscriptionId">
+                    <a [ngClass]="{'active': !(product.Addons && product.Addons.length > 0)}" class="nav-link active"
+                        id="LinkedProductTabLink" data-toggle="tab" href="javascript:void(0)">
+                        <span class="nav-text"
+                            translate="TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_TAB_TEXT_LINKED_SUBSCRIPTION"></span>
+
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content mt-5" id="myTabContent"
+                *ngIf="product.LinkedSubscriptionId || (product.Addons && product.Addons.length)">
+                <div class="tab-pane fade show active" role="tabpanel" aria-labelledby="AddonTabLink">
+                    <div *ngIf="product.Addons && product.Addons.length">
+                        <div class="margin-top-10"></div>
+                        <div class="clearfix margin-top-10"></div>
+                        <div class="card border-0">
+                            <div style="min-height: 300px;overflow: hidden;" slim-scroll
+                                class="card-body mt-checkbox-list">
+
+                                <!-- @for (addon of product.Addons; track $index) {
+                                <div ng-repeat="addon in addon.Addons" ng-init="addonLevel = 0"
+                                    ng-include="'addonsList'"></div>
+                                } -->
+
+                                <!-- <div *ngFor="let addon of product.Addons; let i = index">
+                                    <div *ngFor="let addon of addon.Addons; let j = index" [ngInit]="addonLevel = 0">
+                                        <ng-container *ngTemplateOutlet="addonsList"></ng-container>
+                                    </div>
+                                </div> -->
+                                <div *ngFor="let addon of product.Addons; let i = index">
+                                    <ng-container *ngTemplateOutlet="addonsList; context: { $implicit: addon, addonLevel: addonLevel }"></ng-container>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade show active" *ngIf="product.LinkedSubscriptionId" role="tabpanel"
+                    aria-labelledby="LinkedProductTabLink">
+                    <div class="margin-top-10"></div>
+                    <div class="clearfix margin-top-10"></div>
+                    <div class="card border-0">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <img *ngIf="product.LinkedImageUrl" class="logo-default"
+                                            [src]="product.LinkedImageUrl" width="100" height="100" />
+                                        <div class="margin-top-20"
+                                            *ngIf="product.LinkedImageUrl === null || product.LinedImageUrl === ''">
+                                            <div class="margin-top-20"
+                                                *ngIf="product.LinkedImageUrl === null || product.LinedImageUrl === ''">
+                                                <i class="fa fa-gift logo-default" style="font-size: 60px;"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-10">
+                                            <div class="table-scrollable table-scrollable-borderless">
+                                                <table
+                                                    class="table table-condensed table-hover table-cell-no-border table-borderless">
+                                                    <tr
+                                                        *ngIf="product.LinkedSubscriptionName !== undefined && product.LinkedSubscriptionName !== null && product.LinkedSubscriptionName !== ''">
+                                                        <td class="text-right text-gray-800 fw-bold">
+                                                            {{'TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_LABEL_TEXT_SUBSCRIPTION_NAME'
+                                                            | translate}}</td>
+                                                        <td class="text-gray-700">
+                                                            <p>{{product.LinkedSubscriptionName}}</p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr
+                                                        *ngIf="product.LinkedSubscriptionBillingCycleName !== undefined && product.LinkedSubscriptionBillingCycleName !== null && product.LinkedSubscriptionBillingCycleName !== ''">
+                                                        <td class="text-right text-gray-800 fw-bold">
+                                                            {{'TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_LABEL_TEXT_BILLING_CYCLE'
+                                                            | translate}}</td>
+                                                        <td class="text-gray-700">
+                                                            <p>{{product.LinkedSubscriptionBillingCycleDescription |
+                                                                translate}}</p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr
+                                                        *ngIf="product.LinkedBillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE">
+                                                        <td class="text-right text-gray-800 fw-bold">
+                                                            {{'TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_LABEL_TEXT_UNIT_PRICE'
+                                                            | translate}}</td>
+                                                        <td class="text-gray-700">
+                                                            <span>
+                                                                <span class=" ">{{product.FinalSalePrice |
+                                                                    CurrencyFilter :
+                                                                    product.CurrencySymbol :
+                                                                    product.CurrencyDecimalPlaces :
+                                                                    product.CurrencyThousandSeperator :
+                                                                    product.CurrencyDecimalSeperator}}</span>&nbsp;
+                                                                <span
+                                                                    *ngIf="product.Discount != null && product.Discount > 0">
+                                                                    <del
+                                                                        class="ng-binding text-decoration-line-through text-danger">{{product.OriginlaSalePrice
+                                                                        | CurrencyFilter :
+                                                                        product.CurrencySymbol :
+                                                                        product.CurrencyDecimalPlaces :
+                                                                        product.CurrencyThousandSeperator :
+                                                                        product.CurrencyDecimalSeperator}}</del>
+                                                                </span>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr
+                                                        *ngIf="product.LinkedBillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE">
+                                                        <td class="text-right text-gray-800 fw-bold">
+                                                            {{'TRANSLATE.COUPON_OWNERSHIPS_PLAN_OFFERS_EFFECTIVE_PRICE'
+                                                            | translate}}</td>
+                                                        <td class="font-red text-gray-700"><span>{{product.Quantity *
+                                                                product.FinalSalePrice | CurrencyFilter :
+                                                                product.CurrencySymbol :
+                                                                product.CurrencyDecimalPlaces :
+                                                                product.CurrencyThousandSeperator :
+                                                                product.CurrencyDecimalSeperator}}</span></td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ml-5 mb-5"
+                *ngIf="DefaultTermsAndConditionURL !== null && DefaultTermsAndConditionURL!=='' && ShowTermsAndConditionsForSubscriptionUpdate === 'true' 
+                     && (product.IsCustomerLevel && product.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_SUSPENDED && Permissions.HasReactivateCustomerProductSubscription === 'Allowed'
+                     || product.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_SUSPENDED && product.IsCustomerLevel && product.HasPurchasedAddons && Permissions.HasReactivateCustomerProductSubscription === 'Allowed' && isCustomerAllowedToReduceSeats === true
+                     || product.IsCustomerLevel && product.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_ACTIVE && Permissions.HasSuspendProductSubscription === 'Allowed'
+                     || Permissions.HasSaveProductChanges === 'Allowed' && product.Status.toLowerCase() != cloudHubConstants.SUBSCRIPTION_STATUS_SUSPENDED)">
+                <label class="form-check form-check-inline"> 
+                    <input class="form-check-input" type="checkbox" value=""
+                        name="DefaultTermsAndConditionURLText" id="flexCheckDefault"
+                        [(ngModel)]="isAgreedOnTermsAndCondition" 
+                        [required]="isCheckboxRequired()" [ngbTooltip]="isCheckboxRequired() ? ('TRANSLATE.CHECK_THIS_BOX_TOOLTIP_TEXT'|translate) : null" title=""
+                        container="body" triggers="hover" />
+                    <span class="font ms-3 p-no-padding p-no-margin" style="display:inline-block;"
+                        [innerHTML]="DefaultTermsAndConditionText"></span>
+                    <a class="fw-bold ms-3" style="display:block;" href="{{DefaultTermsAndConditionURL}}"
+                        target="_blank" translate="TRANSLATE.CUSTOMER_ORDER_CART_DEFAULT_TERMS_AND_CONDITION_TEXT"></a>
+                </label>
+                <!--<span ng-show="formCart.form.$submitted &amp;&amp; formCart.form.DefaultTermsAndConditionURLText.$error.required" class="text-danger"><span />{{'CUSTOMER_ORDER_CART_TERMS_AND_CONDITION_IS_NOT_ENABLED_TEXT' | translate}}</span>-->
+            </div>
+            <!--begin::Bottom-->
+            <div class="row">
+                <div class="col-md-12 pl-md-12 ml-md-7 col-lg-12 pl-lg-12 ml-lg-7">
+                    <!--Reactivate with/without addons is being sent as argument for ReActivateSubscription-->
+                    <button type="submit" class="col-md-5 btn btn-light-success btn-sm ms-5 me-5"
+                        [disabled]="!readyToComplete || isUpdatingQuantity"
+                        *ngIf="product.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_SUSPENDED && product.IsCustomerLevel && Permissions.HasReactivateCustomerProductSubscription === 'Allowed'"
+                        (click)="popUpPONumberReActivateSubscription(false, product)">
+                        <span *ngIf="!isUpdatingQuantity"
+                            translate="TRANSLATE.CUSTOMER_PRODUCT_BTN_TEXT_REACTIVATE_SUBSCRIPTION"></span>
+                        <div *ngIf="isUpdatingQuantity"><i class="fa fa-spinner fa-spin"></i>
+                            <span translate="TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT"></span>
+                        </div>
+                    </button>
+
+                    <!--Reactivate with/without addons is being sent as argument for ReActivateSubscription-->
+                    <button type="submit" class="col-md-12 btn btn-light-success btn-sm ms-5 me-5"
+                        *ngIf="product.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_SUSPENDED && product.IsCustomerLevel && product.HasPurchasedAddons && Permissions.HasReactivateCustomerProductSubscription === 'Allowed' && isCustomerAllowedToReduceSeats === true"
+                        [disabled]="!readyToComplete || isUpdatingQuantity"
+                        [hidden]="(isCustomerAllowedToReduceSeats === false && isInheritedPartnerRole === false)"
+                        (click)="popUpPONumberReActivateSubscription(true, product)">
+                        <span *ngIf="!isUpdatingQuantity"
+                            translate="TRANSLATE.CUSTOMER_PRODUCT_BTN_TEXT_REACTIVATE_SUBSCRIPTION_WITH_ADDONS"></span>
+                        <div *ngIf="isUpdatingQuantity"><i class="fa fa-spinner fa-spin"></i>
+                            <span translate="TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT"></span>
+                        </div>
+                    </button>
+
+                    <button type="submit" class="col-md-5 btn btn-light-danger btn btn-sm ms-5 me-5"
+                        *ngIf="product.IsCustomerLevel && product.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_ACTIVE && Permissions.HasSuspendProductSubscription === 'Allowed'"
+                        [hidden]="(isCustomerAllowedToReduceSeats === false && isInheritedPartnerRole === false)"
+                        [disabled]="!readyToComplete || isUpdatingQuantity"
+                        (click)="popUpPONumberSuspendSubscription(product)">
+                        <span *ngIf="!isUpdatingQuantity"
+                            translate="TRANSLATE.CUSTOMER_PRODUCT_BTN_TEXT_SUSPEND_SUBSCRIPTION"></span>
+                        <div *ngIf="isUpdatingQuantity"><i class="fa fa-spinner fa-spin"></i>
+                            <span translate="TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT"></span>
+                        </div>
+                    </button>
+
+                    <button type="submit" class="btn btn-light-success btn-sm ms-5 me-5"
+                        [ngClass]="{'col-md-5': product.IsCustomerLevel && ((product.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_SUSPENDED && !product.HasPurchasedAddons) || product.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_ACTIVE),'col-md-12': !product.IsCustomerLevel || (product.HasPurchasedAddons && product.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_SUSPENDED)}"
+                        *ngIf="Permissions.HasSaveProductChanges === 'Allowed' && product.Status.toLowerCase() != cloudHubConstants.SUBSCRIPTION_STATUS_SUSPENDED && canUpdateProduct"
+                        [disabled]="!readyToComplete || isUpdatingQuantity"
+                        (click)="popUpPONumberUpdateLicense(product);">
+                        <span *ngIf="!isUpdatingQuantity "
+                            translate="TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_BUTTON_TEXT_SUBMIT_CHANGES"></span>
+                        <div *ngIf="isUpdatingQuantity"><i class="fa fa-spinner fa-spin"></i>
+                            <span translate="TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT"></span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <!--end::Bottom-->
+        </div>
+    </div>
+    <ng-template #addonsList let-addon let-addonLevel="addonLevel">
+        <div class="row" [ngClass]="{'font-red': addon.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_SUSPENDED}">
+            <div class="col-md-5 mt-3">
+                <div class="caption" [style.margin-left]="addonLevel * 20 + 'px'">
+                    <label>
+                        <span *ngIf="addon.IsEdit != true" tooltip-append-to-body="true"
+                                            tooltip-class="text-capitalize"
+                                            ngbTooltip="{{ addon.ProductSubscriptionName }}"
+                                            class="fs-7 fw-bold">
+                                            {{addon.ProductSubscriptionName | limitLength: 60}}
+                                            <span
+                                                *ngIf="addon.ProductSubscriptionName != null && addon.ProductSubscriptionName.length > 60">...</span>
+                                        </span>
+                                        <a class="btn btn-icon"
+                                            *ngIf="addon.IsEdit != true && addon.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_ACTIVE "
+                                            (click)="addon.IsEdit = true;setAddonProductName(addon)">
+                                            <i class="ki-duotone fs-4 ki-pencil text-primary" aria-hidden="true"
+                                                data-toggle="tooltip" data-placement="top"
+                                                ngbTooltip="{{'TRANSLATE.TOOLTIP_TEXT_EDIT_NAME'|translate}}">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                            </i>
+                                        </a>
+                                        <div class="row"
+                                            *ngIf="addon.IsEdit === true">
+                                            <div class="col">
+                                                <input type="text" [(ngModel)]="addon.ProductNameToUpdate"
+                                                    name="productNameToUpdate" class="form-control">
+                                            </div>
+                                            <div class="btn-group col-md-1 p-0">
+                                                <a class="btn btn-icon"
+                                                    (click)="updateProductName(addon, 'Name', addon.ProductSubscriptionName)"
+                                                    ng-show="addon.IsEdit === true">
+                                                    <i class="ki-outline ki-check fs-1 text-success"></i>
+                                                </a>
+                                                <a class="btn btn-icon"
+                                                    *ngIf="addon.IsEdit === true"
+                                                    (click)="addon.IsEdit = false;addon.ProductNameToUpdate=addon.ProductSubscriptionName;" ng-show="product.IsEdit === true">
+                                                    <i class="ki-outline ki-cross fs-1 text-danger"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <br />
+                        <span *ngIf="!addon.ProductSubscriptionName && !addon.ProductSubscriptionId">{{addon.PlanProductName}}</span>
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <button class="input-group-text line-height-0 py-0 h-100 custom-border-left" (click)="updateQuantity(addon, false)" [ngClass]="{'disabled': addon.Quantity <= 0}" *ngIf="!addon.IsAnyOfferInParentHierarchySuspended && addon.Status.toLowerCase() !== cloudHubConstants.SUBSCRIPTION_STATUS_SUSPENDED && (Permissions.HasAccessUserLicenseTrackingView === 'Denied' || addon.ProductSubscriptionId == null)">
+                                    <i class="ki-duotone ki-minus"></i>
+                                </button>
+                            </div>
+                            <input class="form-control text-center" oninput="this.value = Math.abs(this.value)" type="number" (keyup)="hideDecimal()" pattern="\d*" [(ngModel)]="addon.Quantity" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_LABEL_QUANTITY' | translate}}: {{addon.Quantity}}" />
+                            <div class="input-group-append">
+                                <button class="input-group-text line-height-0 py-0 h-100 custom-border-left" (click)="updateQuantity(addon, true)"  *ngIf="!addon.IsAnyOfferInParentHierarchySuspended && addon.Status.toLowerCase() !== cloudHubConstants.SUBSCRIPTION_STATUS_SUSPENDED && (Permissions.HasAccessUserLicenseTrackingView === 'Denied' || addon.ProductSubscriptionId == null)">
+                                    <i class="ki-duotone ki-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-3">
+                        <div class="text-right align-middle font-weight-bolder font-size-h5">
+                            <span class="fw-bold text-dark-50">
+                                {{addon.FinalSalePrice | CurrencyFilter: addon.CurrencySymbol : addon.CurrencyDecimalPlaces : addon.CurrencyThousandSeparator : addon.CurrencyDecimalSeparator}}
+                                <span *ngIf="addon.Discount != null && addon.Discount > 0" class="fw-bold text-muted">
+                                    <br />
+                                    <small>
+                                        <del>{{addon.OriginlaSalePrice | CurrencyFilter: addon.CurrencySymbol : addon.CurrencyDecimalPlaces : addon.CurrencyThousandSeparator : addon.CurrencyDecimalSeparator}}</del>
+                                        <span *ngIf="addon.DiscountType === 'Percentage'">
+                                            {{ addon.Discount }}%
+                                        </span>
+                                        <span *ngIf="addon.DiscountType !== 'Percentage'">
+                                            {{ addon.Discount | CurrencyFilter: addon.CurrencySymbol : addon.CurrencyDecimalPlaces : addon.CurrencyThousandSeparator : addon.CurrencyDecimalSeparator }}
+                                            &nbsp;<span translate="TRANSLATE.LBL_DISCOUNT_TEXT"></span>
+                                        </span>
+                                    </small>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-2 mt-3" *ngIf="!addon.IsAnyOfferInParentHierarchySuspended">
+                        <label class="form-check form-check-inline" [ngbTooltip]="'TRANSLATE.MANAGE_CUSTOMER_PRODUCT_TOOLTIP_TEXT_IS_CONSIDER_IN_AUTO_RELEASE' | translate">
+                            <input type="checkbox" [(ngModel)]="addon.IsAvailableForAutoRelease" name="ManageOffer_IsAvailableForAutoRelease"
+                                   [disabled]="addon.Quantity === 0 && addon.ProductSubscriptionId === null" class="form-check-input"
+                                   [checked]="(addon.Quantity > 0 || addon.ProductSubscriptionId != null) && addon.IsAvailableForAutoRelease"
+                                   *ngIf="addon.EntityName.toLowerCase() === 'customer' && Permissions.HasAutoReleasePermission && Permissions.HasManageProductAutoRelease === 'Allowed' && addon.Status.toLowerCase() !== cloudHubConstants.SUBSCRIPTION_STATUS_SUSPENDED && product.LinkedSubscriptionId === null">
+                            <span></span>
+                        </label>
+                    </div>
+                    <div class="col-md-2 mt-1" *ngIf="!addon.IsAnyOfferInParentHierarchySuspended">
+                        <button type="submit" class="btn btn-circle btn-sm btn-icon btn-light-success" *ngIf="addon.IsCustomerLevel && addon.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_SUSPENDED && Permissions.HasReactivateCustomerProductSubscription === 'Allowed'"
+                                (click)="reActivateSubscription(false, addon)" [disabled]="!readyToComplete || isUpdatingQuantity"
+                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_REACTIVATE_SUBSCRIPTION' | translate}}"
+                                tooltip-placement="bottom">
+                            <i class="ki-outline ki-check fs-1"></i>
+                        </button>
+                        <button type="submit" class="btn btn-circle btn-sm btn-icon btn-light-success" *ngIf="addon.IsCustomerLevel && addon.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_SUSPENDED && addon.HasPurchasedAddons && Permissions.HasReactivateCustomerProductSubscription === 'Allowed'"
+                                (click)="reActivateSubscription(true, addon)" [disabled]="!readyToComplete || isUpdatingQuantity"
+                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_REACTIVATE_SUBSCRIPTION_WITH_ADDONS' | translate}}"
+                                tooltip-placement="bottom">
+                            <i class="fa fa-magic"></i>
+                        </button>
+                        <button type="submit" class="btn btn-circle btn-sm btn-icon btn-light-danger"
+                                *ngIf="addon.IsCustomerLevel && addon.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_ACTIVE && Permissions.HasSuspendProductSubscription === 'Allowed'"
+                                (click)="suspendSubscription(addon)" [disabled]="!readyToComplete || isUpdatingQuantity"
+                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_SUSPEND_SUBSCRIPTION' | translate}}"
+                                tooltip-placement="bottom">
+                            <i class="ki-outline ki-cross fs-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div *ngIf="addon.Addons && addon.Addons.length">
+            <ng-container *ngFor="let subAddon of addon.Addons; let i = index">
+                <div *ngIf="addonLevel !== undefined">
+                    <ng-container *ngTemplateOutlet="addonsList; context: { $implicit: subAddon, addonLevel: addonLevel + 1 }"></ng-container>
+                </div>
+            </ng-container>
+        </div>
+    </ng-template>
+</div>

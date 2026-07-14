@@ -1,0 +1,4 @@
+.tooltip-wrapper {
+  display: inline-block;   /* ensures wrapper wraps the button properly */
+  cursor: not-allowed;     /* optional, shows hover cursor for disabled button */
+}

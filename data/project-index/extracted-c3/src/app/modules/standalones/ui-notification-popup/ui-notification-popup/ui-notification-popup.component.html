@@ -1,0 +1,21 @@
+<div class="modal-dialog m-0 modal-dialog m-0-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">
+            <span>{{'TRANSLATE.MENU_ADMINISTRATION_CUSTOM_NOTIFICATIONS'|translate}}</span>
+        </h2>
+      </div>
+      <div class="modal-body overflow-auto">
+        <app-notification-template [title]="title"
+          [description]="description"
+          [templateName]="templateName"
+          [buttonDetails]="" 
+          notificationType="modal-type">
+        </app-notification-template >
+      </div>
+    </div>
+    
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-primary" (click)="onsubmit()" translate="TRANSLATE.BUTTON_TEXT_OK"></button>
+</div>

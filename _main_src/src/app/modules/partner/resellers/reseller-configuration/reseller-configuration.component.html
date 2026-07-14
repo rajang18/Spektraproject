@@ -1,0 +1,47 @@
+<ng-template #actionHeader>
+    @if (permissions.HasGetResellers) {
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-bold btn-primary" (click)="backToList()">
+            <i class="ki-outline ki-to-left fs-2"></i>
+            <span translate="TRANSLATE.BUTTON_TEXT_BACK_TO_RESELLERS"></span>
+        </button>
+    </div>
+    }
+</ng-template>
+
+
+<div class="card card-custom">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl">
+                    <div class="table table-row-bordered">
+                        <!-- @if (!isLoadingResellerConfigurations) { -->
+                        <div>
+                            <form [formGroup]="formGroup">
+                                <div class="row col-md-12">
+                                    <div class="col-md-5 text-start m-0 p-0 ps-4 fw-bolder">
+                                        {{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_HEADER_TEXT_NAME' | translate}}
+                                    </div>
+                                    <div class="col-md-7 text-start fw-bolder ps-5">
+                                        {{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_CAPTION_TEXT_TENANT_CONFIGURATION_VALUE' | translate}}
+                                    </div>
+                                </div>
+                                @for( row of resellerConfiguration;track $index){
+                                <!-- @if uses shortcircuit like while *ngIf evaluates all conditions  -->
+                                <div *ngIf="row.IsShowOnScreen && ((row.Name.trim() == 'ShowNonOnBoardedCustomersReport' && row.IsResellerSupportedWithMPNIB == true) || row.Name.trim() != 'ShowNonOnBoardedCustomersReport')" class="border">
+                                    <tenantconfig [data]="row" [form]="formGroup" [frmControlName]="row.Name" [controlType]="row.ControlType" (savetenantconfig)="saveResellerConfig($event)" (reverttenantconfig)="revertResellerConfig($event)" (canceltenantconfig)="cancelResellerConfig()"></tenantconfig>
+                                </div>
+                                }
+                            </form>
+                            <!-- <tr *ngIf="resellerConfiguration.length === 0">
+                                <td colspan="5"><span translate="TRANSLATE.MESSAGE_NO_RECORDS_FOUND"></span></td>
+                            </tr> -->
+                        </div>
+                        <!-- } -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

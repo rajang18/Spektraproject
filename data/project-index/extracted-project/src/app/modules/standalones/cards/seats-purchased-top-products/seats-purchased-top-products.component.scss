@@ -1,0 +1,27 @@
+
+.seat-purchased-wrapper {
+    height: 300px;
+    overflow: auto;
+
+}
+#five-products-by-seats-purchased-png {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    padding-right: 2.25rem;
+    
+}
+::ng-deep{
+    app-seats-purchased-top-products{
+        .opacity-8{
+            opacity: 0.8;
+        }
+        .loader-indicater{
+            position: absolute;
+            margin: auto;
+            top: 50%;
+            left: 41%;
+            // z-index: 999999;
+        }
+    }
+}

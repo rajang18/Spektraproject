@@ -1,0 +1,89 @@
+<ng-template #preview>
+    <div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">
+                    <span translate="TRANSLATE.PREVIEW_EMAIL_NOTIFICATION_POPUP_HEADER_TEXT_PREVIEW_EMAIL_NOTIFCATION"></span>
+                </h2>
+                <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModal()">
+                    <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+                </div>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <app-email-template-preview [content] ="previewContent"></app-email-template-preview>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary btn-xs mr-2" type="button" (click)="closeModal()">
+                    <span translate="TRANSLATE.PREVIEW_EMAIL_NOTIFICATION_POPUP_BUTTON_TEXT_CLOSE"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+
+
+
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+                    <div class="form-group row mb-4">
+                        <label  class="col-2 col-form-label">
+                            <span translate="TRANSLATE.EMAIL_TEMPLATE_LABEL"></span>
+                        </label>
+                        <div class="col-10 d-flex align-items-center">
+
+                            <ng-select [(ngModel)] ="selectedView" class="w-100" (ngModelChange)="settingContent()" [compareWith]="comparefn">
+
+                                @for(i of views; track $index){
+        
+                                    <ng-option  [value]="i" [selected]="i == selectedView">{{'TRANSLATE.'+i.DisplayName | translate}}</ng-option>
+                                }
+                            </ng-select>
+
+
+
+                            <!-- <select [(ngModel)] ="selectedView" class="form-select" (ngModelChange)="settingContent()">
+                                @for(i of views; track $index){
+        
+                                    <option  [ngValue]="i" [selected]="i == selectedView">{{'TRANSLATE.'+i.DisplayName | translate}}</option>
+                                }
+                            </select> -->
+                        </div>
+                    </div>
+        
+                    <div class="form-group row mb-4 mt-4">
+                        <div class="col-12">
+                            <!-- [(ngModel)] ="selectedView.value" -->
+                          
+                                <app-email-template-viewer [config]="config" [selectedView]="selectedView" [emailLogo]="emailLogo"></app-email-template-viewer>
+                                <!-- <div [ngxSummernote]="config" [(ngModel)] ="selectedView.Value"></div> -->
+                             
+                        </div>
+                    </div>
+        
+                    <div class="form-group row">
+                       <div class="col-12">
+                            <button class="btn btn-primary float-end btn-sm"  (click)="savePartnerSettings(selectedView)" [appPermission]="'SAVE_EVENT_EMAIL_TEMPLATES'" appBusyLoader>
+                                <span translate="TRANSLATE.EMAIL_TEMPLATE_SUBMIT"></span>
+                            </button>
+                           <span 
+                            class="tooltip-wrapper float-end" 
+                            [ngbTooltip]="disablePreview ? ('TRANSLATE.EMAIL_TEMPLATE_UNSAVED_CHANGES_BEFORE_PREVIEW' | translate) : null">
+                            <button 
+                                type="button" 
+                                class="btn btn-light-primary float-end me-4 btn-sm" 
+                                (click)="PreviewEmailNotification()" 
+                                [disabled]="disablePreview">
+                                <span translate="TRANSLATE.EMAIL_TEMPLATE"></span>
+                            </button>
+                            </span>
+                       </div>
+                    </div>
+        </div>
+    </div>
+    
+</div>

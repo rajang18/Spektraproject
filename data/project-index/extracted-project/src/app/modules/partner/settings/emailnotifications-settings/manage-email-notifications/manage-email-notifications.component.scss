@@ -1,0 +1,7 @@
+::ng-deep {
+    app-manage-email-notifications {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+  }

@@ -1,0 +1,42 @@
+.customer-profile{
+    display: flex;
+    gap:20px;
+    flex-direction: column;
+}
+
+.hide {
+    display: none;
+}
+::ng-deep{
+    app-departments{
+        .hide-no-data{
+            .position-relative.top-70px{
+                display: none !important;
+            }
+        }
+        .show-cross{
+            .select2-selection__choice__remove{
+                position: relative !important;
+                top: 4px !important;
+            }
+        }
+        .hide-cross{
+            .select2-selection__choice__remove{
+                // display: none !important;
+                position: relative !important;
+                top: 4px !important;
+            }
+        }
+        .dt-paging.paging_full_numbers{
+            .pagination{
+                visibility: hidden;
+            }
+        }
+
+    }
+}
+
+// .select2-selection__choice__remove {
+//     display: none !important;
+//     /* Hides the cross icon */
+// }

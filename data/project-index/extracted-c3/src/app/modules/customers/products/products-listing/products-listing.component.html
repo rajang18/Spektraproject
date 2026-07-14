@@ -1,0 +1,399 @@
+<!-- Table Row Templates -->
+<ng-template #customerName let-data="adtData" let-emitter="captureEvents">
+  <div class="d-flex overflow-auto">
+    <div class="symbol symbol-circle" *ngIf="data.ImageUrl">
+      <img class="symbol-label" [src]="data.ImageUrl" alt="photo">
+    </div>
+    <div class="symbol symbol-circle" *ngIf="!data.ImageUrl && data.ProductSubscriptionName != translatedValue">
+      <span class="symbol-label font-size-h6 bg-dark text-white">
+        {{ data.ProductSubscriptionName | formatforinitials }}
+      </span>
+    </div>
+    <div class="ms-1">
+      <div class="text-gray-800 fw-bolder font-size-lg mb-0 tooltips" [ngbTooltip]="'TRANSLATE.'+data.StatusDescription | translate">
+        <div class="d-flex align-items-center flex-wrap justify-content-between" [ngClass]="{ 'text-danger': data.Status !== 'Active' && data.Status !== 'Succeeded' }">
+          <div class="flex-grow-1 fw-bolder">
+            <div *ngIf="!data.showCompleteName">
+              <span [innerHtml]="data.ProductSubscriptionName | limitLength:35"></span>
+              <span *ngIf="data.ProductSubscriptionName != null && data.ProductSubscriptionName.length > 35"><small></small></span>
+              <a class="text-primary cursor-pointer" *ngIf="data.ProductSubscriptionName != null && data.ProductSubscriptionName.length > 35" (click)="data.showCompleteName = true">
+                <small class="fw-normal">
+                  {{
+ 'TRANSLATE.PRODUCT_DETAILS_READ_MORE_LINK_TEXT' | translate
+                  }}
+                </small>
+              </a>
+              <sup *ngIf="data.ProductForTrial != null" class="text-warning"><span translate="TRANSLATE.PLAN_MANAGE_TRAIL_OFFER_SYMBOL_TRAIL_OFFER"></span></sup>
+            </div>
+            <div *ngIf="data.showCompleteName">
+              <span style="word-break: break-word" [innerHtml]="data.ProductSubscriptionName"></span>
+              <a class=" text-primary cursor-pointer" *ngIf="data.ProductSubscriptionName != null && data.ProductSubscriptionName.length > 35" (click)="data.showCompleteName = false">
+                <small class="fw-normal">
+                  {{
+ 'TRANSLATE.PRODUCT_DETAILS_READ_LESS_LINK_TEXT' | translate
+                  }}
+                </small>
+              </a>
+              <sup *ngIf="data.ProductForTrial != null" class="text-warning"><span translate="TRANSLATE.PLAN_MANAGE_TRAIL_OFFER_SYMBOL_TRAIL_OFFER"></span></sup>
+            </div>
+          </div>
+        </div>
+        <span *ngIf="data.IsAddon && data.CategoryName.toLowerCase() == cloudHubConstants.CATEGORY_ONLINE_SERVICES_NEW_COMMERCE_EXPERIENCE" class="label label-primary fw-semibold label-inline text-white badge bg-primary fs-8" translate="TRANSLATE.PRODUCT_LIST_ADDON_LABEL"></span>
+      </div>
+
+      <div class="font-weight-bold text-muted" *ngIf="data.LinkedSubscriptionId !== null && data.IsPrimaryInLinkedProduct == true">
+        <i class="ki-outline ki-paper-clip fs-3 text-warning"></i>&nbsp;<span [innerHTML]="data.LinkedSubscriptionName| limitLength:25"></span><span *ngIf="data.LinkedSubscriptionName !=null && data.LinkedSubscriptionName.length > 25">...</span>
+      </div>
+      <div class="bold fs-8" ngbTooltip="{{'TRANSLATE.PRODUCT_LIST_TEXT_SUBSCRIPTION_ID' | translate}}">
+        <span>{{data.ProviderProductId}}</span>
+      </div>
+
+      <div class="font-weight-bold">
+        <!-- Site Name Badge -->
+        @if(data.SiteName != '' && data.SiteName != null && data.SiteName != undefined){
+        <span class="label label-info fw-semibold label-inline text-info badge bg-light-info me-md-2">
+          {{ data.SiteName }}
+        </span>
+        }
+        <!-- Department Name Badge -->
+        @if(data.DepartmentName != '' && data.DepartmentName != null && data.DepartmentName != undefined){
+        <span class="label label-primary fw-semibold label-inline text-primary badge bg-light-primary me-md-2">
+          {{ data.DepartmentName }}
+        </span>
+        }
+
+        <span class="label label-warning fw-semibold label-inline text-white badge bg-warning me-md-2" aria-hidden="true" *ngIf=" data.ValidityType == 'Month(s)'" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+          {{data.Validity}}
+          {{
+(data.Validity == 1? (data.ValidityType === 'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+          'TRANSLATE.TERM_DURATION_DESC_YEAR') : 'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate
+          }}
+        </span>
+
+
+        <span *ngIf="(data.ValidityType === 'Year(s)' || data.ValidityType === 'Year') && !data.ProductForTrial" class="label label-warning fw-semibold label-inline text-white badge bg-warning me-md-2" [ngClass]="{'labelcolor': data.BillingCycleName === 'Monthly', 'TermLabelColor': data.BillingCycleName === 'Annual'}" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+          {{data.Validity}}
+          {{
+(data.Validity == 1? (data.ValidityType === 'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+          'TRANSLATE.TERM_DURATION_DESC_YEAR') : 'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate
+          }}
+        </span>
+
+        <span *ngIf="data.ProductForTrial" class="label label-inline label-warning text-white fw-semibold badge bg-warning me-md-2" [ngbTooltip]="'TRANSLATE.PARTNER_OFFER_TRIAL_PERIOD_DAYS_TOOLTIP' | translate">
+          {{ data.Validity }} {{ 'TRANSLATE.'+data.ValidityType | translate }}
+        </span>
+
+        <!-- Category Labels -->
+        @if(data.CategoryName != undefined){
+        <span *ngIf="data.CategoryName.toLowerCase() === cloudHubConstants.CATEGORY_ONLINE_SERVICES_NEW_COMMERCE_EXPERIENCE" class="label label-light-info fw-semibold label-inline badge me-md-2" [ngbTooltip]="'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate">
+          {{ 'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE' | translate }}
+        </span>
+        }
+        <span *ngIf="data.CategoryName && data.CategoryName !== 'OnlineServicesNCE'" class="label label-light-info fw-semibold label-inline badge me-md-2 text-nowrap" [ngbTooltip]="'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate">
+          {{ 'TRANSLATE.'+ data.CategoryDescriptionKey | translate }}
+        </span>
+
+        <!-- SubCategory Name -->
+        <span *ngIf="data.SubCategoryName">
+          <span class="badge badge-danger font-weight-bold label-inline ms-md-1" [appPermission]="'GET_SUBCATEGORIES_PILLS'"
+            ngbTooltip="{{'TRANSLATE.PARTNER_CUSTOM_CATEGORY_FOR_SUBCATEGORY_TOOLTIP_PILL' | translate}}">
+            {{ data.SubCategoryName }}
+          </span>
+        </span>
+
+        <!-- Level and Market Code -->
+        <span *ngIf="data.Level > 0 && data.CategoryName.toLowerCase() !== cloudHubConstants.CATEGORY_ONLINE_SERVICES_NEW_COMMERCE_EXPERIENCE" class="label label-light-warning fw-semibold label-sm label-inline badge me-md-2">
+          {{ 'TRANSLATE.PRODUCT_LIST_ADDON_LABEL' | translate }}
+        </span>
+
+        <span *ngIf="data.MarketCode" class="badge badge-info me-md-2" [ngbTooltip]="data.MarketRegion">
+          {{ data.MarketCode }}
+        </span>
+          <span *ngIf="data.IsEST" class="badge EST-Pill-styling text-white" ngbTooltip="{{'TRANSLATE.CATEGORY_PILL_EST_TOOLTIP' | translate }}" >{{ 'TRANSLATE.CATEGORY_PILL_NAME_EST' | translate}}</span>
+        <!-- Billing Type -->
+        <span *ngIf="data.BillingTypeName && data.ProviderName.toLowerCase() === cloudHubConstants.PROVIDER_PARTNER" class="label label-inline label-warning text-danger fw-semibold badge bg-light-danger me-md-2" [ngbTooltip]="'TRANSLATE.BILLING_TYPE_TOOLTIP' | translate">
+          {{ 'TRANSLATE.'+ data.BillingTypeDescription | translate }}
+        </span>
+        @if(data.CategoryName != undefined){
+        <!-- Scheduled Renewal and Metered Billing -->
+        <span *ngIf="data.CategoryName.toLowerCase() === cloudHubConstants.CATEGORY_ONLINE_SERVICES_NEW_COMMERCE_EXPERIENCE && data.HasScheduleChanges" class="label label-sm p-0 label-success text-white fw-semibold label-inline bg-white Customscheduleiconposition me-md-2" [ngbTooltip]="'TRANSLATE.CUSTOMER_PRODUCTS_TITLE_SCHEDULED_RENEWAL' | translate">
+          <i class="Customscheduleicon far fa-clock"></i>
+        </span>
+        }
+        <span *ngIf="data.BillingTypeName === 'MeteredBilling'" class="label label-sm p-0 label-inline Customscheduleiconposition me-md-2" [ngbTooltip]="'TRANSLATE.LABLE_TEXT_SLAB' | translate" (click)="priceDetails(data)">
+          <i class="ki-outline ki-information-2 text-primary fs-3 ms-1" aria-hidden="true">
+          </i>
+        </span>
+        @if(data.ShouldShowCancellationIcon && data.Status === 'Active' && !data.IsEST){
+          @if(data.LinkedSubscriptionId !== null){
+            @if(data.CategoryName === 'OnlineServicesNCE' || data.CategoryName === 'Bundles'){
+              <span class="pt-1 position-absolute" ngbTooltip="{{'TRANSLATE.PRODUCT_CANCELLATION_TEXT' | translate}}"><i class="ki-outline ki-time text-warning fs-3 text-primary"></i></span>
+            }
+          }
+          @else {
+            <span class="pt-1 position-absolute" ngbTooltip="{{'TRANSLATE.PRODUCT_CANCELLATION_TEXT' | translate}}"><i class="ki-outline ki-time text-warning fs-3 text-primary"></i></span>
+          }
+        }
+      </div>
+
+    </div>
+  </div>
+</ng-template>
+<ng-template #quantityTemplate let-data="adtData" let-row="row">
+  <td class="col-md-1 text-align-center">
+    <div class="fw-bolder font-size-lg mb-0 text-end pe-5">
+      <span class="me-1" *ngIf="data.CategoryName === 'Custom' || data.CategoryName === 'Bundles' || data.CategoryName === 'OnlineServices' ||
+            data.CategoryName === 'OnlineServicesNCE' || data.CategoryName === 'ReservedInstances' || data.CategoryName === 'SoftwareSubscriptions' || data.CategoryName === 'OneTime' ||
+            data.CategoryName === 'PerpetualSoftware' || data.CategoryName === 'LicenseSupported' || data.CategoryName === 'DistributorOffers'">
+        {{ data.Quantity }}
+        @if((data.CategoryName === 'Custom' || data.CategoryName === 'Bundles' ||
+        data.CategoryName === 'OnlineServicesNCE' || data.CategoryName === 'LicenseSupported' || data.CategoryName === 'DistributorOffers' || data.CategoryName === 'OnlineServices') && (data.ProductForTrial === null) && (data.ConsumptionType != 'Usage' && data.ConsumptionType != 'Contract') && (!data.IsAddon) && ((data.LinkedSubscriptionId !== null && data.IsPrimaryInLinkedProduct)
+        || (data.LinkedSubscriptionId === null))){
+        @if (HasManageProduct === 'Allowed' && data.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_ACTIVE && isCustomerAllowedToChangeProductQuantityFromList) {
+        @if(cloudHubConstants.ROLE_NAME_CUSTOMER_ADMIN_LITE_PLUS === userContext?.RoleName?.toLowerCase()){
+        @if(data.ValidityType == 'Month(s)'){
+        <i class="ki-outline ki-pencil text-primary fs-6 ms-1 cursor-pointer"
+           aria-hidden="true" data-toggle="tooltip" data-placement="top"
+           ngbTooltip="{{'TRANSLATE.TOOLTIP_TEXT_EDIT_QUANTITY'|translate}}"
+           (click)="QuantityChangePopup(data)">
+        </i>
+        }
+        }
+        @else {
+        <i class="ki-outline ki-pencil text-primary fs-6 ms-1 cursor-pointer"
+           aria-hidden="true" data-toggle="tooltip" data-placement="top"
+           ngbTooltip="{{'TRANSLATE.TOOLTIP_TEXT_EDIT_QUANTITY'|translate}}"
+           (click)="QuantityChangePopup(data)">
+        </i>
+        }
+
+        }
+        }
+
+      </span>
+      <span class="me-1" *ngIf="data.CategoryName === 'Azure' || data.CategoryName === 'AzurePlan'">
+        1 ({{ data.Quantity }} Percentage)
+      </span>
+      <br />
+      <span class="label fw-bold label-inline text-white badge fw-semibold fs-8" [ngClass]="{
+                        'bg-warning': data.BillingCycleName?.toLowerCase() === 'monthly',
+                        'bg-success': data.BillingCycleName?.toLowerCase() === 'annual',
+                        'bg-dark': data.BillingCycleName?.toLowerCase() === 'triennial',
+                        'bg-info': data.BillingCycleName?.toLowerCase() === 'onetime'
+                        }"
+            *ngIf="data.BillingCycleName">
+        {{ 'TRANSLATE.'+data.BillingCycleDescription | translate }}
+      </span>
+    </div>
+  </td>
+</ng-template>
+
+<ng-template #unitPriceTemplate let-data="adtData" let-row="row">
+  <!-- {{data|json}} -->
+  @if(data.StatusDescription == 'CUSTOMER_PRODUCTS_TABLE_HEADER_TEXT_TOTAL_AMOUNT'){
+    <td></td>
+  }
+  @else {
+  <td class="col-md-1" style="text-align:right;">
+    <div class="fw-bolder font-size-lg mb-0 text-end" *ngIf="data.FinalSalePrice !== null">
+      <span *ngIf="data.CategoryName !== 'ReservedInstances'">
+        {{ data.FinalSalePrice | currency: data.CurrencySymbol : 'symbol'}}
+      </span>
+      <div class="font-weight-bold text-muted" *ngIf="data.CategoryName !== 'ReservedInstances'">
+        <span *ngIf="data.Discount != null && data.Discount > 0">
+          <span class="strike-through text-danger"
+                *ngIf="data.OriginalSalePrice != null && (data.BillingTypeName.toLowerCase() === 'price' || data.BillingTypeName.toLowerCase() === 'unit')">
+            {{ data.OriginalSalePrice | currency: data.CurrencySymbol : 'symbol'}}
+          </span>
+        </span>
+      </div>
+    </div>
+  </td>
+  }
+</ng-template>
+
+<ng-template #amountTemplate let-data="adtData" let-row="row">
+  @if(data.ProductSubscriptionName == 'Total amount'){
+  @for(total of TotalCost;track total){
+  @if(total.TotalCost>0){
+  <div class="text-end fw-bolder">
+    <span>{{ total.CurrencyCode }}</span><br />
+    <span>{{ total.TotalCost | CurrencyFilter: total.CurrencySymbol : total.CurrencyDecimalPlaces : total.CurrencyThousandSeparator : total.CurrencyDecimalSeparator }}</span>
+  </div>
+  }
+  @else{
+  <div class="text-end fw-bolder">
+    <span>{{total.CurrencyCode}}&nbsp;</span>
+    <span>{{total.CurrencySymbol}}</span>0.0
+  </div>
+  }
+  }
+  }
+  @else{
+  <div style="text-align:right;" [ngClass]="{'align-bottom': data.CategoryName !=undefined ? data.CategoryName.toLowerCase() === 'azure_plan':false}">
+    <div class="ml-2 text-end" *ngIf="data.FinalSalePrice !== null">
+      <div class="text-dark-75 fw-bolder font-size-lg mb-0" *ngIf="data.CategoryName !== 'ReservedInstances'">
+        {{ data.Quantity * data.FinalSalePrice | currency: data.CurrencySymbol : 'symbol'}}
+        <span *ngIf="data?.CategoryName?.toLowerCase() === cloudHubConstants.CATEGORY_ONLINE_SERVICES_NCE && data.IsPromotionAvailableForCustomer && data.ShowPromotionLink" (click)="checkNcePromotionEligibility(data)" tooltip-append-to-body="true" [ngbTooltip]="'TRANSLATE.NCE_PROMOTIONS_AVAILABLE_TEXT' | translate"><i class="ki-outline ki-discount text-primary cursor-pointer"></i></span>
+      </div>
+      <div class="font-weight-bold text-muted" *ngIf="data.CategoryName !== 'ReservedInstances'">
+        <span *ngIf="data.Discount != null && data.Discount > 0">
+          <span class="ng-binding strike-through text-danger" *ngIf="data.OriginalSalePrice != null && (data.BillingTypeName.toLowerCase() === 'price' || data.BillingTypeName.toLowerCase() === 'unit')">
+            {{ data.Quantity * data.OriginalSalePrice | currency: data.CurrencySymbol : 'symbol'}}
+          </span>
+          <br />
+          <small class="text-success">
+            <span *ngIf="data.DiscountType === 'Percentage'">
+              {{ data.Discount }}%
+            </span>
+            <span *ngIf="data.DiscountType !== 'Percentage'">
+              {{ data.Discount | currency: data.CurrencySymbol : 'symbol'}}
+            </span>
+            <span>{{'TRANSLATE.off' | translate}}</span>
+          </small>
+        </span>
+      </div>
+    </div>
+    @if(data.CategoryName != undefined){
+    <div class="ml-2 text-end" *ngIf="(data.CategoryName.toLowerCase() === 'azureplan' || data.CategoryName.toLowerCase() === 'reservedinstances') && data.Discount != null && data.Discount > 0">
+      <div>&nbsp;</div>
+      <div class="font-weight-bold text-muted">
+        <span>
+          <small class="text-success">
+            <span *ngIf="data.DiscountType == 'Percentage'">
+              {{ data.Discount }}%
+            </span>
+            <span *ngIf="data.DiscountType !== 'Percentage'">
+              {{ data.Discount | currency: data.CurrencySymbol : 'symbol'}}
+            </span>
+            <span>{{'TRANSLATE.off' | translate}}</span>
+          </small>
+        </span>
+      </div>
+    </div>
+    }
+    @if(data.LinkedSubscriptionId !== null){
+    <div class="ml-2 text-right">
+      <div class="text-dark-75 fw-bolder font-size-lg mb-0">
+        <!-- <i class="ki-outline ki-paper-clip fs-3 text-warning"></i> -->
+        {{ data.Quantity * data.LinkedProductFinalSalePrice | currency: data.CurrencySymbol : 'symbol'}}
+        <span *ngIf="data.CategoryName !=undefined &&  data.IsLinkedProductPromotionAvailableForCustomer && data.ShowLinkedProductPromotionLink" (click)="checkNceLinkedProductPromotionEligibility(data)" tooltip-append-to-body="true" [ngbTooltip]="'TRANSLATE.NCE_PROMOTIONS_AVAILABLE_TEXT' | translate"><i class="ki-outline ki-discount cursor-pointer text-primary"></i></span>
+      </div>
+      <div class="font-weight-bold text-muted">
+        <span *ngIf="data.LinkedProductDiscount != null && data.LinkedProductDiscount > 0">
+          <span class="strike-through text-danger" *ngIf="data.LinkedProductOriginalSalePrice!=null && data.LinkedProductBillingTypeName.toLowerCase() == cloudHubConstants.BILLING_TYPE_PRICE">
+            {{data.Quantity  * data.LinkedProductOriginalSalePrice  | currency: data.CurrencySymbol : 'symbol'}}
+          </span>
+          <br />
+          <small class="text-success">
+            <span *ngIf="data.LinkedProductDiscountType == 'Percentage'">
+              {{data.LinkedProductDiscount}}%
+            </span>
+            <span *ngIf="data.LinkedProductDiscountType != 'Percentage'">
+              {{data.LinkedProductDiscount | currency: data.CurrencySymbol : 'symbol' }}
+            </span>
+            <span>{{'TRANSLATE.off' | translate}}</span>
+          </small>
+        </span>
+      </div>
+    </div>
+    }
+  </div>
+  }
+
+
+</ng-template>
+
+
+
+<ng-template #ownedByTemplate let-data="adtData" let-row="row">
+  <td class="text-left col-md-1">
+    {{ data.ServiceProviderCustomerName }}
+    <span class="label label-light-primary label-inline badge fs-9 fw-normal" *ngIf="data.DomainName?.length > 0" [ngbTooltip]="'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_DOMAIN' | translate">
+      {{ data.DomainName }}
+    </span>
+  </td>
+</ng-template>
+<ng-template #orderedOnTemplate let-data="adtData" let-row="row">
+  <td class="text-left col-md-2">
+    <div class="ml-2">
+      @if(data.CategoryName !=undefined){
+      <div class="text-dark-75 fw-bolder" *ngIf="data.CategoryName.toLowerCase() !== cloudHubConstants.CATEGORY_PERPETUAL_SOFTWARE && data.CategoryName.toLowerCase() !== cloudHubConstants.CATEGORY_CUSTOM">
+        <span *ngIf="data.CategoryName.toLowerCase() === cloudHubConstants.CATEGORY_DISTRIBUTOR_OFFERS">
+          {{data.AutoRenewDate | c3Date}}
+        </span>
+        <span *ngIf="data.PurchasedProductIsAutoRenew && (data.CategoryName.toLowerCase() != cloudHubConstants.CATEGORY_DISTRIBUTOR_OFFERS)">{{data.AutoRenewDate | c3Date}}</span>
+        <span class="text-danger" *ngIf="!data.PurchasedProductIsAutoRenew && data.CategoryName.toLowerCase() !== cloudHubConstants.CATEGORY_DISTRIBUTOR_OFFERS&& (data.CategoryName.toLowerCase()!==cloudHubConstants.CATEGORY_AZURE_PLAN && data.CategoryName.toLowerCase()!==cloudHubConstants.CATEGORY_AZURE)">
+          {{data.CommitmentEndDate| c3Date}}
+        </span>
+      </div>
+      <div class="text-dark-75 fw-bolder" *ngIf="data.CategoryName.toLowerCase() === cloudHubConstants.CATEGORY_CUSTOM && data.ProductForTrial === null">
+        <span *ngIf="data.PurchasedProductIsAutoRenew">{{data.AutoRenewDate | c3Date}}</span>
+        <span class="text-danger" *ngIf="!data.PurchasedProductIsAutoRenew">{{ data.PartnerOfferExpiresOn | c3Date}}</span>
+      </div>
+      }
+      <div class="text-dark-75 fw-bolder" *ngIf="data.ProductForTrial != null && data.ProductForTrial != undefined">
+        <span *ngIf="data.PurchasedProductIsAutoRenew">{{data.AutoRenewDate | c3Date}}</span>
+        <span class="text-danger" *ngIf="!data.PurchasedProductIsAutoRenew"> {{data.CommitmentEndDate | c3Date }}</span>
+      </div>
+      @if(data.OrderedOn){
+      <div class="mb-0 font-weight-bold" style="color: #9F9F9F">
+        <small>{{'TRANSLATE.PURCHASE_PRODUCT_AUTO_RENEW_LEBEL_TEXT' | translate}} {{data.OrderedOn | c3Date}}</small>
+      </div>
+      }
+    </div>
+  </td>
+</ng-template>
+
+
+<ng-template #actions let-data="adtData" let-row="row">
+  <div class="d-flex justify-content-center">
+    <a class="btn btn-circle btn-light-primary btn-sm tooltips" *ngIf=" data?.CategoryName?.toLowerCase() !== cloudHubConstants.CATEGORY_LICENSE_SUPPORTED
+  && HasManageProduct === 'Allowed'
+  && data.Level == 0
+  && data.Status !== 'InProvision'
+  && data.Status !== 'Failed'
+  && ((data.LinkedSubscriptionId !== null && data.IsPrimaryInLinkedProduct)
+      || (data.LinkedSubscriptionId === null))" (click)="manageProduct(data)" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCTS_TABLE_BUTTON_TOOLTIP_TEXT_MANAGE_PRODUCT'|translate}}">
+      <i class="ki-outline ki-pencil fs-6"></i>
+    </a>
+    <a class="btn btn-circle btn-light-primary btn-sm tooltips" *ngIf="data?.CategoryName?.toLowerCase() === cloudHubConstants.CATEGORY_LICENSE_SUPPORTED
+  && HasManageProduct === 'Allowed'" (click)="manageProduct(data)" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCTS_TABLE_BUTTON_TOOLTIP_TEXT_MANAGE_PRODUCT'|translate}}">
+      <i class="ki-outline ki-pencil fs-6"></i>
+    </a>
+  </div>
+</ng-template>
+
+<ng-template #noDataTemplate>
+  <div class="col-md-12">
+    <app-common-no-record></app-common-no-record>
+  </div>
+</ng-template>
+
+
+@if (!!datatableConfig) {
+<div class="card mt-3">
+  <div class="card-body pt-0 product-wrapper">
+    <div class="card-body" [ngClass]="isFirstLoad ? 'no-pagination' : ''">
+      <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+      </app-c3-table>
+    </div>
+  </div>
+</div>
+}
+@if (!datatableConfig) {
+<div class="row">
+  @if(!datatableConfig){
+  <div class="col-md-12">
+    <app-common-no-record></app-common-no-record>
+  </div>
+  }
+  @for (item of lazyLoadedProducts; track $index) {
+  <div class="col-md-4" appLazyLoad (lazyLoad)="onLazyLoad(item)">
+    <div class="p-2">
+      <app-product-item [productItemDetails]="productItemDetails" [productItem]="item" (onActionData)="manageProduct($event)"></app-product-item>
+    </div>
+  </div>
+  }
+</div>
+}

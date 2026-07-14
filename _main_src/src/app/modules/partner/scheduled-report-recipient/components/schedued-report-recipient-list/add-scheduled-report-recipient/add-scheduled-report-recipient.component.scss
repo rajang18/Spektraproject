@@ -1,0 +1,7 @@
+::ng-deep {
+    app-add-scheduled-report-recipient {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+  }

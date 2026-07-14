@@ -1,0 +1,214 @@
+
+
+@if( CategoryName === 'AzurePlan'){
+<div class="row">
+    <div class="col-md-12">
+        <div class="gutter-b">
+            <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6 mt-5">
+                <div class=" row bs-callout bs-callout-info">
+                    <div class="card-title col-md-12">
+                        <h6 class="card-label"><span translate="TRANSLATE.AZURE_PRODUCT_SLIT_INVOICE_BY_PERCENTAGE_INSTRUCTIONS" ></span></h6>
+                    </div> 
+                    <div class="col-md-12 row m-heading-1 border-green m-bordered ms-5">
+                        <ol>
+                            <li>
+                                <span translate="TRANSLATE.AZURE_PRODUCT_SLIT_INVOICE_BY_PERCENTAGE_HELP_TEXT" ></span>
+                            </li>
+                            <li>
+                                <span translate="TRANSLATE.AZURE_PRODUCT_SLIT_INVOICE_BY_PERCENTAGE_AMOUNT_HELP_TEXT"></span>
+                            </li>
+                            <li>
+                                <span [innerHTML]="'TRANSLATE.AZURE_PRODUCT_SLIT_INVOICE_BY_PERCENTAGE_INSTRUCTIONS_PART_1' | translate" ></span>
+                            </li>
+                            <li>
+                                <span translate="TRANSLATE.AZURE_PRODUCT_SLIT_INVOICE_BY_PERCENTAGE_INSTRUCTIONS_PART_2" ></span>
+                            </li>
+                            <li>
+                                <span translate="TRANSLATE.AZURE_PRODUCT_SLIT_INVOICE_BY_PERCENTAGE_INSTRUCTIONS_PART_3" ></span>
+                            </li>
+                            <li>
+                                <span translate="TRANSLATE.AZURE_PRODUCT_SLIT_INVOICE_BY_PERCENTAGE_INSTRUCTIONS_PART_4" ></span>
+                            </li>
+                            <li>
+                                <span translate="TRANSLATE.AZURE_PRODUCT_SLIT_INVOICE_BY_PERCENTAGE_INSTRUCTIONS_PART_5" ></span>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>                    
+    </div>
+</div>
+
+<div class="col-md-12">
+    @for (data of ProductForOprationalEntityManage; track data.id; let i = $index) {
+   <div>
+       <div ngbAccordion>
+           <div ngbAccordionItem #acc="ngbAccordionItem">
+                       <div ngbAccordionHeader (click)="openFilterAccordion(data.InternalCustomerProductId)">
+                           <button ngbAccordionButton>
+                               <div class="card-label">
+                                   <span ngbTooltip="{{data.ProductDisplayName}}">{{data.ProductDisplayName|limitLength :75}}</span>
+                                   <span *ngIf="data.ProductDisplayName !=null && data.ProductDisplayName.length > 75">...</span>
+                               </div>
+                          </button>
+                       </div>
+                       <div ngbAccordionCollapse>
+                        <div class="card-body p-6">
+                            <table show-filter="false" class="table">
+                                <thead class="fw-bold fs-6 text-uppercase text-gray-800">
+                                    <tr>
+                                        <th>
+                                            <span translate="TRANSLATE.PRODUCT_OWNERSHIP_LABEL_SCOPE_NAME"></span>
+                                        </th>
+                                        <th>
+                                            <span translate="TRANSLATE.PRODUCT_OWNERSHIP_LABEL_PERCENTAGE"></span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (row of data.Scope; track $index) {
+                                    <tr>
+                                        <td class="col-md-6">
+                                            <span [ngStyle]="row.IsSite === true && {'padding-left':'12px'}  || row.IsDepartment === true && {'padding-left':'24px'}" class="fw-semibold">{{row.ScopeName}}</span>
+                                        </td>
+                                        <td class="col-md-6">
+                                            <strong>
+                                                @if(!row.showEditName){ 
+                                                <a type="number" *ngIf="!row.IsReadOnly || enableRelease" class="editable editable-click" href="javascript:void(0)"
+                                                    editable-text="row.NewQuantity" buttons="no" data-toggle="tooltip" data-placement="top" onaftersave=""
+                                                    (click)="row.showEditName =true "  e-maxlength="100" e-minlength="1">
+                                                    {{row.NewQuantity || '0' }}
+                                                </a>
+                                                }
+                                                @if(row.showEditName){ 
+                                                <span *ngIf="!row.IsReadOnly || enableRelease"> 
+                                                    <input #fieldName type="text" [(ngModel)]="row.NewQuantity"
+                                                    (blur)="row.showEditName =false;" />
+                                                </span>
+                                                }
+                                                @if(row.IsReadOnly && !enableRelease){
+                                                <span> {{row.NewQuantity || '0' }} </span>
+                                                }
+                                                <a *ngIf="row.IsReadOnly &&(row.IsDepartment ||row.IsSite)&& row.NewQuantity!=0"
+                                                   class="btn btn-icon-only float-right me-2"
+                                                   (click)="manageReleaseOwnership()"
+                                                   placement="bottom"
+                                                    [ngClass]="{'btn-light-primary':!enableRelease,'btn-light-danger':enableRelease}">
+                                                    <i *ngIf=" !enableRelease" class="ki-outline fs-4 ki-pencil"></i>
+                                                    <i *ngIf=" enableRelease" class="ki-outline ki-cross fs-1"></i>
+                                                </a>
+                                                <a *ngIf="row.IsReadOnly && enableRelease"
+                                                   class="btn btn-info float-right me-2"
+                                                   (click)="releaseOwnership(row)">
+                                                    <!-- <busy-message><i class="fa fa-refresh fa-spin"></i>{{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}</busy-message> -->
+                                                    {{'TRANSLATE.BUTTON_RELEASE' | translate}}
+                                                </a>
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                            <div class="d-flex justify-content-end py-6 gap-3">
+                                <button  type="button" class="btn btn-primary btn-sm" [appPermission]="'BTN_OWNERSHIP_MANAGEMENT_SUBMIT'" *ngIf="!enableRelease && readyToComplete === true && data.Status.toLowerCase() !== cloudHubConstants.SUBSCRIPTION_STATUS_SUSPENDED"
+                                   class="btn btn-primary btn-sm"
+                                   (click)="submitOwnershipChanges(data) ; acc.collapsed=true;" appBusyLoader>
+                                   {{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+           </div>
+       </div>
+   </div>
+}
+</div>
+}
+
+@else{
+<div class="col-md-12">
+    @for (data of ProductForOprationalEntityManage; track data.id; let i = $index) {
+   <div>
+       <div ngbAccordion>
+           <div ngbAccordionItem #acc1="ngbAccordionItem" >
+                       <div ngbAccordionHeader (click)="openFilterAccordion(data.InternalCustomerProductId)">
+                           <button ngbAccordionButton>
+                               <div class="card-label fw-semibold">
+                                   <span ngbTooltip="{{data.ProductDisplayName}}">{{data.ProductDisplayName|limitLength :75}}</span>
+                                   <span *ngIf="data.ProductDisplayName !=null && data.ProductDisplayName.length > 75">...</span>
+                               </div>
+                          </button>
+                       </div>
+                   <div ngbAccordionCollapse>
+                       <div class="card-body p-6">
+                           <table show-filter="false" class="table">
+                               <thead class="fw-bold fs-6 text-uppercase text-gray-800">
+                                   <tr>
+                                       <th>
+                                           <span translate="TRANSLATE.PRODUCT_OWNERSHIP_LABEL_SCOPE_NAME"></span>
+                                       </th>
+                                       <th>
+                                           <span translate="TRANSLATE.PRODUCT_OWNERSHIP_LABEL_QUANTITY"></span>
+                                       </th>
+                                   </tr>
+                               </thead>
+                               <tbody>
+                                   @for (row of data.Scope; track $index) {
+                                   <tr>
+                                       <td class="col-md-6">
+                                           <span [ngStyle]="row.IsSite === true && {'padding-left':'12px'}  || row.IsDepartment === true && {'padding-left':'24px'}" class="fw-semibold">{{row.ScopeName}}</span>
+                                       </td>
+                                       <td class="col-md-6">
+                                           <strong>
+                                            @if(!row.showEditName) { 
+                                                <a type="number" *ngIf="!row.IsReadOnly || enableRelease" class="editable editable-click" href="javascript:void(0)"
+                                                   editable-text="row.NewQuantity" buttons="no" data-toggle="tooltip" data-placement="top"
+                                                   (click)="row.showEditName = true">
+                                                   {{row.NewQuantity || '0'}}
+                                                </a>
+                                            }
+                                            @if(row.showEditName) { 
+                                                <span *ngIf="!row.IsReadOnly || enableRelease"> 
+                                                    <input #fieldName type="text" id="operatingEntity" [(ngModel)]="row.NewQuantity"
+                                                           (blur)="row.showEditName = false;" />
+                                                </span>
+                                            }
+                                               @if(row.IsReadOnly && !enableRelease){
+                                               <span> {{row.NewQuantity || '0' }} </span>
+                                               }
+                                               <a *ngIf="row.IsReadOnly &&(row.IsDepartment ||row.IsSite)&& row.NewQuantity!=0"
+                                                  class="btn btn-icon-only float-right me-2" 
+                                                  (click)="manageReleaseOwnership()"
+                                                  placement="bottom"
+                                                   [ngClass]="{'btn-light-primary':!enableRelease,'btn-light-danger':enableRelease}">
+                                                   <i *ngIf=" !enableRelease" class="ki-outline fs-4 ki-pencil"></i>
+                                                   <i *ngIf=" enableRelease" class="ki-outline ki-cross fs-2"></i>
+                                               </a>
+                                               <a *ngIf="row.IsReadOnly && enableRelease"
+                                                  class="btn btn-info float-right me-2" 
+                                                  (click)="releaseOwnership(row)">
+                                                   <!-- <busy-message><i class="fa fa-refresh fa-spin"></i>{{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}</busy-message> -->
+                                                   {{'TRANSLATE.BUTTON_RELEASE' | translate}}
+                                               </a>
+                                           </strong>
+                                       </td>
+                                   </tr>
+                               }
+                               </tbody>
+                           </table>
+                           <div class="d-flex justify-content-end py-6 gap-3">
+                               <button  type="button" class="btn btn-primary btn-sm" [appPermission]="'BTN_OWNERSHIP_MANAGEMENT_SUBMIT'" *ngIf="!enableRelease && readyToComplete === true && data.Status.toLowerCase() !== cloudHubConstants.SUBSCRIPTION_STATUS_SUSPENDED"
+                                  class="btn btn-primary btn-sm"
+                                  (click)="submitOwnershipChanges(data); acc1.collapsed=true;" appBusyLoader>
+                                  {{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}
+                               </button>
+                           </div>
+                       </div>
+                   </div>
+           </div>
+       </div>
+   </div>
+}
+</div>
+}

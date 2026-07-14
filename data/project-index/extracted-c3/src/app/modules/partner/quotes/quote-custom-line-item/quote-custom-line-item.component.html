@@ -1,0 +1,229 @@
+<form [formGroup]="customLineItemForm" class="form" id="kt_form" role="form" novalidate style="z-index:9999; top:2%; width:100% !important; right:0.5% !important">
+    <div class="modal-header">
+        <h4 class="modal-title text-primary" id="modal-title"><span>{{ 'TRANSLATE.QUOTE_CREATE_A_LINE_ITEM' | translate }}</span></h4>
+    </div>
+    <div class="modal-body" id="modal-body">
+        <label class="text-primary fs-4 fw-semibold ">{{ 'TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_INFORMATION' | translate }}</label>
+        <div class="form-body">
+            <!--begin::Name-->
+            <div class="form-group mt-5" [ngClass]="{'has-error': (customLineItemForm.get('Name')?.touched || customLineItemForm.get('Name')?.dirty) && (customLineItemForm.get('Name')?.hasError('required') || customLineItemForm.get('Name')?.value?.length > 150)}">
+                <label class="fw-semibold p-2">
+                    {{ 'TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_TEXT_NAME' | translate }}
+                    <span class="text-danger">*</span>
+                </label>
+                <input type="text" formControlName="Name" class="form-control form-control-sm mb-3 mb-lg-0 ms-auto custom input-sm"[ngClass]="(customLineItemForm.get('Name')?.touched || customLineItemForm.get('Name')?.dirty) && customLineItemForm.get('Name')?.hasError('required') ? 'border-red' : ''" placeholder="{{ 'TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_TEXT_NAME' | translate }}" required />
+                <span *ngIf="(customLineItemForm.get('Name')?.touched || customLineItemForm.get('Name')?.dirty) && customLineItemForm.get('Name')?.hasError('required')" class="text-danger">
+                    {{ 'TRANSLATE.VALIDATION_MESSAGE_REQUIRED' | translate }}
+                </span>
+                <span *ngIf="(customLineItemForm.get('Name')?.touched || customLineItemForm.get('Name')?.dirty) && customLineItemForm.get('Name')?.value?.length > 150" class="text-danger">
+                    {{ 'TRANSLATE.CUSTOM_LINE_ITEM_MAXLENGTH_ERROR_MESSAGE' | translate }}
+                </span>
+            </div>
+            <!--end::Name-->
+
+            <!--begin::Description-->
+            <div class="form-group" [ngClass]="{'has-error': (customLineItemForm.get('Description')?.touched || customLineItemForm.get('Description')?.dirty) && customLineItemForm.get('Description')?.hasError('required')}">
+                <label class="fw-semibold p-2">
+                    {{ 'TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_TEXT_DESCRIPTION' | translate }}
+                    <span class="text-danger">*</span>
+                </label>
+                <input type="text" formControlName="Description" class="form-control form-control-sm mb-3 mb-lg-0 ms-auto custom input-sm" [ngClass]="(customLineItemForm.get('Description')?.touched || customLineItemForm.get('Description')?.dirty) && customLineItemForm.get('Description')?.hasError('required') ? 'border-red' : ''" placeholder="{{ 'TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_TEXT_DESCRIPTION' | translate }}" required />
+                <span *ngIf="(customLineItemForm.get('Description')?.touched || customLineItemForm.get('Description')?.dirty) && customLineItemForm.get('Description')?.hasError('required')" class="text-danger">
+                    {{ 'TRANSLATE.VALIDATION_MESSAGE_REQUIRED' | translate }}
+                </span>
+            </div>
+            <!--end::Description-->
+
+            <!--begin::SaleType-->
+            <div class="" [ngClass]="{'has-error': (customLineItemForm.get('SaleType')?.touched || customLineItemForm.get('SaleType')?.dirty) && customLineItemForm.get('SaleType')?.hasError('required')}">
+                <label class="fw-semibold p-2">
+                    {{ 'TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_TEXT_SALE_TYPE' | translate }}
+                    <span class="text-danger">*</span>
+                </label>
+                <ng-select formControlName="SaleType" required>
+                    <!-- <ng-option [value]="''" disabled>{{ 'TRANSLATE.SELECT_DEFAULT_OPTION_SELECT' | translate }}</ng-option> -->
+                    <ng-option *ngFor="let option of saleTypes" [value]="option.ID">{{ 'TRANSLATE.'+option.Description | translate }}</ng-option>
+                </ng-select>
+                <span *ngIf="(customLineItemForm.get('SaleType')?.touched || customLineItemForm.get('SaleType')?.dirty) && customLineItemForm.get('SaleType')?.hasError('required')" class="text-danger">
+                    {{ 'TRANSLATE.VALIDATION_MESSAGE_REQUIRED' | translate }}
+                </span>
+            </div> 
+            <!--end::SaleType-->
+
+            <!--begin::Price-->
+            <hr>
+            <label class="text-primary fs-4 fw-semibold  pt-2">{{ 'TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_TEXT_PRICE' | translate }}</label>
+            <div class="form-group row">
+                <div class="col-md-6" [ngClass]="{'has-error': (customLineItemForm.get('UnitPrice')?.touched || customLineItemForm.get('UnitPrice')?.dirty) && customLineItemForm.get('UnitPrice')?.hasError('required')}">
+                    <label class="control-label mt-5 fw-semibold p-2">
+                        {{ 'TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_TEXT_UNIT_PRICE' | translate }}
+                        <span class="text-danger">*</span>
+                    </label>
+                    <input type="number" step="0.01" formControlName="UnitPrice" class="form-control form-control-sm mb-3 mb-lg-0 ms-auto custom input-sm" required />
+                </div>
+                <div class="col-md-6 pt-6">
+                    <label class="col-md-3 fw-semibold p-2">
+                        {{ 'TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_TEXT_IS_TAXABLE' | translate }}
+                    </label>
+                    <div class="col-md-6 mt-2">
+                        <div class="input-group-with-checkbox ms-1">
+                            <label class="form-check form-check-inline">
+                                &nbsp;
+                                <input type="checkbox"  class="form-check-input" formControlName="IsTaxable" />
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--end::Price-->
+
+            <!--begin::Billing-->
+            <div>
+                <hr>
+                <div
+                    class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6 mt-4">
+                    <label class="text-primary fs-4 fw-semibold">{{ 'TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_TEXT_BILLING' | translate}}</label>
+                    <div class="d-flex justify-content-between">
+                        <p><span class="fw-bold fs-6" translate="TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_BILLING_INSTRUCTIONS_HEADING"></span>
+                            <span>
+                                <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_BILLING_INSTRUCTIONS_TOOLTIP' | translate}}">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <span class="path3"></span>
+                                </i>
+                            </span>
+                        </p>
+                        <div class="form-check form-switch">
+                            <input type="checkbox" class="form-check-input" formControlName="BillingEnabled" />
+                            <span></span>
+                        </div>
+                    </div>
+                    <ul>
+                        <li>
+                            <span translate="TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_BILLING_INSTRUCTIONS_1"></span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_BILLING_INSTRUCTIONS_2"></span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_BILLING_INSTRUCTIONS_3"></span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body mt-4">
+                    <div ngbAccordion>
+                        <div ngbAccordionItem [collapsed]="true">
+                            <div ngbAccordionHeader>
+                                <button ngbAccordionButton class="accordion-icon-collapse">
+                                    <div class="fw-bold fs-6">
+                                        <span translate="TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_BILLING_FIELDS"></span>
+                                    </div>
+                                </button>
+                            </div>
+                            <div ngbAccordionCollapse>
+                                <div class="form-group row">
+                                    <div class="col-md-6 mt-5">
+                                        <label class="fw-semibold p-2">
+                                            {{ 'TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_TEXT_START_DATE' | translate }}
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="text" ngbDatepicker [readOnly]="true" #startDate="ngbDatepicker"
+                                                formControlName="StartDate"
+                                                class="form-control form-control-sm mb-3 mb-lg-0 ms-auto custom" readonly required
+                                                placement="bottom-end" />
+                                            <span class="input-group-append">
+                                                <button type="button" (click)="startDate.toggle()"
+                                                    class="btn btn-sm btn-light-primary me-6">
+                                                    <i class="ki-outline ki-calendar fs-3 pe-0"></i>
+                                                </button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mt-5">
+                                        <label class="fw-semibold p-2">
+                                            {{ 'TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_TEXT_END_DATE' | translate }}
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="text" ngbDatepicker [readOnly]="true" #endDate="ngbDatepicker"
+                                                formControlName="EndDate"
+                                                class="form-control form-control-sm mb-3 mb-lg-0 ms-auto custom"
+                                                [minDate]="customLineItemForm.get('StartDate')?.value" readonly required
+                                                placement="bottom-end" />
+                                            <span class="input-group-append">
+                                                <button type="button" (click)="endDate.toggle()"
+                                                    class="btn btn-sm btn-light-primary me-6">
+                                                    <i class="ki-outline ki-calendar fs-3 pe-0"></i>
+                                                </button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+            
+                                <div class="form-group row mb-0">
+                                    <div class="col-md-6">
+                                        <label class="fw-semibold p-2">
+                                            {{ 'TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_TEXT_INVOICE_NUMBER' | translate }}
+                                        </label>
+                                        <input type="text" formControlName="InvoiceNumber"
+                                            class="form-control form-control-sm mb-3 mb-lg-0 ms-auto custom input-sm"
+                                            placeholder="{{ 'TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_TEXT_INVOICE_NUMBER' | translate }}" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label fw-semibold p-2">
+                                                {{ 'TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_TEXT_INVOICE_DATE' | translate }}
+                                            </label>
+                                            <div class="input-group">
+                                                <input type="text" ngbDatepicker #invoiceDate="ngbDatepicker" [readOnly]="true"
+                                                    formControlName="InvoiceDate"
+                                                    class="form-control form-control-sm mb-3 mb-lg-0 ms-auto custom" readonly
+                                                    required placement="top-end" />
+                                                <span class="input-group-append">
+                                                    <button type="button" (click)="invoiceDate.toggle()"
+                                                        class="btn btn-sm btn-light-primary me-6">
+                                                        <i class="ki-outline ki-calendar fs-3 pe-0"></i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+            
+                                <div class="form-group row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label fw-semibold p-2">
+                                                {{ 'TRANSLATE.QUOTE_CUSTOM_LINE_ITEM_TEXT_DUE_DATE' | translate }}
+                                            </label>
+                                            <div class="input-group">
+                                                <input type="text" ngbDatepicker [readOnly]="true" #invoiceDueDate="ngbDatepicker"
+                                                    formControlName="InvoiceDueDate"
+                                                    class="form-control form-control-sm mb-3 mb-lg-0 ms-auto custom"
+                                                    [minDate]="customLineItemForm.get('InvoiceDate')?.value" readonly required
+                                                    placement="top-end" />
+                                                <span class="input-group-append">
+                                                    <button type="button" (click)="invoiceDueDate.toggle()"
+                                                        class="btn btn-sm btn-light-primary me-6">
+                                                        <i class="ki-outline ki-calendar fs-3 pe-0"></i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--end::Billing-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-sm btn-light btn-active-light-primary" type="button" (click)="cancel()"><span translate="TRANSLATE.QUOTE_BUTTON_TEXT_CANCEL"></span></button>
+        <button class="btn btn-primary btn-sm" type="submit" (click)="submit()">
+            <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+        </button>
+    </div>
+</form>

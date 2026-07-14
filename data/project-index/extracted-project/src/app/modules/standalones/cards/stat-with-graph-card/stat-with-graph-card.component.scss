@@ -1,0 +1,17 @@
+.ki-duotone, .ki-outline, .ki-solid {
+    font-size: 2rem;
+    color: var(--bs-text-white);
+}
+
+::ng-deep{
+    app-stat-with-graph-card{
+        .bg-info{
+            background-color: #8b5bf2 !important;
+            background-image:url('/assets/media/svg/shapes/wave-bg-purple.svg');
+        }
+        .bg-dark{
+            background-color: #46484d !important;
+            background-image:url('/assets/media/svg/shapes/subscription bg.svg')
+        }
+    }
+}

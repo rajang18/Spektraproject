@@ -1,0 +1,10 @@
+::ng-deep{
+    app-toolbar{
+      .dropdown-toggle::after{
+        line-height: 1;
+          position: relative;
+          top: 5px;
+        }
+      }
+    }
+  

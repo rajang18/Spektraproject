@@ -1,0 +1,370 @@
+<div class="container-fluid customer-container margin-top-80">
+    <div class="row">
+        <div class="col col-12  col-lg-9 pt-5">
+            <div class="card product-description-card m-auto ">
+                <div class="col-md-12">
+                    <div class="card card-border card-stretch">
+                        <div class="card-header">
+                            <h4 class="font-dark font-weight-bold mb-0">
+                                <span><span translate="TRANSLATE.PUBLIC_SIGNUP_PAYMENT_HEADER_TEXT"></span></span>
+                            </h4>
+                        </div>
+                        <div class="card-body form">
+                            <div class="row ms-1">
+                                <div class="btn-group" data-toggle="buttons">
+                                    <div class="form-check form-check-custom  me-10">
+                                        <input class="form-check-input h-30px w-30px" type="radio" value="" id="flexCheckbox30" [ngClass]="{'active' : pageMode === 'CC'}" *ngIf="isCreditCardEnabled" (click)="setPaymentTypePageMode('CC')" name="paymentType"/>
+                                        <label id="labelCC" class="form-check-label" for="flexCheckbox30">
+                                            <span class="text-gray-700" translate="TRANSLATE.CUSTOMER_PROFILE_PAYMENT_LABEL_TEXT_CREDIT_CARD"></span>
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-custom  me-10">
+                                        <input class="form-check-input h-30px w-30px" type="radio" value="" id="flexCheckbox30" [ngClass]="{'active' : pageMode === 'ACH'}" *ngIf="isACHEnabled" (click)="setPaymentTypePageMode('ACH')" name="paymentType"/>
+                                        <label id="labelACH" class="form-check-label" for="flexCheckbox30">
+                                            <span class="text-gray-700">{{"TRANSLATE.PUBLIC_SIGNUP_TEXT_ACH" | translate}}</span>
+                                        </label>
+                                    </div>
+                                    <!-- <label id="labelCC" class="btn btn-sm btn-active-primary" [ngClass]="{'active' : pageMode === 'CC'}" *ngIf="isCreditCardEnabled" (click)="setPaymentTypePageMode('CC')">
+                                        <span translate="TRANSLATE.CUSTOMER_PROFILE_PAYMENT_LABEL_TEXT_CREDIT_CARD"></span>
+                                    </label>
+                                    <label id="labelACH" class="btn btn-sm btn-active-primary" [ngClass]="{'active' : pageMode === 'ACH'}" *ngIf="isACHEnabled" (click)="setPaymentTypePageMode('ACH')">
+                                        <span>{{"TRANSLATE.PUBLIC_SIGNUP_TEXT_ACH" | translate}}</span>
+                                    </label> -->
+                                </div>
+                            </div>
+                            <div class="clearfix mt-10"></div> 
+                            <form  [formGroup]="paymentFormACH" role="form" novalidate class="horizontal-form" *ngIf="pageMode==='ACH'">
+                                <div class="form-body">
+                                    <div class="col-md-12 mb-5">
+                                        <div class="form-group">
+                                            <label class="control-label mb-2">
+                                                {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_ACCOUNT_NUMBER' | translate }}
+                                                <span class="text-danger"> *</span>
+                                            </label>
+                                            <div>
+                                                <input type="text" class="form-control" formControlName="AccountNumber" name="accountNumber"
+                                                    ng-required="true" />
+                                            </div>
+                                            @if(paymentFormACH.get('AccountNumber')?.errors?.required &&
+                                            paymentFormACH.get('AccountNumber')?.touched){
+                                            <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+                            
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mb-5">
+                                        <div class="form-group">
+                                            <label class="control-label mb-2">
+                                                {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_NAME_ON_ACCOUNT' | translate}}
+                                                <span class="text-danger"> *</span>
+                                            </label>
+                                            <div>
+                                                <input type="text" class="form-control" formControlName="NameOnCard" ng-required="true" />
+                                            </div>
+                                            @if(paymentFormACH.get('NameOnCard')?.errors?.required &&
+                                            paymentFormACH.get('NameOnCard')?.touched){
+                                            <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+                            
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mb-5">
+                                        <div class="form-group">
+                                            <label class="control-label mb-2">
+                                                {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_ROUTING_NUMBER' | translate}}
+                                                <span class="text-danger"> *</span>
+                                            </label>
+                                            <div>
+                                                <input type="text" class="form-control" formControlName="RoutingNumber" name="routingNumber"
+                                                    ng-required="true" />
+                                            </div>
+                                            @if(paymentFormACH.get('RoutingNumber')?.errors?.required &&
+                                            paymentFormACH.get('RoutingNumber')?.touched){
+                                            <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+                            
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label mb-5">
+                                                {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_ACCOUNT_TYPE' | translate}}
+                                                <span class="text-danger"> *</span>
+                                            </label>
+                                            <div>
+                                                <div class="mb-5">
+                                                    <select class="form-control" formControlName="AccountType">
+                                                        @for(type of bankAccountTypes; track $index){
+                                                            <option [value]="type" >{{type}}</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            @if(paymentFormACH.get('AccountType')?.errors?.required &&
+                                            paymentFormACH.get('AccountType')?.touched){
+                                            <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+                            
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label mb-5">
+                                                {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_BUSINESS_ACCOUNT' | translate}}
+                                                <span class="text-danger"> *</span>
+                                            </label>
+                                            <div>
+                                                <div class="mb-5">
+                            
+                                                    <label class="btn btn-outline btn-sm green-jungle">
+                                                        {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_BUSINESS_ACCOUNT_YES' | translate}}
+                                                        <input type="radio" class="toggle" value="1"
+                                                        formControlName="IsBusinessAccount">
+                                                    </label>
+                            
+                                                    <label class="btn btn-outline btn-sm green-jungle">
+                                                        {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_BUSINESS_ACCOUNT_NO' | translate}}
+                                                        <input type="radio" class="toggle" value="0"
+                                                        formControlName="IsBusinessAccount">
+                                                    </label>
+                            
+                                                </div>
+                                            </div>
+                                            @if(paymentFormACH.get('IsBusinessAccount')?.errors?.required &&
+                                            paymentFormACH.get('IsBusinessAccount')?.touched){
+                                            <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+                            
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="clearfix margin-top-20"></div>
+                                <div class="text-danger" id="stripe-errors" role="alert"></div>
+                                <div class="text-end">
+                                    @if(!isProcessing){
+                                        <button *ngIf="cartProducts[0].EnablePublicSignupAssistance && (cartProducts[0].ProviderId === 1 || cartProducts[0].LinkedSubscription?.ProviderId === 1)" class="btn btn-sm btn-light-primary me-2" (click)="skipPaymentAndContinue()" >
+                                            {{'TRANSLATE.PUBLIC_SIGNUP_STRIPE_SKIP_AND_CONTINUE_BTN_TXT' | translate}}
+                                        </button>
+                                        <button class="btn btn-sm btn-primary" (click)="Submit(paymentFormACH)">PayNow
+                                        </button>
+                                    }
+                                    @else{
+                                        <button *ngIf="cartProducts[0].EnablePublicSignupAssistance && (cartProducts[0].ProviderId === 1 || cartProducts[0].LinkedSubscription?.ProviderId === 1)" type="button" class="btn btn-secondary" >
+                                            <div><i class="fa fa-spinner fa-spin"></i><span
+                                                translate="TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT"></span>
+                                        </div>
+                                        </button>
+                                        <button type="button" class="btn btn-secondary" >
+                                            <div><i class="fa fa-spinner fa-spin"></i><span
+                                                translate="TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT"></span>
+                                        </div>
+                                        </button>
+                                    }
+                                </div>
+                            </form>
+                            <form [formGroup]="paymentFormCC" *ngIf="pageMode==='CC'">
+                                <div class="form-body">
+                                    <!-- NOT REquired -->
+                                    <div class="col-md-12 mb-2">
+                                        <div class="form-group">
+                                            <label class="control-label mb-2">
+                                                {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_ALIAS_NAME' | translate}}
+                                                <span class="text-danger"> *</span>
+                                            </label>
+                                            <div>
+                                                <input type="text" class="form-control" formControlName="PaymentProfileAlias" ng-model="cc.NewPaymentAccount.PaymentProfileAlias" name="paymentProfileAlias" ng-required="true" />
+                                            </div>
+                                            @if(paymentFormCC.get('PaymentProfileAlias')?.errors?.required &&
+                                            paymentFormCC.get('PaymentProfileAlias')?.touched){
+                                                <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+                             
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mb-2">
+                                        <div class="form-group">
+                                            <label class="control-label mb-2">
+                                                {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_NAME_ON_CARD' | translate }}
+                                                <span class="text-danger"> *</span>
+                                            </label>
+                                            <div ng-class="{'has-error' : (cc.paymentForm.$submitted || cc.paymentForm.nameOnCard.$dirty) &amp;&amp; cc.paymentForm.nameOnCard.$error.required}">
+                                                <input type="text" class="form-control" formControlName="NameOnCard" name="nameOnCard" ng-required="true" data-value-missing="This field is required!" />
+                                            </div>
+                                            @if(paymentFormCC.get('NameOnCard')?.errors?.required &&
+                                            paymentFormCC.get('NameOnCard')?.touched){
+                                                <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+                             
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mb-2">
+                                        <div class="form-group">
+                                            <label class="control-label mb-2">
+                                                {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_CARD_NUMBER' | translate }}
+                                                <span class="text-danger"> *</span>
+                                            </label>
+                                            <div class="input-icon right mb-2">
+                                                <i *ngIf="cardType==='American Express'" class="form-control-feedback fa fa-cc-amex font-dark"></i>
+                                                <i *ngIf="cardType==='Discover'"  class="form-control-feedback fa fa-cc-discover font-dark"></i>
+                                                <i *ngIf="cardType==='Mastercard'"  class="fa fa-cc-mastercard"></i>
+                                                <i *ngIf="cardType==='Diners Club'" class="form-control-feedback fa fa-cc-mastercard font-dark"></i>
+                                                <i *ngIf="cardType==='Visa'"  class="ki-duotone ki-credit-cartfont-dark"></i>
+                                                <i *ngIf="cardType===''" class="form-control-feedback fa fa-credit-card font-dark"></i>
+                                                <input type="text" class="form-control" formControlName="CreditCardNumber" name="accountNumber" ng-required="true" cc-number cc-eager-type />
+                                            </div>
+                                            @if(paymentFormCC.get('CreditCardNumber')?.errors?.required &&
+                                            paymentFormCC.get('CreditCardNumber')?.touched){
+                                                <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+                             
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="row col-md-8 mb-2">
+                                        <div class="form-group col-md-4">
+                                            <label class="control-label mb-2">
+                                                {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_EXPIRE_MONTH' | translate}}
+                                                <span class="text-danger"> *</span>
+                                            </label>
+                                            <div >
+                                                <input type="text" class="form-control" formControlName="Month" name="expiremonth" ng-required="true" placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_MONTH_INPUT_FIELD' | translate}}" />
+                                            </div>
+                                            @if(paymentFormCC.get('Month')?.errors?.required &&
+                                            paymentFormCC.get('Month')?.touched){
+                                                <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+                             
+                                            }
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label class="control-label mb-2">
+                                                {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_EXPIRE_YEAR' | translate}}
+                                                <span class="text-danger"> *</span>
+                                            </label>
+                                            <div >
+                                                <input type="text" class="form-control" formControlName="Year" name="expireyear" ng-required="true" placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_YEAR_INPUT_FIELD' | translate}}" />
+                                            </div>
+                                            @if(paymentFormCC.get('Year')?.errors?.required &&
+                                            paymentFormCC.get('Year')?.touched){
+                                                <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+                             
+                                            }
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                            <label class="control-label mb-2">
+                                                {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_CVV' | translate}}
+                                                <span class="text-danger"> *</span>
+                                            </label>
+                                            <div>
+                                                <input type="text" class="form-control" formControlName="CVV" name="cvv" ng-required="true" placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_CVV_INPUT_FIELD' | translate}}" />
+                                            </div>
+                                            @if(paymentFormCC.get('CVV')?.errors?.required &&
+                                            paymentFormCC.get('CVV')?.touched){
+                                                <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+                             
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr />
+                                <div class="col-md-12">
+                                    <div class="text-end">
+                                        @if(!isProcessing){
+                                            <button class="btn btn-sm btn-light-primary me-2" *ngIf="(isEnablePublicSignupAssistance && isCartHasMicrosoftProduct)" (click)="skipPaymentAndContinue()" >
+                                                {{'TRANSLATE.PUBLIC_SIGNUP_STRIPE_SKIP_AND_CONTINUE_BTN_TXT' | translate}}
+                                            </button>
+                                            <button class="btn btn-sm btn-primary" *ngIf="true" (click)="Submit(paymentFormCC)">PayNow
+                                            </button>
+                                        }
+                                        @else{
+                                            <button type="button" *ngIf="(isEnablePublicSignupAssistance && isCartHasMicrosoftProduct)" class="btn btn-secondary" >
+                                                <div><i class="fa fa-spinner fa-spin"></i><span
+                                                    translate="TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT"></span>
+                                            </div>
+                                            </button>
+                                            <button type="button" class="btn btn-secondary" >
+                                                <div><i class="fa fa-spinner fa-spin"></i><span
+                                                    translate="TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT"></span>
+                                            </div>
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class=" col col-12 col-lg-3 pt-5">
+            <div class="card product-description-card m-auto" style="height:100%">
+                <!-- <div class="card-header shop-item-title flex-nowrap">
+                    <div class="card-title">
+                        <div class="d-flex flex-column ">
+                            <a href="#" class="card-title font-weight-bolder text-dark-75 font-size-h2 m-0 pt-3 pb-3">
+                                <span class="pl-9" translate="TRANSLATE.CUSTOMER_CART_PORTLET_TITLE_TEXT_PRICE_DETAILS"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div> -->
+                <div class="d-flex justify-content-between mx-5 mt-7">
+                    <span class="text-dark fw-bold h2">{{'TRANSLATE.CUSTOMER_CART_PORTLET_TITLE_TEXT_PRICE_DETAILS'
+                        |translate}}</span>
+                    <span>
+                        <a class="fw-bold cursor-pointer" (click)="checkOutCart()"><span
+                            translate="TRANSLATE.PUBLIC_SIGNUP_EDIT_TEXT"></span></a>&nbsp;
+                    </span>   
+                </div>
+                <div class="d-flex justify-content-between mx-5">
+                    <span class="text-dark font-weight-bolder" *ngIf="_publicSignupSevice.cartCount > 0">
+                        {{_publicSignupSevice.cartCount}} items
+                    </span>
+                    <a *ngIf="_publicSignupSevice.CustomerPublicSignUpModel != null &&  _publicSignupSevice.CustomerPublicSignUpModel != undefined && _publicSignupSevice.CustomerPublicSignUpModel != ''"
+                            class="fw-bold cursor-pointer"
+                            (click)="redirectToBillingInformation()">{{'TRANSLATE.EDIT_BILLING_INFORMATION_IN_PUBLIC_SIGN_UP'
+                            | translate}}</a>
+                </div>
+                <hr class="solid mt-5">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between pt-3 pb-3" *ngIf="_publicSignupSevice.cartTotal">
+                        <span class="text-dark fw-bold"><span translate="TRANSLATE.CUSTOMER_CART_PARAGRAPH_TITLE_TEXT_TOTAL_COST"></span></span>
+                        <span>{{_publicSignupSevice.cartTotal | CurrencyFilter : products[0].CurrencySymbol :
+                            products[0].CurrencyDecimalPlaces : products[0].CurrencyThousandSeperator :
+                            products[0].CurrencyDecimalSeperator}}</span>
+                    </div>
+                    <div class="d-flex justify-content-between pt-3 pb-3" *ngIf="_publicSignupSevice.CustomerPublicSignUpModel != undefined">
+                        <span class="text-dark fw-bold">{{'TRANSLATE.SIGNUP_CART_COUPON_CODE' |
+                            translate}}</span>
+                        <div class="input-group mb-3">
+                            <input type="text" [(ngModel)]="couponCode" (change)="refreshCoupon()" class="form-control form-contol-sm" maxlength="50" name="CouponCode"
+                                placeholder="{{'TRANSLATE.PUBLIC_SINGUP_PLACEHOLDER_VOUCHER_CODE'| translate}}">
+                            <button class="btn btn-sm btn-light-primary" [disabled]="isCouponValidationInProgress" (click)="validateCoupon()">
+                                {{'TRANSLATE.SIGNUP_CART_COUPON_APPLY' | translate}}
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <button *ngIf="(validCouponCode !== null && validCouponCode !== '' && validCouponCode !== undefined && isDiscountApplied)" [disabled]="isCouponValidationInProgress"
+                            class="btn btn-sm btn-light-danger pt-3 pb-3" (click)="removeCouponApplied()">
+                            {{'TRANSLATE.SIGNUP_CART_REMOVE_APPLIED_COUPON' | translate}}
+                        </button>
+                    </div>
+                    <div class="d-flex justify-content-between pt-3 pb-3" *ngIf="cartDiscount > 0 && cartDiscount !== null && cartDiscount !== undefined">
+                        <span class="text-dark fw-bold">{{'TRANSLATE.CUSTOMER_CART_PARAGRAPH_TITLE_TEXT_TOTAL_DISCOUNT'
+                            |
+                            translate}}</span>
+                        <span>{{cartDiscount | CurrencyFilter : products[0].CurrencySymbol :
+                            products[0].CurrencyDecimalPlaces : products[0].CurrencyThousandSeperator :
+                            products[0].CurrencyDecimalSeperator}}</span>
+                    </div>
+                    <hr class="solid mt-5">
+                    <div class="d-flex justify-content-between pt-3 pb-3" *ngIf="payableAmount > 0 && payableAmount !== null && payableAmount !== undefined">
+                        <span class="text-dark fw-bold"> <span translate="TRANSLATE.CUSTOMER_CART_PARAGRAPH_TITLE_TEXT_AMOUNT_PAYABLE"></span>
+                        </span>
+                        <span>{{payableAmount | CurrencyFilter : products[0].CurrencySymbol :
+                            products[0].CurrencyDecimalPlaces : products[0].CurrencyThousandSeperator :
+                            products[0].CurrencyDecimalSeperator}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,84 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="backToList()">
+            <i class="ki-outline ki-to-left fs-2" ></i> <span translate="TRANSLATE.ACCOUNT_MANAGERS_ADD_EDIT_BUTTON_TEXT_BACK_TO_LIST"></span>
+        </button>
+    </div>
+</ng-template>
+<div class="add-customer-container">
+    <div class="card custom-card">
+        <div class="card-body">
+            <form [formGroup]="accountManagerRegisterForm">
+                <div class="form-group row mt-7">
+                    <div class="col-md-4">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.ACCOUNT_MANAGERS_ADD_EDIT_FORM_LABELS_ACCOUNT_MANAGER_ID"></label>
+                        <input type="text"  [disabled]="isEditing"
+                            class="form-control form-control-sm" formControlName="accountManagerId" >
+                            @if(accountManagerRegisterForm.get('accountManagerId')?.errors?.required &&
+                            accountManagerRegisterForm.get('accountManagerId')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                        }
+                    </div>
+                    <div class="col-md-4">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.ACCOUNT_MANAGERS_ADD_EDIT_FORM_LABELS_FIRST_NAME"></label>
+                        <input type="text"
+                            class="form-control form-control-sm" formControlName="firstName" >
+                            @if(accountManagerRegisterForm.get('firstName')?.errors?.required &&
+                            accountManagerRegisterForm.get('firstName')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                        }
+                    </div>
+                    <div class="col-md-4">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.ACCOUNT_MANAGERS_ADD_EDIT_FORM_LABELS_LAST_NAME"></label>
+                        <input type="text"
+                            class="form-control form-control-sm" formControlName="lastName">
+                            @if(accountManagerRegisterForm.get('lastName')?.errors?.required &&
+                            accountManagerRegisterForm.get('lastName')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div>
+                </div>
+                <div class="form-group row mt-7">
+                    <div class="col-md-4">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.ACCOUNT_MANAGERS_ADD_EDIT_FORM_LABELS_EMAIL"></label>
+                        <input type="text"
+                            class="form-control form-control-sm" formControlName="emailAdderss">
+                            @if(accountManagerRegisterForm.get('emailAdderss')?.errors?.required &&
+                            accountManagerRegisterForm.get('emailAdderss')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                            }
+                            @if(accountManagerRegisterForm.get('emailAdderss')?.errors?.invalidEmail &&
+                            accountManagerRegisterForm.get('emailAdderss')?.touched &&
+                            !accountManagerRegisterForm.get('emailAdderss')?.errors?.required){
+                            <span class="text-danger"
+                                translate="TRANSLATE.VALIDATION_MESSAGE_PLEASE_ENTER_A_VALID_EMAIL"></span>
+                            }
+                    </div>
+                    <div class="col-md-4">
+                        <label class="fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.ACCOUNT_MANAGERS_ADD_EDIT_FORM_LABELS_PHONE_NUMBER"></label>
+                        <input type="text" 
+                            class="form-control form-control-sm" formControlName="phoneNumber" maxlength="25">
+                            <!-- @if(accountManagerRegisterForm.get('phoneNumber')?.errors?.invalidPhoneNumber &&
+                            accountManagerRegisterForm.get('phoneNumber')?.touched &&
+                            !accountManagerRegisterForm.get('phoneNumber')?.errors?.required){
+                            <span class="text-danger"
+                                translate="TRANSLATE.VALIDATION_MESSAGE_PLEASE_ENTER_A_VALID_PHONE_NUMBER"></span>
+                            } -->
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3">
+            <button type="button" class="btn btn-sm btn-light btn-active-light-primary" [routerLink]="['/partner/accountmanagers']">{{'TRANSLATE.BUTTON_TEXT_CANCEL' | translate}}
+            </button>
+            <button type="button" class="btn btn-sm btn-primary" (click)="createAccountManager()">
+                {{ this.accountManagerC3Id == null? ('TRANSLATE.BUTTON_TEXT_SUBMIT' | translate) : ('TRANSLATE.BUTTON_TEXT_UPDATE' | translate) }}
+            </button>
+        </div>
+    </div>
+</div>

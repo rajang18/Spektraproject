@@ -1,0 +1,14 @@
+[
+    {
+      "ID": 1,
+      "Name": "Prorate",
+      "NameKey": "BILL_ACTION_NAME_PRORATE",
+      "Description": "BILL_ACTION_DESC_PRORATE"
+    },
+    {
+      "ID": 3,
+      "Name": "No Refund",
+      "NameKey": "BILL_ACTION_NAME_NO_REFUND",
+      "Description": "BILL_ACTION_DESC_NO_REFUND"
+    }
+  ]

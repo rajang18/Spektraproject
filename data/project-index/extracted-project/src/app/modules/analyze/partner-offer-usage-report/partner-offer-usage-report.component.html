@@ -1,0 +1,46 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <ng-select class="w-300px" [(ngModel)]="billingPeriodId" ngDefaultControl (change)="reloadData()" >
+            <ng-option [value]="''" translate="TRANSLATE.CUSTOMER_OPTION_ALL_PERIODS"></ng-option>
+            @for(option of BillingPeriods | orderBy: 'BillingStartDate' : 'desc'; track $index){
+            <ng-option [value]="option.BillingPeriodId">
+                {{option.BillingStartDate | c3Date}} - {{option.BillingEndDate | c3Date}} ({{option.BillingId}})
+            </ng-option>}
+        </ng-select>
+        <button type="button" class="btn btn-light-primary btn-sm btn-lg btn-md btn-xs mr-2 text-nowrap" (click)="exportUsageReport()">
+            <i class="ki-outline ki-exit-down fs-2">
+            </i>{{'TRANSLATE.USAGE_REPORT_CAPTION_TEXT_DOWNLOAD_USAGE_REPORT' | translate}}
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #cost let-data="adtData">
+    <div>
+        {{data.CostToCustomer | CurrencyFilter}}
+    </div>
+</ng-template>
+
+<ng-template #usageDate let-data="adtData" let-emitter="captureEvents">
+    <span>{{data.UsageDate | c3Date}}</span>
+  </ng-template>
+
+<div class="card">
+    <div class="card-body pt-0 overflow-auto">
+        <table *ngIf="totalCost > 0" class="table">
+            <tbody class="datatable-body">
+                <tr class="bg-secondary">
+                    <td class="col-lg-11 ps-4">
+                        <b><span translate="TRANSLATE.PARTNER_USAGE_PRODUCT_USAGE_TAB_DESCRIPTION_TOTAL_COST"></span></b>
+                    </td>
+                    <td class="col-lg-1">
+                        <b>{{totalCost | CurrencyFilter : CurrencySymbol : CurrencyDecimalPlaces : CurrencyThousandSeparator : CurrencyDecimalSeparator}}</b>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        @if (!!datatableConfig) {
+        <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+        </app-c3-table>
+        }
+    </div>
+</div>

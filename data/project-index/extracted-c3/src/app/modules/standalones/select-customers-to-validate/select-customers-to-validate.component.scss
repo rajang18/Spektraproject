@@ -1,0 +1,12 @@
+.outline-none{
+    outline: none;
+    border-radius: 0.375rem;
+    padding: 0.6rem;
+  }
+  ::ng-deep {
+    app-select-customers-to-validate {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+  }

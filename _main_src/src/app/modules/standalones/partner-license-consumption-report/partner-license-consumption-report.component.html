@@ -1,0 +1,95 @@
+<ng-template #actionHeader>
+    @if(entityName == 'Partner' || entityName == 'Reseller'){
+    <button type="button" class="btn btn-sm fw-semibold btn-light-primary" (click)="backToList()">
+      <i class="ki-outline ki-to-left fs-2"></i> <span
+        translate="TRANSLATE.PARTNER_REPORTS_BTN_TEXT_BACK_TO_CUSTOMERS"></span>
+    </button>  
+  }
+</ng-template>
+
+<div [ngClass]="{'card': entityName == 'Customer'}">
+  <div [ngClass]="{'card-body pt-0 overflow-auto': entityName == 'Customer'}">
+@if(entityName.toLowerCase() === cloudHubConstants.ENTITY_CUSTOMER.toLowerCase()  && (tenantsCount !== null && tenantsCount === 0)){
+  <div class="card card-custom h-100">
+    <div class=" card card-body">
+      <div class="form">
+        <div class="form-body row">
+          <div class="col-md-12">
+            <div class="number font-green">
+              <i class="fa fa-unlink"></i>
+            </div>
+            <div class="details">
+              <span translate="TRANSLATE.CUSTOMER_NOT_LINKED_TO_ANY_PROVIDER_TENANTS_ERROR"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+@if(tenantsCount != null && tenantsCount > 0){
+  <div class="d-flex justify-content-end align-items-center gap-2 gap-lg-3 mt-3 mb-5">
+    <a class="btn btn-light-primary btn-sm mr-2 text-nowrap" (click)="exportLicenseConsumptionForServiceProviderCustomer()"
+      [appPermission]="'EXPORT_LICENSE_CONSUMPTION_REPORT'">
+      <i class="ki-outline ki-exit-down fs-2"></i>&nbsp;
+      <span translate="TRANSLATE.LICENSE_CONUMPTION_BUTTON_TEXT_EXPORT_LICENSE_CONUMPTION_REPORT_CSV"></span>
+    </a>
+  </div>
+  <div class="form mb-5">
+    <div class="form-group row">
+      <div class="col-md-2 text-center mt-3 text-start fw-semibold fs-6">
+        <label span translate="TRANSLATE.LICENSE_CONUMPTION_LABEL_TEXT_TENANTS"></label>
+      </div>
+      <div class="col-md-5">
+        <ng-select [(ngModel)]="currentProviderTenantId" name="licenseConsumptionReport"
+          (change)="reloadCustomerTenant()">
+          @for(tenant of tenants; track $index){
+          <ng-option [value]="tenant.CustomerRefId">
+            {{tenant.CustomerName}}
+          </ng-option>
+          }
+        </ng-select>
+      </div>
+    </div>
+  </div>
+}
+@if(isLoading == false && licenseConsumptionReportData.length == 0){
+  <div>
+    <div class="position-relative top-70px">
+        <div class="row">
+            <div class="col-md-12 centered">
+              <app-common-no-record></app-common-no-record>
+            </div>
+        </div>
+    </div>
+  </div>
+}
+@else{
+  @if (!!datatableConfig) {
+    <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" [searchFilter]="false">
+    </app-c3-table>
+  }
+}
+</div>
+</div>
+
+<ng-template #c3subscriptionNames let-data="adtData" let-row="captureEvents">
+  <div class="ms-md-2">
+    @for (row of data.C3SubcriptionNames; track row) {
+    <li>{{ row }}</li>
+    }
+  </div>
+</ng-template>
+<ng-template #actions let-data="adtData" let-emitter="captureEvents">
+  <div class="d-flex">
+    <div class="d-flex align-items-center">
+      <div title="{{'TRANSLATE.RELEASE_UNUSED_SEATS' | translate}} " class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto"
+        [ngClass]="toolbarButtonHeightClass" (click)="releaseUnusedSeats(data)" [appPermission]="'SAVE_CUSTOMER_PRODUCTS'"
+        *ngIf="data.CanReduceSeat === true && data.Count ===1 && data.TotalUnits >= data.AvailableUnits &&  ((data.ConsumedUnits!== null && data.ConsumedUnits > 0 && data.AvailableUnits >  0) || (data.ConsumedUnits !== null && data.ConsumedUnits === 0 && data.AvailableUnits > 1))">
+        <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg me-md-2 h-20px w-20px">
+          <i class="fas fa-undo"></i>
+        </span>
+      </div>
+    </div>
+  </div>
+</ng-template>

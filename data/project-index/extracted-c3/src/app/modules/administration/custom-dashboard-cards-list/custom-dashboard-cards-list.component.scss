@@ -1,0 +1,32 @@
+.Schedulelabelbackgroundcolor {
+    background-color: #AC3934 !important;
+}
+
+.ribbon.ribbon-top .ribbon-label {
+    transform: translateX(-1px) translateY(-1px) !important;
+}
+
+::ng-deep {
+    app-custom-dashboard-cards-list {
+        thead {
+            .padding-end-10 {
+                padding-right: 1em !important;
+            }
+        }
+    }
+}
+
+.disabled-card {
+    opacity: 0.2;
+    pointer-events: none !important;
+    cursor: not-allowed !important;
+}
+
+.no-hover:hover {
+    background-color: transparent;
+}
+
+.icon-align {
+    position: relative;
+    left: 8px;
+}

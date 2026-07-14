@@ -1,0 +1,44 @@
+<ng-container [formGroup]="phoneRowForm">
+    <td>    
+        <ng-select formControlName="phoneType"
+            placeholder="{{'TRANSLATE.selectPhoneType' |translate}}" [appendTo]="'body'">
+            <ng-option value="">{{'TRANSLATE.selectPhoneType' | translate}}</ng-option>
+            @for(type of phoneTypes; track $index){
+            <ng-option [value]="type?.ID">{{'TRANSLATE.'+type?.Description | translate}}</ng-option>
+            }
+        </ng-select>
+        @if(phoneRowForm.get('phoneType')?.errors?.required &&
+        phoneRowForm.get('phoneType').touched){
+        <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+        }
+    </td>
+    <td>
+        <input type="text" class="form-control form-control-sm form-control-solid" formControlName="phoneNumber"
+            placeholder="{{'TRANSLATE.enterPhoneNumber' | translate}}">
+        @if(phoneRowForm.get('phoneNumber')?.errors?.required &&
+        phoneRowForm.get('phoneNumber').touched){
+        <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+        }
+    </td>
+
+    <td>
+        <div class="d-flex justify-content-end">
+            <button ngbTooltip="{{'TRANSLATE.PROFILE_USER_BUTTON_TOOLTIP_TEXT_SAVE_1' | translate}}" class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+                (click)="savePhoneTypes()" [ngClass]="toolbarButtonHeightClass" [disabled]="phoneRowForm.invalid || !phoneRowForm.dirty">
+                <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg h-20px w-20px">
+                    <i class="ki-outline  ki-file text-primary">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </span>
+            </button>
+            <button ngbTooltip="{{'TRANSLATE.PROFILE_USER_BUTTON_TOOLTIP_TEXT_CANCEL' | translate}}" class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+            [ngClass]="toolbarButtonHeightClass"(click)="onCancel()" >
+                <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg h-20px w-20px">
+                    <i class="ki-outline  ki-cross text-primary">
+                    </i>
+                </span>
+            </button>
+        </div>
+    </td>
+</ng-container>

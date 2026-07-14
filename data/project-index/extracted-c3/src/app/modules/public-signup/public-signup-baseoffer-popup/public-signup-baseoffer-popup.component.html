@@ -1,0 +1,160 @@
+<div class="modal-dialog m-0 modal-dialog-centered w-100">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>{{ 'TRANSLATE.PUBLIC_SIGNUP_BASE_OFFER_HEADER' | translate }}</h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModal()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1">
+                    <span class="path1"></span><span class="path2"></span>
+                </i>
+            </div>
+        </div>
+        <div class="modal-body pt-2" id="modal-body">
+            @if (baseOffers?.length > 0) {
+            <div class="d-flex align-items-center position-relative my-1">
+                    <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
+                        <span class="custom-path1">
+                        </span><span class="custom-path2"></span>
+                    </i>
+                    <input type="text" [(ngModel)]="SearchValue" (ngModelChange)="searchBasedOnValue()"
+                        class="header-input-field form-control form-control-solid w-250px ps-12"
+                        placeholder="Search...">
+            </div>
+            <div class="form-group">
+                <div class="radio-list">
+                    <cdk-virtual-scroll-viewport class="product-wrapper" [itemSize]="10">
+                        @if(baseOffersData.length > 0){
+                        @for (product of baseOffersData; track $index) {
+                    <label class="radio radio-outline radio-outline-2x control-label mt-3 d-flex w-100">
+                        <input type="radio" class="form-check-input" name="addonProduct" (click)="addBaseOfferToCart(product)">
+                        <span class="ms-1"></span>
+                        {{ product.Name}}
+                        @if (product.IsPrimaryInLinkedProduct) {
+                        <span style="display: table">
+                            <i class="ki-outline ki-fasten text-warning">
+                            </i>
+                            {{ product.LinkedSubscriptionName }}
+                        </span>
+                        }
+                    </label>
+                    <div class="ms-6">
+                        <span
+                            *ngIf="product.Validity !== null && product.Validity !== '' && (product.CategoryName == 'OnlineServicesNCE' || product.CategoryName == 'Custom')">
+                            @if (product.ValidityType!=null && product.ValidityType == 'Month(s)') {
+                            <span class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2"
+                                aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                {{product.Validity}}
+                                {{ (product.Validity === 1 ? (product.ValidityType === 'Month(s)' ?
+                                'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                            </span>
+                            }
+                            @if (product.ValidityType === 'Year(s)' || product.ValidityType === 'Year') {
+                            <span class="label label-dark font-weight-bold label-inline text-white badge bg-warning ms-md-2"
+                                aria-hidden="true"
+                                [ngClass]="{'labelcolor':product.BillingCycleName == 'Monthly','TermLabelColor': product.BillingCycleName == 'Annual'}"
+                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                {{product.Validity}}
+                                {{ (product.Validity === 1 ? (product.ValidityType === 'Month(s)' ?
+                                'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                            </span>
+                            }
+                        </span>
+                        <span *ngIf="product.BillingCycleName !== null && product.BillingCycleName !== ''">
+                            <span *ngIf="product.BillingCycleName !== null && product.BillingCycleName !== ''"
+                                class="label font-weight-bold label-inline text-white badge ms-md-2"
+                                [ngClass]="{
+                                    'bg-warning': product.BillingCycleName?.toLowerCase() === 'monthly',
+                                    'bg-success': product.BillingCycleName?.toLowerCase() === 'annual',
+                                    'bg-dark': product.BillingCycleName?.toLowerCase() === 'triennial',
+                                    'bg-info': product.BillingCycleName?.toLowerCase() === 'onetime'
+                                }" aria-hidden="true"
+                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}">
+                                {{'TRANSLATE.'+ product.BillingCycleDescription | translate}}</span>
+                        </span>
+                        @if(product.CategoryName?.toLowerCase() == "onlineservicesnce") {
+                        <span class="label label-light-info font-weight-bold label-inline badge ms-md-2"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}">
+                            {{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE' | translate}}
+                        </span>
+                        }
+                        @if(product.MarketCode){
+                        <span class="badge badge-info ms-md-2" ngbTooltip="{{product.MarketRegion}}">{{product.MarketCode}}</span>
+                        }
+                        @if(product.ProviderSettings && product.ProviderSettings.ProviderCategory){
+                        <span class="label label-light-warning font-weight-bold mt-1 badge  "
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_SERVICE_TYPE' | translate}}">
+                            {{product.ProviderSettings.ProviderCategory | translate}}
+                        </span>
+                        }
+                        @if(product.IsPromotionAvailableForCustomer &&
+                        product.ShowPromotionLink){
+                        <span class="mb-0 mr-2 font-weight-normal separator-primary text-primary cursor-pointer" (click)="showPromotionDetail(product)">
+                            <span
+                                tooltip-append-to-body="true" ngbTooltip="{{'TRANSLATE.NCE_PROMOTIONS_AVAILABLE_TEXT' | translate}}">
+                                <i class="ki-outline ki-discount text-primary"></i>
+                            </span>
+                        </span>
+                        }
+                        <span class="price text-primary fw-bolder">
+                            <span *ngIf="product.ConsumptionType == 'Quantity' || product.BillingTypeName == 'Unit'">
+                                <span class="font-size-h3  text-primary font-weight-boldest">
+                                    {{product.FinalSalePrice | megaNumber : product.CurrencySymbol :
+                                    product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                                    product.CurrencyDecimalSeperator}}
+                                </span>
+                                <span *ngIf="product.Discount != null && product.Discount > 0">
+                                    <small class="small">
+                                        <span class="text-danger mr-2">
+                                            <del>
+                                                &nbsp;{{product.OriginlaSalePrice | megaNumber :
+                                                product.CurrencySymbol :
+                                                product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                                                product.CurrencyDecimalSeperator}}
+                                            </del>
+                                        </span>
+                    
+                                        <span *ngIf="product.DiscountType == 'Percentage'" class="text-danger">
+                                            &#40;{{product.Discount}}%
+                                        </span>
+                                        <span *ngIf="product.DiscountType != 'Percentage'" class="text-danger">
+                                            &#40;{{product.Discount | CurrencyFilter : product.CurrencySymbol :
+                                            product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                                            product.CurrencyDecimalSeperator }}
+                                        </span>
+                                    </small>
+                                    <span class="text-danger">
+                                        <span class="small" translate="TRANSLATE.TEXT_OFF"></span>
+                                    </span>
+                                </span>
+                            </span>
+                        </span>
+                    </div>
+                    }
+                     }
+                        @else{
+                            <div class="pt-20">
+                                <app-common-no-record></app-common-no-record>
+                            </div>
+                            }
+                    </cdk-virtual-scroll-viewport>
+                </div>
+            </div>
+            }
+            @else {
+            <span class="text-danger">{{
+                'TRANSLATE.SHOP_NCE_BASE_OFFER_ADDON_NOT_PURCHASABLE_WARNING_MESSAGE' | translate}}</span>
+            }
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-light btn-active-light-primary me-auto cursor-pointer" tabindex="-1"
+                (click)="skip()">
+                {{ 'TRANSLATE.PONUMBER_BUTTON_SKIP' | translate }}
+            </button>
+            <button type="submit" class="btn" [ngClass]="{'btn-primary': selectedBaseOfferForAddon?.Name,'btn-secondary': !selectedBaseOfferForAddon?.Name}" 
+            [disabled]="!selectedBaseOfferForAddon?.Name" (click)="submit()">
+                {{ 'TRANSLATE.PUBLIC_SIGNUP_POPUP_SUBMIT' | translate }}
+            </button>
+        </div>
+    </div>
+</div>

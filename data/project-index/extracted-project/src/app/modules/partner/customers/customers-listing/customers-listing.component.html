@@ -1,0 +1,702 @@
+<ng-template #actionHeader>
+  <div class="header-actions d-flex align-items-center gap-1 gap-lg-1">
+    <button type="button" class="btn btn-sm btn-lg btn-md btn-xs fw-semibold btn-light-primary text-nowrap"
+      [appPermission]="'ACTION_RESELLER_RELATION_SHIP_REQUEST'"
+      [routerLink]="['/partner/customers/requestForResellerRelationship']">
+      <i class="ki-outline ki-people fs-2">
+      </i> {{'TRANSLATE.BTN_TEXT_REQUEST_FOR_RESELLER_RELATIONSHIP' | translate}}
+    </button>
+    <a class="fw-semibold ms-1"
+      *ngIf="permissions.HasSyncMicrosoftCustomerConsent === 'Allowed' || permissions.HasSyncProviderCustomerProfile === 'Allowed'">
+      <div ngbDropdown class="d-flex align-items-center" placement="bottom-right">
+        <button class="btn btn-sm btn-lg btn-md btn-xs btn-light-primary remove-caret"
+          ngbTooltip="{{'TRANSLATE.CUSTOMER_SYNC_PROFILES_TOOLTIP' | translate}}" id="dropdownBasic1"
+          tittle="Customer Settings" ngbDropdownToggle>
+          <i class="ki-outline ki-arrows-loop fs-5">
+          </i>&nbsp;{{'TRANSLATE.CUSTOMERS_SYNC_PROFILES_BUTTON_TEXT' | translate}}
+        </button>
+        <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+          class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-1 fs-base w-250px">
+          <div [appPermission]="'SYNC_MICROSOFT_CUSTOMER_CONSENT'" class='menu-item my-0' ngbDropdownItem>
+            <a class="menu-link px-3 py-2 d-flex" (click)="ReLoadCustomerConsent(null)">
+              <span class="ng-scope text-wrap ps-4"
+                translate="TRANSLATE.CUSTOMER_BUTTON_TEXT_RELOAD_CUTOMER_CONSENT"></span>
+            </a>
+          </div>
+          <div [appPermission]="'SYNC_PROVIDER_CUSTOMER_PROFILE'" class='menu-item my-0' ngbDropdownItem>
+            <a class="menu-link px-3 py-2 d-flex"
+              (click)="ReLoadMicrosoftCustomerProfiles(null)">
+              <span class="ng-scope text-wrap ps-4"
+                translate="TRANSLATE.CUSTOMER_BUTTON_TEXT_RELOAD_PROVIDER_CUSTOMER_PROFILES"></span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </a>
+    <a class="fw-semibold ms-1">
+      <div ngbDropdown class="d-flex align-items-center" placement="bottom-right">
+        <button class="btn btn-sm btn-lg btn-md btn-xs btn-light-primary remove-caret pe-2"
+          ngbTooltip="{{'TRANSLATE.PARTNER_CUSTOMER_REPORTS' | translate}}" id="dropdownBasic1"
+          tittle="Customer Settings" ngbDropdownToggle>
+          <i class="ki-outline ki-exit-down fs-2"></i>&nbsp;{{'TRANSLATE.PARTNER_CUSTOMER_REPORTS' | translate}}
+          <i class="ki-duotone ki-down ms-1"></i>
+        </button>
+        <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+          class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base w-250px">
+          <div class='menu-item my-0' ngbDropdownItem
+            [appPermission]="'EXPORT_CUSTOMER_TEARMS_AND_CONDITIONS_ACCEPTANCE_REPORT'">
+            <a class="menu-link px-3 py-2 d-flex align-items-center gap-2">
+              <span class="ml-2 ng-scope text-wrap"
+                translate="TRANSLATE.CUSTOMER_BUTTON_TEXT_TERMS_AND_CONDITIONS_REPORT"
+                (click)="exportTearmsAndConditionsReport()"></span>
+            </a>
+          </div>
+          <div class='menu-item my-0' ngbDropdownItem [appPermission]="'EXPORT_CUSTOMER_CONSENT_ACCEPTANCE_REPORT'">
+            <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="exportConsetReport()">
+              <span class="ml-2 ng-scope text-wrap" translate="TRANSLATE.CUSTOMER_BUTTON_TEXT_CONSENT_REPORT"></span>
+            </a>
+          </div>
+          <div class='menu-item my-0' ngbDropdownItem [appPermission]="'EXPORT_TRANSACTION_AMOUNT_LIMIT_REPORT'">
+            <a class="menu-link px-3 py-2 d-flex align-items-center gap-2"
+              (click)="exportTransactionAmountLimitReport()">
+              <span class="ml-2 ng-scope text-wrap"
+                translate="TRANSLATE.CUSTOMER_BUTTON_TEXT_TRANSACTION_AMOUNT_LIMIT_REPORT"></span>
+            </a>
+          </div>
+          <div class='menu-item my-0' ngbDropdownItem [appPermission]="'RELOAD_RECON_REPORT'">
+            <a class="menu-link px-3 py-2 d-flex align-items-center" (click)="reloadReconReport()">
+              <span class="ml-2 ng-scope text-wrap"
+                translate="TRANSLATE.CUSTOMER_BUTTON_TEXT_RELOAD_RECON_REPORT"></span>
+            </a>
+          </div>
+          <div class='menu-item my-0' ngbDropdownItem [appPermission]="'GET_RECONCILIATION_REPORT'">
+            <a class="menu-link px-3 py-2 d-flex align-items-center" (click)="exportReconciliationReport()">
+              <span class="ml-2 ng-scope text-wrap"
+                translate="TRANSLATE.CUSTOMER_BUTTON_TEXT_EXPORT_RECON_REPORT"></span>
+            </a>
+          </div>
+          <div class='menu-item my-0' ngbDropdownItem [appPermission]="'BTN_CUSTOMERS_GRID_DOWNLOADABLE_REPORTS'">
+            <a class="menu-link px-3 py-2 d-flex align-items-center " (click)="downloadGridReport()">
+              <span
+                class="ml-2 ng-scope text-wrap">{{'TRANSLATE.CUSTOMER_BUTTON_TEXT_DOWNLOAD_CUSTOMER_REPORT'|translate}}</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+</ng-template>
+<div class="card">
+  <div class="card-body overflow-auto pt-4 pe-8">
+    @if (shouldShowFilter) {
+    <div class="mb-5">
+      <form class="form">
+        <div class="card">
+          <div class="card-body">
+            <div class="">
+              <div class="form-group row">
+                <div class="col-6 col-sm-6 col-md-3  col-lg-3">
+                  <label class="text-gray-800 fw-bold mb-1">
+                    {{'TRANSLATE.CUSTOMER_SEARCH_CUSTOMER_NAME'|translate}}
+                  </label>
+                  <input type="text" [(ngModel)]="Name" (ngModelChange)="c3RouterService.setC3Input(Name);" name="customername" class="form-control form-control-sm "
+                    placeholder="{{'TRANSLATE.PARTNER_CUSTOMER_FILTER_NAME' | translate}}">
+                </div>
+                <div class="col-6 col-sm-6 col-md-3 col-lg-3" [appPermission]="'GET_PLANS'">
+                  <label class="text-gray-800 fw-bold mb-1">
+                    {{'TRANSLATE.CUSTOMER_SEARCH_CUSTOMER_PLAN'|translate}}
+                  </label>
+                  <ng-select [(ngModel)]="selectedPlan" name="selectedPlan" (change)="onSelectedPlanChange()"
+                    #selectElement2 placeholder="{{'TRANSLATE.CUSTOMER_ONBOARDING_PLACEHOLDER_PLANS' |translate}}">
+                    @for (item of plans; track $index) {
+                    <ng-option [value]="item">{{item.Name}}</ng-option>
+                    }
+                  </ng-select>
+                </div>
+                <div class="col-6 col-sm-6 col-md-3   col-lg-3">
+                  <label class="text-gray-800 fw-bold mb-1">
+                    {{'TRANSLATE.CUSTOMER_SEARCH_CUSTOMER_PAY_METHOD'|translate}}
+                  </label>
+                  <select name="paymentMethod" class="form-control form-control-sm form-select form-select-sm "
+                    [(ngModel)]="paymentMethod">
+                    <option value="">
+                      {{'TRANSLATE.CUSTOMER_SEARCH_DEFAULT_OPTION'|translate}}
+                    </option>
+                    <option value="CC">
+                      {{'TRANSLATE.CUSTOMER_ONBOARDING_RADIO_BUTTON_TEXT_CREDIT_CARD'|translate}}
+                    </option>
+                    <option value="ACH">
+                      {{'TRANSLATE.CUSTOMER_ONBOARDING_RADIO_BUTTON_TEXT_ACH'|translate}}
+                    </option>
+                    <option value="Manual">
+                      {{'TRANSLATE.CUSTOMER_ONBOARDING_RADIO_BUTTON_TEXT_INVOICE'|translate}}
+                    </option>
+                  </select>
+                </div>
+                <div class="col-6 col-sm-6 col-md-3   col-lg-3">
+                  <label class="text-gray-800 fw-bold mb-1">
+                    {{'TRANSLATE.CUSTOMER_SEARCH_PROVIDER'|translate}}
+                  </label>
+                  <select class="form-control form-control-sm form-select form-select-sm" [(ngModel)]="providerId"
+                    name="providerId">
+                    <option value="">
+                      {{'TRANSLATE.CUSTOMER_SEARCH_DEFAULT_OPTION'|translate}}
+                    </option>
+                    @for (option of providers; track $index) {
+                    <option [value]="option.ID">{{option.Name}}</option>
+                    }
+
+                  </select>
+                </div>
+              </div>
+              <div class="form-group row pt-4">
+                <div class="col-6 col-sm-6 col-md-3 col-lg-3">
+                  <label class="text-gray-800 fw-bold mb-1">
+                    {{'TRANSLATE.CUSTOMER_SEARCH_PROVIDER_CUSTOMER_ID'|translate}}
+                  </label>
+                  <input type="text" [(ngModel)]="providerCustomerId" name="providerCustomerId"
+                    class="form-control form-control-sm "
+                    placeholder="{{'TRANSLATE.PARTNER_CUSTOMER_FILTER_PROVIDER_CUSTOMER_ID' | translate}}">
+
+                </div>
+                <div class="col-6 col-sm-6 col-md-3 col-lg-3">
+                  <label class="text-gray-800 fw-bold mb-1">
+                    <span translate="TRANSLATE.PARTNERS_LABLE_TEXT_TAG_KEY"></span>
+                  </label>
+                  <select class="form-control form-control-sm form-select form-select-sm" [(ngModel)]="tagKey"
+                    (change)="getTagValuesBykey()" name="addTagValue_TagKey">
+                    <option value="">
+                      {{'TRANSLATE.CUSTOMER_SEARCH_DEFAULT_OPTION'|translate}}
+                    </option>
+                    @for (option of customerTagKeys; track $index) {
+                    <option [value]="option">{{option}}</option>
+                    }
+
+                  </select>
+                </div>
+                <div class="col-6 col-sm-6 col-md-3   col-lg-3">
+                  <label class="text-gray-800 fw-bold mb-1">
+                    <span translate="TRANSLATE.PARTNERS_LABLE_TEXT_TAG_VALUES"></span>
+                  </label>
+                  <ng-select name="tagValues" [multiple]="true"
+                    [disabled]="isDisabled || customerTagValues.length === 0" #selectElement [(ngModel)]="tagValues"
+                    placeholder="{{'TRANSLATE.CUSTOMER_SEARCH_DEFAULT_OPTION'|translate}}">
+                    @for (item of customerTagValues; track $index) {
+                    <ng-option [disabled]="false" [value]="item">{{item}}</ng-option>
+                    }
+                    <i class="ki-duotone ki-down ms-1"></i>
+                  </ng-select>
+                </div>
+                @if (countryCodeList?.length >1) {
+                <div class="col-6 col-sm-6 col-md-3 col-lg-3">
+                  <label class="text-gray-800 fw-bold mb-1">
+                    <span translate="TRANSLATE.CUSTOMER_SEARCH_MARKET"></span>
+                  </label>
+
+                  <ng-select
+                    name="selectedCountryList"
+                    [multiple]="true"
+                    [(ngModel)]="selectedCountryList"
+                    #selectElement1
+                    [hideSelected]="true"
+                    placeholder="{{ 'TRANSLATE.CUSTOMER_MARKET_CODE_PLACEHOLDER' | translate }}"
+                    [items]="countryCodeList"
+                    bindLabel="MarketCode"
+                    bindValue="MarketCode"
+                    [clearable]="true"
+                  >
+                    <ng-template ng-option-tmp let-item="item">
+                      {{ item.MarketCode }} - {{ item.MarketRegion }}
+                    </ng-template>
+                  </ng-select>
+                </div>
+                }
+
+                <div class="col-6 col-sm-6 col-md-3   col-lg-3 mt-4 " ng-class="{'pt-14':vm.CountryCodeList.length >1}">
+                  <div class="form-group form-check mt-3">
+                    <div ng-class="{ 'checkbox-inline': vm.CountryCodeList.length > 1 }">
+                      @if (countryCodeList.length === 1) {
+                      <label class="text-gray-800 fw-bold mb-1">
+                        {{'TRANSLATE.CUSTOMER_SEARCH_CONSIDER_DELETED_CUSTOMER'|translate}}
+                        <br />
+                      </label>
+                      }
+                      <br />
+                      <input class="form-check-input" type="checkbox" [(ngModel)]="considerDeleted"
+                        name="considerDeleted" />
+                      <span></span>
+                      @if (countryCodeList.length > 1) {
+                      <span class="text-gray-800 fw-bold">&nbsp;
+                        {{'TRANSLATE.CUSTOMER_SEARCH_CONSIDER_DELETED_CUSTOMER'|translate}}</span>
+                      }
+
+                    </div>
+                  </div>
+                </div>
+
+                @if (uniqueidentifier?.length > 0) {
+                <div class="col-6 col-sm-6 col-md-3  mt-4 col-lg-3">
+                  <label class="text-gray-800 fw-bold mb-1">
+                    {{'TRANSLATE.CUSTOMER_SEARCH_UNIQUE_IDENTIFIER'|translate}}
+                  </label>
+                  <select class="form-control form-control-sm form-select form-select-sm" [(ngModel)]="configName"
+                    name="uniqueIdentifier">
+                    <option value="">
+                      {{'TRANSLATE.CUSTOMER_SEARCH_DEFAULT_OPTION'|translate}}
+                    </option>
+                    @for (item of uniqueidentifier; track $index) {
+                    <option [value]="item.Name">
+                      {{('TRANSLATE.'+ item.DisplayName)|translate}}
+                    </option>
+                    }
+                  </select>
+                </div>
+                }
+
+                @if (configName!== null && configName !== undefined && configName !== '') {
+                <div class="col-6 col-sm-6 col-md-3  mt-4 col-lg-3">
+                  <label class="text-gray-800 fw-bold mb-1">
+                    @if (configName==='InvoiceNote') {
+                    <span>
+                      {{'TRANSLATE.CUSTOMER_SEARCH_INVOICE_NOTES'|translate}}
+                    </span>
+                    }
+
+                    @if (configName==='ERPCustomerID') {
+                    <span>
+                      {{'TRANSLATE.CUSTOMER_SEARCH_ERP_CUSTOMER_ID'|translate}}
+                    </span>
+                    }
+
+                    @if (configName==='CRMOpportunityID') {
+                    <span>
+                      {{'TRANSLATE.CUSTOMER_SEARCH_CRM_OPPORTUNITY_ID'|translate}}
+                    </span>
+                    }
+
+                    @if (configName==='InternalBillingID') {
+                    <span>
+                      {{'TRANSLATE.CUSTOMER_SEARCH_BILLING_REFERENCE_ID'|translate}}
+                    </span>
+                    }
+
+                  </label>
+                  <input type="text" [(ngModel)]="configValue" name="configValue" class="form-control form-control-sm ">
+                </div>
+                }
+                <div class="col-6 col-sm-6 col-md-3 mt-4 col-lg-3">
+                  <label class="text-gray-800 fw-bold mb-1">
+                    {{'TRANSLATE.ACCOUNT_MANAGER_ID'|translate}}
+                  </label>
+                  <ng-select  [(ngModel)]="AccountManagerId"  #selectElement3
+                  name="AccountManagerId" placeholder="{{'TRANSLATE.SELECT_ACCOUNT_MANAGER_OPTION_DEFAULT'|translate}}">
+                  <ng-option *ngFor="let accountManager of accountManagersData" [value]="accountManager.AccountManagerId">
+                    {{accountManager.AccountManagerId}}
+                  </ng-option>
+                  </ng-select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer py-3">
+            <div class="row">
+              <div class="col-sm-12 col-md-12 col-xs-12 col-12 col-lg-12 text-lg-end search-filters">
+                <button class="btn btn-light-primary btn-sm me-md-2" appBusyLoader (click)="searchCustomers()">
+                  {{ 'TRANSLATE.CUSTOMER_SEARCH_SEARCH_OPTION' | translate }}
+                </button>
+                <button class="btn btn-light-primary btn-sm  me-md-2 me-lg-2 me-sm-2 me-xl-2 me-xxl-2"
+                  (click)="resetSearchCriteria()" appBusyLoader>
+                  {{'TRANSLATE.CUSTOMER_SEARCH_RESET_OPTION' | translate}}
+                </button>
+                <button class="btn btn-light-primary btn-sm me-md-2 me-lg-2 me-sm-2 me-xl-2 me-xxl-2"
+                  (click)="shouldShowFilter = false;" appBusyLoader>
+                  {{'TRANSLATE.CUSTOMER_SEARCH_CLOSE_OPTION' | translate}}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    }
+
+    <ng-template #signupDate let-data="adtData" let-emitter="captureEvents">
+      <span>{{data.SignupDate | c3Date}}</span>
+    </ng-template>
+
+    <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+      <div class="d-flex justify-content-center pe-2">
+        <!--Customer : Quick impersonation-->
+        @if(!data?.DeletedOn){
+        <div class="d-flex align-items-center" (click)="openImpersonationModal(data)">
+          <button
+            ngbTooltip="{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_TD_BUTTON_TOOLTIP_TEXT_QUICK_IMPERSONATION'| translate}}"
+            [appPermission]="'IMPERSONATION'" class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+            [ngClass]="toolbarButtonHeightClass" placement="top">
+            <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+              <i class="ki-outline ki-profile-user text-primary">
+                <!-- <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                        <span class="path4"></span> -->
+              </i>
+            </span>
+          </button>
+        </div>
+        }
+
+        <!--Manage plan action button-->
+
+        @if(!data?.DeletedOn){
+        <div class="d-flex align-items-center" (click)="managePlans(data)">
+          <button ngbTooltip="{{'TRANSLATE.CUSTOMERS_TABLE_TD_BUTTON_TOOLTIP_TEXT_MANAGE_PLANS'| translate}}"
+            class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto" [appPermission]="'BTN_CUSTOMER_PLANS'"
+            [ngClass]="toolbarButtonHeightClass" placement="top">
+            <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+              <i class="ki-outline ki-burger-menu-2 text-primary"></i>
+              <!-- <i class="ki-outline ki-burger-menu-2">
+                <span class="path1"></span>
+                <span class="path2"></span>
+                <span class="path3"></span>
+                <span class="path4"></span>
+                <span class="path5"></span>
+                <span class="path6"></span>
+                <span class="path7"></span>
+                <span class="path8"></span>
+                <span class="path9"></span>
+                <span class="path10"></span>
+              </i> -->
+            </span>
+          </button>
+        </div>
+        }
+
+        <!--Customer settings action buttons with more options-->
+        @if(!data?.DeletedOn){
+        <div ngbDropdown class="d-flex align-items-center" placement="left" container="body">
+          <button class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto" [ngClass]="toolbarButtonHeightClass"
+            id="dropdownBasic1"
+            (mouseenter)="tooltip.open()" 
+            (mouseleave)="tooltip.close()" 
+            ngbTooltip="{{'TRANSLATE.CUSTOMERS_TABLE_TD_BUTTON_TOOLTIP_TEXT_CUSTOMER_SETTINGS' | translate}}"
+            #tooltip = "ngbTooltip"
+            placement="top"
+            ngbDropdownToggle>
+            <span class="svg-icon svg-icon-primary  svg-icon-sm  h-20px w-20px">
+              <i class="ki-outline ki-dots-vertical text-primary"></i>
+              <!-- <i class="ki-duotone ki-user">
+                <span class="path1"></span>
+                <span class="path2"></span>
+              </i> -->
+            </span>
+          </button>
+          <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+            class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base w-250px">
+            <div class='menu-item my-0' ngbDropdownItem>
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="CustomerSettings(data)">
+                <span class="svg-icon m-0 profile-info">
+                  <i class="ki-outline ki-setting-2 fs-5">
+                    <!-- <span class="path1"></span>
+                    <span class="path2"></span> -->
+                  </i>
+                </span>
+                <span class="ml-2 ng-scope" translate="TRANSLATE.CUSTOMER_CONFIGURATION"></span>
+              </a>
+            </div>
+            <div class='menu-item my-0' ngbDropdownItem [appPermission]="'BTN_LINK_CUSTOMER'">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2"
+                (click)="getPartnerTenant(data.C3Id,data.Name)">
+                <span class="svg-icon m-0 profile-info">
+                  <i class="ki-outline ki-user fs-5">
+                    <!-- <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span> -->
+                  </i>
+                </span>
+                <span translate="TRANSLATE.SERVICE_PROVIDER_TENANT"></span>
+              </a>
+            </div>
+            @if(data.IsBillingProfileConfigured === true && billingProvider !== 'mcb' && data.OnboardStatus ===
+            'Onboarded' && !(data.IsBillingConfigured === true && data.IsBillingActive === true)){
+            <div class='menu-item my-0' ngbDropdownItem [appPermission]="'BTN_LINK_BILLING_PROFILE'">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="LinkCustomerBillingProfile(data)">
+                <span class="svg-icon m-0 profile-info">
+                  <i class="ki-outline ki-paper-clip fs-5">
+                    <!-- <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span> -->
+                  </i>
+                </span>
+                <span class="ml-2 ng-scope text-wrap" translate="TRANSLATE.CUSTOMERS_BTN_TEXT_LINK_TO_BILLING_PROFILE"></span>
+              </a>
+            </div>
+            }
+
+            @if(data.IsBillingProfileConfigured === true && billingProvider !== 'mcb' && data.OnboardStatus ===
+            'Onboarded' && !(data.IsBillingConfigured === false && data.IsBillingActive === false)){
+            <div class='menu-item my-0' ngbDropdownItem [appPermission]="'BTN_LINK_BILLING_PROFILE'">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2"
+                (click)="deLinkCustomerBillingProfile(data)">
+                <span class="svg-icon m-0 profile-info">
+                  <i class="ki-outline ki-paper-clip">
+                    <!-- <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span> -->
+                  </i>
+                </span>
+                <span class="ml-2 ng-scope text-wrap"
+                  translate="TRANSLATE.CUSTOMERS_BTN_TEXT_REMOVE_LINK_TO_BILLING_PROFILE"></span>
+              </a>
+            </div>
+            }
+
+            <div class='menu-item my-0' ngbDropdownItem [appPermission]="'BTN_CUSTOMER_REPORTS'">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="getReports(data)">
+                <span class="svg-icon m-0 profile-info">
+                  <i class="ki-outline ki-file fs-5">
+                    <!-- <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span> -->
+                  </i>
+                </span>
+                <span class="ml-2 ng-scope" translate="TRANSLATE.CUSTOMER_REPORTS"></span>
+              </a>
+            </div>
+            <div class='menu-item my-0' ngbDropdownItem [appPermission]="'GET_TAGS'">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="CustomerTags(data)">
+                <span class="svg-icon m-0 profile-info">
+                  <i class="ki-outline ki-price-tag fs-5">
+                    <!-- <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span> -->
+                  </i>
+                </span>
+                <span class="ml-2 ng-scope"
+                  translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_TD_BUTTON_TOOLTIP_TEXT_DEFINE_TAGS"></span>
+              </a>
+            </div>
+            @if(data.billingProvider !== null && data.PaymentMethod !== 'Manual'){
+            <div class='menu-item my-0' ngbDropdownItem [appPermission]="'TEST_PAYMENT'">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="CustomerPayments(data)">
+                <span class="svg-icon m-0 profile-info">
+                  <i class="ki-outline ki-price-tag">
+                    <!-- <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span> -->
+                  </i>
+                </span>
+                <span class="ml-2 ng-scope" translate="TRANSLATE.CUSTOMERS_TABLE_BUTTON_TEXT_CUSTOMER_PAYMENTS"></span>
+                <!--<span class="ml-2 ng-scope" (click)="CustomerTags(data)"
+                  translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_TD_BUTTON_TOOLTIP_TEXT_DEFINE_TAGS"></span>-->
+              </a>
+            </div>}
+            <div class='menu-item my-0' ngbDropdownItem [appPermission]="'RELOAD_RECON_REPORT'">
+          
+              @if(!reconloading){
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="reloadCustomerReconReportWebJob(data.C3Id)">
+                <span class="svg-icon m-0 profile-info">
+                  <i class="ki-outline ki-abstract-35 fs-5">
+                    <!-- <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span> -->
+                  </i>
+                </span>
+                <span class="ml-2 text-wrap ng-scope" 
+                  translate="TRANSLATE.CUSTOMER_BUTTON_TEXT_RELOAD_RECON_REPORT"></span>
+              </a>
+              }
+              @if(reconloading){
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2">
+                <span class="svg-icon m-0 profile-info">
+                  <i class="ki-outline ki-abstract-35">
+                    <!-- <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span> -->
+                  </i>
+                </span>
+                <span class="ml-2 ng-scope" translate="TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT"></span>
+              </a>
+              }
+            </div>
+            <div class='menu-item my-0' ngbDropdownItem [appPermission]="'DELETECUSTOMER'">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="deleteCustomer(data)">
+                <span class="svg-icon m-0 profile-info">
+                  <i class="ki-outline ki-trash fs-5">
+                  </i>
+                </span>
+                <span class="ml-2 ng-scope">
+                  {{'TRANSLATE.CUSTOMERS_TABLE_TD_BUTTON_TOOLTIP_DELETE_CUSTOMER' | translate}}
+                </span>
+              </a>
+            </div>
+            <div class='menu-item my-0' ngbDropdownItem [appPermission]="'GETACCOUNTMANAGERDETAILSOFCUSTOMER'">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2 text-wrap"
+                (click)="getAccountManagerDetailsOfCustomer(data)">
+                <span class="svg-icon m-0 profile-info">
+                  <i class="ki-outline ki-user-edit fs-5">
+                    <!-- <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span> -->
+                  </i>
+                </span>
+                <span class="ml-2 ng-scope text-wrap"
+                  translate="TRANSLATE.CUSTOMERS_TABLE_TD_BUTTON_TOOLTIP_TEXT_ACCOUNT_MANAGER_DETAILS"></span>
+              </a>
+            </div>
+            <div class='menu-item my-0' ngbDropdownItem [appPermission]="'SYNC_PROVIDER_CUSTOMER_PROFILE'">
+              <a class="menu-link px-3 py-2 d-flex align-items-center gap-2"
+                (click)="ReLoadMicrosoftCustomerProfiles(data)">
+                <span class="svg-icon m-0 profile-info">
+                  <i class="ki-outline ki-arrows-loop fs-5">
+                    <!-- <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span> -->
+                  </i>
+                </span>
+                <span class="ml-2 ng-scope" translate="TRANSLATE.SYNC_CUSTOMER_PROFILE"></span>
+              </a>
+            </div>
+            <div class='menu-item my-0' ngbDropdownItem>
+              <a class="menu-link px-3 py-2 d-flex align-item-center gap-2 text-wrap"
+              (click)="PartnerAddressPopUp(data)" >
+              <span class="svg-icon m-0 profile-info">
+                <i class="ki-outline ki-check-circle  fs-5"></i>
+              </span>
+              <span class="ml-2 ng-scope text-wrap" 
+              translate="TRANSLATE.CUSTOMER_TABLE_PARTNER_BILL_FROM_ADDRESS_BUTTON_TEXT"></span>
+              </a>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+
+    </ng-template>
+    <!-- enable name field -->
+    <ng-template #nameTemplate let-data="adtData" let-row="userData">
+      @if(this.HasChangeNameAccess === "Allowed"){
+      <app-edit-column [data]="data" [field]="row?.field" (enableEdit)="enableEditField($event)"></app-edit-column>
+      }@else {
+        @if(data?.DeletedOn){
+          <span class="text-danger">{{data.Name}}</span>
+        }@else{
+          {{data.Name}}
+        }
+      }
+    </ng-template>
+    <div class="col-md-12 d-flex justify-content-between my-1 flex-wrap">
+      <!--begin::Search-->
+      <div class="d-flex align-items-center position-relative my-1">
+        <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5"><span class="custom-path1"></span><span
+            class="custom-path2"></span></i> <input type="text" data-field="Name" data-action="filter"
+          class="header-input-field form-control form-control-solid w-250px ps-12"
+          placeholder="{{'TRANSLATE.CUSTOMER_SEARCH_SEARCH_OPTION'| translate}} {{'TRANSLATE.CUSTOMER_SEARCH_CUSTOMER_name'| translate}}">
+        <!--begin::Card title-->
+      </div>
+      <div class="d-flex">
+        <div>
+          <a class="btn btn-sm btn-lg btn-md btn-xs text-nowrap fw-bold btn-secondary"
+            ngbTooltip="{{'TRANSLATE.BTN_TEXT_SHOW_FILTERS' | translate}}" (click)="displayFilter()">
+            <i class="ki-outline ki-filter fs-2">
+              <!-- <span class="path1"></span>
+              <span class="path2"></span> -->
+            </i>&nbsp;<span translate="TRANSLATE.BTN_TEXT_FILTER"></span>
+          </a>
+        </div>
+        <a class="fw-bold ms-2">
+          <div ngbDropdown class="d-flex align-items-center" placement="bottom-right">
+            <button class="btn btn-sm btn-primary remove-caret pe-2" id="dropdownBasic1"
+              *ngIf="hasCustomerOnboard === 'Allowed'|| hasAddCustomer ===  'Allowed'"
+              ngbTooltip="{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_BUTTON_TEXT_ADD_CUSTOMER'|translate}}"  ngbDropdownToggle appBusyLoader>
+              {{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_BUTTON_TEXT_ADD_CUSTOMER' | translate}}
+              <i class="ki-duotone ki-down ms-1"></i>
+            </button>
+            <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+              class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base">
+
+              <div class='menu-item my-0' ngbDropdownItem [appPermission]="'ADD_CUSTOMER'">
+                <a class="menu-link px-3 py-2 d-flex align-items-center gap-2"
+                  [routerLink]="['/partner/customers/addCustomer']">
+                  <span class="ml-2 ng-scope text-wrap"
+                    translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_BUTTON_TEXT_NEW"></span>
+                </a>
+              </div>
+
+              <div class='menu-item my-0' ngbDropdownItem [appPermission]="'CUSTOMER_ONBOARDING'">
+                <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="onboardCustomer()">
+                  <span class="ml-2 ng-scope" translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_BUTTON_TEXT_EXISTING"></span>
+                </a>
+              </div>
+
+              @if (entityName === 'Partner' || (entityName === 'Reseller' && hasSupportForResellersWithMPNID === 'Yes'))
+              {
+              <div class='menu-item my-0' ngbDropdownItem [appPermission]="'BULKONBOARDCUSTOMERS'" >
+                <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="bulkOnboardCustomers()">
+                  <span class="ml-2 ng-scope" translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_BUTTON_TEXT_BULK"></span>
+                </a>
+              </div>
+              }
+
+
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+    @if (!!datatableConfig) {
+    <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+    </app-c3-table>
+    }
+  </div>
+</div>
+<ng-template #accountmanager>
+  <div>
+    <div class="modal-content">
+      <div class="modal-header ng-scope">
+        <h3 class="modal-title text-primary" id="modal-title">
+          <span class="ng-scope">{{('TRANSLATE.PARTNER_CUSTOMER_ACCOUNT_MANAGER_DETAILS')|translate}}</span>
+        </h3>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <div class="row">
+          <div class="col-md-12" style="padding-left: 30px">
+            @if(accountManagerModalContent.Name !== null && accountManagerModalContent.Name !== undefined &&
+            accountManagerModalContent.Name !== ''){
+            <div class="row static-info">
+              <div class="col-md-4 mb-2 name"> {{'TRANSLATE.PARTNER_CUSTOMER_ACCOUNT_MANAGER_NAME' | translate}} </div>
+              <div class="col-md-8 fw-bold value">
+                {{accountManagerModalContent.Name}}
+              </div>
+            </div>}
+            @if(accountManagerModalContent.Email !== null && accountManagerModalContent.Email !== undefined &&
+            accountManagerModalContent.Email !== ''){
+            <div class="row static-info">
+              <div class="col-md-4 mb-2 name">{{'TRANSLATE.PARTNER_CUSTOMER_ACCOUNT_MANAGER_EMAIL' | translate}} </div>
+              <div class="col-md-8 fw-bold value"> {{accountManagerModalContent.Email}} </div>
+            </div>}
+            @if(accountManagerModalContent.PhoneNumber !== null && accountManagerModalContent.PhoneNumber !== undefined
+            && accountManagerModalContent.PhoneNumber !== ''){
+            <div class="row static-info">
+              <div class="col-md-4 mb-2 name">{{'TRANSLATE.PARTNER_CUSTOMER_ACCOUNT_MANAGER_PHONE_NUMBER' | translate}}
+              </div>
+              <div class="col-md-8 fw-bold value"> {{accountManagerModalContent.PhoneNumber}} </div>
+            </div>}
+            @if(accountManagerModalContent.CustomerName !== null && accountManagerModalContent.CustomerName !==
+            undefined && accountManagerModalContent.CustomerName !== ''){
+            <div class="row static-info">
+              <div class="col-md-4 mb-2 name">{{'TRANSLATE.PARTNER_ACCOUNT_MANAGER_CUSTOMER_NAME' | translate}} </div>
+              <div class="col-md-8 fw-bold value"> {{accountManagerModalContent.CustomerName}} </div>
+            </div>}
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer ng-scope">
+        <button class="btn btn-light-primary btn-active-primary" (click)="closeModalPopup()"><span
+            translate="TRANSLATE.PARTNER_CUSTOMER_ACCOUNT_MANAGER_DETAILS_POPUP_BUTTON"
+            ></span></button>
+      </div>
+    </div>
+  </div>
+</ng-template>

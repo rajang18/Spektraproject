@@ -1,0 +1,257 @@
+<div class="row" *ngIf="row.ShowRows">
+    <div class="col-4">
+        <button class="btn btn-sm" [ngClass]="row.ShowAudit ? 'btn-light-primary' : 'btn-primary'" 
+                (click)="row.ShowAudit = false;">
+                <i class="ki-outline ki-data fs-2"></i>
+                <span translate="TRANSLATE.AZURE_REPORTS_TABLE_GROUP_TD_BUTTON_TEXT_DETAILS"></span>
+        </button>
+        <button class="btn btn-sm ms-2" [ngClass]="row.ShowAudit ? 'btn-primary' : 'btn-light-primary'" 
+               (click)="row.ShowAudit = true;">
+                <i class="ki-outline ki-data fs-2"></i>
+                <span translate="TRANSLATE.AZURE_REPORTS_TABLE_GROUP_TD_BUTTON_TEXT_AUDIT"></span>
+        </button>
+    </div>
+    <div class="col-8">
+
+    </div>
+
+    <div class="col-12">
+        <div *ngIf="!row.ShowAudit">
+            <div class="table">
+                <table class="table table  table-condensed table-bordered table-striped">
+                    <thead class="table-head text-gray-800 fw-bold">
+                        <tr class="table-row">
+                            <th class="table-cell padding-left-5 col-md-4">
+                                <span translate="TRANSLATE.AZURE_REPORTS_TABLE_GROUP_HEADER_TEXT_SERVICE_NAME" ></span>
+                            </th>
+                            <th class="table-cell col-md-4">
+                                @if(isAzureReportingPCStandardizationEnabled){
+                                       <span translate="TRANSLATE.AZURE_REPORTS_TABLE_HEADER_TEXT_RESOURCE_NAME_PC_STANDARIZATION" ></span>
+                                }
+                                @else {
+                                    <span translate="TRANSLATE.AZURE_REPORTS_TABLE_GROUP_HEADER_TEXT_RESOURCE_NAME" ></span>
+                                }
+                            </th>
+                            <th class="table-cell col-md-2">
+                                <span translate="TRANSLATE.AZURE_REPORTS_TABLE_GROUP_HEADER_TEXT_QUANTITY" ></span>
+
+                            </th>
+                            <th [hidden]="IsFixedPrice==true && currentSubscriptionId!=null && !isPartnerLevel" 
+                                class="table-cell padding-right-5 col-md-2 text-right" 
+                                ng-click="vm.SortRowLevel1Fields(row,'ChargeForCustomer')"
+                                (click)="sortData(row)"
+                                >
+                                <span translate="TRANSLATE.AZURE_REPORTS_TABLE_GROUP_HEADER_TEXT_COST" >
+                                    <i *ngIf="!row.IsAscending" class="fa fa-caret-down "></i>
+                                    <i *ngIf="row.IsAscending" class="fa fa-caret-up "></i>
+                                </span>
+                               
+                            </th>
+                        </tr>
+                    </thead>
+                  @for( row1 of row.Rows; track $index){
+                    <tbody class="table-body" >
+                        <!-- second level api call due to complication of angularjs code -->
+                        <tr class="table-row"  (click)="GetResourceGroupDetailsV2(row1)">
+                            <td class="table-cell padding-left-5 col-md-4 fw-semibold">
+                                <i class="ki-duotone ki-arrow-right pe-2" *ngIf="!row1.ShowRows">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                </i>
+                                <i class="ki-duotone ki-arrow-down pe-2" *ngIf="row1.ShowRows">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                </i>
+                                <span>{{row1.ServiceName}}</span>
+                            </td>
+                            <td class="table-cell col-md-4">
+                                {{row1.ResourceName}}
+                            </td>
+                            <td class="table-cell col-md-2">
+                                {{row1.Quantity}} <span>{{row1.Unit}}</span>
+                            </td>
+                            <td [hidden]="IsFixedPrice==true && currentSubscriptionId!=null && !isPartnerLevel" class="table-cell col-md-2 padding-right-5 text-right" header-class="'text-right'">
+                                {{row1.ChargeForCustomer |CurrencyFilter : currentCurrency.CurrencySymbol : currentCurrency.CurrencyDecimalPlaces : currentCurrency.CurrencyThousandSeperator : currentCurrency.CurrencyDecimalSeperator}}
+                            </td>
+                        </tr>
+                        <tr *ngIf="row1.ShowRows">
+                            <td class="table-rows" colspan="4">
+                                <button class="btn btn-sm" [ngClass]="row1.ShowAudit ? 'btn-light-primary' : 'btn-primary'" (click)="row1.ShowAudit = false;">
+                                    <i class="ki-outline ki-data fs-2"></i>
+                                    <span translate="TRANSLATE.AZURE_REPORTS_TABLE_SHOWROWS_BUTTON_TEXT_DETAILS" ></span>
+                                </button>
+                                <button class="btn btn-sm ms-2" [ngClass]="row.ShowAudit ? 'btn-primary' : 'btn-light-primary'" (click)="row1.ShowAudit = true;">
+                                    <i class="ki-outline ki-data fs-2"></i>
+                                    <span translate="TRANSLATE.AZURE_REPORTS_TABLE_SHOWROWS_BUTTON_TEXT_AUDIT"></span>
+                                </button>
+                                <div *ngIf="!row1.ShowAudit">
+                                    <div class="table-responsive table-responsive-md table-responsive-lg table-responsive-sm">
+                                        <table class="table table-condensed table-bordered table-striped">
+                                            <thead class="table-head text-gray-800 fw-bold">
+                                                <tr class="table-row">
+                                                    <!-- ng-click="vm.SortRowLevel2Fields(row1,'UsageDate')" -->
+                                                    <th class="table-cell padding-left-5 col-md-8"  (click)="sortDataByMultipleKeys(row1,'ChargeDate')">
+                                                        <span translate="TRANSLATE.AZURE_REPORTS_TABLE_SHOWROWS_HEADER_TEXT_DATE" >
+                                                            <i *ngIf="!row1.IsAscending2" class="fa fa-caret-down "></i>
+                                                            <i *ngIf="row1.IsAscending2" class="fa fa-caret-up "></i>
+                                                        </span>
+                                                        <!-- <i ng-show="vm.azureEstimateReverseSort[row1.ServiceName + '' + row1.ResourceName]" class="fa fa-caret-down "></i>
+                                                        <i ng-show="!vm.azureEstimateReverseSort[row1.ServiceName + '' + row1.ResourceName]" class="fa fa-caret-up "></i> -->
+                                                    </th>
+                                                    <th class="table-cell col-md-2">
+                                                        <span translate="TRANSLATE.AZURE_REPORTS_TABLE_SHOWROWS_HEADER_TEXT_QUANTITY" ></span>
+                                                    </th>
+                                                    <!--  ng-click="vm.SortRowLevel2Fields(row1,'ChargeForCustomer')" below -->
+                                                    <th [hidden]="IsFixedPrice==true && currentSubscriptionId!=null && !isPartnerLevel" 
+                                                        (click)="sortDataByMultipleKeys(row1,'ChargeForCustomer')"
+                                                        class="table-cell padding-right-5 col-md-2 text-right">
+                                                        <span translate="TRANSLATE.AZURE_REPORTS_TABLE_SHOWROWS_HEADER_TEXT_COST" >
+                                                            <i *ngIf="!row1.IsAscending2" class="fa fa-caret-down "></i>
+                                                            <i *ngIf="row1.IsAscending2" class="fa fa-caret-up "></i>
+                                                        </span>
+                                                        <!-- <i ng-show="vm.azureEstimateReverseSort[row1.ServiceName + '' + row1.ResourceName]" class="fa fa-caret-down "></i>
+                                                        <i ng-show="!vm.azureEstimateReverseSort[row1.ServiceName + '' + row1.ResourceName]" class="fa fa-caret-up "></i> -->
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            @for(row2 of row1.Rows; track $index){
+                                                <tbody class="table-body" ng-repeat="row2 in row1.Rows  | orderBy:vm.azureEstimateSortElementList[row1.ServiceName + '' + row1.ResourceName]:vm.azureEstimateReverseSort[row1.ServiceName + '' + row1.ResourceName]">
+                                                    <tr class="table-row">
+                                                        <td class="table-cell padding-left-5 col-md-8 fw-semibold">
+                                                            {{row2.ChargeDate | c3Date}}
+                                                        </td>
+                                                        <td class="table-cell col-md-2">
+                                                            {{row2.Quantity}} <span>{{row2.Unit}}</span>
+                                                        </td>
+                                                        <td [hidden]="IsFixedPrice==true && currentSubscriptionId!=null && !isPartnerLevel" class="datatable-cell padding-right-5 col-md-2 text-right" header-class="'text-right'">
+                                                            {{row2.ChargeForCustomer | CurrencyFilter : currentCurrency.CurrencySymbol : currentCurrency.CurrencyDecimalPlaces : currentCurrency.CurrencyThousandSeperator : currentCurrency.CurrencyDecimalSeperator}}
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            }
+                                            
+                                        </table>
+                                    </div>
+                                </div>
+                                <div *ngIf="row1.ShowAudit">
+                                    <div class="table-responsive table-responsive-md table-responsive-lg table-responsive-sm">
+                                        <table class="table  table-condensed table-bordered table-striped">
+                                        <thead class="table-head text-gray-800 fw-bold">
+                                            <tr class="table-row">
+                                                <th class="table-cell padding-left-5 col-md-3">
+                                                    <span translate="TRANSLATE.AZURE_REPORTS_TABLE_SHOWAUDIT_HEADER_TEXT_OPERATION_NAME" ></span>
+                                                </th>
+                                                <th class="table-cell col-md-2">
+                                                    <span translate="TRANSLATE.AZURE_REPORTS_TABLE_SHOWAUDIT_HEADER_TEXT_STATUS" ></span>
+                                                </th>
+                                                <th class="table-cell col-md-2">
+                                                    <span translate="TRANSLATE.AZURE_REPORTS_TABLE_SHOWAUDIT_HEADER_TEXT_EVENT_CATEGORY" ></span>
+                                                </th>
+                                                <th class="table-cell col-md-3">
+                                                    <span translate="TRANSLATE.AZURE_REPORTS_TABLE_SHOWAUDIT_HEADER_TEXT_DATE_TIME" ></span>
+                                                </th>
+                                                <th class="table-cell padding-right-5 col-md-2">
+                                                    <span translate="TRANSLATE.AZURE_REPORTS_TABLE_SHOWAUDIT_HEADER_TEXT_EVENT_INITIATED_BY" ></span>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        @for(audit of row1.Audit; track $index){
+                                            <tbody class="table-body" ng-repeat="audit in row1.Audit">
+                                                <tr class="table-row">
+                                                    <td class="table-cell padding-left-5 col-md-4 fw-semibold">
+                                                        {{audit?.operationName?.localizedValue}}
+                                                    </td>
+                                                    <td class="table-cell col-md-4">
+                                                        {{audit?.status?.localizedValue}}
+                                                    </td>
+                                                    <td class="table-cell col-md-2">
+                                                        <span>{{audit?.category?.localizedValue}}</span>
+                                                    </td>
+                                                    <td class="table-cell col-md-2">
+                                                        {{audit?.eventTimestamp}}
+                                                    </td>
+                                                    <td class="table-cell padding-right-5 col-md-2">
+                                                        {{audit?.caller}}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        }
+                                        <tbody class="table-body">
+                                            <tr class="table-row" *ngIf="row1.Audit?.length === 0">
+                                                <td class="table-cell" colspan="5">
+                                                    <div class="position-relative top-70px row fixed-height-card pt-0 mt-0">
+                                                        <div class="col-md-12 d-flex justify-content-center align-items-center flex-column text-center">
+                                                            <app-common-no-record></app-common-no-record>
+                                                        </div>
+                                                      </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                  }
+                </table>
+            </div>          
+        </div>
+        <div *ngIf="row.ShowAudit">
+            <table class="table  table-condensed table-bordered table-striped">
+                <thead class="text-gray-800 fw-bold">
+                    <tr>
+                        <th class="col-md-3 padding-left-5">
+                            <span translate="TRANSLATE.AZURE_REPORTS_TABLE_SHOWAUDIT_HEADER_TEXT_OPERATION_NAME" ></span>
+                        </th>
+                        <th class="col-md-2">
+                            <span translate="TRANSLATE.AZURE_REPORTS_TABLE_SHOWAUDIT_HEADER_TEXT_STATUS" ></span>
+                        </th>
+                        <th class="col-md-2">
+                            <span translate="TRANSLATE.AZURE_REPORTS_TABLE_SHOWAUDIT_HEADER_TEXT_EVENT_CATEGORY" ></span>
+                        </th>
+                        <th class="col-md-3">
+                            <span translate="TRANSLATE.AZURE_REPORTS_TABLE_SHOWAUDIT_HEADER_TEXT_DATE_TIME" ></span>
+                        </th>
+                        <th class="col-md-2 padding-right-5">
+                            <span translate="TRANSLATE.AZURE_REPORTS_TABLE_SHOWAUDIT_HEADER_TEXT_EVENT_INITIATED_BY" ></span>
+                        </th>
+                    </tr>
+                </thead>
+                @for(audit of row.Audit;track $index){
+                    <tbody class="table-body">
+                        <tr class="table-row">
+                            <td class="table-cell col-md-4 padding-left-5 fw-semibold">
+                                {{audit.operationName.localizedValue}}
+                            </td>
+                            <td class="table-cell col-md-4">
+                                {{audit.status.localizedValue}}
+                            </td>
+                            <td class="table-cell col-md-2">
+                                <span>{{audit.category.localizedValue}}</span>
+                            </td>
+                            <td class="table-cell col-md-2">
+                                {{audit.eventTimestamp}}
+                            </td>
+                            <td class="table-cell col-md-2 padding-right-5">
+                                {{audit.caller}}
+                            </td>
+                        </tr>
+                    </tbody>
+                }
+                <tbody class="table-body">
+                    <tr class="table-row" *ngIf="row.Audit?.length === 0">
+                        <td class="table-cell" colspan="5">
+                            <div class="position-relative top-70px row fixed-height-card pt-0 mt-0">
+                                <div class="col-md-12 d-flex justify-content-center align-items-center flex-column text-center">
+                                    <app-common-no-record></app-common-no-record>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>

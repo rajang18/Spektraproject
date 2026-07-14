@@ -1,0 +1,109 @@
+@if (((onboardCustomerModel.PlanIds > 0  && onboardCustomerModel.CustomerCurrencyCode !== null) || customerC3Id !== null) && !loadingSubscriptions) {
+    <div class="table-responsive mt-5">
+        @if((subscriptionsList !== [] && subscriptionsList !== null) && subscriptionsList.length > 0){
+            <div>
+                <table class="table table-striped table-bordered table-hover table-checkable">
+                    <thead>
+                        <tr>
+                            <th class="text-center"><span class="fw-semibold" translate="TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_PROVIDER_PRODUCT_NAME"></span></th>
+                            <th class="text-center"><span class="fw-semibold" translate="TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_PROVIDER_QUANTITY"></span></th>
+                            <th class="text-center"><span class="fw-semibold" translate="TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_MATCHING_PRODUCTS"></span></th>
+                            <th class="text-center"><span class="fw-semibold" translate="TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_MATCHING_PRODUCTS_QUANTITY"></span></th>
+                            <th class="text-center"><span class="fw-semibold" translate="TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_ACTION"></span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (row of subscriptionsList; track $index) {
+                            <tr ng-repeat="row in vm.subscriptionsList">
+                                <td style="width:20%;">
+                                    @if (row.ProviderSubscriptionBillingQualifiedOfferId.length > 40) {
+                                        <span>
+                                            <!-- ng-repeat="i in getTimes(row.ProviderSubscriptionBillingQualifiedOfferId.length / 36) track by $index" -->
+                                            <span>
+                                                &nbsp;&nbsp;
+                                            </span>
+                                        </span>
+                                    }
+                                    
+                                    <span class="fw-semibold">{{row.ProviderSubscriptionFriendlyName}}</span>
+                                    @if (row.ProviderSubscriptionBillingQualifiedOfferId.length > 40) {
+                                        <span><sup class="text-warning"><span translate="TRANSLATE.PLAN_MANAGE_ADD_FORM_TABLE_1_HEADER_TEXT_OFFER_ADD_ON"></span></sup></span>
+                                    }
+                                    
+                                    @if (row.Status ==='suspended') {
+                                        <sup class="text-danger"><span translate="TRANSLATE.CUSTOMER_ONBOARDING_LBL_SUSPENDED"></span></sup>
+                                    }
+                                    
+                                    @if (row.Status === 'expired') {
+                                        <sup class="text-danger"><span translate="TRANSLATE.CUSTOMER_ONBOARDING_LBL_EXPIRED"></span></sup>
+                                    }
+
+                                    @if (row.Status === 'disabled') {
+                                        <sup class="text-danger"><span translate="TRANSLATE.CUSTOMER_ONBOARDING_LBL_DISABLED"></span></sup>
+                                    }
+                                    
+                                    <div class="font-size-sm">
+                                        <span class="font-size-sm"><span translate="TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_BILLING_CYCLE"></span>{{row.BillingCycleName}}</span>
+                                    </div>
+                                </td>
+                                <td style="text-align:center;">                       
+                                    <span>{{row.ProviderQuantity }}</span>
+                                </td>
+                                <td>
+                                    @for (product of row.MappedC3Products; track $index) {
+                                        <ul style="list-style-type:none;padding-left:0px;">
+                                            <li>{{product.MappedProductName}}</li>
+                                        </ul> 
+                                    }
+                                                           
+                                </td>
+                                <td>
+                                @for (product of row.MappedC3Products; track $index) {
+                                    <ul style="list-style-type:none;padding-left:0px;">
+                                        <li>
+                                            <input type="text" [(ngModel)]="product.MappedQuantity" class="form-control" name="MappedQuantity" ng-keyup = "!row.IgnoredProduct" [disabled]="row.IgnoredProduct" />
+                                        </li>
+                                    </ul>        
+                                }                
+                                </td>
+                                <td class="text-center">
+                                    @if (!row.IgnoredProduct && row.CanShowSkipAndIncludeAction) {
+                                        <a class="btn btn-transparent red tooltips ng-scope" (click)="skipProviderSubscription(row)">
+                                            {{'TRANSLATE.BTN_TEXT_SKIP' | translate}}
+                                        </a>
+                                    }
+
+                                    @if (row.IgnoredProduct && row.CanShowSkipAndIncludeAction) {
+                                        <a class="btn btn-transparent green-jungle tooltips ng-scope" (click)="takeOnProviderSubscription(row)">
+                                            {{'TRANSLATE.BTN_TEXT_INCLUDE' | translate}}
+                                        </a>
+                                    }
+                                    
+
+                                </td>
+                            </tr>
+                        }
+                        
+                    </tbody>
+                </table>
+            </div>
+        }
+        
+        @if ((subscriptionsList !== [] && subscriptionsList !== null && subscriptionsList.length === 0) && (pageVisibleList.indexOf('CustomerDetails') === -1)) {
+            <div class="col-md-12">
+                <strong> <span class="text-success ng-binding" translate="TRANSLATE.CUSTOMER_ONBOARDING_TABLE_TD_MESSAGE_NO_SUBSCRIPTIONS_FOUND"></span> </strong>
+            </div>
+        }
+
+    </div>
+}
+
+@if ((onboardCustomerModel.PlanIds !== null || customerC3Id !== null) && (pageVisibleList.indexOf('CustomerDetails') === -1) && (pageVisibleList.indexOf('PlanDetails') >= 0) && !loadingSubscriptions) {
+    <div class="form-actions float-end">
+        <button class="btn btn-success" (click)="collectCustomerDetails()" busy busy-add-classes="disabled" not-busy-remove-classes="disabled">
+            <!-- <busy-message><i class="fa fa-refresh fa-spin"></i></busy-message> -->
+            {{'TRANSLATE.CUSTOMER_ONBOARDING_BUTTON_TEXT_COLLECT_CUSTOMER_DETAILS' | translate}}
+        </button>
+    </div>
+}
+

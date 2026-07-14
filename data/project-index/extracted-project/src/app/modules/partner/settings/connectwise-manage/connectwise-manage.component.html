@@ -1,0 +1,30 @@
+<div class="tab-content">
+    <div class="tab-pane fade show active">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+                    <h6><span translate="TRANSLATE.USERS_UPLOAD_FORM_INSTRUCTIONS"></span></h6>
+                    <a class="btn btn-primary btn-sm me-2" (click)="testConnectivityToPSA()">
+                        {{'TRANSLATE.EXTERNAL_SERVICE_PSA_BUTTON_TEXT_TEST_CONNECTIVITY' | translate}}
+                    </a>
+                    <span>&nbsp;</span>
+                    <span translate="TRANSLATE.EXTERNAL_SERVICE_PSA_TEST_CONNECTIVITY_INSTRUCTIONS"></span>
+                </div>
+                <form [formGroup]="connectWiseSettingsForm">
+                    <div class="col-md-12">
+                        @for(data of connectWiseSettings; track $index){
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <tenantconfig [data]="data" [form]="connectWiseSettingsForm" [frmControlName]="data.Name" [controlType]="data.ControlType"></tenantconfig>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </form>
+                <div class="mt-4 d-flex justify-content-end">
+                    <button class="btn btn-sm btn-primary" [appPermission]="'UPDATE_PURCHSED_PRODUCT_MAPPING'" (click)="saveConnectWiseSettings()" appBusyLoader>{{'TRANSLATE.BUTTON_TEXT_SAVE' | translate}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

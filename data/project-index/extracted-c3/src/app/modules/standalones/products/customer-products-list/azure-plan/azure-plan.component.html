@@ -1,0 +1,206 @@
+<div class="card card-custom gutter-b card-stretch card-border">
+    <div class="card-body d-flex flex-column rounded justify-content-between">
+        @if(((product.SiteName !== undefined && product.SiteName !== null && product.SiteName !== '') &&
+        (product.DepartmentName === null || product.DepartmentName === ''))){
+        <div style="width: 43px; height: 47px; position: absolute; top: 0px; left: 80%; padding-top: 15px; padding-left: 10px;"
+            class="text-white bg-warning">
+            <span translate="TRANSLATE.CUSTOMER_PRODUCTS_LIST_TITLE_SITE"></span>
+        </div>
+        }
+        @if((product.DepartmentName !== undefined && product.DepartmentName !== null && product.DepartmentName !== '')){
+        <div style="width: 47px; height: 47px; position: absolute; top: 0px; left: 77%; padding-top: 15px; padding-left: 8px;"
+            class="text-white bg-primary">
+            <span translate="TRANSLATE.RIBBON_TITLE_DEPARTMENT"></span>
+        </div>
+        }
+        <div class="text-center rounded mb-7">
+            <div class="symbol mr-3" *ngIf="product.ImageUrl">
+                <img class="symbol-label" [src]="product.ImageUrl">
+            </div>
+            <div class="symbol mr-3 " *ngIf="!product.ImageUrl">
+                <span class="symbol-label fs-1 bg-dark text-white">
+                    {{product.ProductSubscriptionName | formatforinitials}}
+                </span>
+            </div>
+        </div>
+        <div>
+            <h4 class="fs-3 product-title">
+                <a class="fw-bold"
+                    [ngClass]="{'text-danger' : product.Status.toLowerCase() === 'suspended' || product.Status.toLowerCase() === 'deleted', 'text-gray-800' : product.Status.toLowerCase() !== 'suspended' || product.Status.toLowerCase() !== 'deleted'}"
+                    [innerHtml]="product.ProductSubscriptionName| limitLength:40"
+                    ngbTooltip="{{product.ProductSubscriptionName}}" tooltip-placement="bottom"
+                    (click)="callManageProduct()">
+                </a><span
+                    *ngIf="product.ProductSubscriptionName !=null && product.ProductSubscriptionName.length > 40"></span>
+                <small *ngIf="product.LinkedSubscriptionId != null" class="text-muted"><i
+                        class="ki-outline ki-paper-clip text-warning small"></i><span
+                        [innerHtml]="product.LinkedSubscriptionName| limitLength:25"></span><span
+                        *ngIf="product.LinkedSubscriptionName !=null && product.LinkedSubscriptionName.length > 25"></span></small>
+            </h4>
+            <div class="fs-3 text-info fw-bold"
+                *ngIf="product.FinalSalePrice!==null && product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE">
+                {{product.Quantity * product.FinalSalePrice | CurrencyFilter : product.CurrencySymbol :
+                product.CurrencyDecimalPlaces : product.CurrencyThousandSeparator : product.CurrencyDecimalSeparator}}
+                <!--<br />
+            <small class="fw-bold text-muted">
+                ({{product.Quantity}} * {{product.FinalSalePrice}})
+                <del class="text-danger">({{product.Quantity}} * {{product.OriginalSalePrice}})</del>
+            </small>-->
+                <small>
+                    <span *ngIf="product.Discount != null && product.Discount > 0" class="text-danger">
+                        <!--<span class="ng-binding strike-through red">
+                        {{product.Quantity * product.OriginalSalePrice  | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeparator : product.CurrencyDecimalSeparator}}
+                    </span>-->
+                        <small>
+                            <span *ngIf="product.DiscountType == 'Percentage'" class="text-danger">
+                                {{product.Discount}}% <span translate="TRANSLATE.CUSTOMER_PRODUCT_DISCOUNT_TEXT"></span>
+                            </span>
+                            <span *ngIf="product.DiscountType != 'Percentage'">
+                                {{product.Discount | CurrencyFilter : product.CurrencySymbol :
+                                product.CurrencyDecimalPlaces : product.CurrencyThousandSeparator :
+                                product.CurrencyDecimalSeparator }} <span
+                                    translate="TRANSLATE.CUSTOMER_PRODUCT_DISCOUNT_TEXT"></span>
+                            </span>
+                        </small>
+                    </span>
+                </small>
+            </div>
+            <div class="fs-5 text-info fw-bold"
+                *ngIf="product.BillingTypeName.toLowerCase() !== cloudHubConstants.BILLING_TYPE_PRICE">
+                <!--<br />
+            <small class="fw-bold text-muted">
+                ({{product.Quantity}} * {{product.FinalSalePrice}})
+                <del class="text-danger">({{product.Quantity}} * {{product.OriginalSalePrice}})</del>
+            </small>-->
+                <small>
+                    <span *ngIf="product.Discount != null && product.Discount > 0">
+                        <!--<span class="ng-binding strike-through red">
+                        {{product.Quantity * product.OriginalSalePrice  | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeparator : product.CurrencyDecimalSeparator}}
+                    </span>-->
+                        <small>
+                            <span *ngIf="product.DiscountType == 'Percentage'" class="text-danger">
+                                {{product.Discount}}% <span translate="TRANSLATE.CUSTOMER_PRODUCT_DISCOUNT_TEXT"></span>
+                            </span>
+                            <span *ngIf="product.DiscountType != 'Percentage'">
+                                {{product.Discount | CurrencyFilter : product.CurrencySymbol :
+                                product.CurrencyDecimalPlaces : product.CurrencyThousandSeparator :
+                                product.CurrencyDecimalSeparator }} <span
+                                    translate="TRANSLATE.CUSTOMER_PRODUCT_DISCOUNT_TEXT"></span>
+                            </span>
+                        </small>
+                    </span>
+                </small>
+            </div>
+        </div>
+        <div class="mt-2">
+            <span *ngIf="product.BillingCycleName !== null && product.BillingCycleName !== ''">
+                <span *ngIf="product.BillingCycleName !== null && product.BillingCycleName !== ''"
+                    class="label fw-bold label-inline text-white badge ms-md-2" [ngClass]="{
+                        'bg-warning': product.BillingCycleName?.toLowerCase() === 'monthly',
+                        'bg-success': product.BillingCycleName?.toLowerCase() === 'annual',
+                        'bg-dark': product.BillingCycleName?.toLowerCase() === 'triennial',
+                        'bg-info': product.BillingCycleName?.toLowerCase() === 'onetime'
+                    }"
+                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}">{{'TRANSLATE.'+product.BillingCycleDescription
+                    | translate}}</span>
+            </span>
+            <span
+                [ngClass]="{'label-light-success bg-light-success text-success': product.Status === 'Active','label-light-danger bg-light-danger text-danger': product.Status === 'Deleted' || product.Status === 'Suspended','label-light-warning bg-light-warning text-warning': product.Status === 'InProvision'}"
+                class="label fw-bold label-inline badge ms-md-2"
+                [translate]="'TRANSLATE.'+product.StatusDescription"></span>
+        </div>
+        <div class="border-top mt-3" style="border-width: 10px;"></div>
+        <!-- <perfect-scrollbar class="scroller-custom" wheel-propagation="true" swipe-propagation="true" on-scroll="onScroll(scrollTop, scrollHeight)" always-visible="true" style="height:100px"> -->
+        <!-- Detail -->
+        <div class="table-responsive-md product-details">
+            <table class="table table-borderless table-vertical-center mb-0">
+                <tbody>
+                    <!--begin::Item-->
+                    <tr>
+                        <!--begin::Content-->
+                        <td class="align-top pb-3">
+                            <div class="fs-lg fw-bold text-muted mb-1">{{'TRANSLATE.CUSTOMER_PRODUCTS_ORDERED_ON' |
+                                translate}}</div>
+                            <div *ngIf="product.OrderedOn" class="fs-lg fw-bold text-dark-75">
+                                {{product.OrderedOn | c3Date }}
+                                <br />
+                                <!--<i *ngIf="product.OrderedOn" class="text-dark">
+                                        <small>
+                                            renew. {{product.OrderedOn | date }}
+                                        </small>
+                                    </i>-->
+                            </div>
+                            <div *ngIf="!product.OrderedOn" class="fs-lg fw-bold text-dark-75">-</div>
+                        </td>
+                        <td class="align-top pb-3" *ngIf="product.ServiceProviderCustomerName">
+                            <div class="fs-lg fw-bold text-muted mb-1">{{'TRANSLATE.CUSTOMER_PRODUCTS_LIST_TITLE_TENANT'
+                                | translate}}</div>
+                            <div class="fs-lg fw-bold text-dark-75">
+                                {{product.ServiceProviderCustomerName}}<br />
+                                <!--<small>{{product.DomainName}}</small>-->
+                            </div>
+                        </td>
+                        <!--end::Content-->
+                    </tr>
+                    <!--end::Item-->
+                    <!--begin::Item-->
+                    <tr>
+                        <!--begin::Content-->
+                        <td class="align-top pb-3" *ngIf="product.SiteName">
+                            <div class="fs-lg fw-bold text-muted mb-1">{{'TRANSLATE.CUSTOMER_PRODUCTS_LIST_TITLE_SITE' |
+                                translate}}</div>
+                            <div class="fs-lg fw-bold text-dark-75">{{product.SiteName}}</div>
+                        </td>
+                        <td class="align-top pb-3" *ngIf="product.DepartmentName">
+                            <div class="fs-lg fw-bold text-muted mb-1">
+                                {{'TRANSLATE.CUSTOMER_PRODUCTS_LIST_TITLE_DEPARTMENT' | translate}}</div>
+                            <div class="fs-lg fw-bold text-dark-75">{{product.DepartmentName}}</div>
+                        </td>
+                        <!--end::Content-->
+                    </tr>
+                    <!--end::Item-->
+                </tbody>
+            </table>
+            <div>
+                <div class="align-top pb-3">
+                    <div class="mt-3" ></div>
+                    <div class="d-flex flex-column flex-grow-1 pr-3 mt-3 ml-3" *ngIf="product.ServiceProviderCustomerName">
+                        <span class="font-size-lg fw-bold text-muted mb-1">{{'TRANSLATE.CUSTOMER_PRODUCTS_LABEL_OWNED_BY' | translate}}</span>
+                        <span class="font-size-lg fw-bold text-dark-75">{{product.ServiceProviderCustomerName}}</span>
+                        <span class="font-size-sm fw-bold text-muted">
+                            <span class="text-primary font-weight-bold">{{product.DomainName}}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- </perfect-scrollbar> -->
+        <div *ngIf="product.Status != 'Failed'" class="mt-3">
+            <div *ngIf="product.Status != 'Failed'">
+                <a *ngIf="product.Status!='InProvision' &&  HasManageProduct === 'Allowed' && product.ErrorCount>0"
+                    (click)="callShowErrors()" class="btn w-100 btn-sm btn-light-danger fw-bold text-uppercase py-4">
+                    <span>{{ 'TRANSLATE.BUTTON_VIEW_ERRORS' | translate }}</span>
+                </a>
+                <a *ngIf="product.Status!='InProvision' &&  HasManageProduct === 'Allowed' && !product.ErrorCount"
+                    class="btn w-100 btn-sm btn-light-primary fw-bold text-uppercase py-4"
+                    (click)="callManageProduct()">
+                    <span>{{ 'TRANSLATE.BUTTON_MANAGE_PRODUCT' | translate }}</span>
+                </a>
+                <a *ngIf="product.Status!='InProvision' &&  HasManageProduct === 'ReadOnly'"
+                    class="btn w-100 btn-sm btn-light-info fw-bold text-uppercase py-4" (click)="callManageProduct()">
+                    <span>{{ 'TRANSLATE.BUTTON_VIEW_PRODUCT' | translate }}</span>
+                </a>
+                <button *ngIf="product.Status=='InProvision'&& (product.ErrorCount==0||product.ErrorCount==null)"
+                    class="btn w-100 btn-sm btn-light-warning fw-bold text-uppercase py-4" [disabled]="true">
+                    <i class="fa fa-spinner fa-spin "></i>
+                    <span>{{ 'TRANSLATE.BUTTON_PROCESSING' | translate}}</span>
+                </button>
+                <button *ngIf="product.Status=='InProvision' && product.ErrorCount>0"
+                    class="btn w-100 btn-sm btn-light-danger fw-bold text-uppercase py-4" [disabled]="true">
+                    <i class="fa fa-spinner fa-spin "></i>
+                    <span>{{ 'TRANSLATE.BUTTON_PROCESSING' | translate}}</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,20 @@
+<div class="modal-header">
+    <div class="caption">
+        <i class="fa fa-download font-dark"></i>&nbsp;
+        <span class="caption-subject font-dark sbold uppercase h5" translate="TRANSLATE.DOWNLOAD_SOFTWARE_AND_KEYS_POP_UP_HEADER"></span>
+    </div>
+</div>
+<div class="modal-body">
+    <div class="form" name="popupForm">
+        <div class="form-group col-md-12 margin-top-20">
+            <textarea class="link form-control">{{link}}</textarea>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="submit" class="btn btn-light-primary" (click)="copyLink()">
+        {{'TRANSLATE.CUSTOMER_PRODUCTS_MANAGE_SOFTWARE_SUBSCRIPTIONS_BUTTON_TEXT_COPY_LINK' | translate}}
+      </button>
+    <button type="submit" class="btn btn-light-primary" (click)="cancel()">{{'TRANSLATE.CUSTOMER_PRODUCTS_MANAGE_SOFTWARE_SUBSCRIPTIONS_BUTTON_TEXT_CLOSE' | translate}}
+    </button>
+</div>

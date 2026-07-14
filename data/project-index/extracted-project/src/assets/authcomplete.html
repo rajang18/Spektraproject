@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login Complete</title>
+  <script>
+    (function () {
+      function parseFragment() {
+        const hash = window.location.hash.substr(1);
+        const result = {};
+        hash.split('&').forEach(pair => {
+          const parts = pair.split('=');
+          result[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1] || '');
+        });
+        return result;
+      }
+
+      const fragment = parseFragment();
+
+      if (window.opener && window.opener !== window) {
+        try {
+          // window.opener.postMessage(fragment, window.location.origin);
+                  window.opener.postMessage({ type: 'oauth-success', tokenData: fragment }, window.location.origin);
+        } catch (e) {
+          console.error('Failed to post message to opener:', e); 
+        }
+      }
+
+      // Optional: delay close to ensure message is received
+      setTimeout(() => {
+        window.close();
+      }, 500);
+    })();
+  </script>
+</head>
+<body>
+  Redirecting...
+</body>
+</html>
+
+

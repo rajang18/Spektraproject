@@ -1,0 +1,95 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary"  (click)="back()">
+            <i class="ki-outline ki-to-left fs-2"></i> <span
+                translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_BTN_TEXT_BACK_TO_SUBSCRIPTION_HISTORY"></span></button>
+    </div>
+</ng-template>
+<div class="card card-custom">
+    <!-- begin::Header -->
+    <div class="card-header card-header-stretch overflow-auto">
+        <ul class="nav nav-stretch nav-line-tabs fw-bold border-transparent flex-nowrap" role="tablist">
+            <li class="nav-item">
+                <a (click)="on3PartyMenuClick('thirdPartyEntityMapping')" [ngClass]="{'active': pageMode === 'thirdPartyEntityMapping', 'text-primary':pageMode === 'thirdPartyEntityMapping'}" class="nav-link cursor-pointer" role="tab">
+                    {{'TRANSLATE.THIRD_PARTY_ENTITY_MAPPING' | translate}}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a (click)="on3PartyMenuClick('thirdPartyProductMapping')" [ngClass]="{'active': pageMode === 'thirdPartyProductMapping', 'text-primary':pageMode === 'thirdPartyProductMapping'}" class="nav-link cursor-pointer" role="tab">
+                    {{'TRANSLATE.THIRD_PARTY_PRODUCT_MAPPING' | translate}}
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body">
+        <div class="col-md-12" *ngIf="pageMode === 'thirdPartyEntityMapping'">
+            <ng-template #textBox let-data="adtData" let-emitter="captureEvents">
+                <div>
+                    <input type="text" class="form-control" placeholder="{{'TRANSLATE.THIRD_PARTY_SELECT_PSA_CUSTOMER_PLACEHOLDER' | translate}}" disabled *ngIf="data.MappedExternalCustomerId !== undefined && data.MappedExternalCustomerId !== null" [class]="themeMode.mode.getValue() == 'light' && data.ExternalCustomerName != null ? 'text-dark' : 'custom'"[(ngModel)]="data.ExternalCustomerName" id="PSAName" name="Name">
+                    <input type="text" class="form-control" placeholder="{{'TRANSLATE.THIRD_PARTY_COMPLETE_MAPPING_FOR_C3_ENTITY_PLACEHOLDER' | translate}}" disabled *ngIf="data.MappedExternalCustomerId === undefined || data.MappedExternalCustomerId === null" [class]="themeMode.mode.getValue() == 'light' && data.ExternalCustomerName != null ? 'text-dark' : 'custom'"[(ngModel)]="data.ExternalCustomerName" id="PSAName" name="Name">
+                </div>
+            </ng-template>
+            <ng-template #textBox2 let-data="adtData" let-emitter="captureEvents">
+                <div>
+        
+                    <input type="text" placeholder="{{'TRANSLATE.THIRD_PARTY_AGREEMENTS_PLACEHOLDER' | translate}}" disabled class="col-md-5 form-control text-start" [class]="themeMode.mode.getValue() == 'light' && data.AgreementName != null ? 'text-dark' : 'custom'"[(ngModel)]="data.AgreementName" name="textBox">
+                    <!-- <input type="radio" [(ngModel)]="data.IsSelected" [value]="true" name="radio" (change)="updateSelectedList(data)" required> -->
+                </div>
+            </ng-template>
+            <ng-container *ngIf="!!activeEntitiesDatatableConfig">
+                <app-c3-table [datatableConfig]="activeEntitiesDatatableConfig" [reload]="reloadEvent" [searchFilter]=false>
+                </app-c3-table>
+            </ng-container>
+            <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+                <div class="d-flex">
+                    <a class="btn btn-light-primary btn-sm btn-lg btn-xs mr-2" (click)="getActiveContracts(data)"  *ngIf="!data.IsMapped && data.AgreementName == null && data.AgreementName == undefined" [hidden]="(data.MappedExternalCustomerId === undefined || data.MappedExternalCustomerId === null || data.MappedExternalCustomerId === 0)">
+                        <span translate="TRANSLATE.SELECT_DEFAULT_OPTION_SELECT"  ></span>
+                    </a>
+                    <a class="btn btn-primary btn-sm btn-lg btn-xs mr-2" (click)="SaveThirdPartySubscriptionEntityMapping(data)"  *ngIf="!data.IsMapped && data.AgreementName != null && data.AgreementName != undefined" [hidden]="(data.AgreementId === undefined || data.AgreementId === null || data.AgreementId === 0)">
+                        <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT" ></span>
+                    </a>
+                    <a class="btn btn-light-danger btn-sm btn-lg btn-xs mr-2" *ngIf="data.IsMapped" (click)="UnMappThirdPartyEntityMapping(data)">
+                        <span translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_BTN_TEXT_RELEASE" ></span>
+                    </a>
+                </div>
+            </ng-template>
+        </div>
+        <div class="col-md-12" *ngIf="pageMode === 'thirdPartyProductMapping'">
+            <div class="col-md-12">
+                <ng-template #textBox let-data="adtData" let-emitter="captureEvents">
+                    <div>
+            
+                        <input type="text" 
+                        class="col-md-5 form-control form-control-sm text-start" 
+                        placeholder="{{'TRANSLATE.THIRD_PARTY_PRODUCTS_PLACEHOLDER' | translate}}" 
+                        disabled 
+                        [class]="themeMode.mode.getValue() == 'light' && data.MappedExternalProductName != null ? 'text-dark' : 'custom'"
+                        [(ngModel)]="data.MappedExternalProductName" 
+                        name="textBox">
+                        <!-- <input type="radio" [(ngModel)]="data.IsSelected" [value]="true" name="radio" (change)="updateSelectedList(data)" required> -->
+                    </div>
+                </ng-template>
+                <ng-container *ngIf="!!activeThirdPartyProductsDatatableConfig">
+                    <app-c3-table [datatableConfig]="activeThirdPartyProductsDatatableConfig" [reload]="productScreenReloadEvent" [searchFilter]=false>
+                    </app-c3-table>
+                </ng-container>
+                <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+                    <div class="d-flex">
+                        <a class="btn btn-light-primary btn-sm btn-lg btn-xs mr-2" (click)="getExternalProductsForMapping(data)" *ngIf="data.ExternalProductId == undefined && data.ExternalProductId == null">
+                            <span translate="TRANSLATE.SELECT_DEFAULT_OPTION_SELECT" ></span>
+                        </a>
+                        <a class="btn btn-light-danger btn-sm btn-lg btn-xs mr-2" (click)="UnMappThirdPartyProduct(data)" *ngIf="data.ExternalProductId !== undefined && data.ExternalProductId !== null">
+                            <span translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_BTN_TEXT_RELEASE" ></span>
+                        </a>
+                    </div>
+                </ng-template>
+            </div>
+            <div class=" text-end mt-5">
+                <a class="btn btn-primary btn-xs mr-2" (click)="saveThirdPartyProductMapping()">
+                    <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"  ></span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>

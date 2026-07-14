@@ -1,0 +1,50 @@
+.addPlanBorderColorforGreaterprice {
+    border: 3px solid gold !important;
+    //border-top: 2px solid gold !important;
+}
+
+.addPlanBorderColorforlessPrice {
+    border: 3px solid red !important;
+    //border-top: 3px solid red !important;
+}
+
+.highlight {
+    background-color: palegreen;
+}
+
+.addPlanBorderColorforOfferWithPromotion {
+    border: 2px solid blue !important;
+    border-top: 2px solid blue !important;
+}
+
+.addBorderColorToEditAndNewOfferForShowPurchasedOffer {
+    border: 2px solid gold !important;
+    border-top: 2px solid gold !important;
+}
+
+.toggle-wrapper {
+    visibility: hidden;
+}
+
+.toggle-wrapper i {
+    visibility: visible;
+    cursor: pointer;
+}
+
+.custom-slab-table-header {
+    margin-bottom: 0px;
+    margin-top: -13px;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.custom-slab-table-body {
+    margin-bottom: 0px;
+    margin-top: -8px;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.w-16 {
+    width: 16.6%;
+}

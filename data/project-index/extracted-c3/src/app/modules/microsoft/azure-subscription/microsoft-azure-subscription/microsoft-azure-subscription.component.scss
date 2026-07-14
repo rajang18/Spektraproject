@@ -1,0 +1,7 @@
+::ng-deep {
+    app-microsoft-azure-subscription {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}

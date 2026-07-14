@@ -1,0 +1,13 @@
+::ng-deep {
+    app-quote-custom-line-item {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+        .border-red{
+            border:2px solid var(--bs-text-danger) !important;
+        }
+        .is-invalid{
+            border:2px solid var(--bs-text-danger) !important;
+        }
+    }
+  }

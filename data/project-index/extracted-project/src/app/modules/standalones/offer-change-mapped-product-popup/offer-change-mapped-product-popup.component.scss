@@ -1,0 +1,19 @@
+::ng-deep{
+  app-offer-change-mapped-product-popup{
+      .custom-height{
+        .select2-dropdown.select2-dropdown--below{
+          max-height:190px;
+          overflow: hidden !important;
+        }
+        .select2-search.select2-search--dropdown{
+          display: none !important;
+        }
+      .select2-selection.select2-selection--single{
+        
+        .custom-not{
+          display: none !important;
+        }
+      }
+      }
+    }
+  }

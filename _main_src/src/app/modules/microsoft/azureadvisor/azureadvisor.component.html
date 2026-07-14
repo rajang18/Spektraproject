@@ -1,0 +1,223 @@
+<div class="card">
+    <div class="card-body pt-0 overflow-auto toolbar-custom-position">
+        <!-- Check if datatableConfig is defined and then render the table -->
+        <ng-container>
+            <div>
+              <form>
+                @if(isPartner){
+                <div class="form-group row mb-0 mt-5">
+                  <div class="col-md-2 text-start">
+                    <label class="col-form-label fw-bold fs-6">
+                      <span class="required">{{'TRANSLATE.AZURE_REPPORT_CUSTOMERS'|translate}}</span>
+                    </label>
+                    <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                       ngbTooltip="{{'TRANSLATE.AZURE_REPPORT_CUSTOMERS_TOOLTIP' | translate}}">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                      <span class="path3"></span>
+                    </i>
+                  </div>
+                  <div class="col-5">
+                    <ng-select [(ngModel)]="CurrentC3CustomerId" name="CurrentC3CustomerId"
+                               (change)="getActiveCustomersHavingUsageSubscription()">
+                      <ng-option value=null disabled selected>
+                        {{'TRANSLATE.AZURE_REPPORT_CUSTOMERS_DEFAULT_SELECT' | translate }}
+                      </ng-option>
+                      @for(option of ActiveCustomer; track $index){
+                      <ng-option [value]="option.C3Id">
+                        {{option.Name}}
+                      </ng-option>
+                      }
+                    </ng-select>
+                  </div>
+                </div>
+                }
+                <div class="form-group row mb-0 mt-5">
+                  <div class="col-md-2 text-start">
+                    <label class="col-form-label fw-bold fs-6">
+                      <span>{{'TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_TENANTS'|translate}}</span>
+                      <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                         ngbTooltip="{{'TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_MICROSOFT_TENANT_SELECTOR' | translate}}">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                      </i>
+                    </label>
+                  </div>
+                  <div class="col-5">
+                    <ng-select [(ngModel)]="selectedServiceProviderCustomer" (change)="GetAzureSubscriptions()" name="selectedServiceProviderCustomer" placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_DROPDOWN_TO_SELECT_A_TENANT' | translate}}">
+                      <ng-option value="null" disabled selected>
+                        {{'TRANSLATE.PLACEHOLDER_TEXT_FOR_DROPDOWN_TO_SELECT_A_TENANT'|translate}}
+                      </ng-option>
+                      @for(option of AllTenants; track $index){
+                      <ng-option [value]="option.CustomerRefId" >
+                        {{option.CustomerName}} {{option.CustomerRefId}}
+                      </ng-option>
+                      }
+                    </ng-select>
+                  </div>
+                </div>
+                <div class="form-group row mb-0 mt-5">
+                  <div class="col-md-2 text-start">
+                    <label class="col-form-label fw-bold fs-6"><span>{{'TRANSLATE.AZURE_REPORTS_LABEL_TEXT_SUBSCRIPTION'|translate}}</span></label>
+                  </div>
+                  <div class="col-5">
+                    <ng-select [(ngModel)]="selectedsubscription" name="selectedsubscription" (change)="GetAzureEntitlement()" placeholder="{{'TRANSLATE.SELECT_A_SUBSCRIPTION_TEXT'|translate}}">
+                      <ng-option value="null"  selected>
+                        {{'TRANSLATE.SELECT_A_SUBSCRIPTION_TEXT'|translate}}
+                      </ng-option>
+                      @for(option of subscriptionDataSource; track $index){
+                      <ng-option [value]="option.ProductId">
+                        {{option.SubscriptionName}} - {{option.SubscriptionId}}
+                      </ng-option>
+                      }
+                    </ng-select>
+                  </div>
+                </div>
+                <div class="form-group row mb-0 mt-5" *ngIf="selectedsubscription != null">
+                  <div class="col-md-2 text-start">
+                    <label class="col-form-label fw-bold fs-6"><span>{{'TRANSLATE.AZURE_REPORTS_LABEL_TEXT_ENTITLEMENT'|translate}}</span></label>
+                  </div>
+                  <div class="col-5">
+                    <ng-select [(ngModel)]="currentEntitlement" name="currentEntitlement" placeholder="{{'TRANSLATE.AZURE_ADVISOR_SELECT_ENTITLEMENT'|translate}}">
+                      <ng-option value="null" selected>
+                        {{'TRANSLATE.AZURE_ADVISOR_SELECT_ENTITLEMENT'|translate}}
+                      </ng-option>
+                      @for(option of entitlementList; track $index){
+                      <ng-option [value]="option.EntitlementId">
+                        {{option.EntitlementName}} - {{option.EntitlementId}}
+                      </ng-option>
+                      }
+                    </ng-select>
+                  </div>
+                </div>
+                <div class="form-group row justify-content-end d-flex flex-column align-items-end mt-8" *ngIf="selectedServiceProviderCustomer != null && selectedServiceProviderCustomer != '' && selectedsubscription != null && selectedsubscription != ''">
+                  <div class="mt-auto d-flex justify-content-end">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="GetRecommendationData()">
+                      {{'TRANSLATE.AZURE_RECOMMENDATION_SUBMIT' | translate}}
+                    </button>
+                  </div>
+                </div>
+              </form>
+
+                <div class="row mt-5  toolbar-custom-position" *ngIf="dataTemp!= null && dataTemp != ''">
+                    <div class="col-6">
+                        <div class="card card-custom h-100">
+                            <div class="card-header">
+                                <div class="card-title card-label font-weight-bolder text-dark">
+                                    <span translate="TRANSLATE.AZURE_RECOMMENDATIONS_TEXT"></span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <ng-container *ngIf="datatableConfig1">
+                                    <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig1"
+                                        [searchFilter]="false">
+                                    </app-c3-table>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card card-custom">
+                            <div class="card-header">
+                                <div class="card-title card-label font-weight-bolder text-dark">
+                                    <span translate="TRANSLATE.AZURE_RECOMMENDARION_SCORE_BY_CATEGORY"></span>
+                                </div>
+                            </div>
+                            <div class="card-body azure-advisor-legend">
+                                <apx-chart [series]="apexChart?.series" [chart]="apexChart?.chart"
+                                    [xaxis]="apexChart?.xaxis" [tooltip]="apexChart?.tooltip" [yaxis]="apexChart?.yaxis"
+                                    [responsive]="apexChart?.responsive" [stroke]="apexChart?.stroke"
+                                    [plotOptions]="apexChart?.plotOptions" [legend]="apexChart?.legend"
+                                    [fill]="apexChart?.fill" [grid]="apexChart?.grid" [colors]="apexChart?.colors">
+                                </apx-chart>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row mt-5" *ngIf="dataTemp!= null && dataTemp != ''">
+                    <div class="col-12">
+                        <div class="card card-custom">
+                            <div class="card-header">
+                                <div class="card-title card-label font-weight-bolder text-dark">
+                                    <span translate="TRANSLATE.AZURE_RECOMMENDATION_RECOMMENDATION_DETAILS"></span>
+                                </div>
+                                <div class="card-toolbar" ngbDropdown>
+                                    <a (click)="exportToCsv(Datastore)"
+                                        class="btn btn-light-primary btn-md py-2 font-weight-bolder mr-2 tooltips"
+                                        ngbTooltip="{{'TRANSLATE.AZURE_RECOMMENDATION_DETAILS_DOWNLOAD_TOOLTIP'| translate}}">
+                                        <span>
+                                            <i class="ki-outline ki-exit-down"></i>
+                                        </span>
+                                    </a>
+                                    <a ngbDropdownToggle id="something"
+                                        class="ms-2 btn btn-light-primary btn-md py-2 font-weight-bolder dropdown-toggle"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                      <span *ngIf="selectedCategory == null">{{'TRANSLATE.AZURE_RECOMMENDATION_ALL_CATEGORIES' | translate}}</span>
+                                        <span *ngIf="selectedCategory != null">{{selectedCategory}}</span>
+                                    </a>
+                                    <div ngbDropdownMenu="something"
+                                        class="dropdown-menu dropdown-menu-sm dropdown-menu-right">
+                                        <ul class="navi navi-hover">
+                                            <li class="navi-item" ngbDropdownItem>
+                                                <a class="navi-link" (click)="SetCategoryForFilter(null)">
+                                                    <span class="navi-text"
+                                                        translate="TRANSLATE.AZURE_RECOMMENDATION_ALL_CATEGORIES"></span>
+                                                </a>
+                                            </li>
+                                            <li class="navi-item" ngbDropdownItem>
+                                                <a class="navi-link" (click)="SetCategoryForFilter('Cost')">
+                                                    <span class="navi-text"
+                                                        translate="TRANSLATE.AZURE_RECOMMENDATION_ALL_COST"></span>
+                                                </a>
+                                            </li>
+                                            <li class="navi-item" ngbDropdownItem>
+                                                <a class="navi-link" (click)="SetCategoryForFilter('Security')">
+                                                    <span class="navi-text"
+                                                        translate="TRANSLATE.AZURE_RECOMMENDATION_ALL_SECURITY"></span>
+                                                </a>
+                                            </li>
+                                            <li class="navi-item" ngbDropdownItem>
+                                                <a class="navi-link"
+                                                    (click)="SetCategoryForFilter('Operational Excellence')">
+                                                    <span class="navi-text"
+                                                        translate="TRANSLATE.AZURE_RECOMMENDATION_ALL_OPERATION_EXCELLENCE"></span>
+                                                </a>
+                                            </li>
+                                            <li class="navi-item" ngbDropdownItem>
+                                                <a class="navi-link" (click)="SetCategoryForFilter('Performance')">
+                                                    <span class="navi-text"
+                                                        translate="TRANSLATE.AZURE_RECOMMENDATION_ALL_PERFORMANCE"></span>
+                                                </a>
+                                            </li>
+
+                                            <li class="navi-item" ngbDropdownItem>
+                                                <a class="navi-link"
+                                                    (click)="SetCategoryForFilter('High Availability')">
+                                                    <span class="navi-text"
+                                                        translate="TRANSLATE.AZURE_RECOMMENDATION_ALL_HIGH_AVAILABILITY"></span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <ng-container *ngIf="datatableConfig2">
+                                    @if (!IsLoading) {
+                                    <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig2"
+                                        [searchFilter]="false">
+                                    </app-c3-table>
+                                    }
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </ng-container>
+    </div>
+</div>

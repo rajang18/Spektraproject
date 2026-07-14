@@ -1,0 +1,193 @@
+<ng-template #popoverText>
+    <span *ngIf="slabTableRowInFocus" [innerHTML]="getPopoverText()"></span>
+</ng-template>
+<div class="modal-dialog m-0 modal-dialog m-0-centered w-100">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>{{'TRANSLATE.PLANS_MANAGE_CONTRACT_DETAILS_POPUP_HEADER_TEXT' | translate}}
+            </h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="cancel()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+            </div>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <h5><strong>{{'TRANSLATE.PLANS_MANAGE_CONTRACT_DETAILS_POPUP_TABLE_HEADER_SLABDATA'|translate}}</strong>
+            </h5>
+            <div *ngIf="pricingSlabs && pricingSlabs.length > 0">
+                <div class="form-body">
+                    <div class="form-group row" [formGroup]="simpleForm">
+                        <label class="control-label col-md-4 mt-2" style="text-align:left">
+                            <span translate="TRANSLATE.PLAN_OFFER_PRICE_CHANGE_LABEL_EFFECTIVENESS_TYPE"></span>
+                            <span class="text-danger">*</span>
+                        </label>
+                        <!--  [ngClass]="{'has-error':( frmPriceChange.$submitted || frmPriceChange.priceChangeEffectivenessType.$dirty) &amp;&amp; frmPriceChange.priceChangeEffectivenessType.$error.required}" -->
+                        <div class="col-md-8" [ngClass]="{'has-error':simpleForm.get('effectivenessTypeId')?.errors?.required &&
+                                buttonClicked}">
+                            <select class="form-control form-control-sm" formControlName="effectivenessTypeId"
+                                [required]="true">
+                                <option value="''" disabled></option>
+                                @if(priceChangeEffectivenessType){
+                                @for (PriceChangeEffectiveness of priceChangeEffectivenessType; track $index) {
+                                <option [value]="PriceChangeEffectiveness.ID"
+                                    translate="TRANSLATE.{{PriceChangeEffectiveness.Description}}">
+                                </option>
+                                }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" [formGroup]="frmPricingSlabs">
+                        <div class="table-responsive-md mt-4" formArrayName="pricingSlabsArray">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th class="header-alignment-normal col-md-2 fw-bold">
+                                            {{'TRANSLATE.PRICING_SLABS_TABLE_HEADER_MINVALUE' | translate}}</th>
+                                        <th class="header-alignment-normal col-md-2 fw-bold">
+                                            {{'TRANSLATE.PRICING_SLABS_TABLE_HEADER_MAXVALUE' | translate}}</th>
+                                        <th class="header-price-alignment col-md-2 fw-bold">
+                                            {{'TRANSLATE.PRICING_SLABS_TABLE_HEADER_SELLING_PRICE' | translate}}</th>
+                                        <th class="header-price-alignment col-md-2 fw-bold">
+                                            {{'TRANSLATE.PRICING_SLABS_TABLE_HEADER_BILLING_TYPE' | translate}}</th>
+                                        <th class="header-price-alignment col-md-2 fw-bold">
+                                            {{'TRANSLATE.PRICING_SLABS_TABLE_HEADER_ACTIONS'| translate}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (row of pricingSlabsArray.controls; track row; let i=$index) {
+                                    <tr [formGroupName]="i" ng-repeat="row in $data" ng-form="rowForm_LineItem"
+                                        fsa-tracked-table-row="row">
+                                        <td>
+                                            <div style="word-break:break-word fw-semibold">
+                                                <!-- {{row.MinValue}} -->
+                                                {{getFormControlValue(row,'minValue')}}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div *ngIf="!getFormControlValue(row,'isNew')" ng-switch-default
+                                                style="word-break:break-word">
+                                                <!-- {{row.Description}} -->
+                                                {{getFormControlValue(row,'maxValue') == null ? "" :
+                                                getFormControlValue(row,'maxValue')}}
+                                            </div>
+                                            <div *ngIf="getFormControlValue(row,'isNew')"
+                                                ng-class="{'has-error' : (rowForm_LineItem.$submitted || rowForm_LineItem.Description.$dirty) &amp;&amp; rowForm_LineItem.Description.$error.required}"
+                                                ng-switch-when="true">
+                                                <input type="number" name="MaxValue" ng-model="row.EditMaxValue"
+                                                    formControlName="editMaxValue"
+                                                    class="editable-input form-control form-control-sm input-sm"
+                                                    ng-required="true"
+                                                    (input)="processPriceSlabInsertion(row, pricingSlabsArray)"
+                                                    [ngbPopover]="popoverText" placement="bottom"
+                                                    [popoverClass]="'custom-popover'" #p="ngbPopover"
+                                                    (focus)="togglePopover(getFormControlValue(row,'isError'), p)" />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div *ngIf="!getFormControlValue(row,'isEditing')" ng-switch-default
+                                                style="word-break:break-word">
+                                                <!-- {{row.SalePrice}} -->
+                                                <span
+                                                    *ngIf="getFormControlValue(row,'billingTypeName') === 'Price'">{{getFormControlValue(row,'salePrice')|
+                                                    CurrencyFilter : product.CurrencySymbol :
+                                                    product.CurrencyDecimalPlaces :
+                                                    product.CurrencyThousandSeperator :
+                                                    product.CurrencyDecimalSeperator}}</span><span
+                                                    *ngIf="getFormControlValue(row,'billingTypeName') === 'Percentage'">{{getFormControlValue(row,'salePrice')}}%</span>
+                                            </div>
+                                            <div *ngIf="getFormControlValue(row,'isEditing')"
+                                                ng-class="{'has-error' : (rowForm_LineItem.$submitted || rowForm_LineItem.Description.$dirty) &amp;&amp; rowForm_LineItem.Description.$error.required}"
+                                                ng-switch-when="true">
+                                                <input type="number" name="SalePrice" ng-model="row.EditSalePrice"
+                                                    formControlName="editSalePrice"
+                                                    class="editable-input form-control form-control-sm input-sm"
+                                                    ng-required="true" />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div *ngIf="!getFormControlValue(row,'isEditing')" ng-switch-default
+                                                style="word-break:break-word">
+                                                <select class="form-control" formControlName="billingTypeId" required>
+                                                    <option *ngFor="let option of billingTypes"
+                                                        [value]="option.BillingTypeId">
+                                                        {{ option.BillingTypeName }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div *ngIf="getFormControlValue(row,'isEditing')"
+                                                ng-class="{'has-error' : (rowForm_LineItem.$submitted || rowForm_LineItem.Description.$dirty) &amp;&amp; rowForm_LineItem.Description.$error.required}"
+                                                ng-switch-when="true">
+                                                <select class="form-control" formControlName="editBillingTypeId"
+                                                    required>
+                                                    <option *ngFor="let option of billingTypes"
+                                                        [value]="option.BillingTypeId">
+                                                        {{ option.BillingTypeName }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div *ngIf="!getFormControlValue(row,'isEditing')">
+                                                <button class="btn btn-active-light-primary btn-sm tooltips"
+                                                    ngbTooltip="{{'TRANSLATE.CONTRACT_DETAILS_TOOLTIP_TEXT_EDIT' | translate}}"
+                                                    (click)="editSlabTableRow(row)">
+                                                    <span
+                                                        class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+                                                        <span class="ki-outline ki-pencil fs-4 text-primary"></span>
+                                                    </span>
+                                                </button>
+                                                <button class="btn btn-active-light-primary btn-sm tooltips"
+                                                    ngbTooltip="{{'TRANSLATE.CONTRACT_DETAILS_TOOLTIP_TEXT_ADD' | translate}}"
+                                                    (click)="addNewSlabTableRow(row, i)">
+                                                    <span
+                                                        class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+                                                        <span class="ki-outline ki-plus fs-4 text-primary"></span>
+                                                    </span>
+                                                </button>
+                                                <button class="btn btn-active-light-primary btn-sm tooltips"
+                                                    ngbTooltip="{{'TRANSLATE.CONTRACT_DETAILS_TOOLTIP_TEXT_DELETE' | translate}}"
+                                                    (click)="deleteSlabTableRow(row)"
+                                                    *ngIf="row !== pricingSlabsArray.controls[0]">
+                                                    <span
+                                                        class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+                                                        <span class="ki-outline ki-trash fs-4 text-primary"></span>
+                                                    </span>
+                                                </button>
+                                            </div>
+                                            <div *ngIf="getFormControlValue(row,'isEditing')">
+                                                <button class="btn btn-active-light-primary btn-sm tooltips"
+                                                    ngbTooltip="{{'TRANSLATE.CONTRACT_DETAILS_TOOLTIP_TEXT_SAVE' | translate}}"
+                                                    (click)="(row.pristine || row.invalid || getFormControlValue(row,'isError')) || saveSlabTableData(row, i)">
+                                                    <span
+                                                        class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+                                                        <span class="ki-outline ki-file-added fs-4 text-primary"></span>
+                                                    </span>
+                                                </button>
+                                                <button class="btn btn-active-light-primary btn-sm tooltips"
+                                                    ngbTooltip="{{'TRANSLATE.CONTRACT_DETAILS_TOOLTIP_TEXT_CANCEL' | translate}}"
+                                                    (click)="cancelSlabTableChanges(row)">
+                                                    <span
+                                                        class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+                                                        <span class="ki-outline ki-cross fs-4 text-primary"></span>
+                                                    </span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            <!--End: Addresses NgTable-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-sm btn-active-light-primary " type="submit" (click)="cancel()"><span
+                    translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span></button>
+            <button class="btn btn-sm btn-primary" type="submit" (click)="ok()" [disabled]="disableSubmitButton()"><span
+                    translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span></button>
+        </div>
+    </div>
+</div>

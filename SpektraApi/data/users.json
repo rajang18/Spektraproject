@@ -1,0 +1,16 @@
+[
+  {
+    "username": "gaurav.singh",
+    "password": "Spektra@123",
+    "displayName": "Gaurav Singh",
+    "email": "gaurav.singh@spektrasystems.com",
+    "roles": ["admin"]
+  },
+  {
+    "username": "abhinav.tyagi",
+    "password": "Spektra@123",
+    "displayName": "Abhinav Tyagi",
+    "email": "abhinav.tyagi@spektrasystems.com",
+    "roles": ["admin"]
+  }
+]

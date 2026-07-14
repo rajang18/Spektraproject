@@ -1,0 +1,215 @@
+<div class="container-fluid customer-container">
+  <div class="row top-space">
+    <div class="col col-12  col-lg-9 pt-20">
+      <style id="antiClickjack">
+        body {
+          display: none !important;
+        }
+      </style>
+      <div id="MCBPaymentForm" *ngIf="currentPage === 'MCB'">
+        <div class="col-md-12 mt-5">
+          <div class="form-group">
+            <label class="control-label">
+              <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                ngbTooltip="{{'TRANSLATE.PAYMENT_PROFILE_MCB_TOOL_TIP_TEXT_CARD_NUMBER' | translate}}">
+                <span class="path1"></span>
+                <span class="path2"></span>
+                <span class="path3"></span>
+              </i>
+              {{ 'TRANSLATE.PAYMENT_PROFILE_MCB_LBL_TEXT_CARD_NUMBER' | translate }}
+              <span class="text-danger"> *</span>
+            </label>
+            <input type="text" id="card-number" class="form-control input-field" title="card number"
+              aria-label="enter your card number" value="" tabindex="1" readonly>
+          </div>
+        </div>
+        <div class="row col-md-12 no-padding-left no-padding-right">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="control-label">
+                <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                  ngbTooltip="{{'TRANSLATE.PAYMENT_PROFILE_MCB_TOOL_TIP_TEXT_EXPIRY_MONTH' | translate}}">
+                  <span class="path1"></span>
+                  <span class="path2"></span>
+                  <span class="path3"></span>
+                </i>
+                {{ 'TRANSLATE.PAYMENT_PROFILE_MCB_LBL_TEXT_EXPIRY_MONTH' | translate }}
+                <span class="text-danger"> *</span>
+              </label>
+              <input type="text" id="expiry-month" class="form-control input-field" title="expiry month"
+                aria-label="two digit expiry month" value="" tabindex="2" readonly>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="control-label">
+                <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                  ngbTooltip="{{'TRANSLATE.PAYMENT_PROFILE_MCB_TOOL_TIP_TEXT_EXPIRY_YEAR' | translate}}">
+                  <span class="path1"></span>
+                  <span class="path2"></span>
+                  <span class="path3"></span>
+                </i>
+                {{ 'TRANSLATE.PAYMENT_PROFILE_MCB_LBL_TEXT_EXPIRY_YEAR' | translate }}
+                <span class="text-danger"> *</span>
+              </label>
+              <input type="text" id="expiry-year" class="form-control input-field" title="expiry year"
+                aria-label="two digit expiry year" value="" tabindex="3" readonly>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="control-label">
+                <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                  ngbTooltip="{{'TRANSLATE.PAYMENT_PROFILE_MCB_TOOL_TIP_TEXT_SECURITY_CODE' | translate}}">
+                  <span class="path1"></span>
+                  <span class="path2"></span>
+                  <span class="path3"></span>
+                </i>
+                {{ 'TRANSLATE.PAYMENT_PROFILE_MCB_LBL_TEXT_SECURITY_CODE' | translate }}
+                <span class="text-danger"> *</span>
+              </label>
+              <input type="text" id="security-code" class="form-control input-field" title="security code"
+                aria-label="three digit CCV security code" value="" tabindex="4" readonly>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="control-label">
+              <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                ngbTooltip="{{'TRANSLATE.PAYMENT_PROFILE_MCB_TOOL_TIP_TEXT_CARD_HOLDER_NAME' | translate}}">
+                <span class="path1"></span>
+                <span class="path2"></span>
+                <span class="path3"></span>
+              </i>
+              {{ 'TRANSLATE.PAYMENT_PROFILE_MCB_LBL_TEXT_CARD_HOLDER_NAME' | translate }}
+              <span class="text-danger"> *</span>
+            </label>
+            <input type="text" id="cardholder-name" class="form-control input-field" title="cardholder name"
+              aria-label="enter name on card" value="" tabindex="5" readonly>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="form-actions right">
+            <button
+              *ngIf="isEnablePublicSignupAssistance"
+              class="btn btn-primary me-2" (click)="skipPaymentAndContinue()" appBusyLoader>
+              {{'TRANSLATE.PUBLIC_SIGNUP_STRIPE_SKIP_AND_CONTINUE_BTN_TXT' | translate}}
+
+            </button>
+            <!--  *ngIf="Permissions.HasSaveCustomerPaymentProfile === 'Allowed'"  -->
+            <button class="btn btn-success" id="payButton" (click)="saveCardDetails()" appBusyLoader>
+              {{ 'TRANSLATE.PAYMENT_TEMPLATE_BUTTON_TEXT_SUBMIT' | translate }}
+            </button>
+            <!-- <button class="btn btn-default" (click)="Cancel()" type="button" appBusyLoader>
+              {{ 'TRANSLATE.PAYMENT_TEMPLATE_BUTTON_TEXT_CANCEL' | translate }}
+            </button> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- JAVASCRIPT FRAME-BREAKER CODE TO PROVIDE PROTECTION AGAINST IFRAME CLICK-JACKING -->
+    <script type="text/javascript">
+
+      if (self === top) {
+        var antiClickjack = document.getElementById("antiClickjack");
+        antiClickjack.parentNode.removeChild(antiClickjack);
+      } else {
+        top.location = self.location;
+      }
+
+      PaymentSession.configure({
+        fields: {
+          // ATTACH HOSTED FIELDS TO YOUR PAYMENT PAGE FOR A CREDIT CARD
+          card: {
+            number: "#card-number",
+            securityCode: "#security-code",
+            expiryMonth: "#expiry-month",
+            expiryYear: "#expiry-year",
+            nameOnCard: "#cardholder-name"
+          }
+        },
+        //SPECIFY YOUR MITIGATION OPTION HERE
+        frameEmbeddingMitigation: ["javascript"],
+        callbacks: {
+          initialized: function (response) {
+            // HANDLE INITIALIZATION RESPONSE
+          },
+          formSessionUpdate: function (response) {
+            // HANDLE RESPONSE FOR UPDATE SESSION
+
+            if (response.status) {
+              if ("ok" === response.status) {
+                console.log("Session updated with data: " + response.session.id);
+
+                //Calling Angularjs function in text/javascript
+                var scope = angular.element(document.getElementById("MCBPaymentForm")).scope();
+                scope.Validate3DSToken(response);
+
+                //check if the security code was provided by the user
+                if (response.sourceOfFunds.provided.card.securityCode) {
+                  console.log("Security code was provided.");
+                }
+
+                //check if the user entered a Mastercard credit card
+                if (response.sourceOfFunds.provided.card.scheme == 'MASTERCARD') {
+                  console.log("The user entered a Mastercard credit card.")
+                }
+              } else if ("fields_in_error" === response.status) {
+
+                var errorMessage = "";
+                console.log("Session update failed with field errors.");
+                if (response.errors.cardNumber) {
+                  errorMessage = "Card number invalid or missing.";
+                }
+                if (response.errors.expiryYear) {
+                  errorMessage = "Expiry year invalid or missing.";
+                }
+                if (response.errors.expiryMonth) {
+                  errorMessage = "Expiry month invalid or missing.";
+                }
+                if (response.errors.securityCode) {
+                  errorMessage = "Security code invalid.";
+                }
+
+                var scope = angular.element(document.getElementById("MCBPaymentForm")).scope();
+
+                scope.ErrorDetails(errorMessage);
+              } else if ("request_timeout" == response.status) {
+
+                console.log("Session update failed with request timeout: " + response.errors.message);
+
+                var scope = angular.element(document.getElementById("MCBPaymentForm")).scope();
+                scope.ErrorDetails("Session update failed with request timeout: " + response.errors.message);
+              } else if ("system_error" == response.status) {
+
+                console.log("Session update failed with system error: " + response.errors.message);
+                var scope = angular.element(document.getElementById("MCBPaymentForm")).scope();
+                scope.ErrorDetails("Session update failed with system error: " + response.errors.message);
+              }
+            } else {
+              console.log("Session update failed: " + response);
+              var scope = angular.element(document.getElementById("MCBPaymentForm")).scope();
+              scope.ErrorDetails("Session update failed: " + response);
+            }
+          }
+        },
+        interaction: {
+          displayControl: {
+            formatCard: "EMBOSSED",
+            invalidFieldCharacters: "REJECT"
+          }
+        }
+      });
+
+      function saveCardDetails() {
+        // UPDATE THE SESSION WITH THE INPUT FROM HOSTED FIELDS
+        PaymentSession.updateSessionFromForm('card');
+      }
+    </script>
+    <!-- Verification Form -->
+    <div id="MCBVerificationForm" *ngIf="currentPage === 'VALIDATE'">
+      <iframe [src]="safeUrl" width="100%" height="550px" frameborder="0"></iframe>
+    </div>
+  </div>
+</div>

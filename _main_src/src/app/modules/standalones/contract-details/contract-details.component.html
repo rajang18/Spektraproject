@@ -1,0 +1,41 @@
+<ng-template #maxValue let-data="adtData" let-row="captureEvents">
+    <span>
+        {{(data.MaxValue === null) ? "": data.MaxValue}}
+    </span>
+</ng-template>
+<ng-template #salePrice let-data="adtData" let-row="captureEvents">
+    <div>
+        <span *ngIf="data.BillingTypeName === 'Price'">{{data.SalePrice | CurrencyFilter}}</span>
+        <span *ngIf="data.BillingTypeName === 'Percentage'">{{data.SalePrice}}%</span>
+    </div>
+</ng-template>
+<div class="modal-dialog m-0 modal-dialog m-0-centered w-100">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>{{'TRANSLATE.PLANS_MANAGE_CONTRACT_DETAILS_POPUP_HEADER_TEXT' |
+                translate}}
+            </h2>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <div class="container-fluid">
+                <h5><strong>{{'TRANSLATE.PLANS_MANAGE_CONTRACT_DETAILS_POPUP_TABLE_HEADER_SLABDATA'|translate}}</strong></h5>
+                @if(!!pricingSlabsDatatableConfig) {
+                <app-c3-table [reload]="reloadEvent" [datatableConfig]="pricingSlabsDatatableConfig" [searchFilter]="false" [isPaginationHide]="false">
+                </app-c3-table>
+                }
+            </div>
+            <div class="mb-3"></div>
+            <div class="container-fluid">
+                <h5><strong>{{'TRANSLATE.PLANS_MANAGE_CONTRACT_DETAILS_TABLE_HEADER_AVAILABILITY'|translate}}</strong></h5>
+                @if(!!slabProductsDatatableConfig) {
+                <app-c3-table [reload]="reloadEvent" [datatableConfig]="slabProductsDatatableConfig" [searchFilter]="false" [isPaginationHide]="false">
+                </app-c3-table>
+                }
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeModalPopup()"
+                tabindex="-1">{{'TRANSLATE.NCE_PROMOTIONS_POPUP_CLOSE' | translate}}</button>
+        </div>
+    </div>
+</div>

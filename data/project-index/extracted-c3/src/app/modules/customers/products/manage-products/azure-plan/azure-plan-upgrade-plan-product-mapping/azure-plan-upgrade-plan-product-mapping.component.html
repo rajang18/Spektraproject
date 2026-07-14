@@ -1,0 +1,50 @@
+<div class="modal-dialog m-0 modal-dialog m-0-centered w-100">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title">
+                <span translate="TRANSLATE.UPGRADE_SYNC_PUPUP_TITLE"></span>
+            </h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="cancel()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+            </div>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <table class="table table-striped table-bordered table-hover table-checkable">
+                <thead>
+                    <tr>
+                        <th class="text-center col-md-4"><span
+                                translate="TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_PROVIDER_PRODUCT_NAME"></span>
+                        </th>
+                        <th class="text-center col-md-8"><span
+                                translate="TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_MATCHING_PRODUCTS"></span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <span translate="TRANSLATE.AZURE_UPGRADE_AZURE_PLAN_TEXT"></span>
+                        </td>
+                        <td class="col-md-8">
+                            <ng-select [(ngModel)]="offer" [items]="planProducts" bindLabel="Name"
+                                bindValue="PlanProductId"
+                                placeholder="{{'TRANSLATE.SELECT_DEFAULT_OPTION_SELECT' | translate}}" [required]="true"
+                                name="PlanProductName">
+                                <ng-template ng-option-tmp let-item="item">
+                                    <div>{{item.Name}}</div>
+                                    <div><small> Plan: <span>{{item.PlanName}}</span> </small></div>
+                                </ng-template>
+                            </ng-select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-transparent btn-success tooltips" [disabled]="!offer" (click)="proceed()"><span
+                    translate="TRANSLATE.BTN_TEXT_FIX" appBusyLoader></span></button>
+            <button class="btn btn-info" type="button" (click)="cancel()" appBusyLoader><span
+                    translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span></button>
+        </div>
+    </div>
+</div>

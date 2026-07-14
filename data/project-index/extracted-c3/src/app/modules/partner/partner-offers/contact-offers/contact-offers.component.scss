@@ -1,0 +1,14 @@
+select:disabled,
+select[disabled]
+{
+cursor:not-allowed !important;
+}
+
+.multiple-select-choice {
+    padding-left: 20px;
+}
+
+
+.nohtmltitle[title]{
+    display: none;
+}

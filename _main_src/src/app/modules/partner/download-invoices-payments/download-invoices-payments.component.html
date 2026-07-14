@@ -1,0 +1,212 @@
+<ng-template #actionHeader>
+  <div class="d-flex justify-content-between">
+    <button type="button" class="btn btn-sm fw-semibold btn-primary" (click)="BackToRevenueAndCostSummary()">
+      <i class="ki-outline ki-to-left fs-2"></i>
+      <span>{{'TRANSLATE.INVOICE_IMPORT_VIEW_BUTTON_BACK_TO_REVENUE_AND_COST_SUMMERY' | translate}}</span>
+    </button>
+  </div>
+</ng-template>
+<div class="card">
+  <!-- begin::Header -->
+  <div class="m-10 d-flex align-items-center justify-content-between">
+    <div class="d-flex">
+      <ul class="nav nav-stretch nav-line-tabs fw-bold border-transparent flex-nowrap" role="tablist">
+        <li class="button" role="presentation">
+          <a class="ms-2 btn btn-sm fw-bold btn-light-primary text-end" id="InvoiceLineItems"
+            (click)="toggleView(true,'InvoiceLineItems')" data-toggle="tab" role="tab" aria-controls="tab-content1"
+            aria-selected="true" onclick="IsPageViewDownloadInvoice = true && reportType ==='InvoiceLineItems'"
+            [ngClass]="{'bg-primary text-white': activeTab === 'InvoiceLineItems', 'btn-light-primary': activeTab !== 'InvoiceLineItems'}">
+            <span translate="TRANSLATE.BTN_INVOICE_LINE_ITEMS"></span></a>
+        </li>
+        <li class="button" role="presentation">
+          <a class="ms-2 btn btn-sm fw-bold btn-light-primary text-end" id="InvoicePayments"
+            (click)="toggleView(false,'InvoicePayments')" data-toggle="tab" role="tab" aria-controls="tab-content2"
+            aria-selected="false" onclick="IsPageViewDownloadInvoice = false && reportType ==='InvoicePayments'"
+            [ngClass]="{'bg-primary text-white': activeTab === 'InvoicePayments', 'btn-light-primary': activeTab !== 'InvoicePayments'}">
+            <span translate="TRANSLATE.BTN_INVOICE_PAYMENTS"></span></a>
+        </li>
+      </ul>
+    </div>
+    
+    <div class="col-md-3">
+      <ng-select [(ngModel)]="billingPeriodId" name="selectedBillingPeriods" (change)="ReloadTableData()">
+        <ng-option *ngFor="let option of BillingPeriods; let i = index" [value]="option.BillingPeriodId">
+          {{ option.BillingStartDate | c3Date }} - {{ option.BillingEndDate | c3Date }} ({{ option.BillingId }})
+        </ng-option>
+      </ng-select>
+    </div>
+  </div>
+  
+  <div class="ms-12 mt-3">
+    <h4 *ngIf="isInvoiceLineItems" translate="TRANSLATE.INVOICE_IMPORT_VIEW_PORTLET_HEADER_DOWNLOAD_INVOICE"></h4>
+    <h4 *ngIf="!isInvoiceLineItems" translate="TRANSLATE.INVOICE_PAYMENTS_IMPORT_VIEW_PORTLET_HEADER_DOWNLOAD_INVOICE">
+    </h4>
+  </div>
+  <div class="card-body m-4">
+    <ng-template #preTaxAmount let-data="adtData" let-emitter="captureEvents">
+      {{ data.PreTaxAmount | CurrencyFilter : data.CurrencySymbol : data.CurrencyDecimalPlaces :
+      data.CurrencyThousandSeperator : data.CurrencyDecimalSeperator }}
+    </ng-template>
+    @if(!isLoading){
+    <ng-container *ngIf="!!datatableConfig">
+      <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" [selection]="true"
+        (onSelection)="handleSelection($event)" (selectAllchecked)="getAllCustomers($event)">
+      </app-c3-table>
+    </ng-container>
+    }
+    @if(hasEnabledXeroAppIntegration === 'true' && hasUploadInvoicesToXero === 'Allowed' && IsPageViewInvoiceLineItem){
+    <div class="row">
+      <div class="col-md-12">
+        <div
+          class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6 mt-5">
+          <div class="">
+            <div class="col-md-12">
+              <h6>
+                <span [innerHTML]="'TRANSLATE.XERO_CONSENT_VIEW_INSTRUCTIONS_HEADING' | translate"></span>
+              </h6>
+            </div>
+            <div class="col-md-12">
+              <ul>
+                <li>
+                  <span translate="TRANSLATE.XERO_CONSENT_VIEW_INSTRUCTIONS_1"></span>
+                </li>
+                <li>
+                  <span translate="TRANSLATE.CLICK_TEXT_FOR_EXTERNAL_LINK"></span>
+                  <a class="text-primary ms-1" role="button" id="customerConsentLink"
+                    (click)="linkToProvideXeroConsentClicked()" target="_blank">
+                    <span translate="TRANSLATE.HYPERLINK_POPUP_TEXT_FOR_PROVIDING_CONSENT"></span>
+                  </a>
+                  <span translate="TRANSLATE.XERO_CONSENT_VIEW_INSTRUCTIONS_2"></span>.
+                </li>
+                <li>
+                  <span [innerHTML]="'TRANSLATE.XERO_CONSENT_VIEW_INSTRUCTIONS_3' | translate"></span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <div class="form-group ">
+          <div
+            class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6 mt-5 ">
+            <div class="">
+              <div class="col-md-12">
+                <a class="btn btn-primary btn-sm h-35px" busy
+                  busy-when-url="api/xeroconsent/CheckValidityOfExistingRefreshToken" busy-add-classes="disabled"
+                  ng-if="true" not-busy-remove-classes="disabled" (click)="CheckValidityOfXeroRefreshToken()">
+                  {{'TRANSLATE.VERIFY_TOKEN_VALIDITY_BUTTON_TEXT' | translate}}
+                </a>&nbsp;
+                <span translate="TRANSLATE.XERO_CONSENT_VIEW_INSTRUCTIONS_4"></span>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+    @if(hasEnabledQuickBooksAppIntegration === 'true' && hasUploadInvoicesToQuickBooks === 'Allowed' &&
+    IsPageViewInvoiceLineItem){
+    <div class="row">
+      <div class="">
+        <div class="m-heading-1 border-green m-bordered">
+          <div
+            class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6 mt-5 ">
+            <div class="">
+              <div class="card-title mb-7">
+                <h6 class="card-label">
+                  <span [innerHTML]="'TRANSLATE.QUICKBOOKS_CONSENT_VIEW_INSTRUCTIONS_HEADING' | translate"></span>
+                </h6>
+              </div>
+              <div class="col-md-12 mt-2">
+                <ul>
+                  <li>
+                    <span translate="TRANSLATE.QUICKBOOKS_CONSENT_VIEW_INSTRUCTIONS_1"></span>
+                  </li>
+                  <li>
+                    <span translate="TRANSLATE.CLICK_TEXT_FOR_EXTERNAL_LINK"></span>
+                    <a class="text-primary ms-1" role="button" id="customerConsentLink"
+                      (click)="linkToProvideQuickBooksConsentClicked()" target="_blank">
+                      <span translate="TRANSLATE.HYPERLINK_POPUP_TEXT_FOR_PROVIDING_CONSENT"></span>
+                    </a>
+                    <span translate="TRANSLATE.QUICKBOOKS_CONSENT_VIEW_INSTRUCTIONS_2"></span>.
+                  </li>
+                  <li>
+                    <span [innerHTML]="'TRANSLATE.QUICKBOOKS_CONSENT_VIEW_INSTRUCTIONS_3' | translate"></span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <div class="form-group ">
+          <div
+            class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6 mt-5 ">
+            <div class="m-heading-1 border-green m-bordered">
+              <div class="">
+                <a class="btn btn-primary btn-sm h-35px" busy
+                  busy-when-url="api/uploadInvoicesToExternalService/CheckValidityOfExistingQuickBooksRefreshToken"
+                  busy-add-classes="disabled" ng-if="true" not-busy-remove-classes="disabled"
+                  (click)="CheckValidityOfQuickBooksRefreshToken()">
+                  {{'TRANSLATE.VERIFY_TOKEN_VALIDITY_BUTTON_TEXT' | translate}}
+                </a>&nbsp;
+                <span translate="TRANSLATE.QUICKBOOKS_CONSENT_VIEW_INSTRUCTIONS_4"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+    <div>
+      <div class="card-body">
+        <div class="d-flex justify-content-end">
+          @if((hasEnabledXeroAppIntegration === 'true' && hasDownloadPostInvoicesToExternalServicesSummary ===
+          'Allowed')){
+          <div class="d-flex justify-content-end">
+            <a class="ms-2 btn btn-sm fw-bold btn-primary text-end"
+              (click)="DownloadPostInvoicesToExternalServicesSummaryReport()">
+              <span class="ps-2">{{'TRANSLATE.BUTTON_TEXT_DOWNLOAD_EXTERNAL_ACCOUNTING_SERVICES_POST_LOG_SUMMARY' |
+                translate}}</span>
+            </a>
+          </div>
+          }
+          @if((hasEnabledXeroAppIntegration === 'true' && hasUploadInvoicesToXero === 'Allowed' &&
+          IsPageViewInvoiceLineItem && customerDetails.length > 0)){
+          <div class="d-flex justify-content-end">
+            <a class="ms-2 btn btn-sm fw-bold btn-primary text-end" (click)="UploadInvoicesToXeroApp()">
+              <span class="ps-2">{{'TRANSLATE.BUTTON_TEXT_UPLOAD_TO_XERO' | translate}}</span>
+            </a>
+          </div>
+          }
+          @if((hasEnabledQuickBooksAppIntegration === 'true' && hasUploadInvoicesToQuickBooks === 'Allowed' &&
+          IsPageViewInvoiceLineItem && customerDetails.length > 0)){
+          <div class="d-flex justify-content-end">
+            <a class="ms-2 btn btn-sm fw-bold btn-primary text-end" (click)="UploadInvoicesToQuickBooksApp()">
+              <span class="ps-2">{{'TRANSLATE.BUTTON_TEXT_UPLOAD_TO_QUICKBOOKS_ONLINE' | translate}}</span>
+            </a>
+          </div>
+          }
+          @if((hasEnabledXeroAppIntegration === 'true' || hasEnabledQuickBooksAppIntegration === 'true') &&
+          (hasGetExternalServicePostLogs === 'Allowed' && IsPageViewInvoiceLineItem && customerDetails.length > 0)){
+          <div class="d-flex justify-content-end">
+            <a class="ms-2 btn btn-sm fw-bold btn-primary text-end" (click)="GoToExternalServicePostLogs()">
+              <span class="ps-2">{{'TRANSLATE.BUTTON_TEXT_VIEW_EXTERNAL_SERVICE_POST_LOGS' | translate}}</span>
+            </a>
+          </div>
+          }
+          @if((customerDetails.length > 0)){
+          <div class="d-flex justify-content-end">
+            <a class="ms-2 btn btn-sm fw-bold btn-primary text-end" (click)="DownloadInvoices()">
+              <span class="ps-2">{{'TRANSLATE.DOWNLOAD_INVOICES_AND_PAYMENTS_BUTTON_TEXT_DOWNLOAD_CSV' | translate}}</span>
+            </a>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

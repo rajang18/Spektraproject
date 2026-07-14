@@ -1,0 +1,7 @@
+::ng-deep {
+    app-customer-role-popup {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}

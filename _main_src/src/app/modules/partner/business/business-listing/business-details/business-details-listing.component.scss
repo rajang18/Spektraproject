@@ -1,0 +1,44 @@
+::ng-deep{
+    app-business-details-listing{
+
+        .w-25-per{
+            width: 25%;
+            max-width: 285px;
+        }
+        .w-17-per{
+            width: 17%;
+        }
+        .w-18-per{
+            width: 18%;
+        }
+        .w-17-3-per{
+            width: 17.3%;
+        }
+        .w-12-5-per{
+            width: 12.5%;
+        }
+        .table-buisness.position-relative{
+            left: 2.5%;
+            width: 96%;
+        }
+        .text-end.pr-10{
+            padding-right: 10%;
+        }
+        .dt-container.dt-bootstrap5.dt-empty-footer > .row:last-child {
+            display: none;
+          }
+        table{
+            thead{
+                display: none !important;
+            }
+        }
+        .dataTable {
+            width: 100% !important;
+          }
+          
+          th, td {
+            white-space: nowrap;
+          }
+    }
+      
+}

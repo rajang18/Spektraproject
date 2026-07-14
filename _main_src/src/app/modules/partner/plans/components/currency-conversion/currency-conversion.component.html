@@ -1,0 +1,89 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="backToPlan()">
+            <i class="ki-outline ki-to-left fs-2"></i> <span translate="TRANSLATE.PLAN_MANAGE_ADD_BUTTON_TEXT_BACK_TO_PLAN"></span></button>
+    </div>
+  </ng-template>
+
+  @if(pageMode == "DefineTargetCurrency"){
+    <div>
+    <!-- @if(frmPlanProductCurrency){ -->
+        <div class="form">
+        <div class="col-md-12">
+            <div class="card card-custom">                    
+                <div class="card-body form col-md-12">
+                    @if(targetCurrencyCount!== null && targetCurrencyCount === 0) {
+                        <div>
+                            <div class="text-center padding-bottom-50 font-lg">
+                                <span translate="TRANSLATE.PARTNER_PLAN_PRODUCT_CURRENCY_CONVERSION_NO_TARGET_CURRENCY_MESSAGE" ></span>
+                            </div>
+                        </div>
+                    }
+                    @if(targetCurrencyCount!== null && targetCurrencyCount > 0) {
+                        
+                    <div class="planProductCurrency">
+                        <div class="row mt-4">
+                            <label class="col-md-2 fw-semibold fs-6 mb-sm-15">
+                                <span translate="TRANSLATE.PARTNER_PLAN_PRODUCT_CURRENCY_CONVERSION_LABEL_TEXT_NAME"></span>
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-md-6">
+                                <strong>{{planInfo.Name}}</strong>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-md-2 fw-semibold fs-6 mb-2 mt-2">
+                                <span translate="TRANSLATE.PARTNER_PLAN_PRODUCT_CURRENCY_CONVERSION_LABEL_TEXT_PLAN_CURRENCY_CODE"></span> 
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-md-6">
+                                <select class="form-select form-select-sm fw-bold input-disable" [(ngModel)]="planInfo.CurrencyCode" disabled>
+                                    @for (item of currencyCodes; track $index) {
+                                        <option [value]="item.CurrencyCode">{{item.CurrencyCode}}</option>
+                                    }
+                                    
+                                </select>
+                                <!-- <span *ngIf="( vm.frmPlanProductCurrency.$submitted || vm.frmPlanProductCurrency.SourceCurrencyCode.$dirty) &amp;&amp; vm.frmPlanProductCurrency.SourceCurrencyCode.$error.required" class="text-danger"><span translate="TRANSLATE.REQUIRED_FIELD_TEXT"></span></span> -->
+                            </div>
+                        </div>
+                        <div class="row mt-6" ng-class="{'has-error':( vm.frmPlanProductCurrency.$submitted || vm.frmPlanProductCurrency.TargetCurrencyCode.$dirty) &amp;&amp; vm.frmPlanProductCurrency.TargetCurrencyCode.$error.required}">
+                            <label class="col-md-2 fw-semibold fs-6 mb-2 mt-2">
+                                <span translate="TRANSLATE.PARTNER_PLAN_PRODUCT_CURRENCY_CONVERSION_LABEL_TEXT_TARGET_CURRENCY_CODE"></span> 
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-md-6">
+                                <select class="form-select form-select-sm fw-bold" required
+                                        [(ngModel)]="planTargetCurrency"
+                                        (ngModelChange)="onCurrencyChange($event)">
+                                    <option [value]="null" readonly [selected]="planTargetCurrency == null">
+                                        <span translate="TRANSLATE.PARTNE_PLAN_DETAILS_LABEL_TEXT_SELECT"></span>
+                                    </option>
+                                    <option *ngFor="let item of targetCurrencyCode" [ngValue]="item.TargetCurrency">
+                                        {{item.TargetCurrency}}
+                                    </option>
+                                </select>
+                                <div *ngIf="(planTargetCurrency=='null' || planTargetCurrency==null) && touched " class="text-danger">
+                                    <span translate="TRANSLATE.REQUIRED_FIELD_TEXT"></span>
+                                </div>
+                            </div>                        
+                        </div>
+                        <div class="form-actions text-right mt-7">
+                            <a class="btn btn-sm fw-bold btn-primary"  (click)="loadOffers()">
+                                <span translate="TRANSLATE.BUTTON_TEXT_LOAD_OFFERS"></span>
+                            </a>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+        </div>
+    <!-- } -->
+    </div>
+  }
+
+  @if(pageMode == "DefinePlanprices"){
+    <app-currency-conversion-list [planId]="planId" [targetCurrencyCode]="targetCurrencyCode" [planInfo]="planInfo" [planTargetCurrency]="planTargetCurrency" [currencyConvertRate]="currencyConvertRate"></app-currency-conversion-list> 
+  }
+
+  

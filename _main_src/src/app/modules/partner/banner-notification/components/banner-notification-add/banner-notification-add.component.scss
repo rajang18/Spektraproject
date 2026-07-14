@@ -1,0 +1,15 @@
+.small-checkbox {
+    width: 15px;
+    height: 15px;
+}
+
+::ng-deep{
+    app-banner-notification-add{
+        .note-editing-area{
+            overflow-y: auto;
+        }
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}

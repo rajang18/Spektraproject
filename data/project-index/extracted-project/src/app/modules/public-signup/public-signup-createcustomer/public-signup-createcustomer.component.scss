@@ -1,0 +1,21 @@
+.border-primary-dashed {
+    border: var(--bs-primary) 1px dashed;
+  }
+
+.header{
+  width: 100%;
+}
+::ng-deep {
+  app-public-signup-createcustomer {
+    .margin-top-80{
+      margin-top: 80px;
+    }
+      .dropdown-toggle::after {
+          display: none !important;
+      }
+  }
+}
+
+.hand-cursor-class:hover {
+  cursor: pointer;
+}

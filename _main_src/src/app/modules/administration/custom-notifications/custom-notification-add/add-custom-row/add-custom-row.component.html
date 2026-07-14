@@ -1,0 +1,71 @@
+<ng-container [formGroup]="custom">
+    <tr>
+        <td>
+            <select class="form-select form-select-solid form-select-lg fw-bold" formControlName="eventId" (change)="oneventSelection()">
+                @for(type of customNotificationEvents; track $index){
+                    <option [value]="type?.ID" ><span class="fw-bold">{{'TRANSLATE.' + type?.Description | translate}}</span></option>
+    
+                }
+            </select>
+            @if(custom.get('eventId')?.errors?.required &&
+            custom.get('eventId').touched){
+            <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+            }
+        </td>
+        <td>
+            @if (this.custom.value.eventId) {
+                <select class="form-select form-select-solid form-select-lg fw-bold"  formControlName="eventEntity" (change)="onEntitySelection()"
+                formControlName="eventEntity"> 
+                @for(temp of this.allEntities; track $index){
+                <option [value]="temp.EntityID" >{{'TRANSLATE.' + temp.EntityDescription | translate}}</option>
+                }  
+            </select>
+            } 
+            @if(custom.get('eventEntity')?.errors?.required &&
+            custom.get('eventEntity').touched){
+            <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+            }
+        </td>
+        <td>
+            @if (this.custom.get('eventEntity').value) {
+            @if (this.selectedEntitiesName === 'ProductVariant') {
+            <a type="button" class="btn-primary ms-3" (click)="getTaggedEntitiesPopup()" ngbTooltip="{{'TRANSLATE.CUSTOM_NOTIFICATION_SELECT_PRODUCTS_TOOLTIP' | translate}}">{{'TRANSLATE.CUSTOM_NOTIFICATION_SELECT' | translate}}
+            </a>
+            <ul>
+                <li *ngIf="this.selectedProductCount > 0">{{this.selectedProductCount}}&nbsp;{{'TRANSLATE.LABEL_DESC_SELECTED_PRODUCT_VARIANTS' | translate}}</li>
+            </ul>
+            }
+            @if (this.selectedEntitiesName === 'PlanProduct') {
+                <a type="button" class="btn-primary ms-3" (click)="getTaggedEntitiesPopup()"ngbTooltip="{{'TRANSLATE.CUSTOM_NOTIFICATION_SELECT_PRODUCTS_TOOLTIP' | translate}}">{{'TRANSLATE.CUSTOM_NOTIFICATION_SELECT' | translate}}</a>
+                <ul>
+                    <li *ngIf="this.selectedPlanCount">{{this.selectedPlanCount}}&nbsp;{{'TRANSLATE.LABEL_DESC_SELECTED_PLANS' | translate}}</li>
+                    <li *ngIf="this.selectedProductCount > 0">{{this.selectedProductCount}}&nbsp;{{'TRANSLATE.LABEL_DESC_SELECTED_PLAN_PRODUCTS' | translate}}</li>
+                </ul>
+                }
+            }
+        </td>
+        <td>
+            <div class="d-flex">
+                <button  ngbTooltip="{{'TRANSLATE.PROFILE_USER_BUTTON_TOOLTIP_TEXT_CANCEL' | translate}}" class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+                     [ngClass]="toolbarButtonHeightClass" (click)="onCancel()">
+                    <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg h-20px w-20px">
+                        <i class="ki-outline ki-cross fs-1"></i>
+                    </span>
+                </button>
+                <!-- <button *ngIf="this.data.mode != 'edit'" ngbTooltip="{{'TRANSLATE.PROFILE_USER_BUTTON_TOOLTIP_TEXT_DELETE' | translate}}" class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+                [ngClass]="toolbarButtonHeightClass" (click)="onCancel()">
+                <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg h-20px w-20px">
+                    <i class="ki-duotone ki-trash">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                        <span class="path4"></span>
+                        <span class="path5"></span>
+                    </i>
+                </span>
+            </button> -->
+            </div>
+        </td>
+    </tr>
+   
+</ng-container>

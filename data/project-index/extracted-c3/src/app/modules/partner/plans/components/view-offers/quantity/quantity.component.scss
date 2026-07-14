@@ -1,0 +1,15 @@
+.filter-dropdown {
+    position: relative;
+    height: calc(75vh - (var(--bs-app-footer-height) + var(--bs-app-header-height) + var(--bs-app-toolbar-height) + 100px));
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.manage-screen-cards {
+    position: relative;
+    height: calc(78vh - (var(--bs-app-footer-height) + var(--bs-app-header-height) + var(--bs-app-toolbar-height) + 100px));
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 10px;
+    margin:10px 0px;
+}

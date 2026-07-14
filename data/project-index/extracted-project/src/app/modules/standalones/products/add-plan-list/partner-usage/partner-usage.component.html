@@ -1,0 +1,157 @@
+<div class="card card-border"
+    style="margin-bottom: 0px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px;padding-right: 10px;">
+    <div class="card-body p-3">
+        <div class="col-md-12">
+            <div class="row">
+                <!-- <div class="ml-7"
+                        *ngIf="product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_UNIT"></div>
+                    <div class="ml-3"
+                        *ngIf="product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PERCENTAGE">
+                    </div> -->
+                <div class="col-md-4">
+                    <div class="col-md-12">
+                        <a class=" ms-1" (click)="collapse = !collapse" style="cursor: pointer;">
+                            <!--  TODO: CJ:Fix-->
+
+                            <i *ngIf="product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_METERED_BILLING && !collapse"
+                                class="fa fa-plus fa-sm text-primary me-1"></i>
+                            <i *ngIf="product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_METERED_BILLING && collapse"
+                                class="fa fa-minus fa-sm text-primary me-1"></i>
+                        </a>
+                        <strong class=" ms-1">{{product.Name}}</strong>
+                        <br />
+                        <span
+                            *ngIf="product.Validity  && product.Validity !== null && product.Validity !== '' && product.ValidityType == 'Month(s)'"
+                            class="label label-warning font-weight-bold label-inline text-white badge bg-warning"
+                            aria-hidden="true"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                            {{product.Validity}} {{(product.Validity == 1? (product.ValidityType === 'Month(s)'?
+                            'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                            'TRANSLATE.TERM_DURATION_DESC_YEARS') | translate }} </span>
+                        <span *ngIf="product.ValidityType === 'Year(s)' || product.ValidityType === 'Year'"
+                            [ngClass]="{'labelcolor':product.BillingCycleName == 'Monthly','TermLabelColor': product.BillingCycleName == 'Annual'}"
+                            class="label label-dark font-weight-bold label-inline text-white badge bg-warning"
+                            aria-hidden="true"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                            {{product.Validity}} {{(product.Validity == 1? (product.ValidityType === 'Month(s)'?
+                            'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                            'TRANSLATE.TERM_DURATION_DESC_YEARS') | translate }} </span>
+                        <span class="label fw-bold label-inline text-white badge ms-md-2" [ngClass]="{
+                            'bg-warning': product.BillingCycleName?.toLowerCase() === 'monthly',
+                            'bg-success': product.BillingCycleName?.toLowerCase() === 'annual',
+                            'bg-dark': product.BillingCycleName?.toLowerCase() === 'triennial',
+                            'bg-info': product.BillingCycleName?.toLowerCase() === 'onetime'
+                            }"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCTS_BILLING_CYCLE' | translate}}">
+                            {{'TRANSLATE.'+product.BillingCycleDescriptionKey | translate}} </span>
+                        <span *ngIf="product.PlanProductMacroName != null"
+                            class="label label-light-warning font-weight-bold badge "
+                            ngbTooltip="{{'TRANSLATE.PLAN_MACRO_DETAILS_LABEL_TEXT' | translate}}">
+                            {{'TRANSLATE.'+product.PlanProductMacroName | translate}}<span
+                                *ngIf="product.PlanProductMacroValue != null && product.PlanProductMacroValue != 0 ">({{'TRANSLATE.'+product.PlanProductMacroValue
+                                | translate}})</span></span>
+
+                                <span *ngIf="product.SubCategoryName" [appPermission]="'GET_SUBCATEGORIES_PILLS'"
+                                    class="badge badge-danger font-weight-bold label-inline ms-md-1"
+                                    ngbTooltip="{{ 'TRANSLATE.PARTNER_CUSTOM_CATEGORY_FOR_SUBCATEGORY_TOOLTIP_PILL' | translate }}">
+                                    {{ product.SubCategoryName }}
+                                </span>
+                        <!--<span class="label label-light-danger font-weight-bold label-inline" ngbTooltip="{{'TRANSLATE.BILLING_TYPE_TOOLTIP' | translate}}"> {{product.BillingTypeName}} </span>-->
+                    </div>
+                </div>
+                <div class="col-md-2 text-end pe-10">
+                    <div *ngIf="product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_UNIT">
+                        <span>{{'TRANSLATE.LABEL_TEXT_RETAIL_PRICE' | translate}}</span>
+                        <br />
+                        <strong>{{product.ProviderSellingPrice | CurrencyFilter : product.CurrencySymbol :
+                            product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                            product.CurrencyDecimalSeperator
+                            }}</strong>
+                    </div>
+                    <div *ngIf="product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE">
+                        <span>{{'TRANSLATE.LABLE_TEXT_COST_TO_PARTNER' | translate}}</span>
+                        <br />
+                        <strong>{{product.PriceforPartner | CurrencyFilter : product.CurrencySymbol :
+                            product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                            product.CurrencyDecimalSeperator }}</strong>
+                    </div>
+                    <div *ngIf="product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE">
+                        <span>{{'TRANSLATE.LABEL_TEXT_RETAIL_PRICE' | translate}}</span>
+                        <br />
+                        <strong>{{product.ProviderSellingPrice | CurrencyFilter : product.CurrencySymbol :
+                            product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                            product.CurrencyDecimalSeperator
+                            }}</strong>
+                    </div>
+                </div>
+                <div class="col-md-2 text-start">
+                    <div *ngIf="product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_UNIT">
+                        <span>{{'TRANSLATE.LABEL_TEXT_BILLING_TYPE' | translate}}</span>
+                        <br />
+                        <strong>{{ 'TRANSLATE.'+product.BillingTypeDescriptionKey | translate }}</strong>
+                    </div>
+                    <div *ngIf="product.BillingTypeName.toLowerCase() !== cloudHubConstants.BILLING_TYPE_UNIT">
+                        <span>{{'TRANSLATE.LABEL_TEXT_BILLING_TYPE' | translate}}</span>
+                        <br />
+                        <strong>{{'TRANSLATE.'+ product.BillingTypeDescriptionKey | translate }}</strong>
+                    </div>
+                </div>
+                <div *ngIf="product.BillingTypeName.toLowerCase() !== cloudHubConstants.BILLING_TYPE_PRICE"
+                    class="col-md-2">&nbsp;</div>
+                <div class="col-md-2 text-end">
+                    <div class="actions" *ngIf="product.Settings.IsAddon == 'false'" [appPermission]="'SAVE_PLAN'"
+                        [hidden]="!showAddButton">
+                        <div>
+                            <a (click)="callOnAction(product, 'addtoplan');" class="btn btn-primary btn-sm"
+                                [hidden]="!showAddButton">
+                                {{'TRANSLATE.BUTTON_TEXT_ADD' | translate}}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div *ngIf="(product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_METERED_BILLING) && (product.Slabs != null && product.Slabs.length > 0) && collapse"
+            class="row">
+            <div class="table-responsive-xxl w-1000px">
+                <table class="table table-bordered">
+                    <thead class="badge-light">
+                        <tr>
+                            <th>
+                                <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_DISPLAY_NAME"></span>
+                            </th>
+                            <th>
+                                <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_MINVALUE"></span>
+                            </th>
+                            <th>
+                                <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_MAXVALUE"></span>
+                            </th>
+                            <th>
+                                <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_COST_PRICE"></span>
+                            </th>
+                            <th>
+                                <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_SELLING_PRICE_MODAL"></span>
+                            </th>
+                            <th>
+                                <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_TYPE"></span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(row of product.Slabs; track row.id){
+                        <tr>
+                            <td>{{row.DisplayName}}</td>
+                            <td class="text-end">{{row.MinValue}}</td>
+                            <td class="text-end">{{row.MaxValue}}</td>
+                            <td class="text-end">{{row.CostToPartner}}</td>
+                            <td class="text-end">{{row.SalePrice}}</td>
+                            <td>{{row.BillingTypeName}}</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

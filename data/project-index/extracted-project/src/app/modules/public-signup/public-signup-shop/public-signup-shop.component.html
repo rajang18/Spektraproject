@@ -1,0 +1,517 @@
+<div class="container-fluid customer-container filters-card">
+    <div class="actions d-flex justify-content-space-between pt-4">
+        <div class="d-flex gap-3 flex-wrap">
+            @if(providers?.length > 0){
+            <div ngbDropdown class="d-flex align-items-center dropdown mt-0">
+                <button translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_PROVIDERS" class="btn btn-sm"
+                    id="dropdownBasic1"
+                    [ngClass]="{'btn-gray':!providerSelection || providerSelection?.length == 0, 'btn-primary': providerSelection?.length > 0}"
+                    ngbDropdownToggle appBusyLoader>
+                    <span *ngIf="providerSelection?.length > 0">&nbsp;({{providerSelection.length}})</span>
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownBasic1" (click)="stayOpen = true"
+                    class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-2 w-170px fs-base">
+                    @for (provider of providers; track $index) {
+                    <div class='menu-item my-0' ngbDropdownItem>
+                        <div class="input-group-with-checkbox ps-2">
+                            <label class="form-check d-flex gap-3">
+                                <input type="checkbox" class="form-check-input" value="{{provider.Name}}"
+                                    (click)="$event.stopPropagation();toggleProviderSelection(provider)"
+                                    [checked]="providerSelection.indexOf(provider) > -1" [disabled]="false">
+                                <span class="text-gray-500" translate="TRANSLATE.{{provider.Description}}"></span>
+                            </label>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+            @if(filteredCategories?.length > 0){
+            <div ngbDropdown class="d-flex align-items-center dropdown mt-0">
+                <button translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_CATEGORY" class="btn btn-sm"
+                    id="dropdownBasic1"
+                    [ngClass]="{'btn-gray':!categorySelection || categorySelection?.length == 0, 'btn-primary': categorySelection?.length > 0}"
+                    ngbDropdownToggle appBusyLoader>
+                    <span *ngIf="categorySelection?.length > 0">&nbsp;({{categorySelection.length}})</span>
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownBasic1" (click)="stayOpen = true"
+                    class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-2 w-250px fs-base">
+                    @for (category of filteredCategories; track $index) {
+                    <div class='menu-item my-0' ngbDropdownItem>
+                        <div class="input-group-with-checkbox ps-2">
+                            <label class="form-check d-flex gap-3">
+                                <input type="checkbox" class="form-check-input" value="{{category.Name}}"
+                                    (click)="$event.stopPropagation();toggleCategorySelection(category)"
+                                    [checked]="categorySelection.indexOf(category) > -1" [disabled]="false">
+                                <span class="text-gray-500"
+                                    translate="TRANSLATE.{{category.CategoryDescriptionKey}}"></span>
+                            </label>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+            @if(filteredProviderCategories?.length > 0){
+            <div ngbDropdown class="d-flex align-items-center dropdown mt-0">
+                <button translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_SERVICE_TYPES" class="btn btn-sm"
+                    id="dropdownBasic1"
+                    [ngClass]="{'btn-gray':!providerCategorySelection || providerCategorySelection?.length == 0, 'btn-primary': providerCategorySelection?.length > 0}"
+                    ngbDropdownToggle appBusyLoader>
+                    <span
+                        *ngIf="providerCategorySelection?.length > 0">&nbsp;({{providerCategorySelection.length}})</span>
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownBasic1" (click)="stayOpen = true"
+                    class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-2 w-275px fs-base">
+                    @for (providerCategory of filteredProviderCategories; track $index) {
+                    <div class='menu-item my-0' ngbDropdownItem>
+                        <div class="input-group-with-checkbox ps-2">
+                            <label class="form-check d-flex gap-3">
+                                <input type="checkbox" class="form-check-input"
+                                    value="{{providerCategory.ProviderCategoryName}}"
+                                    (click)="$event.stopPropagation();toggleProviderCategorySelection(providerCategory)"
+                                    [checked]="providerCategorySelection.indexOf(providerCategory) > -1"
+                                    [disabled]="false">
+                                <span class="text-gray-500">
+                                    {{providerCategory.ProviderCategoryName.split('-').length > 0 ?
+                                    providerCategory.ProviderCategoryName.split('-').join('- \n'):
+                                    (providerCategory.ProviderCategoryName|translate)}}
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+            @if (termDuration?.length > 0){
+            <div ngbDropdown class="d-flex align-items-center dropdown mt-0">
+                <button class="btn btn-sm"
+                    [ngClass]="{'btn-gray':!termDurationSelection || termDurationSelection?.length == 0, 'btn-primary': termDurationSelection?.length > 0}"
+                    translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_TERM_DURATION" id="dropdownBasic1"
+                    ngbDropdownToggle appBusyLoader>
+                    <span *ngIf="termDurationSelection?.length > 0">&nbsp;({{termDurationSelection.length}})</span>
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+                    class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-2 fs-base">
+                    @for (term of termDuration; track $index) {
+                    <div class='menu-item my-0' ngbDropdownItem>
+                        <div class="input-group-with-checkbox ps-2">
+                            <label class="form-check d-flex gap-3">
+                                <input type="checkbox" class="form-check-input" value="{{term}}"
+                                    (click)="$event.stopPropagation();toggleTermDurationSelection(term)"
+                                    [checked]="termDurationSelection.indexOf(term) > -1" [disabled]="false">
+                                <span class="text-gray-500">
+                                    {{term.Validity}} {{term.Validity == 1? (term.ValidityType === 'Month(s)'?
+                                    ('TRANSLATE.TERM_DURATION_DESC_MONTH'|translate) :
+                                    ('TRANSLATE.TERM_DURATION_DESC_YEAR'|translate)) :
+                                    ('TRANSLATE.TERM_DURATION_DESC_YEARS'|translate) }}
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+            @if (planBillingCycles?.length > 0){
+            <div ngbDropdown class="d-flex align-items-center dropdown mt-0">
+                <button translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_BILLING_CYCLES" class="btn btn-sm"
+                    id="dropdownBasic1" tittle="Customer Settings"
+                    [ngClass]="{'btn-gray':!billingCycleSelection || billingCycleSelection?.length == 0, 'btn-primary': billingCycleSelection?.length > 0}"
+                    ngbDropdownToggle appBusyLoader>
+                    <span *ngIf="billingCycleSelection?.length > 0">&nbsp;({{billingCycleSelection.length}})</span>
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+                    class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-2 fs-base">
+                    @for (billingCycle of planBillingCycles; track $index) {
+                    <div class='menu-item my-0' ngbDropdownItem>
+                        <div class="input-group-with-checkbox ps-2">
+                            <label class="form-check d-flex gap-3">
+                                <input type="checkbox" class="form-check-input" value="{{billingCycle.Name}}"
+                                    (click)="$event.stopPropagation();toggleBillingCycleSelection(billingCycle)"
+                                    [checked]="billingCycleSelection.indexOf(billingCycle) > -1" [disabled]="false">
+                                <span class="text-gray-500">
+                                    {{'TRANSLATE.'+billingCycle.Description | translate}}
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+            @if (billingTypes?.length > 0){
+            <div ngbDropdown class="d-flex align-items-center dropdown mt-0">
+                <button translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_BILLING_TYPES" class="btn btn-sm"
+                    id="dropdownBasic1"
+                    [ngClass]="{'btn-gray':!selectedBillingTypes || selectedBillingTypes?.length == 0, 'btn-primary': selectedBillingTypes?.length > 0}"
+                    ngbDropdownToggle appBusyLoader>
+                    <span *ngIf="selectedBillingTypes?.length > 0">&nbsp;({{selectedBillingTypes.length}})</span>
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+                    class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-2 fs-base w-225px">
+                    @for(billingType of billingTypes; track $index) {
+                    <div class='menu-item my-0' ngbDropdownItem>
+                        <div class="input-group-with-checkbox ps-2">
+                            <label class="form-check d-flex gap-3">
+                                <input type="checkbox" class="form-check-input" value="{{billingType.Name}}"
+                                    (click)="$event.stopPropagation();toggleBillingTypeSelection(billingType)"
+                                    [checked]="selectedBillingTypes.indexOf(billingType) > -1" [disabled]="false">
+                                <span class="text-gray-500">
+                                    {{billingType.Name | translate}}
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+            @if (consumptionTypes?.length > 0){
+            <div ngbDropdown class="d-flex align-items-center dropdown mt-0">
+                <button translate="TRANSLATE.MANAGE_PLANS_FILTER_TITLE_CONSUMPTION_TYPES" class="btn btn-sm"
+                    id="dropdownBasic1"
+                    [ngClass]="{'btn-gray':!consumptionTypeSelection || consumptionTypeSelection?.length == 0, 'btn-primary': consumptionTypeSelection?.length > 0}"
+                    ngbDropdownToggle appBusyLoader>
+                    <span
+                        *ngIf="consumptionTypeSelection?.length > 0">&nbsp;({{consumptionTypeSelection.length}})</span>
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+                    class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-2 fs-base">
+                    @for (consumptionType of consumptionTypes; track $index) {
+                    <div class='menu-item my-0' ngbDropdownItem
+                        *ngIf="consumptionType.Name.toLowerCase().trim() !='contract'">
+                        <div class="input-group-with-checkbox ps-2">
+                            <label class="form-check d-flex gap-3">
+                                <input type="checkbox" class="form-check-input" value="{{consumptionType.Name}}"
+                                    (click)="$event.stopPropagation();toggleConsumptionTypeSelection(consumptionType)"
+                                    [checked]="consumptionTypeSelection.indexOf(consumptionType) > -1"
+                                    [disabled]="false">
+                                <span class="text-gray-500">
+                                    {{'TRANSLATE.'+consumptionType.Description | translate}}
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+            @if(supportedMarkets?.length > 0){
+            <div ngbDropdown class="d-flex align-items-center dropdown mt-0">
+                <button class="btn btn-sm" translate="TRANSLATE.MANAGE_PLANS_FILTER_TITLE_SUPPORTED_MARKETS"
+                    id="dropdownBasic1"
+                    [ngClass]="{'btn-gray':!marketCodeSelection || marketCodeSelection?.length == 0, 'btn-primary': marketCodeSelection?.length > 0}"
+                    ngbDropdownToggle appBusyLoader>
+                    <span *ngIf="marketCodeSelection?.length > 0">&nbsp;({{marketCodeSelection.length}})</span>
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+                    class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-2 fs-base">
+                    @for (supportedMarket of supportedMarkets; track $index) {
+                    <div class='menu-item my-0' ngbDropdownItem>
+                        <div class="input-group-with-checkbox ps-2">
+                            <label class="form-check d-flex gap-3">
+                                <input type="checkbox" class="form-check-input"
+                                    (click)="$event.stopPropagation();toggleMarketTypeSelection(supportedMarket)"
+                                    [checked]="marketCodeSelection.indexOf(supportedMarket) > -1" [disabled]="false">
+                                <span class="text-gray-500">{{supportedMarket.MarketCode}}</span>
+                            </label>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+            @if(providers?.length > 0){
+            <div ngbDropdown class="d-flex align-items-center dropdown mt-0">
+                <button class="btn btn-sm" id="dropdownBasic1"
+                    translate="TRANSLATE.PUBLIC_SINGUP_FILTER_DEFAULT_PLACEHOLDER"
+                    [ngClass]="{'btn-gray':!filterBy || filterBy === '', 'btn-primary': filterBy && filterBy !== ''}"
+                    ngbDropdownToggle appBusyLoader>
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+                    class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-2 fs-base w-200px">
+                    <div class='menu-item my-0' ngbDropdownItem>
+                        <div class="input-group-with-radio ps-2">
+                            <label class="form-check d-flex gap-5">
+                                <input type="radio" class="form-check-input mb-2" (click)="changeSortBy('price-desc')"
+                                    name="filterBy" [checked]="filterBy === 'price-desc'">
+                                <span class="text-gray-500"> {{'TRANSLATE.PUBLIC_SINGUP_FILTER_DEFAULT_PRICE_HIGH_LOW' |
+                                    translate}}</span>
+                            </label>
+                            <label class="form-check d-flex gap-5">
+                                <input type="radio" class="form-check-input mb-2" name="filterBy"
+                                    (click)="changeSortBy('price-asc')" [checked]="filterBy === 'price-asc'">
+                                <span class="text-gray-500"> {{'TRANSLATE.PUBLIC_SINGUP_FILTER_DEFAULT_PRICE_LOW_HIGH' |
+                                    translate}}</span>
+                            </label>
+                            <label class="form-check d-flex gap-5">
+                                <input type="radio" class="form-check-input mb-2" name="filterBy"
+                                    (click)="changeSortBy('name-asc')" [checked]="filterBy === 'name-asc'">
+                                <span class="text-gray-500"> {{'TRANSLATE.PUBLIC_SINGUP_FILTER_DEFAULT_NAME_ASC' |
+                                    translate}}</span>
+                            </label>
+                            <label class="form-check d-flex gap-5">
+                                <input type="radio" class="form-check-input mb-2" name="filterBy"
+                                    (click)="changeSortBy('name-desc')" [checked]="filterBy === 'name-desc'">
+                                <span class="text-gray-500"> {{'TRANSLATE.PUBLIC_SINGUP_FILTER_DEFAULT_NAME_DESC' |
+                                    translate}}</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-sm" (click)="clearFilters()">
+                {{'TRANSLATE.PUBLIC_SIGNUP_SHOP_SCREEN_BUTTON_CLEAR_FILTERS' | translate}}
+            </button>
+            }
+        </div>
+    </div>
+    <div class="products mt-6">
+        <div class="d-flex justify-content-center align-items-center col-md-12"
+            *ngIf="scrollBusy && products.length === 0 ">
+            <span class="spinner-border text-primary" role="status"></span>
+            <span class="text-muted fs-6 fw-semibold ms-5">{{'TRANSLATE.LOADING_MESSAGE' | translate}}</span>
+        </div>
+        <div class="row product-wrapper" (scrolled)="onScroll()" infiniteScroll [infiniteScrollDistance]="0.3"
+        [infiniteScrollThrottle]="50" [scrollWindow]="false">
+            @if(products.length==0 && !scrollBusy){
+            <div class="col-md-12">
+                <app-common-no-record></app-common-no-record>
+            </div>
+            }
+            @for (product of products; track $index) {
+            <div class="col-sm-12 col-lg-4 d-flex align-items-start mb-6" appLazyLoad (lazyLoad)="onLazyLoad(product)">
+                <div class="card public-signup-card-custom card-border">
+                    <div class="card-header shop-item-title flex-nowrap p-0">
+                        <div class="card-title m-0">
+                            @if (product.ImageUrl) {
+                            <div class="symbol me-2">
+                                <img [src]="product.ImageUrl" />
+                            </div>
+                            } @else {
+                            <div class="d-block symbol mr-5 pt-1 me-4">
+                                <span class="symbol-label fs-1 text-dark">
+                                    {{ product.Name | formatforinitials }}
+                                </span>
+                            </div>
+                            }
+                            <div class="text">
+                                <a class="fw-bold text-dark" [innerHTML]="product.Name"
+                                    ngbTooltip="{{product.ProviderSettings?.ProviderCategory ? product.Name + ' - ' + product.ProviderSettings?.ProviderCategory : product.Name}}"
+                                    tooltipPlacement="bottom"></a>
+                                <!-- @if (product.Name != null && product.Name.length > 25) {
+                                                <span class="font-weight-bolder">...</span>
+                                            } -->
+                                <span class="text-muted linked-p-name-text ms-2 fs-6">
+                                    <sup *ngIf="product.IsAddon">
+                                        <span translate="TRANSLATE.CUSTOMER_SHOP_SUP_TEXT_ADD_ON"
+                                            class="text-warning shop-nce-addon"></span>
+                                    </sup>
+                                    @if (product.IsPrimaryInLinkedProduct) {
+                                    <span style="display: table">
+                                        <i class="ki-outline ki-fasten text-warning">
+                                        </i>
+                                        {{ product.LinkedSubscriptionName }}
+                                    </span>
+                                    }
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="chips">
+                            <!-- NCE, sw, qty, bundle, partner-usage -->
+                            <span *ngIf="product.Validity !== null && product.Validity !== '' && (product.CategoryName == 'OnlineServicesNCE' || product.CategoryName == 'Custom')"> 
+                                @if (product.ValidityType!=null && product.ValidityType == 'Month(s)') {
+                                <span
+                                    class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2"
+                                    aria-hidden="true"
+                                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                    {{product.Validity}}
+                                    {{ (product.Validity === 1 ? (product.ValidityType === 'Month(s)' ?
+                                    'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                    'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                                </span>
+                                }
+                                @if (product.ValidityType === 'Year(s)' || product.ValidityType === 'Year') {
+                                <span
+                                    class="label label-dark font-weight-bold label-inline text-white badge bg-warning ms-md-2"
+                                    aria-hidden="true"
+                                    [ngClass]="{'labelcolor':product.BillingCycleName == 'Monthly','TermLabelColor': product.BillingCycleName == 'Annual'}"
+                                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                    {{product.Validity}}
+                                    {{ (product.Validity === 1 ? (product.ValidityType === 'Month(s)' ?
+                                    'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                    'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+
+                                </span>
+                                }
+                            </span>
+                            <!-- NCE, sw, qty, bundle, partner-usage, azure -->
+                            <span *ngIf="product.BillingCycleName !== null && product.BillingCycleName !== ''">
+                                <span *ngIf="product.BillingCycleName !== null && product.BillingCycleName !== ''"
+                                    class="label font-weight-bold label-inline text-white badge ms-md-2"
+                                    [ngClass]="{
+                                    'bg-warning': product.BillingCycleName?.toLowerCase() === 'monthly',
+                                    'bg-success': product.BillingCycleName?.toLowerCase() === 'annual',
+                                    'bg-dark': product.BillingCycleName?.toLowerCase() === 'triennial',
+                                    'bg-info': product.BillingCycleName?.toLowerCase() === 'onetime'
+                                    }" aria-hidden="true"
+                                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}">
+                                    {{'TRANSLATE.'+ product.BillingCycleDescription | translate}}</span>
+                            </span>
+                            @if(product.CategoryName?.toLowerCase() ==
+                            cloudHubConstants.CATEGORY_PERPETUAL_SOFTWARE) {
+                            <span class="font-size-h5">
+                            <span class="label label-light-info fw-bold label-inline badge ms-md-2"
+                              ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}">
+                            {{'TRANSLATE.CATEGORY_DESCRIPTION_PERPETUAL_SOFTWARE' | translate}}</span>
+                            </span>
+                    }
+                            <!-- nce -->
+                            @if(product.CategoryName?.toLowerCase() == cloudHubConstants.CATEGORY_ONLINE_SERVICES_NCE) {
+                            <span class="label label-light-info font-weight-bold label-inline badge ms-md-2"
+                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}">
+                                {{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE' | translate}}
+                            </span>
+                            }
+                            <!-- sw -->
+                            @if(product.CategoryName?.toLowerCase() ==
+                            cloudHubConstants.CATEGORY_SOFTWARE_SUBSCRIPTIONS) {
+                            <span class="font-size-h5">
+                                <span class="label label-light-info font-weight-bold label-inline badge ms-md-2"
+                                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}">
+                                    {{'TRANSLATE.CATEGORY_DESC_SOFTWARE_SUBSCRIPTIONS' | translate}}</span>
+                            </span>
+                            }
+                            <!-- all MS expect usage -->
+                            @if(product.MarketCode){
+                            <span class="badge badge-info ms-md-2"
+                                ngbTooltip="{{product.MarketRegion}}">{{product.MarketCode}}</span>
+                            }
+                            @if(product.ProviderSettings && product.ProviderSettings.ProviderCategory &&
+                            product.CategoryName?.toLowerCase() ==
+                            cloudHubConstants.CATEGORY_SOFTWARE_SUBSCRIPTIONS){
+                            <span class="label label-light-warning font-weight-bold mt-1 badge  "
+                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_SERVICE_TYPE' | translate}}">
+                                {{product.ProviderSettings.ProviderCategory.replace('SoftwareSubscription - ','') |
+                                translate}}
+                            </span>
+                            }
+                            @else if(product.ProviderSettings && product.ProviderSettings.ProviderCategory &&
+                            product.CategoryName?.toLowerCase() ==
+                            cloudHubConstants.CATEGORY_PERPETUAL_SOFTWARE){
+                           <span
+                           *ngIf="product.ProviderSettings.ProviderCategory!= '' && product.ProviderSettings.ProviderCategory!= null"
+                           class="label label-light-warning fw-bold label-inline badge ms-md-2 text-capitalize"
+                           ngbTooltip="{{'TRANSLATE.CUSTOMER_CART_SIDEBAR_FILTER_TEXT_SERVICE_TYPES' | translate}}">{{product.ProviderSettings.ProviderCategory}}</span>
+                            }
+                            @else if(product.ProviderSettings && product.ProviderSettings.ProviderCategory){
+                            <span class="label label-light-warning font-weight-bold mt-1 badge  "
+                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_SERVICE_TYPE' | translate}}">
+                                {{product.ProviderSettings.ProviderCategory | translate}}
+                            </span>
+                            }
+                            <!-- sw, nce -->
+                            @if(product.ProviderSettings && product.ProviderSettings?.EnforceAttestation == 'TRUE'){
+                            <span
+                                ngbTooltip="{{'MICROSOFT_ATTESTATION_TYPE_TOOLTIP' | translate}}{{product.ProviderSettings?.AttestationType | translate}}"
+                                class="font-weight-normal  separator-primary text-primary cursor-pointer ms-md-2">
+                                <span><i class="ki-outline ki-verify text-primary"></i></span>
+                            </span>
+                            }
+                            <!-- partner qty, partner usage -->
+                            <span
+                                *ngIf="product.CategoryName?.toLowerCase() !== cloudHubConstants.CATEGORY_ONLINE_SERVICES_NCE && product.BillingTypeName !== null && product.BillingTypeName !== ''"
+                                class="label label-light-danger font-weight-bold label-inline text-danger badge bg-light-danger ms-md-2"
+                                ngbTooltip="{{'TRANSLATE.BILLING_TYPE_TOOLTIP' | translate}}">{{product.BillingTypeName | translate}}</span>
+                            <!-- <span class="label font-weight-bold label-inline text-white badge bg-warning">Monthly
+
+
+                                        </span>
+                                        <span
+                                            class="label label-dark font-weight-bold label-inline text-white badge bg-info">NCE
+                                        </span>
+                                        <span class="label label-dark font-weight-bold label-inline text-white badge bg-dark">US
+                                        </span>
+                                        <span
+                                            class="label label-dark font-weight-bold label-inline text-white badge bg-primary">Commercial
+                                        </span> -->
+                            @if(product.IsPromotionAvailableForCustomer &&
+                            product.ShowPromotionLink){
+                            <span 
+                                class="mb-0 mr-2 font-weight-normal separator-primary text-primary cursor-pointer"><span
+                                    tooltip-append-to-body="true"><i
+                                        class="ki-outline ki-discount text-primary"></i></span></span>
+                            }
+
+                        </div>
+                        <div class="fs-8" style="height: 2.5rem; overflow: hidden;">
+                            <span class="p-detail-text">{{ product.Description | stripHtml | limitLength:130 }}</span>
+                            @if (product.Description != null && product.Description.length > 130) {
+                            <a class="text-primary">
+                                {{ 'TRANSLATE.SHOP_TILE_HYPERLINK_READ_MORE' | translate }}
+                            </a>
+                            }
+                        </div>
+                        <div>
+                            <span class="price text-primary fw-bolder">
+                                <span
+                                    *ngIf="product.ConsumptionType == 'Quantity' || product.BillingTypeName == 'Unit'">
+                                    <span class="font-size-h3  text-primary font-weight-boldest">
+                                        {{product.FinalSalePrice | megaNumber : product.CurrencySymbol :
+                                        product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                                        product.CurrencyDecimalSeperator}}
+                                    </span>
+                                    <span *ngIf="product.Discount != null && product.Discount > 0">
+                                        <small class="small">
+                                            <span class="text-danger mr-2">
+                                                <del>
+                                                    &nbsp;{{product.OriginlaSalePrice | megaNumber :
+                                                    product.CurrencySymbol :
+                                                    product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                                                    product.CurrencyDecimalSeperator}}
+                                                </del>
+                                            </span>
+
+                                            <span *ngIf="product.DiscountType == 'Percentage'" class="text-danger">
+                                                &#40;{{product.Discount}}%
+                                            </span>
+                                            <span *ngIf="product.DiscountType != 'Percentage'" class="text-danger">
+                                                &#40;{{product.Discount | CurrencyFilter : product.CurrencySymbol :
+                                                product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                                                product.CurrencyDecimalSeperator }}
+                                            </span>
+                                        </small>
+                                        <span class="text-danger">
+                                            <span class="small" translate="TRANSLATE.TEXT_OFF"></span>
+                                        </span>
+                                    </span>
+                                </span>
+                            </span>
+                            <span class="text-muted">/{{product.BillingCycleName}}</span>
+                            <!-- <span class="text-muted"> / Month</span> -->
+                        </div>
+                    </div>
+                    <div class="overlay">
+                        <div class="d-flex gap-3">
+                            <button class="btn  btn-sm btn-primary"
+                                (click)="onAction(product,'addtocart')" appBusyLoader>{{'TRANSLATE.PUBLIC_SIGNUP_ADD_TO_CART' |
+                                translate}}</button>
+                            <button (click)="readMore(product)"
+                                class="btn btn-sm btn-primary">{{'TRANSLATE.PUBLIC_SIGNUP_QUICK_VIEW' |
+                                translate}}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+    <div class="d-flex justify-content-center align-items-center col-md-12" *ngIf="scrollBusy && products.length > 0">
+        <span class="spinner-border text-primary" role="status"></span>
+        <span class="text-muted fs-6 fw-semibold ms-5">{{'TRANSLATE.LOADING_MESSAGE' | translate}}</span>
+    </div>
+</div>

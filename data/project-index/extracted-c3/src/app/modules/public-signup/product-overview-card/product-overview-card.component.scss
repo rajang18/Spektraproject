@@ -1,0 +1,16 @@
+.product-description-card{
+    .card-header,.card-body{
+     padding: 15px;
+     .card-title{
+      display: flex;
+      align-items: start;
+     }
+     .card-discription{
+      margin: 0 50px;
+     }
+    }
+    .divider{
+      padding:0 15px;
+      border-top: var(--bs-border-width) dotted;
+    }
+  }

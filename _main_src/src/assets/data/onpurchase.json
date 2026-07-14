@@ -1,0 +1,14 @@
+[
+    {
+      "ID": 1,
+      "Name": "Prorate",
+      "NameKey": "BILL_ACTION_NAME_PRORATE",
+      "Description": "BILL_ACTION_DESC_PRORATE"
+    },
+    {
+      "ID": 2,
+      "Name": "Full Charge",
+      "NameKey": "BILL_ACTION_NAME_FULL_CHARGE",
+      "Description": "BILL_ACTION_DESC_FULL_CHARGE"
+    }
+  ]

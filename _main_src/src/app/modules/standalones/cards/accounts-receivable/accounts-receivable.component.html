@@ -1,0 +1,38 @@
+<div class="col card card-custom d-flex">
+    <div class="card-header pt-5">
+        <div class="dashboard-filter-wrapper d-flex justify-content-between w-100">
+            <div class="card-title align-items-start flex-column dashboard-tile-title">
+                <span class="card-label fw-semibold">
+                    <span translate="TRANSLATE.PARTNER_DASHBOARD_CAPTION_ACCOUNTS_RECEIVABLE">
+                        <span
+                            class="text-gray-500 mt-1 fw-semibold fs-6">
+                            {{billingPeriodsData?.BillingStartDate | c3Date }} - {{billingPeriodsData?.BillingEndDate  | c3Date}} <span class="tooltips ng-binding"
+                                data-original-title="Invoice generated on">({{billingPeriodsData?.BillGenerationDate | c3Date  }})</span>
+                        </span>
+                    </span>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="card-body pt-2 pb-2" style="height:auto">
+
+        @if(!!isLoading){
+            <app-loader></app-loader>
+        }
+        @else if(!!paymentsData && paymentsData.length > 0 && totalAmount>0){
+        <div id="site_statistics" class="chart">
+            <apx-chart [series]="chartOptions?.series" [chart]="chartOptions?.chart" [labels]="chartOptions?.labels"
+                [dataLabels]="chartOptions?.dataLabels" [legend]="chartOptions?.legend"
+                [responsive]="chartOptions?.responsive" [tooltip]="chartOptions?.tooltip" [fill]="chartOptions?.fill"
+                [colors]="chartOptions?.colors">
+            </apx-chart>
+        </div>
+        <div>
+        </div>
+        }
+        @else if(totalAmount<=0 && !isLoading){
+         <span class="text-black-50" translate="TRANSLATE.PARTNER_DASHBOARD_PIE_CHART_MESSAGE"></span>
+        }
+
+    </div>
+</div>

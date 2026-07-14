@@ -1,0 +1,190 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3" *ngIf="pageMode === 'StageAndValidatePayments'">
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary me-1" (click)="showHelpText = !showHelpText">
+            <span translate="TRANSLATE.CHANGE_PLAN_HELP"></span>&nbsp;
+            <i class="ki-outline ki-question-2"></i>
+        </button>
+        <button type="button" class="btn btn-sm fw-bold btn-primary" [routerLink]="['/partner/business/payments']" *ngIf="pageMode === 'StageAndValidatePayments'">
+            <i class="fas fa-step-backward"></i> <span translate="TRANSLATE.BTN_MULTIPLE_PAYMENTS_BACK_TO_PAYMENTS"></span>
+        </button>
+    </div>
+</ng-template>
+@if(pageMode === 'StageAndValidatePayments'){
+<div class="card" *ngIf="showHelpText">
+    <div class="card-body">
+        <div class="m-heading-1 border-green m-bordered">
+            <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+                <div class="card-title mb-7">
+                    <h6 class="card-label"><span translate="TRANSLATE.MULTIPLE_PAYMENTS_RECORD_FORM_INSTRUCTIONS"></span></h6>
+                </div>
+                <div class="row m-heading-1 border-green m-bordered ms-5">
+                    <ol>
+                        <li>
+                            <span translate="TRANSLATE.BULK_RECORD_MULTIPLE_PAYMENTS_INSTRUCTIONS_PART_1"></span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.BULK_RECORD_MULTIPLE_PAYMENTS_INSTRUCTIONS_PART_2"></span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.BULK_RECORD_MULTIPLE_PAYMENTS_INSTRUCTIONS_PART_3"></span>
+                            <ol type="a">
+                                <li>
+                                    <span [innerHTML]="'TRANSLATE.BULK_RECORD_MULTIPLE_PAYMENTS_INSTRUCTIONS_PART_3_A' | translate"></span>
+                                </li>
+                                <li>
+                                    <span [innerHTML]="'TRANSLATE.BULK_RECORD_MULTIPLE_PAYMENTS_INSTRUCTIONS_PART_3_B' | translate"></span>
+                                </li>
+                                <li>
+                                    <span [innerHTML]="'TRANSLATE.BULK_RECORD_MULTIPLE_PAYMENTS_INSTRUCTIONS_PART_3_C'| translate"></span>
+                                </li>
+                                <li>
+                                    <span [innerHTML]="'TRANSLATE.BULK_RECORD_MULTIPLE_PAYMENTS_INSTRUCTIONS_PART_3_D' | translate"></span>
+                                </li>
+                                <li>
+                                    <span [innerHTML]="'TRANSLATE.BULK_RECORD_MULTIPLE_PAYMENTS_INSTRUCTIONS_PART_3_E'| translate"></span>
+                                </li>
+                            </ol>
+                        </li>
+                        <li>
+                            <span [innerHTML]="'TRANSLATE.BULK_RECORD_MULTIPLE_PAYMENTS_INSTRUCTIONS_PART_4'|translate"></span>
+                        </li>
+                        <li>
+                            <span [innerHTML]="'TRANSLATE.BULK_RECORD_MULTIPLE_PAYMENTS_INSTRUCTIONS_PART_5'|translate"></span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.BULK_RECORD_MULTIPLE_PAYMENTS_INSTRUCTIONS_PART_6"></span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.BULK_RECORD_MULTIPLE_PAYMENTS_INSTRUCTIONS_PART_7"></span>
+                        </li>
+                        <li>
+                            <span [innerHTML]="'TRANSLATE.BULK_RECORD_MULTIPLE_PAYMENTS_INSTRUCTIONS_PART_8' | translate"></span>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card mt-5">
+    <div class="card-body pt-0 overflow-auto">
+        <div class="row ms-3">
+            <div class="col-md-3 mt-3">
+                <input filestyle type="file" #fileUpload accept=".csv" data-class-button="btn-outline-secondary" class="form-control form-control-sm inline p0" (change)="fileChange($event)" />
+            </div>
+            <div class="col-md-9 mt-3">
+                <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="loadUpdatedPaymentRecords()">
+                    <span *ngIf="isDataLoading"><i class="fa fa-refresh fa-spin"></i>&nbsp;{{'TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT' |
+                        translate}}</span>
+                    <span *ngIf="!isDataLoading" class="mt-2"><i class="ki-outline ki-exit-down fs-3"></i>&nbsp;</span>
+                    <span class="">{{'TRANSLATE.REPORT_USAGE_VALIDATE_INPUT_BUTTON_TEXT' | translate}}</span>
+                    <!-- </span> -->
+                </button>
+                @if(!isImportDisabled && validationProcessedCount > 0 && validationErrorCount === 0){
+                <button type="button" class="btn btn-sm fw-bold btn-light-primary ms-2" (click)="importMultiplePayments()">
+                    <span *ngIf="isDataLoading"><i class="fa fa-refresh fa-spin"></i>&nbsp;{{'TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT' |
+                        translate}}</span>
+                    <span *ngIf="!isDataLoading"><i class="ki-outline ki-exit-down fs-2"></i>&nbsp;
+                        <span>{{'TRANSLATE.RECORD_MULTIPLE_PAYMENTS_IMPORT_PAYMENTS_BUTTON_TEXT'|translate}}</span>
+                    </span>
+                </button>
+                }
+                <button type="button" class="btn btn-sm fw-bold btn-light-primary float-end" (click)="downloadPaymentCatalogue()">
+                    <i class="ki-outline ki-exit-down fs-3"></i>&nbsp;
+                    <span>{{'TRANSLATE.RECORD_MULTIPLE_PAYMENTS_CATALOGUE_BUTTON_TEXT'|translate}}</span>
+                </button>
+            </div>
+        </div>
+        <div class="row">&nbsp;</div>
+        <div class="row">
+            <div class="col-md-12 center-block">
+                <div class="col-md-12 text-end" style="padding-right: 30px;">
+                    {{'TRANSLATE.REPORT_USAGE_BUTTON_TEXT_FILTER_BY' | translate}}
+                    <div class="btn-group">
+                        <a class="btn btn-light-success btn-sm" (click)="updateSelectedStatus('Success')" [(ngModel)]="successStatusSelected"
+                            [ngClass]="{'btn-success' : successStatusSelected === true, 'btn-light-success' : !successStatusSelected}">
+                            <span [ngStyle]="{'text-color': '#A7A977'}"><i class="ki-outline ki-check fs-1 #A7A977" *ngIf="successStatusSelected"></i>{{'TRANSLATE.REPORT_USAGE_STATUS_TABLE_FILTER_TEXT_SUCCESS'
+                                | translate}}</span>
+                        </a>
+                        <a class="btn btn-light-danger btn-sm" (click)="updateSelectedStatus('Error')" [(ngModel)]="successStatusSelected"
+                            [ngClass]="{'btn-danger' : failedStatusSelected === true, 'btn-light-danger' : !failedStatusSelected}">
+                            <span [ngStyle]="{'text-color': '#F2583E'}"><i class="ki-outline ki-check fs-1 #F2583E" *ngIf="failedStatusSelected"></i>{{'TRANSLATE.REPORT_USAGE_STATUS_TABLE_FILTER_TEXT_ERROR'
+                                | translate}}</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <ng-container *ngIf="!!datatableConfig">
+                <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig"></app-c3-table>
+            </ng-container>
+        </div>
+    </div>
+</div>
+
+<ng-template #commissionValidationStatus let-data="adtData">
+    @if(currentStep === currentStepEnum.Validation){
+    <div>
+        <span *ngIf="data.ValidationStatus?.toLowerCase() === 'success'" translate="TRANSLATE.RECORD_MULTIPLE_PAYMENTS_VALIDATION_STATUS_SUCCESS"></span>
+        <span *ngIf="data.ValidationStatus?.toLowerCase() === 'error'" translate="TRANSLATE.RECORD_MULTIPLE_PAYMENTS_VALIDATION_STATUS_ERROR"></span>
+    </div> }
+</ng-template>
+
+<ng-template #commissionValidationError let-data="adtData">
+    <div>
+        <div *ngIf="data.ValidationStatus?.toLowerCase() === 'error'">
+            <ul>
+                @for (error of data.ValidationError; track $index) {
+                <li>
+                    &nbsp;&nbsp; <span>{{'TRANSLATE.' + error | translate }}</span>
+                </li>
+                }
+            </ul>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #commissionImportStatus let-data="adtData">
+    <div>
+        <span *ngIf="data.ImportStatus?.toLowerCase() === 'success'" translate="TRANSLATE.RECORD_MULTIPLE_PAYMENTS_IMPORT_STATUS_SUCCESS"></span>
+        <span *ngIf="data.ImportStatus?.toLowerCase() === 'error'" translate="TRANSLATE.RECORD_MULTIPLE_PAYMENTS_IMPORT_STATUS_ERROR"></span>
+    </div>
+</ng-template>
+
+<ng-template #commissionImportError let-data="adtData">
+    <div>
+        <div *ngIf="data.ImportStatus?.toLowerCase() === 'error'">
+            <ul>
+                @for (error of data.ImportError; track $index) {
+                <li>
+                    &nbsp;&nbsp; <span>{{'TRANSLATE.' + error | translate }}</span>
+                </li>
+                }
+            </ul>
+        </div>
+    </div>
+</ng-template>
+}
+
+
+@else if (pageMode === 'DownloadCatalogue') {
+<div class="card">
+    <div class="card-body pt-0 overflow-auto">
+        <ng-container *ngIf="!!datatableConfigCatalogue">
+            <app-c3-table [reload]="reloadEventCatalogue" [datatableConfig]="datatableConfigCatalogue" [selection]="true" (onSelection)="handleSelection($event)"></app-c3-table>
+        </ng-container>
+
+        <div class="form-actions text-lg-end text-sm-end">
+            <button class="btn btn-light-primary ms-2" (click)="cancel()">
+                <span translate="TRANSLATE.BUTTON_DOWNLOAD_BULK_INVOICE_CANCEL"></span>
+            </button>
+            <button class="btn btn-light-primary ms-2" [disabled]="selectedBusinessRecords.length < 1" (click)="downloadSelectedPaymentsCatlogue()">
+                <span translate="TRANSLATE.BUTTON_DOWNLOAD_BULK_INVOICE_DOWNLOAD"></span>
+            </button>
+        </div>
+    </div>
+</div>
+} 
+
+<ng-template #paymentAmount let-data="adtData">
+{{data.PaymentAmount | number : '1.2-2'}}
+</ng-template>

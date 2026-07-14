@@ -1,0 +1,118 @@
+<div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title">
+                {{'TRANSLATE.CUSTOMER_CART_COTERMINOSITY_POPUP_HEADER' | translate}}
+            </h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="cancel()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+            </div>
+        </div>
+        <!--{{ExistingSubscriptions}}-->
+        <div class="modal-body" id="modal-body">
+            <div class="row">
+                <div class="col-12">
+                    <div ngbAccordion class="mb-3" [closeOthers]=true>
+                     @for(data of existingSubscriptions; track $index){
+                        <div ngbAccordionItem>
+                            <div ngbAccordionHeader>
+                                <button ngbAccordionButton class="text-primary"> <input type="radio" [checked]="data.Ischecked"
+                                        (change)="selectedDate(data)" required [(ngModel)]="providerEffectiveEndDate" [id]="data.ID"
+                                        name="columnName" [value]="data.ProviderEffectiveEndDate" class="me-3" /><span
+                                        class="fs-3 fw-semibold">{{ convertToDateFormat(data.ProviderEffectiveEndDate)
+                                        }}</span></button>
+                            </div>
+                            <div ngbAccordionCollapse>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-12" style="overflow-x:auto">
+                                                <div
+                                                    class="table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl">
+                                                    <table class="table" template-pagination="custom/pager">
+                                                        <thead>
+                                                            <tr>
+                                                                <td class="col-md-4 fw-bold fs-5">
+                                                                    {{'TRANSLATE.CUSTOMER_CART_COTERMINOSITY_POPUP_TABLE_HEADER_SUBSCRIPTION_NAME'
+                                                                    | translate}}
+                                                                </td>
+                                                                <td class="col-md-4 fw-bold fs-5">
+                                                                    {{'TRANSLATE.CUSTOMER_CART_COTERMINOSITY_POPUP_TABLE_HEADER_SUBSCRIPTION_ID'
+                                                                    | translate}}
+                                                                </td>
+                                                                <td class="col-md-4 fw-bold fs-5">
+                                                                    {{'TRANSLATE.CUSTOMER_CART_COTERMINOSITY_POPUP_TABLE_HEADER_VALIDITY'
+                                                                    | translate}}
+                                                                </td>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @for(row of data.SubscriptionDetails; track $index){
+                                                            <tr>
+                                                                <td class="col-md-4 fw-bold fs-6">
+                                                                    {{ row?.Name === 'COTERMINOUSITY_NOT_ONBOARDED_TEXT_MESSGAE' ?
+                                                                    ('TRANSLATE.' + row?.Name | translate) : (row?.Name) }}
+                                                                </td>
+                                                                <td class="col-md-4 fs-6">
+                                                                    {{row?.ProviderProductId}}
+                                                                </td>
+                                                                <td class="col-md-4 fs-6">
+                                                                    @if(row?.Validity !== 0){
+                                                                    <span>{{ row?.Validity }}&nbsp;
+                                                                        @if(row?.ValidityType === 'Month(s)'){
+                                                                        <span>{{'TRANSLATE.TERM_DURATION_DESC_MONTH' |
+                                                                            translate}}</span>
+                                                                        }@else{
+                                                                        <span>{{'TRANSLATE.TERM_DURATION_DESC_YEAR' |
+                                                                            translate}}</span>
+                                                                        }
+                                                                    </span>
+                                                                    }
+                                                                    @if(row?.Validity === 0){
+                                                                    <span>
+                                                                        {{'TRANSLATE.SHOW_NOT_ONBOARDED_SUBSCRIPTION_VALIDITY_IN_CUSTOM_END_DATE'
+                                                                        | translate}} </span>
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                       }
+                    </div>
+                </div>
+                @if(existingSubscriptions.length === 0){
+                <div class="col-md-12">
+                    <!-- <div colspan="9"><span translate="TRANSLATE.MESSAGE_NO_RECORDS_FOUND"></span></div> -->
+                    <div class="d-flex align-items-center justify-content-center"
+                    style="height: 100%;">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <app-common-no-record></app-common-no-record>
+                        </div>
+                    </div>
+    </div>
+                </div>
+                }
+            </div>
+        </div>
+        <div class="modal-footer">
+            
+            <button class="btn btn-secondary" type="button" (click)="cancel()"><span
+                    translate="TRANSLATE.CUSTOM_END_DATE_POPUP_BUTTON_TEXT_CANCEL"></span></button>
+            @if(existingSubscriptions.length != 0)
+            {
+                <button class="btn btn-primary" ng-if="true" ng-hide="ExistingSubscriptions.length === 0"
+                    (click)="submit()"><span translate="TRANSLATE.CUSTOM_END_DATE_POPUP_BUTTON_TEXT_SUBMIT"></span></button>
+            }
+        </div>
+    </div>
+</div>

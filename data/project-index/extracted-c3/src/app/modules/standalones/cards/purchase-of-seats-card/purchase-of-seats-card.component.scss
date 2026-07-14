@@ -1,0 +1,14 @@
+::ng-deep{
+    app-purchase-of-seats-card{
+        .opacity-8{
+            opacity: 0.8;
+        }
+        .loader-indicater{
+            position: absolute;
+            margin: auto;
+            top: 50%;
+            left: 41%;
+            // z-index: 999999;
+        }
+    }
+}

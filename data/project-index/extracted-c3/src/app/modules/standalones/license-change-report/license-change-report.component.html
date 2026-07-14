@@ -1,0 +1,145 @@
+<ng-template #actionHeader>
+  <div class="header-actions d-flex align-items-center gap-2 gap-lg-3" (click)="setNgSelectText()"
+    *ngIf="entityName == 'Partner' || entityName == 'Reseller'">
+    <ng-select [(ngModel)]="selectedCustomer" name="selectedCustomer" #selectElement
+      class="ms-auto ajustar custom-width" (change)="onSelectedCustomerChange()"
+      title="{{'TRANSLATE.REPORT_ALL_CUSTOMERS_PLACEHOLDER' |translate}}"
+      placeholder="{{'TRANSLATE.REPORT_ALL_CUSTOMERS_PLACEHOLDER' |translate}}">
+      @for(customer of customers; track $index){
+      <ng-option [value]="customer">
+        {{customer.Name}}
+      </ng-option>
+      }
+    </ng-select>
+    <div class="input-group w-25">
+      <input class="form-control form-control-sm mb-3 mb-lg-0 ms-auto custom"
+        [ngClass]="{ 'custPlacehoder': startDate  }"
+        [placeholder]="startDate ? (startDate | date:globalDateFormat) : 'yyyy-mm-dd'" [readOnly]="true"
+        [(ngModel)]="startDate" ngbDatepicker #sd="ngbDatepicker" (dateSelect)="updateStartDate($event)"
+        [maxDate]="maxDate" readonly />
+      <button class="btn btn-light-primary btn-sm" (click)="sd.toggle()" type="button"><i class="ki-outline ki-calendar fs-3 pe-0"></i>
+      </button>
+    </div>
+    <div class="input-group w-25">
+      <input class="form-control form-control-sm mb-3 mb-lg-0 ms-auto custom" [ngClass]="{ 'custPlacehoder': endDate  }"
+        [placeholder]="endDate ? (endDate | date:globalDateFormat) : 'yyyy-mm-dd'" name="endDate" [(ngModel)]="endDate"
+        [readOnly]="true" [maxDate]="maxDate" ngbDatepicker #ed="ngbDatepicker" (dateSelect)="updateEndtDate($event)"
+        readonly />
+      <button class="btn btn-light-primary btn-sm" (click)="ed.toggle()" type="button"><i class="ki-outline ki-calendar fs-3 pe-0"></i>
+      </button>
+    </div>
+    <button class="btn btn-sm btn-lg btn-md btn-xs btn-light-primary pe-3" [appPermission]="'DOWNLOAD_LICENSE_CHANGE'"
+      (click)="getLicenseChangeReport()"
+      ngbTooltip="{{'TRANSLATE.LICENSE_CHANGE_CAPTION_TEXT_DOWNLOALICENSE_CHANGE_REPORT' | translate}}"
+      tooltip-placement="left">
+      <i class="ki-outline ki-exit-down fs-2">
+      </i>
+    </button>
+  </div>
+</ng-template>
+
+<div *ngIf="entityName == 'Customer'">
+  <div class=" col-md-12 pb-3 border-0">
+    <div class="row">
+      <div class="actions col-md-6 text-start">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="row" ng-controller="DatepickerUIController">
+              <div class="input-group">
+                <input class="form-control"
+                  [ngClass]="{ 'custPlacehoder': startDate  }" [readOnly]="true"
+                  [placeholder]="startDate ? (startDate | date:globalDateFormat) : 'yyyy-mm-dd'" [(ngModel)]="startDate"
+                  ngbDatepicker #sd="ngbDatepicker" (dateSelect)="updateStartDate($event)" [maxDate]="maxDate"
+                  readonly />
+                  <button class="btn btn-light-primary btn-sm" (click)="sd.toggle()" type="button"><i class="ki-outline ki-calendar fs-3 pe-0"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="row" ng-controller="DatepickerUIController">
+              <div class="input-group">
+                <input class="form-control"
+                  [ngClass]="{ 'custPlacehoder': endDate  }"
+                  [placeholder]="endDate ? (endDate| date:globalDateFormat) : 'yyyy-mm-dd'" name="endDate"
+                  [(ngModel)]="endDate" ngbDatepicker #ed="ngbDatepicker" [readOnly]="true"
+                  (dateSelect)="updateEndtDate($event)" [maxDate]="maxDate" readonly />
+                  <button class="btn btn-light-primary btn-sm" (click)="ed.toggle()" type="button"><i class="ki-outline ki-calendar fs-3 pe-0"></i>
+                  </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="actions col-md-6 text-end">
+        <div>
+          <a class="btn btn-light-primary btn-sm mr-2 text-nowrap" [appPermission]="'DOWNLOAD_LICENSE_CHANGE'" (click)="getLicenseChangeReport()">
+            <i class="ki-outline ki-exit-down fs-2">
+              <!-- <span class=""></span>
+              <span class="path2"></span> -->
+            </i>
+            <span
+              class="text-center pt-4">{{'TRANSLATE.LICENSE_CHANGE_CAPTION_TEXT_DOWNLOALICENSE_CHANGE_REPORT'|translate}}</span>
+
+          </a>
+        </div>
+        <!-- <a class="btn btn-sm fw-bold btn-primary" (click)="exportLicenseChangeReport()"
+              [appPermission]="'DOWNLOAD_LICENSE_CHANGE'"
+              ngbTooltip="{{'TRANSLATE.LICENSE_CHANGE_CAPTION_TEXT_DOWNLOALICENSE_CHANGE_REPORT' | translate}}"
+              tooltip-placement="left">
+              <i class="fa fa-download"></i>
+            </a> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #productName let-data="adtData" let-emitter="captureEvents">
+  <div>
+    @if(entityName === 'Customer'){
+    @if(data.ProductForTrial != null && data.ProductForTrial != undefined && data.ProductForTrial != ''){
+    <span class="fw-semibold text-gray-800">{{data.ProductName}}</span>&nbsp;<sup class="fw-bolder text-warning"><span
+        [translate]="'TRANSLATE.PLAN_MANAGE_TRAIL_OFFER_SYMBOL_TRAIL_OFFER'"></span></sup>
+    @if(data.EntityName == 'Site' || data.EntityName == 'SiteDepartment'){
+    <small class="text-dark">{{data.OwnerName}}</small>
+    }
+    }@else{
+    <span class="fw-semibold text-gray-800">{{data.ProductName}}</span>
+    @if(data.EntityName == 'Site' || data.EntityName == 'SiteDepartment'){
+    <small class="text-dark"><br>{{data.OwnerName}}</small>
+    }
+    }
+    }
+    @else{
+    @if(data.ProductForTrial != null && data.ProductForTrial != undefined && data.ProductForTrial != ''){
+    <span>{{data.ProductName}}</span>&nbsp;<sup class="fw-bolder text-warning"><span
+        [translate]="'TRANSLATE.PLAN_MANAGE_TRAIL_OFFER_SYMBOL_TRAIL_OFFER'"></span></sup>
+    }@else{
+    <span>{{data.ProductName}}</span>
+    }
+    }
+  </div>
+</ng-template>
+<ng-template #TnCStatus let-data="adtData" let-emitter="captureEvents">
+  @if(data.IsTermsAndConditionsAccepted !== null){
+  <span class="badge badge-light-success"><span [translate]="'TRANSLATE.LICENSE_CHANGE_REPORT_TERMS_AND_CONDITIONS_ACCEPTED'"></span></span>
+  <a href="{{data.TermsAndConditionsUrl}}" target="_blank">{{'TRANSLATE.LICENSE_CHANGE_REPORT_TERM_AND_CONDITION_URL_TEXT' | translate}}</a>
+  <span><i class="ki-duotone ki-exit-right-corner">
+     <span class="path1"></span>
+     <span class="path2"></span>
+      </i></span>
+  }
+</ng-template>
+
+<div [ngClass]="{'card': entityName !== 'Customer'}">
+  <div [ngClass]="{'card-header ps-0': entityName !== 'Customer'}">
+    <div [ngClass]="{'card-body pt-0 overflow-auto': entityName !== 'Customer'}">
+      <!-- Enable name field -->
+      <!-- Check if datatableConfig is defined and then render the table -->
+      <ng-container *ngIf="datatableConfig" [appPermission]="'VIEW_LICENSE_CHANGE'">
+        <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" [searchFilter]=false>
+        </app-c3-table>
+      </ng-container>
+    </div>
+  </div>
+</div>

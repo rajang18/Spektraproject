@@ -1,0 +1,151 @@
+<div class="card card-border">
+    <div class="card-body pt-4">
+        <div class="d-flex justify-content-end">
+            <app-order-status-indicators [product]="product"></app-order-status-indicators>
+        </div>
+        <div class="d-flex align-items-center mb-0">
+            <div class="flex-shrink-0 me-4">
+                @if(product.ImageUrl){
+                <div class="symbol me-3">
+                    <img class="symbol-label" [src]="product.ImageUrl">
+                </div>
+                }
+                @else{
+                <div class="symbol  symbol symbol-65 symbol-dark">
+                    <span class="symbol-label fs-3 bg-dark text-white">
+                        {{product.Name | formatforinitials}}
+                    </span>
+                </div>
+                }
+            </div>
+            <div class="d-flex flex-column col-9">
+                <a  class="text-gray-800 fw-bold text-hover-primary h4 mb-0 ml-3">{{product.Name}}
+                    <sup [hidden]="product.ProductForTrial == null && product.ProductForTrial == undefined" class="text-warning fw-bold"><span translate="TRANSLATE.PLAN_MANAGE_TRAIL_OFFER_SYMBOL_TRAIL_OFFER"></span></sup>
+                </a>
+            </div>
+        </div>
+        @if(product.ProviderError){
+        <p class="mb-1 text-danger">
+            @if(!product.IsJsonError){
+            <span>
+            {{'TRANSLATE.'+product.ProviderError | translate}}
+            </span>
+           }
+           @else{
+            <ul *ngIf="product.ProviderError.FailedProducts" class="m-0" style="padding-left:1rem">
+                @for (error of product.ProviderError.FailedProducts | keyvalue ;track error.key){
+                    <li><span translate>{{error.key}}</span>
+                        <ul>
+                            @for(item of error?.value || [];track $index){
+                             <li>
+                                    {{item}}
+                                </li>
+                            }
+                        </ul> 
+                    </li>
+                }
+                @if(product.ProviderError.SucceededProducts && product.ProviderError.SucceededProducts.length>0){
+                    <li  class="text-success">
+                        <span translate="ERROR_FAILED_TO_REVERT_OPERATION_ON_SUBSCRIPTION"></span>
+                  <ul>
+                  @for(item of product.ProviderError.SucceededProducts;track $index){
+                     <li class="font-weight-600">{{item}}</li>
+                  }
+                </ul>
+                </li>
+                  
+                }
+            </ul>
+           } 
+        </p>
+        }
+        @if((!product.ProviderError || product.ProviderError.length == 0) && product.ApproveOrRejectRemark){
+        <p class="mb-0 text-danger">
+            {{product.ApproveOrRejectRemark | innerTranslate}}
+        </p>
+        }
+        <div class="h-200px">
+            @if(product.MarketCode !== null && entityName == cloudHubConstants.ENTITY_PARTNER){
+            <span class="badge badge-info" ngbTooltip="{{product.MarketRegion}}">{{product.MarketCode}}</span>
+            }
+            @if(product.BillingCycleName && product.ProductForTrial == null){
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="text-dark-75 fw-bold mr-2">{{'TRANSLATE.PARTNER_MANAGED_CART_LIST_TEMPLATE_USAGE_LABEL_TEXT_BILLING_CYCLE' | translate}}</span>
+                <a  class="text-muted text-hover-primary">{{'TRANSLATE.'+product.BillingCycleDescription | translate}}</a>
+            </div>
+            }
+            @if(product.ProviderSettings && product.ProviderSettings.ProviderCategory){
+            <div class="d-flex justify-content-between align-items-center my-1">
+                <span class="text-dark-75 fw-bold mr-2">{{'TRANSLATE.MICROSOFT_CART_LIST_TEMPLATE_AZURE_LABEL_TEXT_CATEGORY' | translate}}</span>
+                <a  class="text-muted text-hover-primary">{{product.ProviderSettings.ProviderCategory | translate}}</a>
+            </div>
+            }
+            @if(product.Quantity){
+            <div class="d-flex justify-content-between align-items-center my-1">
+                <span class="text-dark-75 fw-bold mr-2">{{'TRANSLATE.CUSROMER_PRODUCTS_LIST_TITLE_QUANTITY' | translate}}</span>
+                <span class="text-muted">{{product.Quantity}}</span>
+            </div>
+            }
+            @if(product.BillingTypeName){
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="text-dark-75 fw-bold mr-2">{{'TRANSLATE.PARTNER_MANAGED_CART_LIST_TEMPLATE_USAGE_LABEL_TEXT_BILLING_TYPE' | translate}}</span>
+                <a  class="text-muted text-hover-primary">{{'TRANSLATE.'+product.BillingTypeDescription| translate}}</a>
+            </div>
+            }
+            @if(product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE){
+            <div class="d-flex justify-content-between align-items-center my-1">
+                <span class="text-dark-75 fw-bold mr-2">{{'TRANSLATE.MICROSOFT_CART_LIST_TEMPLATE_ONLINE_SERVICES_LABEL_TEXT_UNIT_PRICE' | translate}}</span>
+                <span class="text-muted">
+                    <span class="bold">{{product.DisplayFinalSalePrice | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeparator : product.CurrencyDecimalSeparator}}</span>&nbsp;
+                    @if(product.Discount != null && product.Discount > 0){
+                    <span class="ps-2 text-danger">
+                        <del class="ng-binding strike-through text-danger">{{product.DisplayOriginalSalePrice | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeparator : product.CurrencyDecimalSeparator}}</del>
+                    </span>
+                    }
+                </span>
+            </div>
+            }
+            @if(product.Discount != null && product.Discount > 0){
+            <div class="d-flex justify-content-between align-items-center my-1">
+                <span class="text-dark-75 fw-bold mr-2">{{'TRANSLATE.MICROSOFT_CART_LIST_TEMPLATE_ONLINE_SERVICES_LABEL_TEXT_DISCOUNT' | translate}}</span>
+                <span class="text-muted">
+                    @if(product.DiscountType?.toLowerCase() == cloudHubConstants.BILLING_TYPE_PERCENTAGE){
+                    <span class="text-danger">{{product.Discount}}%</span>
+                    }
+                    @if(product.DiscountType?.toLowerCase() != cloudHubConstants.BILLING_TYPE_PERCENTAGE){
+                    <span class="text-danger">{{product.Discount | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeparator : product.CurrencyDecimalSeparator }}</span>
+                    }
+                </span>
+            </div>
+            }
+            <div class="d-flex justify-content-between align-items-center my-1">
+                <span class="text-dark-75 fw-bold mr-2">{{'TRANSLATE.ORDER_DETAILS_FIELD_ORDERED_ON' | translate}}</span>
+                <span class="text-muted text-lg-right ">{{product.OrderedOn | dateTimeFilter: globalDateForamt }}</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center my-1">
+                <span class="text-dark-75 fw-bold mr-2">{{'TRANSLATE.ENTITY_NAME_ORDER' | translate}}</span>
+                <span class="text-muted">{{'TRANSLATE.'+product.EntityName | translate}}</span>
+            </div>
+            @if(product.ScheduledDate !== null){
+            <div class="d-flex justify-content-between align-items-center my-1">
+                <span class="text-dark-75 fw-bold mr-2">{{'TRANSLATE.ORDER_DETAILS_SCHEDULED_DATE' | translate}}</span>
+                <span class="text-muted">{{product.ScheduledDate | dateTimeWithUTCSuffixFilter:false}}</span>
+            </div>
+            }
+            @if(showTermsAndConditionsForSubscriptionUpdate === true && product.IsTermsAndConditionsAccepted !== null){
+            <div class="d-flex justify-content-between align-items-center my-1">
+                <span class="text-dark-75 fw-bold mr-2">{{'TRANSLATE.ORDER_DETAILS_TERMS_AND_CONDITIONS' | translate}}</span>
+                <span class="text-muted">{{'TRANSLATE.ORDER_DETAILS_TERMS_AND_CONDITIONS_ACCEPTED' | translate}}</span>
+            </div>
+            }
+        </div>
+    </div>
+
+    <div class="card-footer p-5">
+        <a [appPermission]="'menu_customer_comments'" class="btn btn-block btn-sm btn-light-primary fw-bold text-uppercase mb-2 col-md-12" (click)="callManageProducts()">{{'TRANSLATE.BTN_TEXT_COMMENT' | translate}}</a>
+
+        @if((product.ItemStatus === 'Scheduled' || ((product.CartStatusName === 'Scheduled' || product.CartStatusName === 'PartiallyFulfilled') && product.ItemStatus === 'Onhold') || (product.CartStatusName === 'Onhold' && (product.ItemStatus === 'Onhold' || product.ItemStatus === 'Scheduled') && product.ScheduledDate !== null)) && isScheduledDateFuture && (product.LinkedCartLineItemId === null || (product.LinkedCartLineItemId !== null && product.IsPrimaryInLinkedProduct))){
+            <a [appPermission]="'BTN_REMOVE_AND_CANCEL_ORDER'" class="btn btn-block btn-sm btn-light-danger fw-bold text-uppercase mb-0 col-md-12" (click)="cancelOrderedProduct()">{{'TRANSLATE.BTN_TEXT_REMOVE' | translate}}</a>
+        }
+    </div>
+</div>

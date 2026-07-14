@@ -1,0 +1,11 @@
+.disabled{
+    pointer-events: none; /* Disables mouse interactions */
+    opacity: 0.65; /* Makes the button appear inactive */
+    cursor: not-allowed;
+}
+
+select:disabled,
+select[disabled]
+{
+cursor:not-allowed !important;
+}

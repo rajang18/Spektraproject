@@ -1,0 +1,184 @@
+<div class="card">
+    <div class="card-body pt-0 overflow-auto">
+
+        <ng-template #planName let-data="adtData" let-row="userData">
+            <div class="header-custom-title">
+                @if (data.PlanOfferBillingQualifiedOfferId.length < 40) { <p
+                    [ngStyle]="{'padding-left': data.PlanOfferBillingQualifiedOfferId.length/2}">
+                    <span class="fw-semibold"> {{data.PlanOfferQualifiedOfferName}}</span>
+                    <br />
+                    </p>
+                    }
+                    @if (data.PlanOfferBillingQualifiedOfferId.length > 40) {
+                    <p [ngStyle]="{'padding-left': data.PlanOfferBillingQualifiedOfferId.length/2}">
+                        {{data.PlanOfferQualifiedOfferName}} <sup class="text-warning">
+                            <span
+                                translate="{{'TRANSLATE.PLAN_MANAGE_ADD_FORM_TABLE_1_HEADER_TEXT_OFFER_ADD_ON' | translate}}"></span>
+                        </sup>
+                    </p>
+                    }
+                    <div [ngStyle]="{'padding-left': data.PlanOfferBillingQualifiedOfferId.length/2}">
+                        @if (data.ValidityType!=null && data.ValidityType == 'Month(s)' &&
+                        (data.CategoryName=='OnlineServicesNCE' || data.CategoryName== 'SoftwareSubscriptions')) {
+                        <span
+                            class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                            {{data.Validity}}
+                            @if(data.Validity == 1 && data.ValidityType === 'Month(s)'){
+                            {{'TRANSLATE.TERM_DURATION_DESC_MONTH'|translate}}
+                            }
+                            @else if(data.Validity == 1 && data.ValidityType != 'Month(s)'){
+                            {{'TRANSLATE.TERM_DURATION_DESC_YEAR' | translate}}
+                            }
+                            @else {
+                            {{'TRANSLATE.TERM_DURATION_DESC_YEAR(S)' | translate }}
+                            }
+                        </span>
+                        }
+                        @if(data.ValidityType === 'Year(s)' || data.ValidityType === 'Year') {
+                        <span
+                            class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2"
+                            [ngClass]="{'labelcolor':data.BillingCycleName == 'Monthly','TermLabelColor': data.BillingCycleName == 'Annual'}"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                            {{data.Validity}}
+                            @if(data.Validity == 1 && data.ValidityType === 'Month(s)'){
+                            {{'TRANSLATE.TERM_DURATION_DESC_MONTH'|translate}}
+                            }
+                            @else if(data.Validity == 1 && data.ValidityType != 'Month(s)'){
+                            {{'TRANSLATE.TERM_DURATION_DESC_YEAR' | translate}}
+                            }
+                            @else {
+                            {{'TRANSLATE.TERM_DURATION_DESC_YEAR(S)' | translate }}
+                            }
+                        </span>
+                        }
+
+                        <span class="label font-weight-bold label-inline text-white badge bg-dark ms-md-2"
+                            [ngClass]="{
+                                'bg-warning': data.BillingCycleName?.toLowerCase() === 'monthly',
+                                'bg-success': data.BillingCycleName?.toLowerCase() === 'annual',
+                                'bg-dark': data.BillingCycleName?.toLowerCase() === 'triennial',
+                                'bg-info': data.BillingCycleName?.toLowerCase() === 'onetime'
+                                }" aria-hidden="true"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE'|translate}}"
+                            translate="TRANSLATE.{{data?.BillingCycleDescription}}">
+                        </span>
+                        <span
+                            class="label label-success font-weight-bold label-inline text-white badge label-bg-success ms-md-2"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_PROVIDER' | translate}}">{{data.ProviderName | c3Translate}}
+                        </span>
+                        <span class="label label-light-info font-weight-bold label-inline badge label-bg-info ms-md-2"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}"
+                            translate="TRANSLATE.{{data?.CategoryDescriptionKey }}">
+                        </span>
+                        <span
+                            class="label label-light-danger font-weight-bold label-inline badge label-bg-light-danger ms-md-2"
+                            ngbTooltip="{{'TRANSLATE.CUSTOM_OFFER_TOOLTIP_TEXT_BILLING_TYPE' | translate}}">
+                            {{'TRANSLATE.'+data.BillingTypeDescription | translate}}
+                        </span>
+                        @if (data.PlanProductMacroName !== null && data?.ConsumptionType != 'Usage' && data?.ConsumptionType != 'Contract'  ) {
+                        <span
+                            class="label label-light-warning font-weight-bold mt-1 label-inline badge label-bg-warning ms-md-2"
+                            ngbTooltip="{{'TRANSLATE.PLAN_MACRO_DETAILS_LABEL_TEXT' | translate}}">
+                            {{'TRANSLATE.'+data.PlanProductDescriptionKey | translate}}
+                            @if (data.PlanProductMacroValue !== null && data.PlanProductMacroValue != 0) {
+                            <span>({{data.PlanProductMacroValue}})</span>
+                            }
+                        </span>
+                        }
+                        @if (data.MarketCode) {
+                            <span class="label label-info fw-bold label-inline text-white badge bg-info ms-md-2"
+                            ngbTooltip="{{data.MarketRegion}}">{{data.MarketCode}}</span>
+                        } 
+                        @if(data.IsEST){
+                                <span class="badge EST-Pill-styling text-white ms-md-2" ngbTooltip="{{'TRANSLATE.CATEGORY_PILL_EST_TOOLTIP' | translate }}" >{{ 'TRANSLATE.CATEGORY_PILL_NAME_EST' | translate}}</span>
+                            }
+                        <span *ngIf="data.ShowPromotionLink"
+                            class="font-weight-normal separator-primary text-primary "
+                            tooltip-append-to-body="true"
+                            ngbTooltip="{{'TRANSLATE.NCE_PROMOTIONS_AVAILABLE_TEXT' | translate}}">
+                            <i class="ki-outline ki-discount text-primary fs-3 mt-2 cursor-pointer" (click)="CheckNcePromotionDetails(data)"></i></span>
+                        <!-- <span *ngIf="data.ShowPromotionLink && Permissions.AreNcePromotionsEnabled" (click)="CheckNcePromotionDetails(data)" 
+                            class="font-weight-normal separator-primary text-primary " 
+                            tooltip-append-to-body="true" ngbTooltip="{{'TRANSLATE.NCE_PROMOTIONS_AVAILABLE_TEXT' | translate}}">
+                            <i class="fas fa-bullhorn text-primary"></i>
+                        </span> -->
+
+                    </div>
+            </div>
+        </ng-template>
+
+        <ng-template #salePrice let-data="adtData" let-row="captureEvents">
+            <div class="ms-md-2">
+                {{data?.SalePrice}}
+                <span
+                    *ngIf="data?.BillingTypeName?.toLowerCase() === 'markup' || data?.BillingTypeName?.toLowerCase() === 'percentage'"><strong>(%)</strong></span>
+            </div>
+        </ng-template>
+
+        <ng-template #salePrize let-data="adtData" let-row="captureEvents">
+            <div class="ms-md-2">
+                @if(data.PlanProductPriceId > 0){
+                <span>{{data.TargetSalePrice}}</span>
+                }
+                @if(data.PlanProductPriceId === 0 && (data.BillingTypeName.toLowerCase() === 'percentage')){
+                <span ng-init="data.TargetSalePrice = data.SalePrice">{{data.TargetSalePrice}}</span>
+                }
+                @if(data.PlanProductPriceId === 0 && (data.BillingTypeName.toLowerCase() === 'markup')){
+                <div class="input-group">
+                    <input type="number" min="0" step="0.01" class="form-control form-control-sm text-end"
+                        placeholder="{{'PLACEHOLDER_FOR_PRICE' | translate}}" [(ngModel)]="data.TargetSalePrice">
+                    <span class="input-group-addon"><strong>(%)</strong></span>
+                </div>
+                }
+                @if(data.PlanProductPriceId === 0 && (data.BillingTypeName.toLowerCase() === 'price' ||
+                data.BillingTypeName.toLowerCase() === 'unit' )){
+                <div>
+                    @if(data.PlanProductPriceId === 0){
+                    <input type="number" min="0" step="0.01" class="form-control form-control-sm text-end"
+                        placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_PRICE' | translate}}"
+                        [(ngModel)]="data.TargetSalePrice">
+                    }
+                </div>
+                }
+            </div>
+        </ng-template>
+
+        <ng-template #customHeader let-data="adtData">
+            <tr class="text-gray-500 fw-bold fs-7 text-uppercase gs-0">
+                <th colspan="2" class="text-center  col-2 col-sm-2 col-md-2 col-md-2">
+                    {{'TRANSLATE.PARTNER_PLAN_PRODUCT_CURRENCY_CONVERSION_LABEL_TEXT_PRODUCT_NAME' | translate}}
+                </th>
+                <th colspan="3" class=" text-center col-2 col-sm-2 col-md-2 col-md-2">
+                    {{'TRANSLATE.PARTNER_PLAN_PRODUCT_CURRENCY_CONVERSION_LABEL_TEXT_SOURCE_CURRENCY' | translate}}
+                    ({{planInfo.CurrencyCode}})
+                </th>
+                <th colspan="2" class="text-center col-2 col-sm-2 col-md-2 col-md-2">
+                    {{'TRANSLATE.PARTNER_PLAN_PRODUCT_CURRENCY_CONVERSION_LABEL_TEXT_TARGET_CURRENCY' | translate}}
+                    ({{planTargetCurrency || (targetCurrencyCode[0].TargetCurrency)}}<span class="ng-binding ng-scope"
+                        *ngIf="currencyConvertRate > 0"> - {{currencyConvertRate}}</span>)
+                </th>
+            </tr>
+        </ng-template>
+
+        <!-- <ng-template #multipleSearch>
+            <div [style]="'padding-left:10px'">
+                <input type="text" data-action="filter" class="form-control form-control-solid w-200px ps-12" placeholder="Search...">
+            </div>
+        </ng-template> -->
+
+        <ng-container *ngIf="datatableConfig">
+            <div [ngClass]="isLoading ? 'hide-paginaion' : ''">
+                <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" [customeHeader]="customHeader"
+                    [multiSearch]="multipleSearch">
+                </app-c3-table>
+            </div>
+        </ng-container>
+    </div>
+    <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3">
+        <button type="button" class="btn btn-primary me-2" [appPermission]="'ACTION_SAVE_PLAN_IN_OTHER_CURRENCY'"
+            (click)="submitProducts()" appBusyLoader>
+            <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+        </button>
+    </div>
+</div>

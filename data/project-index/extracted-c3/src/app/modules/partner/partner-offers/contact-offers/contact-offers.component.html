@@ -1,0 +1,325 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-semibold btn-light-primary" (click)="backToPartnerOffer()">
+            <i class="ki-outline ki-to-left fs-2"></i> <span
+                translate="TRANSLATE.CUSTOM_OFFERS_CAPTION_BUTTON_TEXT_BACK_TO_CUSTOM_OFFERS"></span></button>
+    </div>
+</ng-template>
+
+<div class="card">
+    <div class="card-body">
+        @if(isDataLoaded){
+        <form [formGroup]="customOfferRegisterForm">
+            <div class="form-group row mt-7">
+                <div class="col-md-2 col-form-label text-left text-sm-left">
+                    <label class="required fw-semibold fs-6 mb-2"
+                        translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_PROVIDER"></label>
+                    <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                        ngbTooltip="{{'TRANSLATE.PARTNER_OFFER_PROVIDER_TOOLTIP' | translate}}">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                    </i>
+                </div>
+                <div class="col-md-5">
+                    <select class="form-select form-select-sm form-control-sm fw-bold" formControlName="providerName">
+                        @for(option of providers; track $index){
+                        <option [value]="option.ID" [disabled]="true">
+                            {{option.Description | translate}}
+                        </option>
+                        }
+                    </select>
+                </div>
+
+            </div>
+            <div class="form-group row mt-7">
+                <div class="col-md-2 col-form-label text-left text-sm-left">
+                    <label class="required fw-semibold fs-6 mb-2"
+                        translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_CATEGORY"></label>
+                </div>
+                <div class="col-md-5">
+                    <select class="form-select form-select-sm form-control-sm fw-bold" formControlName="category">
+                        @for(option of providerCategories; track $index){
+                        <option [value]="option.ID" [disabled]="isEditMode">
+                            {{option.CategoryDescriptionKey | translate}}
+                        </option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row mt-7">
+                <div class="col-md-2 col-form-label text-left text-sm-left">
+                    <label class="required fw-semibold fs-6 mb-2"
+                        translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_CONSUMPTION_TYPE">
+                    </label>
+                    <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                        ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CONSUMPTION_TYPE_HELP_TEXT' | translate}}">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                    </i>
+                </div>
+                <div class="col-md-5">
+                    <select class="form-select form-select-sm form-control-sm fw-bold" formControlName="consumptionType"
+                        (click)="filterBillingCycle()">
+                        @for(option of consumptionTypes; track $index){
+                        <option [value]="option.ID" [disabled]="isEditMode">
+                            {{option.Description | translate}}
+                        </option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row mt-7">
+                <div class="col-md-2 col-form-label text-left text-sm-left">
+                    <label class="required fw-semibold fs-6 mb-2" translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_NAME">
+                    </label>
+                </div>
+                <div class="col-md-5">
+                    <input type="text" formControlName="name" class="form-control form-control-sm">
+                    @if(customOfferRegisterForm.get('name')?.errors?.required &&
+                    customOfferRegisterForm.get('name')?.touched){
+                    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                    }
+                </div>
+            </div>
+            <div class="form-group row mt-7">
+                <div class="col-md-2 col-form-label text-left text-sm-left">
+                    <label class="required fw-semibold fs-6 mb-2"
+                        translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_DESCRIPTION"></label>
+                </div>
+                <div class="col-md-5">
+                    <textarea type="text" formControlName="description"
+                        placeholder="{{'TRANSLATE.PLACEHOLDER_ENTER_TEXT' | translate}}"
+                        class="form-control form-control-sm"></textarea>
+                    @if(customOfferRegisterForm.get('description')?.errors?.required &&
+                    customOfferRegisterForm.get('description')?.touched){
+                    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                    }
+                </div>
+            </div>
+            <div class="form-group row mt-7">
+                <div class="col-md-2 col-form-label text-left text-sm-left">
+                    <label class="required fw-semibold fs-6 mb-2"
+                        translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_BILLING_CYCLE"
+                        ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOTIP_TEXT_VALIDITY'|translate}}">
+                    </label>
+                </div>
+                <div class="col-md-5">
+                    <select class="form-select form-select-sm form-control-sm fw-bold" formControlName="billingcycles">
+                        @for(option of billingcycles; track $index){
+                        <option [value]="option.BillingCycleId" [disabled]="isEditMode">
+                            {{'TRANSLATE.' + option.BillingCycleDescription | translate}}
+                        </option>
+                        }
+                    </select>
+                    @if(customOfferRegisterForm.get('billingcycles')?.errors?.required &&
+                    customOfferRegisterForm.get('billingcycles')?.touched){
+                    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                    }
+                </div>
+            </div>
+            @if((selectedConsumptionType[0]?.Name?.toLowerCase() === 'quantity' && selectedBillingCycle[0]?.IsRecurring)
+            || selectedConsumptionType[0]?.Name?.toLowerCase() === 'usage' ||
+            selectedConsumptionType[0]?.Name?.toLowerCase() === 'service'){
+            <div class="form-group row mt-7">
+                <div class="col-md-2 col-form-label text-left ">
+                    <label class="required fw-semibold fs-6 mb-2"
+                        translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_VALIDITY"></label>
+                </div>
+                <div class="col-md-5">
+                    <textarea type="number" formControlName="Validity" class="form-control form-control-sm">
+                            </textarea>
+                </div>
+            </div>
+
+            }
+            <div class="form-group row mt-7">
+                <div class="col-md-2 col-form-label text-left text-sm-left">
+                    <label class="required fw-semibold fs-6 mb-2"
+                        translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_FEED_SOURCE">
+                    </label>
+                    <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                        ngbTooltip="{{'TRANSLATE.CONTRACT_OFFER_FEEDSOURCE_TOOLTIP' | translate}}">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                    </i>
+                </div>
+                <div class="col-md-5">
+                    <select class="form-select form-select-sm form-control-sm fw-bold" formControlName="feedSource">
+                        @for(option of feedSource; track $index){
+                        <option [value]="option.ID" [disabled]="isEditMode">
+                            {{option.Name}}
+                        </option>
+                        }
+                    </select>
+                </div>
+            </div>
+            @if(true){
+            <div class="form-group row mt-7">
+                <div class="col-md-2 col-form-label text-left text-sm-left">
+                    <label class="required fw-semibold fs-6 mb-2" translate="TRANSLATE.PARTNER_OFFER_SLAB_DATA"></label>
+                    <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                        ngbTooltip="{{'TRANSLATE.CONTRACT_OFFER_SLABDATA_TOOLTIP' | translate}}">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                    </i>
+                </div>
+                <div class="col-md-9">
+                    <table class="table table-responsive table-striped table-hover table-bordered table-sm"
+                        id="mytable">
+                        <thead>
+                            <tr>
+                                <th style="text-align: right; font-weight: bold;" scope="col">
+                                    <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_MINVALUE"></span>
+                                </th>
+                                <th style="text-align: right; font-weight: bold;" scope="col">
+                                    <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_MAXVALUE"></span>
+                                </th>
+                                <th style="text-align: right; font-weight: bold;" scope="col">
+                                    <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_SELLING_PRICE"></span>
+                                </th>
+                                <th style="text-align: left; font-weight: bold;" scope="col">
+                                    <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_BILLING_TYPE"></span>
+                                </th>
+                                <th style="text-align: center; font-weight: bold;" scope="col"
+                                    [appPermission]="'SAVE_OR_UPDATE_PARTNER_OFFER'">
+                                    <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_ACTIONS"></span>
+                                </th>
+                            </tr>
+                        </thead>
+                        
+                        <tbody *ngIf="!!formArray?.controls">
+                            <tr formArrayName="slabData" *ngFor="let item of formArray.controls; let i = index">
+                                <ng-container [formGroupName]="i">
+                                    <td class="col-md-2 fw-bold text-end">
+                                        <!-- ajmal:todo: need to check -->
+                                        {{item?.get('MinValue').getRawValue()}}
+                                    </td>
+                                    <td class="col-md-2 text-end">
+                                        {{item?.get('MaxValue').getRawValue()}}
+                                    </td>
+                                    <td class="col-md-2">
+                                        <div class="d-flex align-items-right" *ngIf="item?.get('isEditing')?.value">
+                                            <span
+                                                *ngIf="item?.get('BillingTypeName').getRawValue() === 'Price'">{{currencySymbol}}</span>
+                                            <span style="text-align: right;"
+                                                *ngIf="!item?.get('isEditing')?.value">{{item?.get('SalePrice').getRawValue()}}</span>
+                                            <span
+                                                *ngIf="item?.get('BillingTypeName').getRawValue() === 'Percentage'">&#37;</span>
+                                            <input *ngIf="item?.get('isEditing')?.value"
+                                                class="form-control form-control-sm text-end"
+                                                formControlName="SalePrice" type="number">
+                                        </div>
+                                        <div class="text-end" *ngIf="!item?.get('isEditing')?.value">
+                                            <span
+                                                *ngIf="item?.get('BillingTypeName').getRawValue() === 'Price'">{{currencySymbol}}</span>
+                                            <span style="text-align: right;"
+                                                *ngIf="!item?.get('isEditing')?.value">{{item?.get('SalePrice').getRawValue()}}</span>
+                                            <span
+                                                *ngIf="item?.get('BillingTypeName').getRawValue() === 'Percentage'">&#37;</span>
+                                        </div>
+                                    </td>
+                                    <td class="col-md-3" style="text-align: center;">
+                                        <select class="form-select form-select-sm form-control-sm fw-bold required"
+                                            formControlName="BillingTypeId">
+                                            <option [value]="''">
+                                                {{ 'TRANSLATE.CONTRACT_OFFER_BILLING_TYPE_PLACEHOLDER' | translate }}
+                                            </option>
+                                            @for(option of billingTypes; track $index){
+                                            <option [value]="option.BillingTypeId">
+                                                {{option.BillingTypeName | translate}}
+                                            </option>
+                                            }
+                                        </select>
+                                    </td>
+                                    <td class="col-md-3" [appPermission]="'SAVE_OR_UPDATE_PARTNER_OFFER'">
+
+                                        <a form="rowForm" class="btn btn-active-light-primary btn-sm tooltips"
+                                            ngbTooltip="{{'TRANSLATE.PARTNER_CONTRACT_OFFERS_TOOLTIP_TEXT_SAVE' | translate}}"
+                                            (click)="saveOrEditSlabData(item, false)"
+                                            *ngIf="item?.get('isEditing')?.value">
+                                            <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+                                                <span class="ki-outline ki-file-added fs-6 text-primary"></span>
+                                            </span>
+                                        </a>
+                                        <a form="rowForm" class="btn btn-active-light-primary btn-sm tooltips"
+                                            ngbTooltip="{{'TRANSLATE.PARTNER_CONTRACT_OFFERS_TOOLTIP_TEXT_CANCEL' | translate}}"
+                                            (click)="cancelSlabTableChanges(item, i)"
+                                            *ngIf="item?.get('isEditing')?.value">
+                                            <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+                                                <span class="ki-outline ki-cross fs-6 text-primary"></span>
+                                            </span>
+                                        </a>
+                                        <a form="rowForm" class="btn btn-active-light-primary btn-sm tooltips"
+                                            ngbTooltip="{{'TRANSLATE.PARTNER_CONTRACT_OFFERS_TOOLTIP_TEXT_EDIT' | translate}}"
+                                            (click)="saveOrEditSlabData(item, true)"
+                                            *ngIf="!item?.get('isEditing')?.value">
+                                            <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+                                                <span class="ki-outline ki-pencil fs-6 text-primary"></span>
+                                            </span>
+                                        </a>
+                                        <a form="rowForm" class="btn btn-active-light-primary btn-sm tooltips"
+                                            ngbTooltip="{{'TRANSLATE.PARTNER_CONTRACT_OFFERS_TOOLTIP_TEXT_ADD' | translate}}"
+                                            *ngIf="!getSladdataEditing(item)" (click)="addGroup(i)">
+                                            <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+                                                <span class="ki-outline ki-plus fs-6 text-primary"></span>
+                                            </span>
+                                        </a>
+                                        <a form="rowForm" class="btn btn-active-light-primary btn-sm tooltips"
+                                            ngbTooltip="{{'TRANSLATE.PARTNER_CONTRACT_OFFERS_TOOLTIP_TEXT_DELETE' | translate}}"
+                                            (click)="removeGroup(i)" *ngIf="!item?.get('isEditing')?.value && i != 0">
+                                            <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+                                                <span class="ki-outline ki-trash fs-6 text-primary"></span>
+                                            </span>
+                                        </a>
+                                    </td>
+                                </ng-container>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            }
+            <div class="form-group row my-7">
+                <div class="col-md-2 col-form-label text-left text-sm-left">
+                    <label class="required fw-semibold fs-6 mb-2"
+                        translate="TRANSLATE.CUSTOM_OFFERS_CAPTION_LABLE_TEXT_APPLICABILITY">
+                    </label>
+                </div>
+                <div class="col-md-5">
+                    <select2 [data]="providersDataSet" (update)="ProviderSelectionChange($event)"
+                        formControlName="applicabilityProviders"
+                        placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_PROVIDERS_DROPDOWN' | translate}}"
+                        [templates]="template" [multiple]="true">
+                        <ng-template #template let-data="data">
+                            <span class="nohtmltitle multiple-select-choice" ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_PROVIDER' | translate}}">
+                                {{'TRANSLATE.' + data?.text | translate}}
+                            </span>
+                        </ng-template>
+                    </select2>
+                    <select2 [data]="categoriesDataSet" *ngIf="Availability.Providers.length > 0"
+                        (update)="CategorySelectionChange($event)" formControlName="applicabilityCategories"
+                        placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_CATEGORIES_DROPDOWN' | translate}}" 
+                        [templates]="template"
+                        [multiple]="true"
+                        [listPosition]="'above'"
+                        [displaySearchStatus]="'hidden'">
+                        <ng-template #template let-data="data">
+                            <span class="nohtmltitle multiple-select-choice" ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_CATEGORY' | translate}}">
+                                {{'TRANSLATE.' + data?.text | translate}}
+                            </span>
+                        </ng-template>
+                    </select2>
+                </div>
+            </div>
+        </form>
+        }
+        <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3">
+            <button type="button" [appPermission]="'BTN_SAVE_OR_UPDATE_CONTRACT_OFFER'" class="btn btn-primary"
+                (click)="saveContractOffer()" appBusyLoader>
+                <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span></button>
+        </div>
+    </div>

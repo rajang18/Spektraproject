@@ -1,0 +1,57 @@
+.divided {
+    display: flex;
+    align-items: center;
+}
+
+.divider {
+    flex-grow: 1;
+    border-bottom: 1px ;
+    margin: 5px;
+    color: #d9d9d9
+}
+
+.wizard-form-height {
+    min-height: 700px !important;
+}
+
+/* quote-details.component.scss */
+
+.fixed-height-one {
+    height: 770px; /* Fixed height for Tab 1 */
+    overflow-y: auto; /* Scroll if content exceeds height */
+  }
+  
+  .fixed-height-two {
+    height: 700px; /* Fixed height for Tab 2 */
+    overflow-y: auto;
+  }
+  
+  .fixed-height-three {
+    height: 700px; /* Fixed height for Tab 3 */
+    overflow-y: auto;
+  }
+  
+  .fixed-height-four {
+    height: 650px; /* Fixed height for Tab 4 */
+    overflow-y: auto;
+  }
+  
+  .strike-through {
+    text-decoration: line-through;
+}
+.custom-container {
+  border: 1px solid #B7B5B4;
+  background-color: white;
+}
+
+.custom-width-word-break{
+  word-wrap: break-word;
+  width : 270px;
+}
+
+.space-after {
+    margin-right: 5px;
+    display: inline-block;
+    font-weight: 500!important;
+    font-size: 1rem!important;
+}

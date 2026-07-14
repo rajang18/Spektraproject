@@ -1,0 +1,17 @@
+.psa-details{
+    width: 100%;          
+    /* Optional: Set the width of the container */
+    overflow-x: auto;      
+    /* Enable horizontal scrolling */
+    overflow-y: hidden;
+}
+::ng-deep{
+    .col-width-10{
+        width: 10%
+         
+     }
+     .col-width-18{
+        width: 18%
+         
+     }
+}

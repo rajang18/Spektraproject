@@ -1,0 +1,52 @@
+
+@if(templateName == 'Template-2'){
+    <div class="card-body d-flex p-0 bgi-no-repeat" [appPermission]="'side_bar_banner_manage'" [ngClass]="notificationType === 'modal-type' ? templateName : ''">
+        <div class="flex-grow-1 card-rounded flex-grow-1 bgi-no-repeat ">
+            <div class="justify-content-end">
+            </div>
+    
+            <div class="row w-100">
+                <div class="col-5">
+                </div>
+                <div class="col-7">
+                    @if(!!title){
+                    <h2 class="title-text font-weight-bolder">{{title}}</h2>
+                    }
+                    @if(!!description){
+                    <div class="description-text pb-5 width-80-percent custom-max-width-200">
+                        <div class="line-break-all word-break-unset anchor-description" [innerHTML]="description">
+                        </div>
+                    </div> }
+    
+                    @if(!!buttonDetails){
+                        <a class="btn notitification-action-btn"
+                        [href]="buttonDetails?.btnUrl"  target="_blank"><span>{{buttonDetails?.btnText}}</span>
+                    </a>
+                  }
+                </div>
+            </div>
+        </div>
+        </div>
+}
+
+@else{
+    <div class="card-body   d-flex p-0  bgi-no-repeat" [appPermission]="'side_bar_banner_manage'" [ngClass]="notificationType === 'modal-type' ? templateName : ''">
+        <div class="flex-grow-1 card-rounded flex-grow-1 bgi-no-repeat ">
+            <div class="justify-content-end">
+            </div>
+            @if(!!title){
+            <h2 class="text-white title-text font-weight-bolder">{{title}}</h2>
+            }
+            @if(!!description){
+            <div class="text-white description-text pb-5 fs-2 width-80-percent custom-max-width-200">
+                <div class="line-break-all word-break-unset anchor-description" [innerHTML]="description">
+                </div>
+            </div> }
+            @if(!!buttonDetails){
+                <a class="btn notitification-action-btn"
+                        [href]="buttonDetails?.btnUrl" target="_blank"><span class="notitification-action-btn-text">{{buttonDetails?.btnText}}</span>
+                    </a>
+            }
+        </div>
+    </div>
+}

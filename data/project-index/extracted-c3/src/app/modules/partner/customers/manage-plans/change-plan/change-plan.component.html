@@ -1,0 +1,239 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-semibold btn-light-primary" (click)="showHelpText = !showHelpText">
+            <span translate="TRANSLATE.CHANGE_PLAN_HELP"></span>&nbsp;
+            <i class="ki-outline ki-question-2 fs-4"></i>
+        </button>
+        <button type="button" class="btn btn-sm fw-semibold btn-primary" (click)="BackToPlanAssignment()">
+            <i class="ki-outline ki-to-left fs-2"></i> <span
+                translate="TRANSLATE.PARTNER_CUSTOMER_PLANS_BTN_TEXT_BACK_TO_CUSTOMER_PLANS"></span>
+        </button>
+    </div>
+</ng-template>
+
+<div class="card">
+    <div class="card-header flex-column pt-3 px-8">
+        @if (showHelpText) {
+        <form>
+            <div class="mb-5">
+                <div
+                    class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+                    <h6><span translate="TRANSLATE.CHANGE_PLAN_INSTRUCTIONS_HEADING"></span></h6>
+                    <ul>
+                        <li>
+                            <span translate="TRANSLATE.CHANGE_PLAN_INSTRUCTIONS_1"></span>
+                            <ul>
+                                <li> <span
+                                        [innerHTML]="'TRANSLATE.CHANGE_PLAN_INSTRUCTIONS_1_SUBINSTRUCTION_1' | translate"></span>
+                                </li>
+                                <li> <span
+                                        [innerHTML]="'TRANSLATE.CHANGE_PLAN_INSTRUCTIONS_1_SUBINSTRUCTION_2' | translate"></span>
+                                </li>
+                                <li> <span
+                                        [innerHTML]="'TRANSLATE.CHANGE_PLAN_INSTRUCTIONS_1_SUBINSTRUCTION_3' | translate"></span>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.CHANGE_PLAN_INSTRUCTIONS_2"></span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.CHANGE_PLAN_INSTRUCTIONS_3"></span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.CHANGE_PLAN_INSTRUCTIONS_4"></span>
+                        </li>
+                        <li>
+                            <span [innerHTML]="'TRANSLATE.CHANGE_PLAN_INSTRUCTIONS_5' | translate"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </form>
+        }
+        <form>
+            <div class="form-group row mt-2">
+                <label class="col-md-2 col-form-label required fw-semibold mb-2"
+                    translate="TRANSLATE.CHANGE_PLAN_CHANGE_LABEL_SOURCE_PLANS">
+                </label>
+                <div class="col-md-5">
+                    <ng-select [multiple]="true" [(ngModel)]="SelectedSourcePlans"
+                        (change)="OnSourcePlansChange($event)" name="SSP" (remove)="OnRemoveSourcePlans($event)"
+                        placeholder="{{'TRANSLATE.CHANGE_PLAN_PLACEHOLDER_FOR_SOURCE_PLANS'|translate}}">
+                        @for (sPlans of SourcePlans; track $index) {
+                        <ng-option [value]="sPlans">{{sPlans.Name | translate}}</ng-option>
+                        }
+                    </ng-select>
+                    <span *ngIf="IsInvalidSourcePlans"
+                        class="text-danger">{{'TRANSLATE.CHANGE_PLAN_VALIDATION_MESSAGE_ISINVALIDSOURCEPLANS' | translate}}
+                    </span>
+                </div>
+            </div>
+            <div class="form-group row mt-2">
+                <label class="col-md-2 col-form-label required fw-semibold mb-2"
+                    translate="TRANSLATE.CHANGE_PLAN_CHANGE_LABEL_TARGET_PLANS">
+                </label>
+                <div class="col-md-5">
+                    <ng-select [(ngModel)]="SelectedTargetPlan" name="TTP"
+                        (change)="comparePlanOffers()" placeholder="{{'TRANSLATE.CHANGE_PLAN_PLACEHOLDER_FOR_TARGET_PLANS'|translate}}">
+                        @for (tPlans of TargetPlans | orderBy: 'Name' : 'asc' : true ; track $index) {
+                        <ng-option [value]="tPlans">{{tPlans.Name | translate}}</ng-option>
+                        }
+                    </ng-select>
+                </div>
+            </div>
+
+            <div class="form-group row mt-5">
+                <div class="col-md-12">
+                    <div class="input-group-with-checkbox">
+                        <label class="form-check form-check-inline me-5">  
+                            <input type="checkbox" id="unassignPlan" [ngClass]="{'hidden-checkbox': CanUnassignPlan && !isAllMatchingProductsAvailable}" class="form-check-input" [(ngModel)]="IsUnAssignPlan"
+                                name="UnAssignPlan" (change)="onClickUnAssignPlan()">
+                            <span class="fw-semibold ps-2"
+                                translate="TRANSLATE.CHANGE_PLAN_CHECKBOX_TEXT_UNASSIGN_PLAN">
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row mt-7">
+                <ng-template #checkboxTemplate let-data="adtData">
+                    <div class="d-flex form-check">
+                        <input type="checkbox" class="form-check-input" [disabled]="data.TargetPlanProducts.length == 0"
+                            [(ngModel)]="data.IsChecked" [name]="'IsChecked' + data.CurrentPlanProductId" (change)="rowChecked(data)">
+                    </div>
+                </ng-template>
+
+                <ng-template #nameTemplate let-data="adtData">
+                    <div class="d-flex align-items-start custom fw-semibold">
+                        <span class="fw-bold fs-5">{{data.CurrentDisplayName}}</span>
+                        @if (data.CurrentParentPlanProductId > 0) {
+                        <span><sup class="text-warning"><span
+                                    translate="TRANSLATE.PLAN_MANAGE_ADD_FORM_TABLE_1_HEADER_TEXT_OFFER_ADD_ON"></span></sup></span>
+                        }
+                        @if (data.CurrentLinkedProductName) {
+                        <span><sup class="text-warning"> <i class="fa fa-link"></i></sup></span>
+                        }
+                        <div class="fw-semibold">
+                            <label>
+                                {{data.ProviderProductId}}
+                            </label>
+                        </div>
+                        <div class="small mt-0">
+                            <label class="me-2">
+                                <span translate="TRANSLATE.CHANGE_PLAN_TABLE_TEXT_PLAN_NAME"></span>
+                            </label>
+                            <label class="me-3">
+                                {{data.CurrentPlanName}}
+                            </label>
+                            <label class="me-2">
+                                <span translate="TRANSLATE.CHANGE_PLAN_TABLE_TEXT_QUANTITY"></span>
+                            </label>
+                            <label>
+                                {{data.CurrentQuantity}}
+                            </label>
+                            <br />
+                            </div>
+                            <div class="col-md-5">
+                                <span
+                                    class="label label-light-info fw-semibold label-inline badge" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}">{{formattedCurrentCategoryName(data.CurrentCategoryName)}}
+                                </span>
+                                <span
+                                    class="label label-warning fw-semibold label-inline badge-inline text-white bg-warning badge ms-md-2"
+                                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}"
+                                    *ngIf="data.CurrentValidityType === 'Year(s)' || data.CurrentValidityType === 'Year'"
+                                    [ngClass]="{'labelcolor':data.CurrentBillingCycleName == 'Monthly','TermLabelColor': data.CurrentBillingCycleName == 'Annual'}">
+                                    {{data.CurrentValidity}} {{data.CurrentValidity > 1?
+                                    data.CurrentValidityType:data.CurrentValidityType.replace('(s)','') }}
+                                </span>
+                                <span>
+                                    <span
+                                        class="label label-warning fw-semibold label-inline badge-inline text-white badge bg-warning"
+                                        ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}"
+                                        *ngIf="data.CurrentValidityType!=null && data.CurrentValidityType == 'Month(s)'">
+                                        {{data.CurrentValidity}} {{data.CurrentValidity > 1?
+                                        data.CurrentValidityType:data.CurrentValidityType.replace('(s)','')}} 
+                                    </span>
+                                </span>
+                                <span class="label fw-semibold label-inline text-white badge"
+                                [ngClass]="{
+                                    'bg-warning': data.CurrentBillingCycleName?.toLowerCase() === 'monthly',
+                                    'bg-success': data.CurrentBillingCycleName?.toLowerCase() === 'annual',
+                                    'bg-dark': data.CurrentBillingCycleName?.toLowerCase() === 'triennial',
+                                    'bg-info': data.CurrentBillingCycleName?.toLowerCase() === 'onetime'
+                                }"
+                                ngbTooltip="{{'TRANSLATE.PRODUCT_BUNDLE_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}">
+                                    {{data.CurrentBillingCycleName}}
+                                </span>
+                                <span
+                                    class="label label-light-success fw-semibold label-inline text-success badge bg-light-success" ngbTooltip="{{'TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_PROVIDER' | translate}}">
+                                    {{data.CurrentProviderName}}
+                                </span>
+                                <span
+                                    class="label badge-info fw-semibold label-inline badge" ngbTooltip="{{'TRANSLATE.LABEL_TEXT_PRICE' | translate}}">{{data.CurrentCurrencySymbol}}{{data.CurentSalePrice}}
+                                </span>
+                            </div>
+                            <br>
+                       @if (data.CurrentLinkedProductName) {
+                        <div class="">
+                            <label class="me-1 fw-bolder fs-6">
+                                <span translate="TRANSLATE.CHANGE_PLAN_TABLE_TEXT_LINKED_PRODUCT"></span>
+                            </label>
+                            <label>
+                                {{data.CurrentLinkedProductName}}
+                            </label>
+                        </div>
+                        }
+                    </div>
+
+                </ng-template>
+
+                <ng-template #mappedTemplate let-data="adtData" let-row="mappedProductsData">
+                    <div class="d-flex flex-column">
+                        <ng-select [(ngModel)]="data.MappedPlanProducts" [disabled]="data.TargetPlanProducts.length == 0"
+                            [name]="'ProductName' + data.CurrentPlanProductId"
+                            [placeholder]="(data.TargetPlanProducts.length>0 ?'TRANSLATE.SELECT_DEFAULT_OPTION_SELECT':'TRANSLATE.CHANGE_PLAN_PLACEHOLDER_NO_MATCHED_PRODUCTS_IN_TARGET_PLAN') | translate">
+                            <ng-template ng-label-tmp let-row="item">
+                                <span>{{row.TargetDisplayName}}</span>
+                            </ng-template>
+                            @for (planProducts of data.TargetPlanProducts; track $index) {
+                            <ng-option [value]="planProducts" (click)="selectedOffer(data)">
+                                <span *ngIf="planProducts.TargetLinkedProductName"><i
+                                        class="fa fa-link font-yellow-gold"></i></span>
+                                <div *ngIf="planProducts.TargetParentPlanProductId==0">
+                                    {{planProducts.TargetDisplayName}}</div>
+                                <div *ngIf="planProducts.TargetParentPlanProductId> 0">
+                                    {{planProducts.TargetDisplayName+'('+planProducts.TargetParentPlanProductName+')'}}
+                                </div>
+                                <div><small> {{'TRANSLATE.CHANGE_PLAN_TABLE_TEXT_PRICE' | translate}}:
+                                        <span>{{data.CurrencySymbol}}</span><span>{{planProducts.TargetSalePrice}}</span>
+                                    </small></div>
+                                <div><small *ngIf="planProducts.TargetLinkedProductName">
+                                        {{'TRANSLATE.CHANGE_PLAN_TABLE_TEXT_LINKED_PRODUCT' | translate}}:
+                                        <span>{{planProducts.TargetLinkedProductName}}</span> </small></div>
+                            </ng-option>
+                            }
+                        </ng-select>
+                        <span *ngIf="(data.IsChecked && !data.MappedPlanProducts)" class="text-danger"><span
+                                translate="TRANSLATE.CHANGE_PLAN_VALIDATION_MESSAGE_SELECT_MAPPED_PRODUCT"></span>
+                        </span>
+                    </div>
+                </ng-template>
+            </div>
+        </form>
+    </div>
+    <div class="card-body pt-5 overflow-auto">
+        @if (!!datatableConfig) {
+        <app-c3-table [datatableConfig]="datatableConfig" [selection]="true" [checkboxWithTooltip]="true" [searchFilter]="false" (onSelection)="handleSelection($event)" [isPaginationHide]="true">
+        </app-c3-table>
+        }
+        @if (IsShowSubmit) {
+        <div class="card-footer d-flex justify-content-end py-6 pt-8 pb-0 px-0">
+            <button type="button" class="btn btn-sm btn-primary me-4" (click)="submitChangePlan()">
+                {{ 'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate }}
+            </button>
+        </div>
+        }
+    </div>
+</div>

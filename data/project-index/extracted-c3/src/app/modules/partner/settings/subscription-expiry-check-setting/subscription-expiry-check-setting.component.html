@@ -1,0 +1,41 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-semibold btn-primary"
+            [routerLink]="['/partner/settings/renewalnotification/addoreditsubscriptionexpirycheck']" appBusyLoader>
+            <i class="ki-outline ki-plus fs-2"></i> <span
+                translate="TRANSLATE.SUBSCRIPTION_RENEWAL_EXPIRATION_ADD_CHECK"></span>
+        </button>
+    </div>
+</ng-template>
+
+    <div class="card-body pt-0 overflow-auto">
+        <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+            <div class="d-flex justify-content-end">
+                <!-- Add your action buttons or other elements here -->
+                <div class="d-flex align-items-center">
+                    <div class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto" placement="top"
+                        [ngClass]="toolbarButtonHeightClass" (click)="editSubscriptionExpiry(data)"
+                        ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_EDIT'|translate}}">
+                        <span>
+                            <i class="ki-outline ki-pencil text-primary"> </i>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center">
+                    <div class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto" placement="top"
+                        [ngClass]="toolbarButtonHeightClass" (click)="deleteExpiryCheck(data.Id)"
+                        ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_DELETE'|translate}}">
+                        <span>
+                            <i class="ki-outline ki-trash text-primary"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+        <!-- Check if datatableConfig is defined and then render the table -->
+        <ng-container *ngIf="datatableConfig">
+            <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" [searchFilter]="true">
+            </app-c3-table>
+        </ng-container>
+    </div>

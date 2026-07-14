@@ -1,0 +1,50 @@
+#past_dues_png{
+    display: flex;
+    flex-direction: column;
+    padding-right: 2.25rem;
+    gap: 25px;
+}  
+.past-dues-wrapper {
+    height: 400px;
+    overflow: auto;
+}
+::ng-deep {
+    app-past-dues {
+        .opacity-8 {
+            opacity: 0.5;
+        }
+
+        .loader-indicater {
+            position: absolute;
+            margin: auto;
+            top: 50%;
+            left: 41%;
+        }
+
+        .z-index-10 {
+            z-index: 10 !important;
+        }
+
+        .select2-container--default .select2-selection--single {
+            position: relative;
+            padding-right: 30px;
+        }
+
+        .select2-container--default .select2-selection--single::after {
+            content: "\f107";
+            font-family: 'FontAwesome' !important;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: var(--select2-arrow-color, #888);
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow:before {
+            content: "";
+            display: none;
+        }
+
+    }
+}

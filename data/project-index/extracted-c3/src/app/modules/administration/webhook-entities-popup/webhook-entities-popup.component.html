@@ -1,0 +1,371 @@
+<!-- <div class="m-4">
+    <label class="font-size-h1 font-weight-bolder bold text-primary">
+        <span class="bold" translate="TRANSLATE.WEBHOOK_NOTIFICATION_TAGGED_ENTITIES_ELENMENTS_POPUP_HEADER"></span>
+    </label>
+</div>
+<div class="card m-6">
+    <div class="card-body pt-0 overflow-auto">
+    </div>
+</div> -->
+
+<div class="modal-dialog m-0 modal-dialog m-0-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><span translate="TRANSLATE.WEBHOOK_NOTIFICATION_TAGGED_ENTITIES_ELENMENTS_POPUP_HEADER"></span></h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModal()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+            </div>
+        </div>
+
+        <div class="modal-body pt-0 overflow-auto">
+            <div class="d-flex flex-column-fluid">
+                <!--begin::Container-->
+                <div class="container-fluid">
+                    <!--begin::Page Layout-->
+                    <div class="d-flex flex-row" block-ui="loadingProductOffers">
+                        <!--begin::Aside-->
+                        <div class="flex-column offcanvas-mobile" id="kt_profile_aside">
+                            <!--begin::Forms Widget 15-->
+                            <div class="card card-custom gutter-b m-4">
+                                <!--begin::Body-->
+                                <div class="card-body w-225px custom-scroll">
+                                    <!--begin::Form-->
+                                    <form>
+                                        <div>
+                                            <div class=" mb-5">
+                                                <div class="div-providers">
+                                                    <label
+                                                        class="mb-1 text-gray-900 fw-bold fs-5 text-uppercase">
+                                                        <span
+                                                            translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_PROVIDERS"></span></label>
+                                                    <div class=" row">
+                                                        <div class="col-12 col-form-label">
+                                                            @for (provider of providers; track $index) {
+                                                            <div class="checkbox-list">
+                                                                <label
+                                                                    class="checkbox checkbox-outline checkbox-outline-2x control-label mb-1">
+                                                                    <input type="checkbox" class="form-check-input me-1 mb-1"
+                                                                        value="{{provider}}" name="provider"
+                                                                        (click)="toggleProviderSelection(provider)"
+                                                                        [checked]="ProviderSelection.indexOf(provider) > -1">&nbsp;
+                                                                    <span class="fs-6 text-gray-500">{{provider.Name}}</span>
+                                                                </label>
+                                                            </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class=" mb-5">
+                                                <!-- Categories -->
+                                                @if (IsManagedByPartner){
+                                                <div class="div-category">
+                                                    <label
+                                                        class="mb-1 text-gray-900 fw-bold fs-5 text-uppercase">
+                                                        <span
+                                                            translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_CATEGORY"></span></label>
+                                                    <div class=" row">
+                                                        <div class="col-12 col-form-label">
+                                                            @for(category of Categories; track $index) {
+                                                            <div> <label
+                                                                    class="checkbox checkbox-outline checkbox-outline-2x control-label mb-1"
+                                                                    *ngIf="category.Name === 'Custom'">
+                                                                    <input type="checkbox" class="form-check-input me-1 mb-1"
+                                                                        value="{{category}}"
+                                                                        (click)="toggleCategorySelection(category)"
+                                                                        [checked]="CategorySelection.indexOf(category) > -1">&nbsp;
+                                                                    <span class="fs-6 text-gray-500">{{category.Description}} </span>
+                                                                </label>
+                                                            </div>
+                                                            }
+                                                            <div [appPermission]="'GET_PARTNER_TRIAL_OFFER_FILTER'">
+                                                                <label
+                                                                    class="checkbox checkbox-outline checkbox-outline-2x control-label mb-1">
+                                                                    <input type="checkbox" class="form-check-input me-1 mb-1"
+                                                                        [(ngModel)]="SelectedIsTrailOffer"
+                                                                        (click)="FilterProductsByIsTrailOffer()">&nbsp;
+                                                                    <span class="fs-6 text-gray-500">{{'TRANSLATE.CATEGORY_DESC_CUSTOM' |
+                                                                        translate}}</span>&nbsp;<sup
+                                                                        class="text-warning"><span
+                                                                            translate="TRANSLATE.PLAN_MANAGE_TRAIL_OFFER_SYMBOL_TRAIL_OFFER"></span></sup>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                }
+                                            </div>
+                                            @if (this.SelectedIsTrailOffer){
+                                            <div class=" mb-5">
+                                                <!-- Categories -->
+                                                <div class="div-category">
+                                                    <label
+                                                        class="mb-1 text-gray-900 fw-bold fs-5 text-uppercase">
+                                                        <span 
+                                                            translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_TRIAL_DURATION"></span></label>
+                                                    <div class=" row">
+                                                        <div class="col-12 col-form-label">
+                                                            @for(day of trialDays; track $index) {
+                                                            <div> <label
+                                                                    class="checkbox checkbox-outline checkbox-outline-2x control-label mb-1">
+                                                                    <input type="checkbox" class="form-check-input me-1 mb-1"
+                                                                        value="{{trialDays}}"
+                                                                        (click)="toggleTrialDurationSelection(day)"
+                                                                        [checked]="TrialDurationSelection.indexOf(day) > -1"
+                                                                        [disabled]="false">&nbsp;
+                                                                    <span class="fs-6 text-gray-500">
+                                                                        {{day.Days}} {{'TRANSLATE.' +
+                                                                        day.TrialPeriodKey| translate }}
+                                                                    </span>
+                                                                </label>
+                                                            </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            }
+                                            <!--Once Trial offer available Duration -->
+                                            <div class=" mb-5">
+                                                <!-- Term Duration -->
+                                                <div class="div-billing-cycle">
+                                                    <label
+                                                        class="mb-1 text-gray-900 fw-bold fs-5 text-uppercase">
+                                                        <span
+                                                            translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_TERM_DURATION"></span></label>
+                                                    <div class=" row">
+                                                        <div class="col-12 col-form-label">
+                                                            @for(term of ProductTermDurations; track $index) {
+                                                            <label
+                                                                class="checkbox checkbox-outline checkbox-outline-2x control-label mb-1">
+                                                                <input type="checkbox" class="form-check-input me-1 mb-1"
+                                                                    value="{{term}}"
+                                                                    (click)="toggleTermDurationSelection(term)"
+                                                                    [checked]="TermDurationSelection.indexOf(term) > -1">&nbsp;
+                                                                <span class="fs-6 text-gray-500">{{term.Validity}} {{term.Validity == 1?
+                                                                term.ValidityType === 'Month(s)'?
+                                                                ('TRANSLATE.TERM_DURATION_DESC_MONTH' | translate ):
+                                                                ('TRANSLATE.TERM_DURATION_DESC_YEAR' | translate) :
+                                                                ('TRANSLATE.TERM_DURATION_DESC_YEARS' | translate) }}</span>
+                                                            </label>
+                                                            <br>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class=" mb-5">
+                                                <!-- Billing Cycles -->
+                                                <div class="div-billing-cycle">
+                                                    <label
+                                                        class="mb-1 text-gray-900 fw-bold fs-5 text-uppercase">
+                                                        <span
+                                                            translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_BILLING_CYCLES"></span></label>
+                                                    <div class=" row">
+                                                        <div class="col-12 col-form-label">
+                                                            @for(billingCycle of BillingCycle; track $index) {
+                                                            <label
+                                                                class="checkbox checkbox-outline checkbox-outline-2x control-label mb-1">
+                                                                <input type="checkbox" class="form-check-input me-1 mb-1"
+                                                                    value="{{billingCycle}}"
+                                                                    (click)="toggleBillingCycleSelection(billingCycle)"
+                                                                    [checked]="BillingCycleSelection.indexOf(billingCycle) > -1">&nbsp;
+                                                                <span class="fs-6 text-gray-500">{{'TRANSLATE.'+ billingCycle.Description |
+                                                                    translate }}</span>
+                                                            </label>
+                                                            <br>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class=" mb-5">
+                                                <!-- Consumption types -->
+                                                <div class="div-billing-cycle">
+                                                    <label
+                                                        class="mb-1 text-gray-900 fw-bold fs-5 text-uppercase">
+                                                        <span
+                                                            translate="TRANSLATE.MANAGE_PLANS_FILTER_TITLE_CONSUMPTION_TYPES"></span></label>
+                                                    <div class=" row">
+                                                        <div class="col-12 col-form-label">
+                                                            @for(consumptionType of ConsumptionType; track $index) {
+                                                            <label
+                                                                class="checkbox checkbox-outline checkbox-outline-2x control-label mb-1">
+                                                                <input type="checkbox" class="form-check-input me-1 mb-1"
+                                                                    value="{{consumptionType}}"
+                                                                    (click)="toggleConsumptionTypeSelection(consumptionType)"
+                                                                    [checked]="ConsumptionTypeSelection.indexOf(consumptionType) > -1">&nbsp;
+                                                                <span class="fs-6 text-gray-500">{{'TRANSLATE.'+ consumptionType.Description |
+                                                                    translate }}</span>
+                                                            </label>
+                                                            <br>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <!--end::Form-->
+                                </div>
+                                <!--end::Body-->
+                            </div>
+                            <!--end::Forms Widget 15-->
+                        </div>
+                        <!--end::Aside-->
+                        <ng-template #productName let-data="adtData" let-emitter="captureEvents">
+                            <div>
+                                <span
+                                    *ngIf="data.ProductForTrial == null || data.ProductForTrial == undefined">{{data.ProductName}}</span>
+                                <span *ngIf="data.ProductForTrial != null || data.ProductForTrial != undefined">
+                                    <span>{{data.ProductName}}</span>&nbsp;<sup class="text-warning"><span
+                                            translate="TRANSLATE.PLAN_MANAGE_TRAIL_OFFER_SYMBOL_TRAIL_OFFER"></span></sup>
+                                </span>
+                            </div>
+                        </ng-template>
+                        <!--begin::Layout-->
+                        <div class="flex-row-fluid ml-lg-8">
+                            <div>
+                                <div class="col-md-12 no-padding-right">
+                                    <div class="input-lg pull-left">
+                                        <div class="row">
+                                            <div class="col-md-6 p-1 p-sm-1">
+                                            </div>
+                                            <div class="col-md-5 p-1 p-sm-1">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-5">
+                                <div class="col-md-12">
+                                    <div>
+                                        <div class="row"
+                                            infinite-scroll-container='".constrained"' infinite-scroll-parent="true"
+                                            infinite-scroll-distance="1">
+                                            <div class="col-md-12" id="productList" style="margin-bottom:5px;">
+                                                <div class="card-body pt-0 overflow-auto">
+                                                    <ng-template #radioButton let-data="adtData"
+                                                        let-emitter="captureEvents">
+                                                        <span>
+                                                            <div class="input-group-with-radio ps-2">
+                                                                <input type="radio" name="product"  [id]="'product' + data.ProductId"
+                                                                    class="form-check-input mb-2"
+                                                                    (click)="updateSelectedList(data)" [(ngModel)]="selectedProductId" [value]="data.ProductId">
+                                                            </div>
+                                                        </span>
+                                                    </ng-template>
+
+                                                    <ng-template #propertiespills let-data="adtData"
+                                                        let-emitter="captureEvents">
+                                                        <span>
+                                                            <span
+                                                                class="label label-light-info fw-semibold label-inline badge"
+                                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}">
+                                                                {{'TRANSLATE.'+data.CategoryDescriptionKey | translate}} </span>
+                                                            <span
+                                                                *ngIf="data.ProductForTrial == null || data.ProductForTrial == undefined">
+                                                                <span
+                                                                    class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2"
+                                                                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}"
+                                                                    *ngIf="data.ValidityType!=null && data.ValidityType == 'Month(s)'">
+                                                                    {{data.Validity}} 
+                                                                    @if(data.Validity > 1){
+                                                                        {{'TRANSLATE.TERM_DURATION_DESC_MONTH(S)' | translate}}
+                                                                      }
+                                                                      @else{
+                                                                        {{'TRANSLATE.TERM_DURATION_DESC_MONTH' | translate}}
+                                                                      }
+                                                                </span>
+                                                            </span>
+                                                            <span
+                                                                *ngIf="data.ProductForTrial == null || data.ProductForTrial == undefined">
+                                                                <span
+                                                                    class="label label-warning font-weight-bold label-inline text-white badge ms-md-2"
+                                                                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}"
+                                                                    aria-hidden="true"
+                                                                    *ngIf="data.ValidityType === 'Year(s)' || data.ValidityType === 'Year'"
+                                                                    [ngClass]="{'bg-danger':data.BillingCycleName == 'Monthly','bg-success': data.BillingCycleName == 'Annual','bg-warning': data.BillingCycleName != 'Monthly' && data.BillingCycleName != 'Annual' }">
+                                                                    {{data.Validity}} 
+                                                                    @if(data.Validity > 1){
+                                                                        {{(data.ValidityType === 'Year(s)' ? 'TRANSLATE.VALIDITY_TYPE_DESC_YEARS' : 'TERM_DURATION_DESC_YEAR') | translate}}
+                                                                      }
+                                                                      @else{
+                                                                        {{'TRANSLATE.TERM_DURATION_DESC_YEAR' | translate}}
+                                                                      }
+                                                                </span>
+                                                            </span>
+                                                            <span
+                                                                *ngIf="data.ProductForTrial != null && data.ProductForTrial != undefined">
+                                                                <span
+                                                                    class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2"
+                                                                    ngbTooltip="{{'TRANSLATE.PARTNER_OFFER_TRIAL_PERIOD_DAYS_TOOLTIP' | translate}}"
+                                                                    aria-hidden="true">
+                                                                    {{data.Validity}}
+                                                                    {{'TRANSLATE.TRIAL_PERIOD_DAYS_TEXT'| translate
+                                                                    }}</span>
+                                                            </span>
+                                                            <span
+                                                                class="label font-weight-bold label-inline text-white badge ms-md-2"
+                                                                [ngClass]="{
+                                                                    'bg-warning': data.BillingCycleName?.toLowerCase() === 'monthly',
+                                                                    'bg-success': data.BillingCycleName?.toLowerCase() === 'annual',
+                                                                    'bg-dark': data.BillingCycleName?.toLowerCase() === 'triennial',
+                                                                    'bg-info': data.BillingCycleName?.toLowerCase() === 'onetime'
+                                                                }"
+                                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}">
+                                                                {{'TRANSLATE.'+data.BillingCycleDescription | translate}}</span>
+                                                            <span class="label label-light-success badge"
+                                                                ngbTooltip="{{'TRANSLATE.CUSTOM_NOTIFICATION_SIDEBAR_FILTER_CONSUMPTION_TYPES' | translate}}">
+                                                                {{'TRANSLATE.'+data.ConsumptionTypesDescription | translate}}</span>
+                                                            <span
+                                                                class="badge badge-light-danger font-weight-bold label-inline badge bg-light-danger ms-md-2"
+                                                                ngbTooltip="{{'TRANSLATE.BILLING_TYPE_TOOLTIP' | translate}}">
+                                                                {{'TRANSLATE.'+ data.BillingTypeDescription | translate
+                                                                }}</span>
+                                                        </span>
+                                                    </ng-template>
+                                                    <!-- @if(!isLoading){ -->
+                                                    <div class="ms-8">
+                                                        <div
+                                                            class="d-flex align-items-center position-relative mt-2 mb-2 ms-20">
+                                                            <i
+                                                                class="ki-duotone ki-magnifier fs-3 position-absolute ms-5"><span
+                                                                    class="custom-path1"></span><span
+                                                                    class="custom-path2"></span></i> <input type="text"
+                                                                [(ngModel)]="filterByName"
+                                                                class="header-input-field form-control form-control-solid w-200px ps-10"
+                                                                placeholder="{{'TRANSLATE.CUSTOMER_SEARCH_SEARCH_OPTION'| translate}}">
+                                                        </div>
+                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text-info ms-17">{{selectedProductList.ProductName}}</span>&nbsp;
+                                                        <span class="text-info" *ngIf="selectedProductList.ProductName">{{isselect}}</span>
+                                                        <ng-container *ngIf="datatableConfig">
+                                                            <app-c3-table [datatableConfig]="datatableConfig" [reload]="reloadEvent" 
+                                                                [searchFilter]=true>
+                                                            </app-c3-table>
+                                                        </ng-container>
+                                                    </div>
+                                                    <!-- } -->
+                                                    <div class="modal-footer ">
+                                                        <button type="button" (click)="Submit()"
+                                                            class="btn btn-primary btn-sm"
+                                                            data-bs-dismiss="modal">{{'TRANSLATE.CUSTOM_NOTIFICATION_POPUP_SUBMIT_BUTTON_TEXT'
+                                                            | translate}}</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Layout-->
+                    </div>
+                    <!--end::Page Layout-->
+                </div>
+                <!--end::Container-->
+            </div>
+        </div>
+    </div>
+</div>

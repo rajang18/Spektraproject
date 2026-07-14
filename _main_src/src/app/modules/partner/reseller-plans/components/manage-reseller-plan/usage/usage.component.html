@@ -1,0 +1,98 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" [appPermission]="'GET_RESELLER_PLANS'"
+            (click)="backToPlans()">
+            <i class="ki-outline ki-to-left fs-2"></i> <span
+                translate="TRANSLATE.PLAN_MANAGE_ADD_BUTTON_TEXT_BACK_TO_PLAN"></span>
+        </button>
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" [appPermission]="'SAVE_RESELLER_PLAN'"
+            [routerLink]="['/partner/resellerplans/addProducts']">
+            <span translate="TRANSLATE.RESELLER_ADD_PLAN_BUTTON_TEXT_ADD_MORE_PRODUCTS"></span>
+        </button>
+        <button class="btn btn-sm fw-bold btn-primary" [appPermission]="'SAVE_RESELLER_PLAN'" (click)="savePlan()"
+            appBusyLoader>
+            <span translate="TRANSLATE.RESELLER_ADD_PLAN_BUTTON_TEXT_SAVE_PLAN"></span>
+        </button>
+    </div>
+</ng-template>
+
+<div class="tab-content">
+    <div class="tab-pane fade show active">
+        <div>
+            <div class="form-group row">
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center position-relative my-1">
+                        <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5"><span
+                                class="custom-path1"></span><span class="custom-path2"></span></i>
+                        <input type="text" class="form-control form-control-solid h-36px w-500px ps-12"
+                            (ngModelChange)="catchSelectedProductsSearchKeywordChange()"
+                            placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_INPUT_FIELD_TO_SEARCH_A_PRODUCT_OR_PRODUCT_ID' | translate}}"
+                            [(ngModel)]="searchSelectedProductsKeyword" ng-model-options="{debounce: 1000}"
+                            [disabled]="false">
+                        <!-- <div class="input-group-append">
+                            <button type="submit" class="btn btn-primary btn-sm" [appPermission]="'GET_RESELLER_PRODUCTS'" (click)="catchSelectedProductsSearchKeywordChange()">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-12 p-4">
+                    <div style="margin-top:10px;margin-bottom:10px;" [appPermission]="'RESELLER_USAGE_PLAN_MACRO'">
+                        <span
+                            class="label label-success font-weight-bold label-inline text-white badge bg-success ms-md-2">
+                            <strong> {{('TRANSLATE.MANAGE_PLAN_MACRO_APPLIED' | translate)}} : </strong>
+                            {{selectedMacro!=null ? selectedMacro?.Description :
+                            ('TRANSLATE.MANAGE_PLAN_NO_MACRO_APPLIED' | translate)}}
+                            <span *ngIf="selectedMacro?.NeedsPercent">({{planInfo.UsageMacroValue}})</span>
+                            &nbsp;
+                        </span>
+
+                        <i role="button" class="ki-outline ki-pencil fs-4 text-primary" ngbTooltip="{{'TRANSLATE.MANAGE_PLAN_EDIT_MACRO_TOOLTIP' | translate}}" (click)="macroChange()">
+                            <!-- <span class="path1"></span>
+                            <span class="path2"></span> -->
+                        </i>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="product-wrapper" (scrolled)="onScroll()" infiniteScroll [infiniteScrollDistance]="0.3"
+                        [infiniteScrollThrottle]="50" [scrollWindow]="false">
+                        @if(!scrollBusy && selectedProducts.length == 0){
+                            <app-common-no-record></app-common-no-record>
+                        }
+                        @if(scrollBusy && selectedProducts.length == 0){
+                        @for (item of [1,2,3]; track $index) {
+                        <div class="card p-2 mb-3" aria-hidden="true">
+                            <div class="card-body">
+                                <p class="card-text placeholder-glow">
+                                    <span class="placeholder col-md-6"></span>
+                                    <span class="placeholder col-md-4"></span>
+                                    <span class="placeholder col-md-2"></span>
+                                </p>
+                            </div>
+                        </div>
+                        }
+                        }
+                        @if(selectedProducts.length > 0){
+                        @for (item of selectedProducts; track $index) {
+                        <div class="row" appLazyLoad (lazyLoad)="onLazyLoad(item)">
+                            <div class="p-2">
+                                <app-product-item
+                                    *ngIf="!(item.CategoryName==='AzurePlan' && item.ProviderReferenceId==='MS-AZR-0145P')"
+                                    [productItemDetails]="productItemDetails" [productItem]="item"
+                                    [isResellerPlanView]="isResellerPlanView"
+                                    (onActionData)="onManagePlanAction($event)" [isPrice]="item.CategoryName === 'AzurePlan' ? item?.IsPrice : isPrice"
+                                    [temp]="(item.CategoryName==='AzurePlan') ? null : temp"></app-product-item>
+                            </div>
+                        </div>
+                        }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

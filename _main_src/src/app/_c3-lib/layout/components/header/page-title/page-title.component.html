@@ -1,0 +1,41 @@
+<div class="breadcumbs-container gap-4">
+  @if (!!title) {
+    <ng-container>
+      <!-- begin::Title -->
+      <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 my-0 flex-column justify-content-center">
+        @if(!title.removeLocalization){
+          {{ title.title |c3Translate}}
+        }@else {
+          <span [innerHTML]="title.title"></span>
+        }
+      </h1>
+      <!-- end::Title -->
+    </ng-container>
+    }
+ 
+    @if(!!breadcrumbs) {
+      <ng-container>
+        <ul class=" d-flex gap-2 breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1 px-0" style="list-style: none;">
+          @for (breadcumb of breadcrumbs; track breadcumb; let last = $last){
+            @if(breadcumb){
+            <li>
+              <span class=" breadcrumb-item"
+                [ngClass]="last ? 'text-gray-900': 'text-muted text-hover-primary cursor-pointer'">
+                @if(breadcumb?.removeLocalization){
+                  {{  breadcumb.value  }}
+                }
+                @else {
+                  @if(breadcumb?.useInnerHTML){
+                    <span [innerHTML]="breadcumb.value"></span>
+                  }@else {
+                    {{ breadcumb | c3Translate }}
+                  }
+                }
+              </span>
+            </li>
+            }
+          }
+        </ul>
+      </ng-container>
+      }
+</div>

@@ -1,0 +1,237 @@
+<!-- Popover template -->
+<ng-template  #trialOfferParentDetailsTemplate>
+    <div *ngIf="showData"> 
+        <div *ngIf="trialOfferParentProductDetails != null">
+            <table>
+                <tr class="font-size-sm">
+                    <td class="font-weight-bold">  
+                        <span>{{ 'TRANSLATE.TRIAL_OFFER_PARENT_PRODUCT_NAME' | translate }}</span></td>
+                    <td>&nbsp;:&nbsp;</td>
+                    <td><strong>{{trialOfferParentProductDetails?.ProductName }}</strong>
+                    </td>
+                </tr>
+                <tr class="font-size-sm">
+                    <td class="font-weight-bold"><span>{{ 'TRANSLATE.TRIAL_OFFER_PARENT_PROVIDER_NAME' | translate }}</span></td>
+                    <td>&nbsp;:&nbsp;</td>
+                    <td><strong>{{ 'TRANSLATE.'+trialOfferParentProductDetails?.ProviderDescriptionKey | translate }}</strong></td>
+                </tr>
+                <tr class="font-size-sm">
+                    <td class="font-weight-bold"><span>{{ 'TRANSLATE.TRIAL_OFFER_PARENT_CATEGORY_NAME' | translate }}</span></td>
+                    <td>&nbsp;:&nbsp;</td>
+                    <td class=" line-break-all"><strong>{{ 'TRANSLATE.'+trialOfferParentProductDetails?.CategoryDescriptionKey | translate }}</strong></td>
+                </tr>
+                <tr class="font-size-sm">
+                    <td class="font-weight-bold"><span>{{ 'TRANSLATE.TRIAL_OFFER_PARENT_CONSUMPTION_TYPE' | translate }}</span></td>
+                    <td>&nbsp;:&nbsp;</td>
+                    <td><strong>{{ 'TRANSLATE.'+trialOfferParentProductDetails?.ConsumptionTypeDescriptionKey | translate }}</strong></td>
+                </tr>
+                <tr class="font-size-sm">
+                    <td class="font-weight-bold"><span>{{ 'TRANSLATE.TRIAL_OFFER_PARENT_TERM_DURATION' | translate }}</span></td>
+                    <td>&nbsp;:&nbsp;</td>
+                    <td>
+                        <strong>
+                            {{ trialOfferParentProductDetails?.Validity }}
+                            {{ (trialOfferParentProductDetails?.Validity == 1 ?
+                            (product.ValidityType === 'Month(s)' ? 'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') : 'TRANSLATE.TERM_DURATION_DESC_YEAR(S)' )| translate }}
+                        </strong>
+                    </td>
+                </tr>
+                <tr class="font-size-sm">
+                    <td class="font-weight-bold"><span>{{ 'TRANSLATE.TRIAL_OFFER_PARENT_BILLING_CYCLE_NAME' | translate }}</span></td>
+                    <td>&nbsp;:&nbsp;</td>
+                    <td><strong>{{ 'TRANSLATE.'+trialOfferParentProductDetails?.BillingCycleDescription | translate }}</strong></td>
+                </tr>
+                <tr class="font-size-sm">
+                    <td class="font-weight-bold"><span>{{ 'TRANSLATE.TRIAL_OFFER_PARENT_BILLING_TYPE' | translate }}</span></td>
+                    <td>&nbsp;:&nbsp;</td>
+                    <td><strong>{{ 'TRANSLATE.'+trialOfferParentProductDetails?.BillingTypeDescription | translate }}</strong></td>
+                </tr>
+                <tr class="font-size-sm">
+                    <td class="font-weight-bold"><span>{{ 'TRANSLATE.TRIAL_OFFER_PARENT_SALE_TYPE' | translate }}</span></td>
+                    <td>&nbsp;:&nbsp;</td>
+                    <td><strong>{{'TRANSLATE.'+trialOfferParentProductDetails?.SaleTypeDescription | translate }}</strong></td>
+                </tr>
+                <tr class="font-size-sm">
+                    <td class="font-weight-bold"><span>{{ 'TRANSLATE.TRIAL_OFFER_PARENT_PROVIDERSELLINGPRICE' | translate }}</span></td>
+                    <td>&nbsp;:&nbsp;</td>
+                    <td><strong>{{trialOfferParentProductDetails?.ProviderSellingPrice | CurrencyFilter }}</strong></td>
+                </tr>
+                <tr class="font-size-sm">
+                    <td class="font-weight-bold"><span>{{ 'TRANSLATE.TRIAL_OFFER_PARENT_IS_AUTO_RENEWABLE' | translate }}</span></td>
+                    <td>&nbsp;:&nbsp;</td>
+                    <td><strong>{{ 'TRANSLATE.'+trialOfferParentProductDetails?.IsAutoRenewal ? 'Yes' : 'No' }}</strong></td>
+                </tr>
+            </table>
+        </div>
+        <div *ngIf="trialOfferParentProductDetails == null">
+            <span class="font-weight-bold font-size-h5">{{ 'TRANSLATE.LOADING_MESSAGE' | translate }}</span>
+        </div>
+    </div>
+</ng-template>
+<!-- Popover template -->
+<div class="card card-custom gutter-b card-stretch card-border">
+    <div class="card-body">
+        <div class="d-flex align-items-center">
+            @if (product.ImageUrl) {
+            <div class="flex-shrink-0 me-4 symbol symbol-65 mr-4">
+                <img [src]="product.ImageUrl">
+            </div>
+            }
+            @if (!product.ImageUrl) {
+            <div class="flex-shrink-0 me-4 symbol symbol-dark symbol-50 mr-4">
+                <span class="symbol-label font-size-h1 bg-dark text-white">
+                    {{product.Name | formatforinitials}}
+                </span>
+            </div>
+            }
+            <div class="d-flex flex-column mr-auto">
+                <div>
+                    <!--START::To update-->
+                    <i class="ki-duotone ki-information-2 trial-offer-parent-icon fs-3 mt-1" aria-hidden="true" [ngbPopover]="trialOfferParentDetailsTemplate"
+                        triggers="mouseenter:mouseleave" popoverClass="popover-max-width"  popoverTitle="{{'TRANSLATE.POPOVER_TITLE_TRIAL_OFFER_PARENT_DETAILS' | translate}}" 
+                         popoverAppendToBody="true"  [container]="'body'"
+                         (mouseover)="getTrialOfferParentOfferDetail(product)">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                    </i>
+                    @if(!product.IsEdit){
+                    <span class="h5 font-weight-boldest" ngbTooltip="{{product.Name}}" tooltip-append-to-body="true" tooltip-class="text-capitalize" tooltip-placement="bottom">{{product.Name | limitLength:50}}&nbsp;</span>
+                    }
+                    <sup class="text-warning font-size-xs mb-1 mt-2"><span translate="TRANSLATE.CUSTOMER_SHOP_SUP_TEXT_TRIAL_OFFER"></span></sup>
+                    @if(product.IsEdit != true && product.Name !=null && product.Name.length > 50){
+                    <span class="card-title text-hover-primary font-weight-bolder font-size-h5 text-dark mb-1">...</span>
+                    }
+                    @if(product.IsEdit != true){
+                    <button class="btn btn-icon" (click)="product.IsEdit = true" appBusyLoader [isDisabledOnly]="true" ngbTooltip="{{'TRANSLATE.TOOLTIP_TEXT_EDIT_NAME'|translate}}">
+                        <i class="ki-outline ki-pencil text-primary " aria-hidden="true" data-toggle="tooltip" data-placement="top" ></i>
+                    </button>
+                    }
+                    @if(product.IsEdit){
+                    <div class="row" ng-if="product.IsEdit === true">
+                        <div class="col-md-9">
+                            <input type="text" [(ngModel)]="product.UpdatedProductName" class="form-control form-control-sm">
+                        </div>
+
+                        <div class="btn-group col-md-2 p-0">
+                            <a class="btn btn-icon" (click)="callUpdateProductNameInCart(product.UpdatedProductName);" [hidden]="product.IsEdit === false">
+                                <i class="ki-outline ki-check fs-1 text-success"></i>
+                            </a>
+                            <a class="btn btn-icon" (click)="product.IsEdit = false;product.UpdatedProductName=product.Name;" [hidden]="product.IsEdit === false">
+                                <i class="ki-outline ki-cross fs-1 text-danger"></i>
+                            </a>
+                        </div>
+                    </div>
+                    }
+                    <!--END :: To update-->
+                </div>
+                <span>
+                    <span class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-0" aria-hidden="true" ngbTooltip="{{'TRANSLATE.PARTNER_OFFER_TRIAL_PERIOD_DAYS_TOOLTIP' | translate}}">{{product.NoOfDaysForFreeCancelation}} {{'TRANSLATE.TRIAL_PERIOD_DAYS_TEXT' | translate}}</span>
+                    @if(product.ProviderSettings && product.ProviderSettings.ProviderCategory){
+                    <span class="label label-light-warning font-weight-bold label-inline text-warning badge bg-light-warning ms-md-2">{{product.ProviderSettings.ProviderCategory | translate}}</span>
+                    }
+                    @if(product.BillingTypeName && product.BillingTypeName !== ''){
+                    <span class="label label-light-danger font-weight-bold label-inline text-danger badge bg-light-danger ms-md-2 width-text-wrapper" ngbTooltip="{{'TRANSLATE.BILLING_TYPE_TOOLTIP' | translate}}">{{'TRANSLATE.'+product.BillingTypeDescription | translate}}</span>
+                    }
+                </span>
+            </div>
+            <div class="card-toolbar mb-auto">
+                <button #buttonRef class="btn btn-circle btn-sm btn-icon btn-light-primary me-2" [appPermission]="'menu_customer_comments'" ngbTooltip="{{'TRANSLATE.CART_CARD_COMMENT_ACTION' | translate}}" (click)="callManageProduct()" appBusyLoader [isDisabledOnly]="true">
+                    <i class="ki-outline ki-messages"></i>
+                    </button>
+                <button class="btn btn-circle btn-sm btn-icon btn-light-danger mr-2" [appPermission]="'DELETE_CART_ITEM'" ngbTooltip="{{'TRANSLATE.DELETE_PRODUCT_BUTTON_TOOLTIP_TEXT' | translate}}" (click)="callDeleteProductFromCart()" appBusyLoader [isDisabledOnly]="true">
+                    <i class="ki-outline ki-trash"></i>
+                </button>
+            </div>
+        </div>
+        <div class="d-flex">
+            <div class="flex-grow-1">
+                <div class="d-flex align-items-center justify-content-between flex-wrap mt-2">
+                    <div class="flex-grow-1 font-weight-bold text-dark-50 py-2 py-lg-2 mr-5">
+                        <p class="mb-0 width-text-wrapper">
+                            {{product.Description}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex flex-wrap mt-5">
+            <div class="d-flex flex-wrap pb-5">
+                @if(product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE){
+                    <div class="mr-12 d-flex flex-column">
+                        <span class="d-block fw-bold"><span translate="TRANSLATE.CART_PAGE_TITLE_PRICE"></span></span>
+                        <span class="font-weight-bolder h5 pt-2">
+                            <span class="font-weight-bolder text-info">
+                                {{product.DisplayFinalSalePrice | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeparator : product.CurrencyDecimalSeparator}}
+                            </span>
+                        </span>
+                    </div>
+                }
+                <div class="ms-18 d-flex flex-column cw-25">
+                    <div class="row" style="margin-left:0px;">
+                        <div>
+                            <span class="d-block fw-bold"><span translate="TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_LABEL_QUANTITY"></span></span>
+                            <div class="input-group pt-2" style="width: 70%;">
+                                <div class="input-group-prepend">
+                                    <button class="input-group-text line-height-0 py-0 h-100 disabled-button" [disabled]="!isSaveCartAllowed" (click)="product.Quantity = product.Quantity === 1 ? 1 : product.Quantity - 1;callUpdateCartItemQuantity()" appBusyLoader [isIconOnly]="true">
+                                        <i class="fa-solid fa-minus icon-xs"></i>
+                                    </button>
+                                </div>
+                                <input class="form-control form-control-sm text-center " type="text" pattern="\d*"  [(ngModel)]="product.Quantity" [disabled]="true" />
+                                <div class="input-group-append">
+                                    <button class="input-group-text line-height-0 py-0 h-100 disabled-button" [disabled]="!isSaveCartAllowed" (click)="product.Quantity = (1 + (+product.Quantity ));callUpdateCartItemQuantity()" appBusyLoader [isIconOnly]="true">
+                                        <i class="fa-solid fa-plus icon-xs"></i>
+                                    </button>
+                                </div>
+                                @if(HasSaveCart === 'Allowed' && !isShowApply && product.Quantity && product.Quantity != product.OriginalQuantity){
+                                <div class="col-md-12" (click)="callUpdateCartItemQuantity()" [hidden]="isShowApply">
+                                    <a class="badge badge-pill badge-primary mt-2">{{'TRANSLATE.CART_PAGE_BUTTON_TEXT_UPDATE_QUANTITY' | translate}}</a>
+                                </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if(HasTextBoxPONumberInHistory === 'Allowed'){
+                <div class="col-md-6 pl-4">
+                    <div class="d-flex" [ngClass]="{'': product.PONumber == null && isEdit === false}">
+                        <span class="d-block font-weight-bolder fw-bold mb-2">{{'TRANSLATE.PONUMBER_TITLE' |translate}}</span>
+                        @if(product.PONumber == null && isEdit === false){
+                            <button class="btn btn-icon pb-8" ng-if="product.PONumber == null && isEdit === false" >
+                                <i class="fa fa-plus text-primary cursor-pointer" (click)="isEdit = true" ngbTooltip="{{'TRANSLATE.ADD_PONUMBER'|translate}}"></i>
+                            </button>
+                        }
+                    </div>
+                    <div>
+                        @if(isEdit != true){
+                            <span class="font-size-h5 h5"  ngbTooltip="{{product.PONumber}}" tooltip-placement="bottom">{{product.PONumber}}</span>
+                        }
+                        @if(isEdit != true && product.PONumber != null){
+                            <a class="btn btn-icon ms-4" ng-show="isEdit != true && product.PONumber != NULL">
+                                <i class="ki-outline ki-pencil text-primary px-3" (click)="isEdit = true" aria-hidden="true" data-toggle="tooltip" data-placement="top" ngbTooltip="{{'EDIT_PONUMBER'|translate}}"></i>
+                                <i class="ki-outline ki-trash text-danger" (click)="deletePONumber();" aria-hidden="true" data-toggle="tooltip" data-placement="top" ngbTooltip="{{'DELETE_PONUMBER'|translate}}"></i>
+                            </a>
+                        }
+                        @if(isEdit === true){
+                            <div class="row ">
+                                <div class="col-md-6 pl-0">
+                                    <input type="text" [(ngModel)]="product.UpdatedPONumber" class="form-control form-control-sm">
+                                </div>
+                                <div class="btn-group col-md-2 p-0">
+                                    <a class="btn btn-icon" (click)="updatePONumber(product);">
+                                        <i class="ki-outline ki-check fs-1 text-success"></i>
+                                    </a>
+                                    <a class="btn btn-icon" (click)="isEdit = false;product.UpdatedPONumber=product.PONumber;">
+                                        <i class="ki-outline ki-cross fs-1 text-danger"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+        </div>
+       
+</div>

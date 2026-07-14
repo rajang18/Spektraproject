@@ -1,0 +1,84 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="back()">
+            <i class="ki-outline ki-to-left fs-2" ></i> <span translate="TRANSLATE.BUTTON_TEXT_BACK_TO_LIST"></span>
+        </button>
+    </div>
+  </ng-template>
+
+  <div class="container">
+    <div class="col-md-12">
+        <div>
+            <div class="card-custom">
+                <div class="card-body overflow-auto">
+                    <div class="row">
+                        
+                        <form [formGroup]="couponAssignmentForm">
+                            <div class="col-md-12 mt-5">
+                                <div class="form-group row">
+                                    <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                                        <label class="required fw-semibold fs-6">
+                                            {{'TRANSLATE.COUPON_ASSIGNMENT_UNDER_EDIT_COUPON' | translate}}
+                                        </label>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <ng-select [items]="couponDataSource" bindLabel="Code" bindValue="ID"
+                                            placeholder="{{'TRANSLATE.PLACEHOLDER_SEARCH_COUPON_BY_CODE_DROPDOWN' | translate}}" [searchable]="true"
+                                            [clearable]="true" formControlName="couponAssignmentAdd_CouponDetailId" (change)="onCouponChange($event)"
+                                            appendTo="body">
+                                            <ng-template ng-option-tmp let-item="item">
+                                                {{ item.Code }} - {{ item.Name }}
+                                            </ng-template>
+                                        </ng-select>
+                                        @if(couponAssignmentForm.get('couponAssignmentAdd_CouponDetailId')?.errors?.required &&
+                                        couponAssignmentForm.get('couponAssignmentAdd_CouponDetailId')?.touched){
+                                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            @if(!isPlanRelated && couponAssignmentAdd.CouponDetailId){
+                                <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6 mt-5 mb-6">
+                                    <div class="col-md-12 ps-2">
+                                        <div class="row m-heading-1 border-green m-bordered">
+                                            <span>{{ 'TRANSLATE.COUPON_ASSIGNMENT_DIRECT_COUPON_INSTRUCTIONS_HEADING' | translate }}</span>
+                                            <ul>
+                                                <li>
+                                                  <span>{{ 'TRANSLATE.COUPON_ASSIGNMENT_DIRECT_COUPON_INSTRUCTIONS_1' | translate }}</span>
+                                                </li>
+                                                <li>
+                                                  <span>{{ 'TRANSLATE.COUPON_ASSIGNMENT_DIRECT_COUPON_INSTRUCTIONS_2' | translate }}</span>
+                                                </li>
+                                                <li>
+                                                  <span>{{ 'TRANSLATE.COUPON_ASSIGNMENT_DIRECT_COUPON_INSTRUCTIONS_3' | translate }}</span>
+                                                </li>
+                                              </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <ng-container *ngIf="datatableConfig">
+                                    <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" [selection]="true" (onSelection)="handleSelection($event)" (selectAllchecked)="selectAllHandler($event)">
+                                    </app-c3-table>
+                                    
+                                </ng-container>
+                            }
+                            <div class="d-flex justify-content-end py-6 px-9 gap-3" > 
+                                <button  type="button" class="btn btn-light  btn-sm btn-active-light-primary" [routerLink]="['/partner/coupon/couponassignment']">
+                                    <span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span>
+                                </button>
+                                @if(this.customerData.length > 0){
+                                    <button type="button" class="btn  btn-sm btn-primary" (click)="saveCouponAssignment()" appBusyLoader>
+                                        <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+                                    </button>
+                                }
+                            </div>
+                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

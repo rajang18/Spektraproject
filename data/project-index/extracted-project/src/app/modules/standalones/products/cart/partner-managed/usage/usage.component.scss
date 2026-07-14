@@ -1,0 +1,32 @@
+.Customscheduleicon {
+    background-color: #AC3934 !important;
+    border-radius: 50%;
+    color: white;
+    border-spacing: 0px !important;
+    border-width: initial;
+    box-shadow: none !important;
+}
+
+.labelcolor {
+    background-color: #DF2B03 !important;
+  }
+  
+  .TermLabelColor {
+    background-color: #3D9C49 !important;
+  }
+
+  ::ng-deep{
+    .mr-auto{
+        margin-right: auto !important;
+    }
+    
+    .max-width-300{
+        max-width: 300px;
+    }
+}
+
+select:disabled,
+select[disabled]
+{
+cursor:not-allowed !important;
+}

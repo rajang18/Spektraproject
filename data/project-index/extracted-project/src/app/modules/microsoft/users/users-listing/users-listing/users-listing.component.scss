@@ -1,0 +1,10 @@
+.font-green-jungle {
+    color: #26C281 !important;
+}
+::ng-deep {
+    app-users-listing {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}

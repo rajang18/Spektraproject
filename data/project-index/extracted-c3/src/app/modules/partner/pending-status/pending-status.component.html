@@ -1,0 +1,108 @@
+<ng-template #paidtemplate let-data="adtData" let-emitter="captureEvents">
+    {{data.PaidAmount | CurrencyFilter : data.CurrencySymbol : data.CurrencyDecimalPlaces : data.CurrencyThousandSeperator : data.CurrencyDecimalSeperator}}
+</ng-template>
+
+<ng-template #actionHeader>
+   
+</ng-template>
+
+
+<ng-template #C3PaymentStatus let-data="adtData" let-emitter="captureEvents">
+    {{'TRANSLATE.'+ data.C3PaymentStatusDescription | translate}}
+</ng-template>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <ng-template #action let-data="adtData" let-emitter="captureEvents">
+                                <div class="d-flex justify-content-end">
+                                    @if( !data.IsLoading === true){
+                                        <div *ngIf="getPendingPaymentStatus === 'Allowed'"  class="d-flex align-items-center">
+                                            <button ngbTooltip="{{'TRANSLATE.PENDING_PAYMENT_VIEW_BUTTON_TOOLTIP_TEXT_GET_PENDING_PAYMENT_STATUS' | translate}}" class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+                                              [ngClass]="toolbarButtonHeightClass" (click)="GetPaymentStatusFromBilling(data)">
+                                              <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+                                                <i class="ki-outline ki-arrows-loop text-primary"></i>
+                                              </span>                                          
+                                            </button>
+                                        </div>
+                                    }
+                                    
+                                    <div *ngIf="getPendingPaymentStatus === 'Allowed' && data.IsLoading === true" class="d-flex align-items-center">
+                                        <button class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto" [ngClass]="toolbarButtonHeightClass">
+                                          <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+                                            <i class="ki-duotone ki-loading">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                            </i>
+                                          </span>
+                                        </button>
+                                    </div>
+
+                                    @if(!data.IsLoading === true){
+                                        <div *ngIf="getPendingPaymentStatus === 'Allowed' && data.BillingPaymentStatus !== undefined && data.BillingPaymentStatus !== null && data.BillingPaymentStatus.toLowerCase() !== data.C3PaymentStatus.toLowerCase()" class="d-flex align-items-center"  >
+                                            <button class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto" (click)="UpdatePaymentStatus(data)" ngbTooltip="{{'TRANSLATE.PENDING_PAYMENT_VIEW_BUTTON_TOOLTIP_TEXT_UPDATE_PAYMENT_STATUS_IN_C3' | translate}}" [ngClass]="toolbarButtonHeightClass">
+                                              <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+                                                <i class="ki-outline ki-pencil text-primary"></i>
+                                              </span>
+                                            </button>
+                                        </div>
+                                    }
+                                    
+
+                                    <div *ngIf="getPendingPaymentStatus === 'Allowed' && data.BillingPaymentStatus !== undefined && data.BillingPaymentStatus !== null && data.BillingPaymentStatus.toLowerCase() !== data.C3PaymentStatus.toLowerCase() && data.IsLoading === true" class="d-flex align-items-center">
+                                        <button class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto" [ngClass]="toolbarButtonHeightClass">
+                                          <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+                                            <i class="ki-duotone ki-loading">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                            </i>
+                                          </span>                                       
+                                        </button>
+                                    </div>
+                                </div>
+                            </ng-template>
+
+                            <div class="col-md-12 d-flex justify-content-end my-2 pb-1">
+                                <!-- [ngClass]="{'disabled':pendingPaymentDetails.length === 0}" -->
+                            @if(!IsReloadAllInitiated === true){
+                                <a *ngIf="getPendingPaymentStatus === 'Allowed'"
+                                    class="btn btn-sm btn-primary me-2 remove-caret"
+                                    (click)="GetAllPaymentStatusFromBilling()" >
+                                 <i class="fas fa-sync-alt"></i><span translate="TRANSLATE.BUTTON_TEXT_CHECK_ALL_PENDING_PAYMENT_STATUS"></span>
+                             </a>                          
+                            }
+                             @if(!IsReloadAllInitiated === true ){
+                                <a *ngIf="getPendingPaymentStatus === 'Allowed' && hasUpdatedStatus"
+                                    class="btn btn-sm btn-primary  remove-caret" 
+                                    (click)="UpdateAllPayments()">
+                                   <i class="ki-outline ki-pencil text-white"></i>
+                                    <span translate="TRANSLATE.BUTTON_TEXT_UPDATE_ONCLICK_PENDING_PAYMENT_STATUS"></span>
+                             </a>
+                            }
+                             <!-- [ngClass]="{'disabled':true}" -->
+                              @if(!IsReloadAllInitiated === false){
+                                <a *ngIf="getPendingPaymentStatus === 'Allowed'"
+                                class="btn btn-sm btn-primary remove-caret">
+                                 <i class="fas fa-spinner fa-spin"></i> {{'TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}
+                             </a>
+                              }
+                           
+                           </div>
+
+                            @if(!isGridDataLoading){
+                                @if(config){
+                                    <app-c3-table [datatableConfig]="config">     
+                                    </app-c3-table>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

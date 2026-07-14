@@ -1,0 +1,21 @@
+<div class="modal-dialog m-0 modal-dialog m-0-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>{{'TRANSLATE.METERED_BILLING_TEXT_MODAL_HEADER' | translate}}</h2>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <div class="container-fluid">
+                <ng-container>
+                    @if(!!datatableConfig) {
+                    <app-c3-table [datatableConfig]="datatableConfig" [searchFilter]=false [isPaginationHide]="true">
+                    </app-c3-table>
+                    }
+                </ng-container>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" (click)="closeModalPopup()" tabindex="-1">{{'TRANSLATE.BUTTON_CLOSE' |
+                translate}}</button>
+        </div>
+    </div>
+</div>

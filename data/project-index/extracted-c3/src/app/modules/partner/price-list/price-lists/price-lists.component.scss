@@ -1,0 +1,10 @@
+::ng-deep {
+    .custom-height {
+        min-height: calc(53vh - (var(--bs-app-footer-height) + var(--bs-app-header-height) + var(--bs-app-toolbar-height) + 100px)) !important;
+    }
+    
+    .ng-select .ng-select-multiple .ng-select-container .ng-value-container .ng-placeholder {
+        padding-top: 4px !important;
+    }
+
+}

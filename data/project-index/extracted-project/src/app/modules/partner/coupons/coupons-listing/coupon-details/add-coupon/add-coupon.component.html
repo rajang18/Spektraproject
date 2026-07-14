@@ -1,0 +1,677 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm btn-sm fw-bold btn-light-primary" (click)="backToList()">
+            <i class="ki-outline ki-to-left fs-2"></i>
+            <span translate="TRANSLATE.COUPON_BUTTON_TEXT_BACK_TO_COUPON"></span></button>
+    </div>
+</ng-template>
+
+@if(isDataLoaded) {
+<form [formGroup]="addCouponRegisterForm">
+    <div class="form-group row">
+        <div class="form-group row mt-5">
+            <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                <label class="required fw-semibold fs-6" translate="TRANSLATE.COUPON_TABLE_HEADER_TEXT_NAME"></label>
+            </div>
+            <div class="col-5">
+                <input type="text" [disabled]="addCoupon.IsCouponAssigned" class="form-control form-control-sm fw-bold"
+                    formControlName="couponName">
+                @if(addCouponRegisterForm.get('couponName')?.errors?.required &&
+                addCouponRegisterForm.get('couponName')?.touched){
+                <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                }
+            </div>
+        </div>
+        <div class="form-group row mt-5">
+            <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                <label class="required fw-semibold fs-6"
+                    translate="TRANSLATE.COUPON_TABLE_HEADER_TEXT_DESCRIPTION"></label>
+            </div>
+            <div class="col-5">
+                <input type="text" [disabled]="addCoupon.IsCouponAssigned" class="form-control form-control-sm fw-bold"
+                    formControlName="description">
+                @if(addCouponRegisterForm.get('description')?.errors?.required &&
+                addCouponRegisterForm.get('description')?.touched){
+                <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                }
+            </div>
+        </div>
+        <div class="form-group row mt-5">
+            <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                <label class="required fw-semibold fs-6" translate="TRANSLATE.COUPON_TABLE_HEADER_TEXT_CODE"></label>
+            </div>
+            <div class="col-5">
+                <input type="text" class="form-control form-control-sm fw-bold" [disabled]="addCoupon.IsCouponAssigned"
+                    formControlName="code"
+                    (blur)="checkCouponExistence(addCouponRegisterForm.get('code')?.getRawValue())">
+                @if(addCouponRegisterForm.get('code')?.errors?.required &&
+                addCouponRegisterForm.get('code')?.touched){
+                <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                }
+                @if(addCouponRegisterForm.get('code')?.errors?.pattern &&
+                addCouponRegisterForm.get('code')?.touched && !isCouponCodeExists){
+                <span class="text-danger"
+                    translate="TRANSLATE.VALIDATION_MESSAGE_COUPON_CODE_INVALID_SPECIAL_CHARACTER"></span>
+                }
+                <span *ngIf="isCouponCodeExists"
+                    class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_COUPON_CODE_ALREADY_EXISTS' | translate}}</span>
+            </div>
+        </div>
+        <div class="form-group row mt-5">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                        <label class="required fw-semibold fs-6 mb-2 text-end col-form-label"
+                            translate="TRANSLATE.COUPON_TABLE_HEADER_TEXT_DISCOUNT"></label>
+                        <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                            [ngbTooltip]="'TRANSLATE.COUPON_DISCOUNT_TOOLTIP' | translate">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                        </i>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <!-- <div class="input-group-prepend"> -->
+                            <span class="input-group-text">
+                                <!-- <i *ngIf="!vm.addCoupon.IsPercentage"></i> -->
+                                %
+                            </span>
+                            <!-- </div> -->
+                            <input type="number" min="0" [disabled]="addCoupon.IsCouponAssigned"
+                                ng-pattern="/^(([0-9]{1,2}(\.[0-9]+)?)|100)$/" step=".01" max="100"
+                                class="form-control form-control-sm fw-bold" (input)="onValueChangediscount()"formControlName="discount" [title]="tooltipText1">
+                        </div>
+                        @if(addCouponRegisterForm.get('discount')?.errors?.required &&
+                        addCouponRegisterForm.get('discount')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                        @if(addCouponRegisterForm.get('discount')?.errors?.pattern &&
+                        addCouponRegisterForm.get('discount')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_DISCOUNT_VALEU"></span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row mt-5">
+            <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                <label class="fw-semibold fs-6 mb-2 text-end col-form-label"
+                    translate="TRANSLATE.COUPON_TABLE_HEADER_TEXT_NOOFRECURRENCES"></label>
+                <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                    [ngbTooltip]="'TRANSLATE.RECURRENCES_TOOLTIP' | translate">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                </i>
+            </div>
+            <div class="col-5">
+                <input type="number" min="0" class="form-control form-control-sm fw-bold" [disabled]="addCoupon.IsCouponAssigned"
+                    formControlName="Recurrences" (input)="onValueChange()" [title]="tooltipText">
+            </div>
+        </div>
+        <div class="form-group row mt-5">
+            <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                <label class="fw-semibold fs-6 mb-2 text-end col-form-label"
+                    translate="TRANSLATE.COUPON_TABLE_HEADER_TEXT_VALIDTILL"></label>
+                <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                    [ngbTooltip]="'TRANSLATE.COUPONS_EXPIRES_ON_TOOLTIP_TEXT' | translate">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                </i>
+            </div>
+            <div class="col-5">
+                <div class="input-group">
+                    <input class="form-control form-control-sm fw-bold"
+                        formControlName="validTill" name="addCoupon.ExpiresOn" ngbDatepicker [placement]="['bottom-end', 'top-end', 'bottom-start', 'top-start' ]" #ad="ngbDatepicker"
+                        [readOnly]="true" (ngModelChange)="onValidTillChange()" [minDate]="todayDate"/>
+                    <button class="btn btn-secondary btn-sm" (click)="ad.toggle()" [disabled]="addCoupon.IsCouponAssigned"
+                        type="button"><i class="ki-outline ki-calendar fs-3 text-primary"></i></button>
+                </div>
+
+            </div>
+        </div>
+        <div class="form-group row mt-5">
+            <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                <label class="fw-semibold fs-6 mb-2 text-end col-form-label"
+                    translate="TRANSLATE.COUPON_TABLE_HEADER_TEXT_EXPIRESON"></label>
+                <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                    [ngbTooltip]="'TRANSLATE.COUPONS_VALID_TILL_TOOLTIP_TEXT' | translate">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                </i>
+
+                <!-- <input type="text" class="form-control form-control-sm form-control-solid"
+                                            formControlName="expiresOn"> -->
+            </div>
+            <div class="col-5">
+                <div class="input-group">
+                    <input class="form-control form-control-sm fw-bold"
+                        formControlName="expiresOn" name="addCoupon.ExpiresOn" ngbDatepicker [placement]="['bottom-end', 'top-end', 'bottom-start', 'top-start' ]" #ed="ngbDatepicker"
+                        [readOnly]="true" (ngModelChange)="onExpiresOnChange()" [minDate]="todayDate"/>
+                    <button class="btn btn-secondary btn-sm"  (click)="ed.toggle()" [disabled]="addCoupon.IsCouponAssigned"
+                        type="button"> <i class="ki-outline ki-calendar fs-3 text-primary"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row mt-7">
+            <div class="col-md-12">
+                @if (!isEditMode) {
+                @if (pagemode?.toLowerCase() === PageModeEnum.Add.toLowerCase()) {
+                <h5>
+                    <span class="svg-icon svg-icon-primary svg-icon-2x">
+                        <!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2021-05-14-112058/theme/html/demo1/dist/../src/media/svg/icons/Shopping/Price1.svg--><svg
+                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px"
+                            height="24px" viewBox="0 0 24 24" version="1.1">
+                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <polygon points="0 0 24 0 24 24 0 24" />
+                                <path
+                                    d="M3.52270623,14.028695 C2.82576459,13.3275941 2.82576459,12.19529 3.52270623,11.4941891 L11.6127629,3.54050571 C11.9489429,3.20999263 12.401513,3.0247814 12.8729533,3.0247814 L19.3274172,3.0247814 C20.3201611,3.0247814 21.124939,3.82955935 21.124939,4.82230326 L21.124939,11.2583059 C21.124939,11.7406659 20.9310733,12.2027862 20.5869271,12.5407722 L12.5103155,20.4728108 C12.1731575,20.8103442 11.7156477,21 11.2385688,21 C10.7614899,21 10.3039801,20.8103442 9.9668221,20.4728108 L3.52270623,14.028695 Z M16.9307214,9.01652093 C17.9234653,9.01652093 18.7282432,8.21174298 18.7282432,7.21899907 C18.7282432,6.22625516 17.9234653,5.42147721 16.9307214,5.42147721 C15.9379775,5.42147721 15.1331995,6.22625516 15.1331995,7.21899907 C15.1331995,8.21174298 15.9379775,9.01652093 16.9307214,9.01652093 Z"
+                                    fill="#000000" fill-rule="nonzero" opacity="0.3" />
+                            </g>
+                        </svg><!--end::Svg Icon-->
+                    </span>
+                    &nbsp;<span translate="TRANSLATE.COUPON_PLAN_COUPON_OWNERSHIPS"></span>
+                </h5>
+                }
+                }
+                @if (isEditMode){
+                @if (pagemode?.toLowerCase() === PageModeEnum.Edit.toLowerCase()) {
+                <h5>
+                    <span class="svg-icon svg-icon-primary svg-icon-2x">
+                        <!--begin::Svg Icon | path:/var/www/preview.keenthemes.com/metronic/releases/2021-05-14-112058/theme/html/demo1/dist/../src/media/svg/icons/Shopping/Price1.svg--><svg
+                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px"
+                            height="24px" viewBox="0 0 24 24" version="1.1">
+                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <polygon points="0 0 24 0 24 24 0 24" />
+                                <path
+                                    d="M3.52270623,14.028695 C2.82576459,13.3275941 2.82576459,12.19529 3.52270623,11.4941891 L11.6127629,3.54050571 C11.9489429,3.20999263 12.401513,3.0247814 12.8729533,3.0247814 L19.3274172,3.0247814 C20.3201611,3.0247814 21.124939,3.82955935 21.124939,4.82230326 L21.124939,11.2583059 C21.124939,11.7406659 20.9310733,12.2027862 20.5869271,12.5407722 L12.5103155,20.4728108 C12.1731575,20.8103442 11.7156477,21 11.2385688,21 C10.7614899,21 10.3039801,20.8103442 9.9668221,20.4728108 L3.52270623,14.028695 Z M16.9307214,9.01652093 C17.9234653,9.01652093 18.7282432,8.21174298 18.7282432,7.21899907 C18.7282432,6.22625516 17.9234653,5.42147721 16.9307214,5.42147721 C15.9379775,5.42147721 15.1331995,6.22625516 15.1331995,7.21899907 C15.1331995,8.21174298 15.9379775,9.01652093 16.9307214,9.01652093 Z"
+                                    fill="#000000" fill-rule="nonzero" opacity="0.3" />
+                            </g>
+                        </svg><!--end::Svg Icon-->
+                    </span>
+                    &nbsp;<span translate="TRANSLATE.COUPON_PLAN_COUPON_OWNERSHIPS"></span>
+                </h5>
+                }
+                }
+            </div>
+        </div>
+        <div class="form">
+            <div class="form-group row mt-2">
+                <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                    <label class="fw-semibold fs-6 mb-2 text-end col-form-label"
+                        translate="TRANSLATE.COUPON_OWNERSHIPS_PLAN">
+                    </label>
+                </div>
+                <div class="col-md-5">
+                    <select class="form-select form-select-sm fw-bold" formControlName="selectedPlanId"
+                        (change)="getPlanDetails()" name="PlanChange_selectedPlanId">
+                        <option value="" [disabled]="(ID >0)">
+                            {{'TRANSLATE.DROPDOWN_PLACEHOLDER_SELECT'|translate}}</option>
+                        <option *ngFor="let plan of plans" [value]="plan.InternalPlanId" [disabled]="(ID >0)">
+                            {{plan.Name}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row mt-3">
+                <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                    <label class="fw-semibold fs-6 mb-2 text-end col-form-label"
+                        translate="TRANSLATE.COUPON_OWNERSHIPS_COUPON_ENTITY">
+                    </label>
+                </div>
+                <div class="col-md-5">
+                    <select class="form-select form-select-sm fw-bold" [(ngModel)]="selectedCouponEntity"
+                        (change)="getEntityBasedData()" name="PlanChange_selectedPlanentity"
+                        formControlName="selectedCouponEntity">
+                        <option *ngIf="!selectedPlanId || selectedPlanId === '' ||!selectedCouponEntity" [value]="''" [disabled]="(ID >0)">
+                            {{'TRANSLATE.DROPDOWN_PLACEHOLDER_SELECT'|translate}}</option>
+                        @for (entity of couponEntities; track $index) {
+                        <option [value]="entity.Name" [disabled]="(ID > 0)"
+                            [hidden]="!addCouponRegisterForm.get('selectedPlanId').value && entity.Name === 'PlanOffer'"
+                            [selected]="selectedCouponEntity==entity.Name">
+                            {{'TRANSLATE.' + entity.DisplayName |
+                            translate}}
+                        </option>
+                        }
+                    </select>
+                </div>
+            </div>
+            @if(selectedPlanId && !(addCoupon.ID >0)){
+            <div class="form-group row mt-2">
+                <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                    <label class="fw-semibold fs-6 mb-2 text-start col-form-label"
+                        translate="TRANSLATE.COUPON_OWNERSHIPS_CHECKBOX_APPLICABLE_TO_ALL_CUSTOMERS">
+                        <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                            [ngbTooltip]="'TRANSLATE.COUPON_OWNERSHIPS_CHECKBOX_APPLICABLE_TO_ALL_CUSTOMERS_HELPTEXT' | translate">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                        </i>
+                    </label>
+                </div>
+                <div class="col-md-5 mt-2">
+                    <label
+                        class="checkbox checkbox-outline checkbox-outline-2x control-label checkbox-primary mb-5 form-check">
+                        <input type="checkbox" class="form-check-input ng-valid ng-dirty ng-touched" [disabled]="(ID > 0)"
+                            formControlName="isApplicableForAllCustomers" style="vertical-align:text-bottom;">
+                        <span></span>
+                    </label>
+
+                </div>
+            </div>
+            }
+            <div class="form-group row mt-7">
+                @if(isProviderSelection){
+                <div class="col-md-2"></div>
+                <div class="col-md-10">
+                    <label class="row mb-5">
+                        <span translate="TRANSLATE.COUPON_OWNERSHIPS_PROVIDER"></span>
+                    </label>
+                    <div class="col-md-10">
+                        <div class="form-check mb-5" *ngFor="let provider of Providers;">
+                            <input class="form-check-input" role="button" type="checkbox"
+                                [checked]="provider.IsSelected" id="{{'flexCheckDefault'+provider.ID}}"
+                                (change)="selectRecords(provider)" [disabled]="(ID > 0)"/>
+                            <label class="form-check-label text-gray-700" role="button"
+                                for="{{'flexCheckDefault'+provider.ID}}">
+                                {{'TRANSLATE.'+provider.Description | translate}}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                }
+                @if(isSaleTypeSelection){
+                <div class="col-md-2"></div>
+                <div class="col-md-10">
+                    <label class="row mb-5">
+                        <span translate="TRANSLATE.COUPON_OWNERSHIPS_SALETYPE"></span>
+                    </label>
+                    <div class="col-md-10">
+                        <div class="form-check mb-5" *ngFor="let saleType of SaleTypes;">
+                            <input class="form-check-input" role="button" type="checkbox"
+                                [checked]="saleType.IsSelected" id="{{'flexCheckDefault'+saleType.ID}}"
+                                (change)="selectRecords(saleType)" [disabled]="(ID > 0)"/>
+                            <label class="form-check-label text-gray-700" role="button" role="button"
+                                for="{{'flexCheckDefault'+saleType.ID}}">
+                                {{'TRANSLATE.'+saleType.Description | translate}}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                }
+                @if (isCategorySelection) {
+                <div class="col-md-2"></div>
+                <div class="col-md-10">
+                    <label class="row mb-5">
+                        <span translate="TRANSLATE.COUPON_OWNERSHIPS_CATEGORY"></span>
+                    </label>
+                    <div class="col-md-10">
+                        <div class="form-check mb-5" *ngFor="let category of Categories;">
+                            <input class="form-check-input" role="button" type="checkbox"
+                                [checked]="category.IsSelected" id="{{'flexCheckDefault'+category.ID}}"
+                                (change)="selectRecords(category)" [disabled]="(ID > 0)" />
+                            <label class="form-check-label text-gray-700" role="button"
+                                for="{{'flexCheckDefault'+category.ID}}">
+                                {{(category.Name.toLowerCase() === 'onlineservicesnce' === true ?
+                                'TRANSLATE.CATEGORY_FILTER_DESC_NCE' : 'TRANSLATE.'+category.CategoryDescriptionKey) |
+                                translate}}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                }
+                @if (isPlanOfferSelection && selectedPlanId !== null && !isOfferLoading){
+                <div class="col-md-2">
+                    <label class="col-form-label fw-semibold">
+                        <span translate="TRANSLATE.COUPON_OWNERSHIPS_PLAN_OFFERS"></span>
+                    </label>
+                </div>
+                <div class="col-md-10">
+                    <div class="col-md-10">
+                        <!--begin::Accordion-->
+                        <div class="accordion accordion-icon-collapse" id="kt_accordion_3">
+                            <!--begin::Item-->
+                            <div class="mb-5">
+                                <!--begin::Header-->
+                                <div class="row">
+                                    <div class=" col-md-8 accordion-header py-3 d-flex">
+                                        <h3 class="fs-4 fw-semibold mb-5 ms-4">
+                                            <div class="form-check mb-5">
+                                                <input class="form-check-input" role="button" type="checkbox"
+                                                    [checked]="isSelectAllProducts"
+                                                    (change)="selectAllPlanProducts()"/>
+                                                <label class="form-check-label text-gray-700" role="button">
+                                                    {{'TRANSLATE.COUPON_CHECKBOX_TEXT_SELECT_ALL_OFFERS'|translate}}
+                                                </label>
+                                            </div>
+                                        </h3>&nbsp;&nbsp;&nbsp;
+                                        <span class="accordion-icon align-items-start" data-bs-toggle="collapse"
+                                            data-bs-target="#kt_accordion_3_item_1">
+                                            <i class="ki-duotone ki-plus-square fs-2x plus-icon"><span
+                                                    class="path1"></span><span class="path2"></span><span
+                                                    class="path3"></span></i>
+                                            <i class="ki-duotone ki-minus-square fs-2x minus-icon"><span
+                                                    class="path1"></span><span class="path2"></span></i>
+                                        </span>
+
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control form-control-sm custom"
+                                            placeholder="{{ 'TRANSLATE.BUTTON_TEXT_SEARCH' | translate }}"
+                                            formControlName="searchTerm" />
+                                    </div>
+                                </div>
+                                <!--end::Header-->
+
+                                    <div id="kt_accordion_3_item_1" class="fs-6 collapse show  ps-10 pt-2" data-bs-parent="#kt_accordion_3">
+                                        <!-- Check if filtered planOffers has data -->
+                                        <div *ngIf="filteredPlanOffers?.length > 0; else noData" class="ps-5">
+                                            <cdk-virtual-scroll-viewport class="product-wrapper" [itemSize]="10">
+                                                <div *ngFor="let addon of filteredPlanOffers" class="ps-5">
+                                                    <ng-container *ngTemplateOutlet="addonsList; context: { addon: addon }"></ng-container>
+                                                </div>
+                                            </cdk-virtual-scroll-viewport>
+                                        </div>
+                                        
+                                        <!-- Display 'No data found' when filtered data is empty -->
+                                        <ng-template #noData>
+                                            <div class="col-md-12 centered">
+                                                <app-common-no-record></app-common-no-record>
+                                            </div>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                                <!--end::Item-->
+                            </div>
+                            <!--end::Accordion-->
+                        </div>
+                    </div>
+                }
+                @if(isCategorySelection && isAzurePlanSelected){
+                    <div class="form-group row mt-2">
+                        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="fw-semibold fs-6 mb-2 text-start col-form-label"
+                                translate="TRANSLATE.IS_CONSUMPTION_BASED_DISCOUNT_APPLICABLE_TITLE">
+                                <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                                    [ngbTooltip]="'TRANSLATE.AZURE_PLAN_DISCOUNT_SLABDATA_NOTE' | translate">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <span class="path3"></span>
+                                </i>
+                            </label>
+                        </div>
+                        <div class="col-md-5 mt-2">
+                            <label
+                                class="checkbox checkbox-outline checkbox-outline-2x control-label checkbox-primary mb-5 form-check">
+                                <input type="checkbox" class="form-check-input ng-valid ng-dirty ng-touched mt-3"
+                                    formControlName="isAzurePlanDiscountApplicable" (change)="toggleAzurePlanSlabDiscountTable()"  [disabled]="(ID > 0)" style="vertical-align:text-bottom;">
+                                <span></span>
+                                <!-- <span class="fw-bold italic-text" translate="TRANSLATE.AZURE_PLAN_DISCOUNT_SLABDATA_NOTE"></span> -->
+                            </label>
+                        </div>
+                    </div>
+                    @if(isShowAzurePlanSlabDiscountTable){
+                        <div class="form-group row mt-7">
+                            <div class="col-md-2 col-form-label text-left text-sm-left">
+                                <label class="required fw-semibold fs-6 mb-2" translate="TRANSLATE.AZURE_PLAN_DISCOUNT_SLAB_DATA"></label>
+                                <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                                    ngbTooltip="{{'TRANSLATE.AZURE_PLAN_DISCOUNT_SLABDATA_TOOLTIP' | translate}}">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <span class="path3"></span>
+                                </i>
+                            </div>
+                            <div class="col-md-9">
+                                <table class="table table-responsive table-striped table-hover table-bordered table-sm" id="mytable">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align: right; font-weight: bold;" scope="col">
+                                                <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_MINVALUE"></span>
+                                            </th>
+                                            <th style="text-align: right; font-weight: bold;" scope="col">
+                                                <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_MAXVALUE"></span>
+                                            </th>
+                                            <th style="text-align: right; font-weight: bold;" scope="col">
+                                                <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_DISCOUNT"></span>
+                                            </th>
+                                            <th style="text-align: left; font-weight: bold;" scope="col">
+                                                <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_BILLING_TYPE"></span>
+                                            </th>
+                                            <th style="text-align: center; font-weight: bold;" scope="col" *ngIf="pagemode?.toLowerCase() != PageModeEnum.Edit.toLowerCase()">
+                                                <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_ACTIONS"></span>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody *ngIf="!!formArray?.controls">
+                                        <tr formArrayName="slabData" *ngFor="let item of formArray.controls; let i = index">
+                                            <ng-container [formGroupName]="i">
+                                                <td class="col-md-2 fw-bold text-end">
+                                                    {{item?.get('MinValue').getRawValue()}}
+                                                </td>
+                                                <td class="col-md-2 text-end">
+                                                    {{item?.get('MaxValue').getRawValue()}}
+                                                </td>
+                                                <td class="col-md-2">
+                                                    <div class="d-flex align-items-right" *ngIf="item?.get('isEditing')?.value">
+                                                        <span style="text-align: right;"*ngIf="!item?.get('isEditing')?.value">{{item?.get('Discount').getRawValue()}}</span>
+                                                        <input *ngIf="item?.get('isEditing')?.value" class="form-control form-control-sm text-end" formControlName="Discount" type="number">
+                                                    </div>
+                                                    <div class="text-end" *ngIf="!item?.get('isEditing')?.value">
+                                                        <span style="text-align: right;" *ngIf="!item?.get('isEditing')?.value">{{item?.get('Discount').getRawValue()}}</span>
+                                                    </div>
+                                                </td>
+                                                <td class="col-md-2" style="text-align: center;">
+                                                    <select class="form-select form-select-sm form-control-sm fw-bold required"
+                                                        formControlName="BillingType">
+                                                        @for(option of billingTypes; track $index){
+                                                        <option [value]="option.BillingTypeName">
+                                                            {{option.BillingTypeName | translate}}
+                                                        </option>
+                                                        }
+                                                    </select>
+                                                </td>
+                                                @if(pagemode?.toLowerCase() != PageModeEnum.Edit.toLowerCase()) {
+                                                    <td class="col-md-3">
+                                                    <a form="rowForm" class="btn btn-active-light-primary btn-sm tooltips" ngbTooltip="{{'TRANSLATE.AZURE_PLAN_DISCOUNT_TOOLTIP_TEXT_SAVE' | translate}}" (click)="saveOrEditSlabData(item, false)" *ngIf="item?.get('isEditing')?.value">
+                                                        <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+                                                            <span class="ki-outline ki-file-added fs-6 text-primary"></span>
+                                                        </span>
+                                                    </a>
+                                                    <a form="rowForm" class="btn btn-active-light-primary btn-sm tooltips" ngbTooltip="{{'TRANSLATE.AZURE_PLAN_DISCOUNT_TOOLTIP_TEXT_CANCEL' | translate}}" (click)="cancelSlabTableChanges(item, i)" *ngIf="item?.get('isEditing')?.value">
+                                                        <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+                                                            <span class="ki-outline ki-cross fs-6 text-primary"></span>
+                                                        </span>
+                                                    </a>
+                                                    <a form="rowForm" class="btn btn-active-light-primary btn-sm tooltips" ngbTooltip="{{'TRANSLATE.AZURE_PLAN_DISCOUNT_TOOLTIP_TEXT_EDIT' | translate}}" (click)="saveOrEditSlabData(item, true)" *ngIf="!item?.get('isEditing')?.value">
+                                                        <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+                                                            <span class="ki-outline ki-pencil fs-6 text-primary"></span>
+                                                        </span>
+                                                    </a>
+                                                    <a form="rowForm" class="btn btn-active-light-primary btn-sm tooltips" ngbTooltip="{{'TRANSLATE.AZURE_PLAN_DISCOUNT_TOOLTIP_TEXT_ADD' | translate}}" *ngIf="!getSladdataEditing(item)" (click)="addGroup(i)">
+                                                        <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+                                                            <span class="ki-outline ki-plus fs-6 text-primary"></span>
+                                                        </span>
+                                                    </a>
+                                                    <a form="rowForm" class="btn btn-active-light-primary btn-sm tooltips" ngbTooltip="{{'TRANSLATE.AZURE_PLAN_DISCOUNT_TOOLTIP_TEXT_DELETE' | translate}}" (click)="removeGroup(i)" *ngIf="!item?.get('isEditing')?.value && i != 0">
+                                                        <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+                                                            <span class="ki-outline ki-trash fs-6 text-primary"></span>
+                                                        </span>
+                                                    </a>
+                                                </td>
+                                                }
+                                            </ng-container>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+        <div class="col-md-12 text-end"
+            ng-hide="vm.selectedCouponEntity == 'PlanOffer' && vm.limitTo<vm.planOffers.length">
+
+            <button type="button" class="btn btn-sm btn-light btn-active-light-primary me-2"
+                (click)="updatePageMode()"><span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span></button>
+
+            <button type="button" class="btn btn-sm btn-primary me-2" *ngIf="!isCouponCodeExists" busy busy-when-url="api"
+                busy-add-classes="disabled" not-busy-remove-classes="disabled" (click)="createCoupon()" appBusyLoader>
+                {{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}
+            </button>
+        </div>
+    </div>
+</form>
+}
+<ng-template #addonsList let-addon="addon">
+    <div class="from margin-top-10">
+        <div class="from-group row">
+            <div class="col-md-10">
+                <div class="caption">
+                    <div class="form-check mb-5">
+                        <input class="form-check-input" role="button" type="checkbox"  [checked]="addon.IsSelected"
+                            (change)="toggleOfferSelection(addon)" 
+                            [disabled]="addon.ProviderName?.toLowerCase()==cloudHubConstants.PROVIDER_MICROSOFT && addon.CategoryName?.toLowerCase()==cloudHubConstants.CATEGORY_AZURE_PLAN && addon.IsAddon"/>
+                        <label class="form-check-label text-gray-700" role="button">
+                            <strong [ngClass]="{'not-available-for-purchase': !addon.IsAvailablePlanProductInShop }">{{addon.Name}}
+                                <i *ngIf="!addon.IsAvailablePlanProductInShop" class="ki-outline ki-minus-circle not-available-for-purchase"
+                                    ngbTooltip="{{'TRANSLATE.MANAGE_PLAN_NOT_AVAILABLE_FOR_PURCHASE' | translate}}">
+                                </i></strong>
+                        </label>
+                    </div>
+                </div>
+                <div class="chips">
+                    <!-- NCE, sw, qty, bundle, partner-usage -->
+                    <span *ngIf="addon.Validity !== null && addon.Validity !== ''">
+                        @if (addon.ValidityType == 'Month(s)') {
+                        <span
+                            class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2"
+                            aria-hidden="true"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                            {{addon.Validity}}
+                            {{ (addon.Validity === 1 ? (addon.ValidityType === 'Month(s)' ?
+                            'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                            'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                        </span>
+                        }
+                        @if (addon.ValidityType === 'Year(s)' || addon.ValidityType === 'Year') {
+                        <span class="label label-dark font-weight-bold label-inline text-white badge bg-warning ms-md-2"
+                            aria-hidden="true"
+                            [ngClass]="{'labelcolor':addon.BillingCycleName == 'Monthly','TermLabelColor': addon.BillingCycleName == 'Annual'}"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                            {{addon.Validity}}
+                            {{ (addon.Validity === 1 ? (addon.ValidityType === 'Month(s)' ?
+                            'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                            'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+
+                        </span>
+                        }
+                    </span>
+
+                    @if(addon.ProviderSettings && addon.ProviderSettings.ProviderCategory){
+                    <span
+                        class="label label-light-primary font-weight-bold label-inline">{{'TRANSLATE.'+addon.ProviderSettings.ProviderCategory
+                        | translate}} </span>
+                    }
+                    <!-- NCE, sw, qty, bundle, partner-usage, azure -->
+                    <span *ngIf="addon.BillingCycleName !== null && addon.BillingCycleName !== ''">
+                        <span *ngIf="addon.BillingCycleName !== null && addon.BillingCycleName !== ''"
+                            class="label label-dark font-weight-bold label-inline text-white badge bg-dark ms-md-2" [ngClass]="{
+                                'bg-warning': addon.BillingCycleName?.toLowerCase() === 'monthly',
+                                'bg-success': addon.BillingCycleName?.toLowerCase() === 'annual',
+                                'bg-dark': addon.BillingCycleName?.toLowerCase() === 'triennial',
+                                'bg-info': addon.BillingCycleName?.toLowerCase() === 'onetime'
+                            }" aria-hidden="true"
+                            
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}">
+                            {{'TRANSLATE.'+addon.BillingCycleDescriptionKey | translate}}
+                        </span>
+                    </span>
+                    <!-- nce -->
+                    <!-- @if(addon.CategoryName?.toLowerCase() ==
+                    cloudHubConstants.CATEGORY_ONLINE_SERVICES_NCE) {
+                    <span class="label label-light-info font-weight-bold label-inline badge ms-md-2"
+                        ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}">
+                        {{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE' | translate}}
+                    </span>
+                    } -->
+
+                    @if(addon.CategoryName == 'OnlineServicesNCE'){
+                    <span class="label label-light-info font-weight-bold label-inline badge ms-md-2"
+                        ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}">{{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE'
+                        | translate}}</span>
+
+                    }
+
+                    <!-- sw -->
+                    <!-- @if(addon.CategoryName?.toLowerCase() !=
+                    cloudHubConstants.CATEGORY_ONLINE_SERVICES_NCE) {
+                    <span class="font-size-h5">
+                        <span class="label label-light-info font-weight-bold label-inline badge ms-md-2"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}">
+                            {{'TRANSLATE.CATEGORY_DESC_SOFTWARE_SUBSCRIPTIONS' | translate}}</span>
+                    </span>
+                    } -->
+                    @if(addon.CategoryName != 'OnlineServicesNCE'){
+                    <span class="label label-light-info font-weight-bold label-inline  badge ms-md-2"
+                        ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}">{{'TRANSLATE.'+addon.CategoryDescriptionKey
+                        | translate }}</span>
+
+                    }
+
+                    <!-- all MS expect usage -->
+                    @if(addon.MarketCode){
+                    <span class="badge badge-info ms-md-2"
+                        ngbTooltip="{{addon.MarketRegion}}">{{addon.MarketCode}}</span>
+                    }
+                    @if(addon.IsEST){
+                        <span class="badge EST-Pill-styling text-white ms-md-2" ngbTooltip="{{'TRANSLATE.CATEGORY_PILL_EST_TOOLTIP' | translate }}" >{{ 'TRANSLATE.CATEGORY_PILL_NAME_EST' | translate}}</span>
+                    }
+
+                    @if(addon.ShowPromotionLink){
+                        <span class="mb-0 mr-2 font-weight-normal separator-primary text-primary cursor-pointer ms-md-2 position-relative-top-5" (click)="checkNcePromotionDetails(addon)" ngbTooltip="{{'TRANSLATE.COUPON_OWNERSHIPS_COUPON_PLAN_OFFER_TEXT_PROMOTION_AVAILABLE_TO_CUSTOMER' | translate }}">
+                            <i class="ki-outline ki-discount text-primary fs-2 mt-1"></i>
+                        </span>
+                    }
+
+                    @if(addon.PlanProductMacroName !== null && addon.ConsumptionType != 'Usage' && addon.ConsumptionType != 'Contract'){
+                    <span class="label label-light-warning font-weight-bold label-inline badge ms-md-2"
+                        ngbTooltip="{{'TRANSLATE.PLAN_MACRO_DETAILS_LABEL_TEXT' | translate}}">
+                        {{'TRANSLATE.'+addon.PlanProductMacroName | translate}}<span
+                            *ngIf="addon.PlanProductMacroValue !== null && addon.PlanProductMacroValue != 0">({{addon.PlanProductMacroValue}})</span></span>
+                    }
+
+                    <!-- sw, nce -->
+                    @if(addon.ProviderSettings && addon.ProviderSettings?.EnforceAttestation == 'TRUE'){
+                    <span
+                        ngbTooltip="{{'MICROSOFT_ATTESTATION_TYPE_TOOLTIP' | translate}}{{addon.ProviderSettings?.AttestationType | translate}}"
+                        class="font-weight-normal  separator-primary text-primary cursor-pointer ms-md-2">
+                        <span><i class="ki-outline ki-verify text-primary"></i></span>
+                    </span>
+                    }
+                    <!-- partner qty, partner usage -->
+                    <!-- <span
+                        *ngIf="addon.CategoryName?.toLowerCase() !== cloudHubConstants.CATEGORY_ONLINE_SERVICES_NCE && addon.BillingTypeName !== null && addon.BillingTypeName !== ''"
+                        class="label label-light-danger font-weight-bold label-inline text-danger badge bg-light-danger ms-md-2"
+                        ngbTooltip="{{'TRANSLATE.BILLING_TYPE_TOOLTIP' | translate}}">{{addon.BillingTypeName}}</span> -->
+                </div>
+            </div>
+            <div class="col-md-2">
+                <strong>{{(addon.SalePrice | CurrencyFilter : addon.CurrencySymbol : addon.CurrencyDecimalPlaces :
+                    addon.CurrencyThousandSeparator : addon.CurrencyDecimalSeparator)}}</strong>
+            </div>
+        </div>
+        <br />
+    </div>
+    @if(addon.Addons!= [] && addon.Addons != undefined){
+    <div *ngIf="addon.IsSelected">
+        <div *ngFor="let addon of addon.Addons" class="ps-5">
+            @if(addon.IsAddon){
+            <ng-container *ngTemplateOutlet="addonsList; context: { addon: addon }"></ng-container>
+            }
+        </div>
+    </div>
+    }
+</ng-template>

@@ -1,0 +1,206 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-bold fw-semibold btn-light-primary" (click)="backToList()">
+            <i class="ki-outline ki-to-left fs-2"></i> <span
+                translate="TRANSLATE.BUTTON_TEXT_BACK_TO_RESELLERS"></span></button>
+    </div>
+</ng-template>
+<div class="add-customer-container">
+    <div class="card custom-card">
+        <div class="card-body">
+            <form [formGroup]="resellerRegisterForm">
+                @if( hasSupportForResellersWithMPNID == 'Yes'){
+                    <div class="notice p-3 pb-0 mb-8 bg-light-primary rounded border-primary border border-dashed min">
+                        <div class="col-md-12">
+                            <div class="bs-callout bs-callout-info">
+                                <h4 class="block" translate="TRANSLATE.ADD_RESELLER_LINK_PROVIDER_RESELLER_TITLE"></h4>
+                                <p [innerHTML]="'TRANSLATE.ADD_RESELLER_LINK_PROVIDER_RESELLER_HELP_TEXT' | translate" > </p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                }
+                <div class="form-group row">
+                    <div class="col-md-4">
+                        <label class="required fw-semibold fs-6 mb-2" translate="TRANSLATE.RESELLER_LABEL_TEXT_NAME"></label>
+                            <input type="text" class="form-control form-control-sm " formControlName="name" [ngClass]="{'has-error' : (resellerRegisterForm.get('name')?.errors?.required && resellerRegisterForm.get('name')?.touched && isSubmitted)}">
+                            @if(resellerRegisterForm.get('name')?.errors?.required && resellerRegisterForm.get('name')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                            }
+                    </div>
+                    <div class="col-md-4">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.RESELLER_LABEL_TEXT_COMPANY_NAME"></label>
+                            <input type="text" class="form-control form-control-sm" formControlName="companyName" [ngClass]="{'has-error' : (resellerRegisterForm.get('companyName')?.errors?.required && resellerRegisterForm.get('companyName')?.touched && isSubmitted)}">
+                            @if(resellerRegisterForm.get('companyName')?.errors?.required &&
+                            resellerRegisterForm.get('companyName')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                            }
+                    </div>
+                </div>
+
+                <div class="mb-5 mt-7">
+                    <span class="fw-bold fs-3 d-flex align-items-center"
+                        translate="TRANSLATE.RESELLER_CAPTION_TEXT_RESELLER_BILLING_PROFILE">
+                    </span>
+                </div>
+                <hr>
+                <div class="form-group row mt-7">
+                    <div class="col-md-6">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.RESELLER_LABEL_TEXT_FIRST_NAME"></label>
+                            <input type="text" class="form-control form-control-sm"
+                            formControlName="firstName" [ngClass]="{'has-error' : (resellerRegisterForm.get('firstName')?.errors?.required && resellerRegisterForm.get('firstName')?.touched && isSubmitted)}">
+                        @if(resellerRegisterForm.get('firstName')?.errors?.required &&
+                        resellerRegisterForm.get('firstName')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> }
+                    </div>
+                    <div class="col-md-6">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.RESELLER_LABEL_TEXT_LAST_NAME"></label>
+                        <input type="text" class="form-control form-control-sm" autocomplete="off"
+                            formControlName="lastName" [ngClass]="{'has-error' : (resellerRegisterForm.get('lastName')?.errors?.required && resellerRegisterForm.get('lastName')?.touched && isSubmitted) || (resellerRegisterForm.get('lastName')?.errors?.pattern &&
+                        resellerRegisterForm.get('lastName')?.touched)}">
+                        @if(resellerRegisterForm.get('lastName')?.errors?.required &&
+                        resellerRegisterForm.get('lastName')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                        @if(resellerRegisterForm.get('lastName')?.errors?.pattern &&
+                        resellerRegisterForm.get('lastName')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.REQUIRED_PATTERN_TEXT"></span> }
+                    </div>
+                </div>
+                <div class="form-group row mt-7">
+                    <div class="col-md-6">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.RESELLER_LABEL_TEXT_EMAIL"></label>
+                        <input type="text" class="form-control form-control-sm" formControlName="email"
+                            (blur)="validateEmail()"
+                            [ngClass]="{'has-error' : (resellerRegisterForm.get('email')?.errors?.required && resellerRegisterForm.get('email')?.touched && isSubmitted)}">
+                        <div
+                            *ngIf="resellerRegisterForm.get('email')?.errors?.required && resellerRegisterForm.get('email')?.touched">
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        </div>
+                        <div
+                            *ngIf="resellerRegisterForm.get('email')?.errors?.invalidEmail && resellerRegisterForm.get('email')?.touched && ! resellerRegisterForm.get('email')?.errors?.required">
+                            <span class="text-danger"
+                                translate="TRANSLATE.VALIDATION_MESSAGE_PLEASE_ENTER_A_VALID_EMAIL"></span>
+                        </div>
+                        <!-- <div *ngIf="resellerRegisterForm.get('email')?.errors?.emailExists && resellerRegisterForm.get('email')?.touched">
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_EMAIL_ALREADY_EXIST"></span>
+                        </div> -->
+                    </div>
+                    <div class="col-md-6">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.RESELLER_LABEL_TEXT_PHONE_NUMBER"></label>
+                        <input type="text" class="form-control form-control-sm" formControlName="phoneNumber"
+                            [ngClass]="{'has-error' : (resellerRegisterForm.get('phoneNumber')?.errors?.required && resellerRegisterForm.get('phoneNumber')?.touched && isSubmitted)}">
+                        @if(resellerRegisterForm.get('phoneNumber')?.errors?.required &&
+                        resellerRegisterForm.get('phoneNumber')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div>
+                </div>
+                <div class="form-group row mt-7">
+                    <div class="col-md-6">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.RESELLER_LABEL_TEXT_ADDRESS_LINE_1"></label>
+                        <input type="text" class="form-control form-control-sm" formControlName="addressOne"
+                            [ngClass]="{'has-error' : (resellerRegisterForm.get('addressOne')?.errors?.required && resellerRegisterForm.get('addressOne')?.touched && isSubmitted)}">
+                        @if(resellerRegisterForm.get('addressOne')?.errors?.required &&
+                        resellerRegisterForm.get('addressOne')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                        @if(resellerRegisterForm.get('addressOne')?.errors?.maxlength && resellerRegisterForm.get('addressOne')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_CUSTOMER_ADDRESS_1_MAX_LENGTH_256"></span> 
+                        }
+                    </div>
+                    <div class="col-md-6">
+                        <label class=" fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.RESELLER_LABEL_TEXT_ADDRESS_LINE_2"></label>
+                        <input type="text" class="form-control form-control-sm" formControlName="addressTwo">
+                        @if(resellerRegisterForm.get('addressTwo')?.errors?.maxlength && resellerRegisterForm.get('addressTwo')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_CUSTOMER_ADDRESS_2_MAX_LENGTH_256"></span> 
+                        }
+                    </div>
+                </div>
+                <div class="form-group row mt-7">
+                    <div class="col-md-3">
+                        <label class="required fw-semibold fs-6 mb-2" translate="TRANSLATE.RESELLER_LABEL_TEXT_COUNTRY">
+                        </label>
+                        <select class="form-select form-select-sm" formControlName="country"
+                            (change)="getStatesByCountryCode()"
+                            [ngClass]="{'has-error' : (resellerRegisterForm.get('country')?.errors?.required && resellerRegisterForm.get('country')?.touched && isSubmitted)}">
+                            <option value="" translate=""></option>
+                            @for(country of countriesData; track $index){
+                            <option [value]="country.Code">{{country?.Name}}</option>
+                            }
+                        </select>
+                        @if(resellerRegisterForm.get('country')?.errors?.required &&
+                        resellerRegisterForm.get('country')?.touched){
+                        <div>
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        </div>
+                        }
+                    </div>
+                    <div class="col-md-3">
+                        <label class="fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.RESELLER_LABEL_TEXT_STATE"></label>
+                            @if (statesData?.[0]?.IsStateProvinceMandatory) {
+                            <span class="text-danger">*</span>
+                            }
+                        @if(resellerRegisterForm.get('country')?.value == ''|| !isStateDataAvailable){
+                        <input type="text" class="form-control form-control-sm" formControlName="state"
+                            [ngClass]="{'has-error' : (resellerRegisterForm.get('state')?.errors?.required && resellerRegisterForm.get('state')?.touched && isSubmitted) && statesData?.[0]?.IsStateProvinceMandatory}">
+                        }
+                        @else if(!!isStateDataAvailable) {
+                        <select class="form-select form-select-sm" formControlName="state"
+                            [ngClass]="{'has-error' : (resellerRegisterForm.get('state')?.errors?.required && resellerRegisterForm.get('state')?.touched && isSubmitted)}">
+                            <option value="" translate="TRANSLATE.SELECT_DEFAULT_OPTION_SELECT"></option>
+                            @for(state of statesData; track $index){
+                                <option [value]="state.StateCode">{{state?.Name}}</option>
+                                }
+                        </select>
+                        }
+                        @if(resellerRegisterForm.get('state')?.errors?.required &&
+                        resellerRegisterForm.get('state')?.touched && statesData?.[0]?.IsStateProvinceMandatory){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div>
+                    <div class="col-md-3">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.RESELLER_LABEL_TEXT_CITY"></label>
+                        <input type="text" class="form-control form-control-sm" formControlName="city"
+                            [ngClass]="{'has-error' : (resellerRegisterForm.get('city')?.errors?.required && resellerRegisterForm.get('city')?.touched && isSubmitted)}">
+                        @if(resellerRegisterForm.get('city')?.errors?.required &&
+                        resellerRegisterForm.get('city')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div>
+                    <div class="col-md-3">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.RESELLER_LABEL_TEXT_ZIP"></label>
+                        <input type="text" class="form-control form-control-sm" formControlName="zip"
+                            [ngClass]="{'has-error' : (resellerRegisterForm.get('zip')?.errors?.required && resellerRegisterForm.get('zip')?.touched && isSubmitted)}">
+                        @if(resellerRegisterForm.get('zip')?.errors?.required &&
+                        resellerRegisterForm.get('zip')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div>
+                </div>
+                <br>
+                <hr>
+            </form>
+        </div>
+        <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3">
+            <button type="button" class="btn btn-light btn-active-light-primary btn-sm"
+                (click)="cancelFormChanges()">{{'TRANSLATE.BUTTON_TEXT_CANCEL' |
+                translate}}
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" (click)="submitForm()"
+                appBusyLoader>{{'TRANSLATE.BUTTON_TEXT_SUBMIT' |
+                translate}}</button>
+        </div>
+    </div>
+
+</div>

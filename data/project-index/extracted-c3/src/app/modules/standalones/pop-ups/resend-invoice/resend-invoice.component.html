@@ -1,0 +1,38 @@
+<div class="modal-dialog m-0 modal-dialog m-0-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title">
+                <span translate="TRANSLATE.RESEND_INVOICE"></span>
+            </h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="cancel()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+            </div>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <form [formGroup]="frmEmailDetails" role="form" class="form" novalidate> 
+                <div class="form-group row bs-callout bs-callout-info ng-scope border border-dashed border-primary rounded bg-light-primary">
+                    <h6>
+                        <span translate="TRANSLATE.RESEND_INVOICE_HEADER_TEXT"></span>
+                    </h6>
+                    <p>
+                        <span [innerHTML]="'TRANSLATE.RESEND_INVOICE_NOTE'| translate"></span>
+                    </p>
+                </div>
+                <div class="form-group row" ng-class="{'has-error':( cc.frmEmailDetails.$submitted || cc.frmEmailDetails.emailsList.$dirty) &amp;&amp; cc.frmEmailDetails.emailsList.$error.required }">
+                    <div class="col-md-12">
+                        <textarea name="emailsList" formControlName="emailsList" class="form-control" placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_INPUT_TEXTAREA_TO_GET_EMAIL_IDS' | translate}}" required ></textarea>
+                        @if (frmEmailDetails.get('emailsList')?.errors?.required && frmEmailDetails.get('emailsList').touched ) {
+                            <span class="text-danger">
+                                <span translate="TRANSLATE.REQUIRED_FIELD_TEXT" ></span>
+                            </span>
+                        }
+                    </div>
+                </div> 
+            </form>
+        </div> 
+        <div class="modal-footer">
+            <a class="btn btn-light btn-active-light-primary btn-sm" (click)="cancel()"><span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span></a>
+            <a class="btn btn-primary btn-sm" (click)="resendInvoice()"><span translate="TRANSLATE.SEND_INVOICE_TO_GIVEN_USERS_POPUP_BUTTON_TEXT"></span></a>
+        </div>
+    </div>
+</div>

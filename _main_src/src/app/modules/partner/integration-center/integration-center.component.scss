@@ -1,0 +1,12 @@
+/* This class will freeze the entire container */
+.component-frozen {
+    position: relative;
+    pointer-events: none; /* This is the magic: it ignores all clicks/hovers */
+    opacity: 0.6;         /* Visual cue that it is disabled */
+    user-select: none;    /* Prevents highlighting text */
+}
+
+/* Optional: Add a 'Wait' cursor to the whole area */
+.component-frozen {
+    cursor: wait !important;
+}

@@ -1,0 +1,51 @@
+.well {
+    border: 0;
+    padding: 20px;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+    box-shadow: none !important;
+    min-height: 20px;   
+    margin-bottom: 20px;
+    background-color: #f1f4f7;   
+    border-radius: 4px;   
+}
+
+.header-alignment-normal {
+    text-align: left !important;
+}
+
+.header-price-alignment {
+    text-align: right !important;
+}
+
+.header-icon-alignment {
+    text-align: center !important;
+}
+
+.header-action-alignment {
+    text-align: center !important;
+}
+
+.body-alignment-normal {
+    text-align: left !important;
+}
+
+.body-price-alignment {
+    text-align: right !important;
+}
+
+.body-icon-alignment {
+    text-align: center !important;
+}
+
+.body-action-alignment {
+    text-align: center !important;
+}
+.v-align{
+    vertical-align: top;
+}
+.deep-bold{
+    ::ng-deep{
+        *{font-weight: 400;}
+    }
+}

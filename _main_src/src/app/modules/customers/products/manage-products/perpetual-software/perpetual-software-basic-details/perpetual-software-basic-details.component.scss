@@ -1,0 +1,30 @@
+.symbol>img {
+    width: 96px;
+    height: 96px;
+}
+
+.symbol-label {
+    width: 96px;
+    height: 96px;
+}
+
+.description-color {
+    color: #78829D;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    pointer-events: all !important;
+}
+
+.table td {
+    color: var(--bs-text-gray-800)!important;
+}
+
+::ng-deep{
+    app-perpetual-software-basic-details{
+        .p-no-margin p{
+            margin-bottom: 0px !important;
+        }
+    }  
+}

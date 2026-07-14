@@ -1,0 +1,132 @@
+<section class="page-frame dashboard">
+  <h2 class="screen-title">1. Dashboard (Home)</h2>
+
+  <div class="dashboard__heading">
+    <div>
+      <h1>Welcome back, {{ firstName() }}</h1>
+      <p>What would you like to build today?</p>
+    </div>
+    <a class="btn btn-primary" routerLink="/requirement-to-code">
+      <svg lucidePlus [size]="17"></svg>
+      New Requirement
+    </a>
+  </div>
+
+  @if (isLoading()) {
+    <div class="kpi-grid">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="kpi-card app-panel">
+          <div class="skeleton" style="height: 14px; width: 60%; margin-bottom: 14px;"></div>
+          <div class="skeleton" style="height: 28px; width: 40%; margin-bottom: 14px;"></div>
+          <div class="skeleton" style="height: 30px; width: 100%;"></div>
+        </div>
+      }
+    </div>
+
+    <div class="feature-grid">
+      @for (i of [1, 2, 3, 4]; track i) {
+        <div class="feature-card app-panel">
+          <div class="skeleton" style="height: 16px; width: 50%; margin-bottom: 10px;"></div>
+          <div class="skeleton" style="height: 14px; width: 85%;"></div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="kpi-grid">
+      @for (kpi of kpis; track kpi.label) {
+        <div class="kpi-card app-panel">
+          <div class="kpi-card__top">
+            <span class="kpi-card__icon"><svg [lucideIcon]="kpi.icon" [size]="18"></svg></span>
+            <span class="kpi-card__delta" [class.kpi-card__delta--down]="!kpi.trendUp">
+              <svg lucideArrowUpRight [size]="13"></svg>
+              {{ kpi.delta }}
+            </span>
+          </div>
+          <strong class="kpi-card__value">{{ kpi.value }}</strong>
+          <span class="kpi-card__label">{{ kpi.label }}</span>
+          <svg class="kpi-card__spark" viewBox="0 0 100 32" preserveAspectRatio="none">
+            <polyline [attr.points]="sparklinePoints(kpi.spark)" fill="none" />
+          </svg>
+        </div>
+      }
+    </div>
+
+    <div class="feature-grid repo-grid">
+      @for (card of featureCards; track card.route) {
+        <a class="feature-card repo-card" [routerLink]="card.route">
+          <span class="icon-badge"><svg [lucideIcon]="card.icon" [size]="20"></svg></span>
+          <span class="repo-card__body">
+            <strong>{{ card.title }}</strong>
+            <p>{{ card.description }}</p>
+          </span>
+          <span class="repo-card__arrow"><svg lucideArrowRight [size]="16"></svg></span>
+        </a>
+      }
+    </div>
+
+    <div class="dashboard__split">
+      <div class="app-panel dashboard__projects">
+        <div class="panel-body">
+          <div class="section-bar" style="margin-top: 0;">
+            <h2>Recent Projects</h2>
+            <a class="link-purple" routerLink="/history">View All</a>
+          </div>
+
+          @for (project of recentProjects; track project.name) {
+            <div class="project-row">
+              <span class="icon-badge"><svg [lucideIcon]="folderIcon" [size]="18"></svg></span>
+              <div>
+                <h3>{{ project.name }}</h3>
+                <p class="muted">Generated on {{ project.generatedOn }}</p>
+              </div>
+              <span class="chip" [class]="statusChipClass(project.status)">{{ project.status }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="app-panel assistant-panel">
+        <div class="panel-body">
+          <div class="assistant-panel__header">
+            <span class="assistant-panel__icon"><svg lucideSparkles [size]="16"></svg></span>
+            <div>
+              <h3>Ask Copilot</h3>
+              <p class="muted">Get quick answers about your workspace</p>
+            </div>
+          </div>
+
+          <div class="assistant-panel__messages">
+            @for (message of assistantMessages(); track $index) {
+              <div class="assistant-message" [class.assistant-message--user]="message.role === 'user'">
+                @if (message.role === 'assistant') {
+                  <span class="assistant-message__avatar"><svg lucideBot [size]="14"></svg></span>
+                }
+                <p>{{ message.text }}</p>
+              </div>
+            }
+          </div>
+
+          <div class="assistant-panel__prompts">
+            @for (prompt of suggestedPrompts; track prompt) {
+              <button type="button" class="assistant-chip" (click)="useSuggestedPrompt(prompt)">
+                {{ prompt }}
+              </button>
+            }
+          </div>
+
+          <form class="assistant-panel__input" (ngSubmit)="sendAssistantMessage()">
+            <input
+              type="text"
+              placeholder="Ask about your projects…"
+              [value]="assistantInput()"
+              (input)="assistantInput.set($any($event.target).value)"
+            />
+            <button type="submit" aria-label="Send message">
+              <svg lucideSend [size]="16"></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  }
+</section>

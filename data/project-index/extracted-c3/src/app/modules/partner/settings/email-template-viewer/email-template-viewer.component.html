@@ -1,0 +1,7 @@
+<!-- <link href="../../../../../../node_modules/summernote/dist/summernote-lite.min.css"> -->
+
+@if(selectedView?.Value){
+<div class="shadow-container" #shadowContainer>
+    <div [ngxSummernote]="config" [(ngModel)] ="selectedView.Value"></div>
+</div>
+}

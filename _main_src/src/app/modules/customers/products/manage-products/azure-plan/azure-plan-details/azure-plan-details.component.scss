@@ -1,0 +1,16 @@
+.p-no-padding p {
+    padding: 0px !important;
+}
+
+.p-no-margin p {
+    margin: 0px !important;
+}
+
+/* Add this CSS rule to your styles.css or component-specific CSS */
+/* Inside your component's CSS file */
+
+::ng-deep .read-term p{
+    padding: 0;
+    margin: 0;
+}
+

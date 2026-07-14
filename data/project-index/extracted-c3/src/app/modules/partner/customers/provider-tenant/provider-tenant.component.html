@@ -1,0 +1,670 @@
+<ng-template #actionHeader>
+    @if(pageMode === 'list'){
+    <div class="header-actions d-flex align-items-center gap-1 gap-lg-1">
+        <a class="fw-bold ">
+            <div ngbDropdown class="d-flex align-items-center" placement="bottom-right">
+                <button class="btn btn-sm btn-light-primary fw-semibold" id="dropdownBasic1" ngbDropdownToggle>
+                    <i class="ki-outline ki-copy ">
+                    </i>
+                    &nbsp;{{'TRANSLATE.CUSTOMERS_BTN_TEXT_LINK_TO_PROVIDER' |
+                    translate}}
+                </button>
+                           <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+                    class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base w-150px">
+                    <div class='menu-item my-0' ngbDropdownItem>
+                        <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="linkCustomer()">
+                            <span class="ml-2 ng-scope"
+                                translate="TRANSLATE.DROPDOWN_MENU_BUTTON_TEXT_TO_LINK_SINGLE_PROVIDER"></span>
+                        </a>
+                    </div>
+                    <div class='menu-item my-0' ngbDropdownItem *ngIf="permissions.HasCustomersBulkOnboard === 'Allowed' &&  (entityName === 'Partner' || (entityName === 'Reseller' && hasSupportForResellersWithMPNID === 'Yes'))">
+                        <a class="menu-link px-3 py-2 d-flex align-items-center gap-2"
+                            (click)="linkToMultipleProviders()">
+                            <span class="ml-2 ng-scope"
+                                translate="TRANSLATE.DROPDOWN_MENU_BUTTON_TEXT_TO_LINK_MULTIPLE_PROVIDERS"></span>
+                        </a>
+                    </div>
+                    <div class='menu-item my-0' ngbDropdownItem *ngIf="permissions.HasCustomersBulkAddTenants === 'Allowed' && (entityName === 'Partner' || (entityName === 'Reseller' && hasSupportForResellersWithMPNID === 'Yes'))">
+                        <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="loadStatusView()">
+                            <span class="ml-2 ng-scope"
+                                translate="TRANSLATE.DROPDOWN_MENU_BUTTON_TEXT_TO_ADD_MULTIPLE_TENANTS"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </a>
+        <a (click)="backToCustomer()" class="btn btn-light-primary fw-semibold btn-sm me-2 text-nowrap" ui-sref="partner.customers"
+            >
+            <i class="ki-outline ki-to-left fs-2"></i> <span
+                translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_BUTTON_TEXT_BACK_TO_CUSTOMERS"></span>
+        </a>
+    </div>
+    }
+    @if (pageMode === 'status') {
+    <div class="header-actions d-flex align-items-center gap-1 gap-lg-1">
+        <a class="fw-bold ">
+            <button type="button" class="btn btn-light-primary btn-sm me-2 fw-semibold" (click)="backToTenants()">
+                <i class="ki-outline ki-to-left fs-2"></i> {{ 'TRANSLATE.TENANT_MANAGEMENT_TEXT_BACK_TO_TENAMT' | translate }}
+            </button>
+        </a>
+    </div>
+    }
+
+</ng-template>
+
+<ng-template #addTenantModal>
+    <div class="m-0-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title text-primary">
+                    <span class="">{{('TRANSLATE.TENANT_MANAGEMENT_LABEL_BULK_ADD_TENANT')|translate}}</span>
+                </h3>
+
+                <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModalPopup()"
+                    data-bs-dismiss="modal">
+                    <i class="ki-outline ki-cross fs-1"></i>
+                </div>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <div class="row border-bottom mb-10" *ngIf="lastTenantData?.LastTenantName">
+                    <div class="col-12">
+                        <div>
+                            <h5 class="mb-5">
+                                <i class="ki-duotone ki-information-2 fs-5 me-1">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <span class="path3"></span>
+                                </i>
+                                <span translate="TRANSLATE.BULK_ADD_TENANT_DESCRIPTION"></span>
+                                <span class="text-primary">{{lastTenantData?.LastTenantName}}</span>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12" style="padding-left: 30px">
+                        <form name="vm.frmAddTenants" [formGroup]="formGroup" role="form" class="form form-horizontal">
+                            <div class="form-body form-group">
+                                <div class="form-group row mb-4 ">
+                                    <label
+                                        class="fw-semibold col-md-3 text-md-start text-lg-start  text-start text-sm-start">
+                                        <span translate="TRANSLATE.TENANT_MANAGEMENT_LABEL_TENANT_NAME"></span><span
+                                            class="text-danger">*</span>
+                                        <i class="ki-duotone ki-information-2 fs-5 " aria-hidden="true"
+                                            [ngbTooltip]="'TRANSLATE.TENANT_MANAGEMENT_TENANT_NAME_TOOLTIP' | translate">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                            <span class="path3"></span>
+                                        </i>
+                                    </label>
+                                    <div class="col-md-9">
+                                        <input type="text" formControlName="tenantName"
+                                            (ngModelChange)="setDefaultTenantName()"
+                                            class="form-control form-control-sm" name="tenant_Name" required />
+                                        @if(formGroup.get('tenantName')?.errors?.required &&
+                                        formGroup.get('tenantName')?.touched){
+                                        <span class="text-danger"
+                                            translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                                        }
+
+                                    </div>
+                                </div>
+
+                                <div class="form-group row mb-4">
+                                    <label
+                                        class="fw-semibold col-md-3  text-md-start text-lg-start  text-start text-sm-start">
+                                        <span translate="TRANSLATE.TENANT_MANAGEMENT_LABEL_PREFIX"></span>
+                                        <i class="ki-duotone ki-information-2 fs-5 " aria-hidden="true"
+                                            [ngbTooltip]="'TRANSLATE.TENANT_MANAGEMENT_LABEL_PREFIX_TOOLTIP' | translate">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                            <span class="path3"></span>
+                                        </i>
+                                    </label>
+                                    <div class="col-md-9">
+                                        <input type="text" formControlName="prefixName" (input)="setDefaultTenantPrefix()"  
+                                            class="form-control form-control-sm" name="tenant_PrefixName">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row mb-4">
+                                    <label
+                                        class="fw-semibold  col-md-3  text-md-start text-lg-start  text-start text-sm-start">
+                                        <span translate="TRANSLATE.TENANT_MANAGEMENT_LABEL_SEQUENCE"></span><span
+                                            class="text-danger">*</span>
+                                        <i class="ki-duotone ki-information-2 fs-5 " aria-hidden="true"
+                                            [ngbTooltip]="'TRANSLATE.TENANT_MANAGEMENT_SEQUENCE_TOOLTIP' | translate">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                            <span class="path3"></span>
+                                        </i>
+                                    </label>
+                                    <div class="col-md-9">
+                                        <input type="text" formControlName="tenantSequence" (ngModelChange)="setDefaultTenantSequence()"
+                                            class="form-control form-control-sm" name="tenant_Sequence" required>
+                                        @if(formGroup.get('tenantSequence')?.errors?.required && formGroup.get('tenantSequence')?.touched){
+                                        <span class="text-danger"
+                                            translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                                        }
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group row mb-4">
+                                    <label
+                                        class="fw-semibold  col-md-3  text-md-start text-lg-start text-start text-sm-start">
+                                        <span translate="TRANSLATE.TENANT_MANAGEMENT_LABEL_TENANT_COUNT"></span><span
+                                            class="text-danger">*</span>
+                                        <i class="ki-duotone ki-information-2 fs-5 " aria-hidden="true"
+                                            [ngbTooltip]="'TRANSLATE.TENANT_MANAGEMENT_TENANT_COUNT_TOOLTIP' | translate">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                            <span class="path3"></span>
+                                        </i>
+                                    </label>
+                                    <div class="col-md-9">
+                                        <input type="number" formControlName="tenantCount"
+                                            class="form-control form-control-sm"
+                                            max="lastEntitlementData.CurrentAlowedCount" name="tenant_Count" required>
+                                        @if(formGroup.get('tenantCount')?.errors?.required &&
+                                        formGroup.get('tenantCount')?.touched){
+                                        <span class="text-danger"
+                                            translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="form-group row mb-4">
+                                    <label
+                                        class="fw-semibold col-md-3 text-md-start text-lg-start text-start text-sm-start">
+                                        <span translate="TRANSLATE.TENANT_MANAGEMENT_LABEL_DOMAIN_NAME"></span><span
+                                            class="text-danger">*</span>
+                                        <i class="ki-duotone ki-information-2 fs-5 " aria-hidden="true"
+                                            [ngbTooltip]="'TRANSLATE.TENANT_MANAGEMENT_LABEL_DOMAIN_NAME_TOOLTIP' | translate">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                            <span class="path3"></span>
+                                        </i>
+                                    </label>
+                                    <div class="col-md-9">
+                                        <input type="text" formControlName="domainName"
+                                            class="form-control form-control-sm" name="tenant_Name" required>
+                                        @if(formGroup.get('domainName')?.errors?.required
+                                        &&formGroup.get('domainName')?.touched){
+                                        <span class="text-danger"
+                                            translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-4">
+                                    <label
+                                        class="fw-semibold from-check-label col-md-3 mt-2  text-md-start text-lg-start text-start text-sm-start">
+                                        <span translate="TRANSLATE.TENANT_MANAGEMENT_LABEL_CREATE_SUBSCRIPTION"></span>
+                                        <i class="ki-duotone ki-information-2 fs-5 " aria-hidden="true"
+                                            [ngbTooltip]="'TRANSLATE.TENANT_MANAGEMENT_CREATE_SUBSCRIPTION_TOOLTIP' | translate">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                            <span class="path3"></span>
+                                        </i>
+                                    </label>
+                                    <div class="col-md-8  form-check ms-3">
+                                        <label class="mt-2 ">
+                                            <input type="checkbox" id="ch1" (change)="setIsCreateSubscription()"
+                                                formControlName="isCreateSubscription" [(ngModel)]="isCreateSubscription"
+                                                name="tenants_createsubscriptions" class="form-check-input">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                @if (getFormControlValue('isCreateSubscription')) {
+                                <div class="form-group row mb-4" ng-show="vm.isCreateSubscription">
+                                    <label
+                                        class="fw-semibold col-md-3  text-md-start text-lg-start text-start text-sm-start">
+                                        <span translate="TRANSLATE.TENANT_MANAGEMENT_LABEL_PLAN_PRODUCT"></span><span
+                                            class="text-danger">*</span>
+                                        <i class="ki-duotone ki-information-2 fs-5 " aria-hidden="true"
+                                            [ngbTooltip]="'TRANSLATE.TENANT_MANAGEMENT_LABEL_PLAN_PRODUCT_TOOLTIP' | translate">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                            <span class="path3"></span>
+                                        </i>
+                                    </label>
+                                    <div class="col-9">
+                                        <ng-select formControlName="mappedC3PlanProduct" name="selectedPlan"
+                                            [items]="planProducts"
+                                            placeholder="{{'TRANSLATE.CUSTOMER_ONBOARDING_PLACEHOLDER_PLANS' |translate}}">
+                                            <ng-template ng-label-tmp let-row="item">
+                                                <span>{{row.PlanOfferQualifiedOfferName}}</span>
+                                            </ng-template>
+                                            <ng-template ng-option-tmp let-row="item" let-search="searchTerm">
+                                                <div>
+                                                    <div><span>{{row.PlanOfferQualifiedOfferName}}</span></div>
+                                                    <div><small>{{'TRANSLATE.MATCHING_PRODUCT_PLAN_TEXT' | translate}}
+                                                            <span ng-bind-html="planProducts.PlanName">
+                                                                {{row.PlanName}}</span> </small></div>
+                                                    <div>
+                                                        <small>
+                                                            {{row.BillingTypeName}}:
+                                                            @if (row.BillingTypeName === 'Price') {
+                                                            <span
+                                                                ng-bind-html="planProducts.CurrencySymbol">{{row.CurrencySymbol}}</span>
+                                                            }
+                                                            <span
+                                                                ng-bind-html="planProducts.FinalSalePrice">{{row.FinalSalePrice}}</span>
+                                                        </small>
+                                                    </div>
+                                                </div>
+
+                                            </ng-template>
+                                        </ng-select>
+                                        @if(formGroup.get('mappedC3PlanProduct')?.errors?.required &&
+                                        formGroup.get('mappedC3PlanProduct')?.touched){
+                                        <span class="text-danger"
+                                            translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                                        }
+                                    </div>
+                                </div>
+                                }
+
+                                @if (sites?.length > 0 && getFormControlValue('isCreateSubscription')) {
+                                <div class="form-group row mb-4">
+                                    <label
+                                        class="fw-semibold   col-md-3  text-md-start text-lg-start  text-start text-sm-start">
+                                        <span translate="TRANSLATE.TENANT_MANAGEMENT_LABEL_SITE"></span>
+                                    </label>
+                                    <div class="col-md-9">
+                                        <select [(ngModel)]="ownerSiteId" formControlName="ownerSiteId"
+                                            class="form-control form-select form-select-sm" name="azureGroups_main"
+                                            (change)="getSiteDepartments()">
+                                            <option value="" [selected]="ownerSiteId === null" value=""></option>
+                                            @for (site of sites; track $index) {
+                                            <option [value]="site.C3SiteID">{{site.Name}} </option>
+                                            }
+
+                                        </select>
+                                        <!-- <span ng-show="vm.frmAddTenants.$submitted &amp;&amp; vm.frmAddTenants.tenant_site.$error.required" class="text-danger">
+                                                <span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                                            </span> -->
+                                        @if(formGroup.get('ownerSiteId')?.errors?.required &&
+                                        formGroup.get('ownerSiteId')?.touched){
+                                        <span class="text-danger"
+                                            translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                                        }
+                                    </div>
+                                </div>
+                                }
+
+                                @if (siteDepartments?.length > 0 && getFormControlValue('isCreateSubscription')) {
+                                <div class="form-group row mb-4"
+                                    ng-show="vm.SiteDepartments.length > 0 && vm.isCreateSubscription">
+                                    <label
+                                        class="fw-semibold   col-md-3  text-md-start text-lg-start   text-start text-sm-start">
+                                        <span translate="TRANSLATE.TENANT_MANAGEMENT_LABEL_DEPARTMENT"></span>
+                                    </label>
+                                    <div class="col-md-9">
+                                        <select formControlName="ownerDepartmentId"
+                                            class="form-control form-select form-select-sm" name="azureGroups_main">
+                                            <option value="" [selected]="ownerDepartmentId === null"></option>
+                                            @for (department of siteDepartments; track $index) {
+                                            <option value="{{department.C3DepartmentID}}">{{department.Name}} </option>
+                                            }
+                                        </select>
+                                        @if(formGroup.get('ownerDepartmentId')?.errors?.required &&
+                                        formGroup.get('ownerDepartmentId')?.touched){
+                                        <span class="text-danger"
+                                            translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                                        }
+                                    </div>
+                                </div>
+                                }
+
+                                @if (getFormControlValue('isCreateSubscription')) {
+                                <div class=" row mb-4" ng-show="vm.isCreateSubscription">
+                                    <label
+                                        class="fw-semibold col-md-3 mt-2  text-md-start text-lg-start  text-start text-sm-start">
+                                        <span translate="TRANSLATE.TENANT_MANAGEMENT_LABEL_ASSIGN_ADMIN"></span>
+                                        <i class="ki-duotone ki-information-2 fs-5 " aria-hidden="true"
+                                            [ngbTooltip]="'TRANSLATE.TENANT_MANAGEMENT_LABEL_ASSIGN_ADMIN_TOOLTIP' | translate">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                            <span class="path3"></span>
+                                        </i>
+                                    </label>
+                                    <div class="col-md-8 form-check ms-3">
+                                        <div class="input-group-with-checkbox">
+                                            <label class="mt-2">
+                                                <input type="checkbox" id="ch1" formControlName="isCreateAdminOwner"
+                                                    name="tenants_createsubscriptions" class="form-check-input">
+                                                <span></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div
+                                        class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6 mb-3">
+                                        <div class="row m-heading-1 border-green m-bordered">
+                                            <div>
+                                                <strong>{{ 'TRANSLATE.PROVIDER_BULK_CUSTOMER_ATTESTATION_AND_AGREEMENT_CREATION_INSTRUCTIONS_HEADING' |
+                                                    translate }}</strong>
+                                                <ul class="mt-2">
+                                                    <li>
+                                                        {{ 'TRANSLATE.PROVIDER_BULK_CUSTOMER_ATTESTATION_AND_AGREEMENT_CREATION_INSTRUCTIONS_1' | translate
+                                                        }}
+                                                    </li>
+                                                    <li>
+                                                        {{ 'TRANSLATE.PROVIDER_BULK_CUSTOMER_ATTESTATION_AND_AGREEMENT_CREATION_INSTRUCTIONS_2' | translate
+                                                        }}
+                                                    </li>
+                                                    <li>
+                                                        {{ 'TRANSLATE.PROVIDER_BULK_CUSTOMER_ATTESTATION_AND_AGREEMENT_CREATION_INSTRUCTIONS_3' | translate
+                                                        }}
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                }
+                                
+                                @if (tenantName?.length > 0 && tenantSequence?.length > 0) {
+                                <div class="form-group row mb-4">
+                                    <div class="col-md-12">
+                                        <span translate="TRANSLATE.THE_SEQUENCE_LABEL_THE_STARTING_NAME"></span>
+                                        <span class="text-danger">{{prefixName}} {{tenantName}} {{tenantSequence}}</span>
+                                    </div>
+                                </div>
+                                }
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer ng-scope">
+               
+                <button class="btn btn-secondary btn-sm" type="button" ng-click="vm.cancel()"
+                    (click)="closeModalPopup()">
+                    <span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span>
+                </button>
+                <a class="btn btn-primary btn-sm tooltips ng-scope me-2" (click)="onModalSubmit()">
+                    <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+
+<div class="d-flex flex-column-fluid">
+    <div class="container-fluid">
+        <div class="card card-custom">
+            <div class="card-body">
+
+                <!------------------------------------ Page mode list start Accordion -------------------------------------->
+                @if(pageMode ==='list'){
+                <div class="col-md-12">
+                    @if(tenantArray !== [] && tenantArray !== null && tenantArray !== '' && tenantArray.length > 0
+                    && !loadingProvidersData){
+                    @for (data of tenantArray; track data.id; let i = $index) {
+                    <div>
+                        <div ngbAccordion>
+                            <div ngbAccordionItem [collapsed]="i !== 0">
+                                <div ngbAccordionHeader class=" text-primary">
+                                    <button ngbAccordionButton class="text-primary fs-3 text">
+                                        <i class="ki-outline ki-people  text-primary pe-2 fs-2"></i> {{data[0].ProviderName}}
+                                    </button>
+                                </div>
+                                <div ngbAccordionCollapse>
+                                    <div>
+                                        <!-- ngbAccordionBody -->
+                                        <div class="">
+                                            <div
+                                                class="table-responsive table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl">
+                                                <table class="table table-bordered mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="text-start text-gray-800 fw-bold fs-7 text-uppercase gs-0"
+                                                                translate="TRANSLATE.SERVICE_PROVIDER_TENANT_LABEL_TENANT_NAME">
+                                                            </th>
+                                                            <th class="text-start text-gray-800 fw-bold fs-7 text-uppercase gs-0"
+                                                                translate="TRANSLATE.SERVICE_PROVIDER_TENANT_LABEL_TENANT_ID">
+                                                            </th>
+                                                            @if (data.length > 1) {
+                                                            <th
+                                                                class="text-start text-gray-800 fw-bold fs-7 text-uppercase gs-0">
+                                                                {{'TRANSLATE.SERVICE_PROVIDER_TENANT_LABEL_ACTION' |
+                                                                translate}}
+                                                            </th>
+                                                            }
+
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @for (row of data; track $index) {
+                                                        <tr>
+                                                            <td header-class="'text-start'">
+                                                                <span
+                                                                    class="fw-semibold">{{row.ServiceProviderCustomerName}}</span>&nbsp;
+                                                                @if (data.length > 1 && row.MarketCode!==null &&
+                                                                row.MarketCode!=='' && row.MarketCode!==undefined) {
+                                                                <span
+                                                                    class="badge badge-info mt-1">{{row.MarketCode}}</span>
+                                                                }
+                                                                @if (row.IsDefault) {
+                                                                <span><i
+                                                                        class="ki-outline ki-check fs-1-circle text-success tooltips"></i></span>
+                                                                }
+                                                                <br>
+                                                                @if (row.DomainName !== null) {
+                                                                <span class="small"><span
+                                                                        translate="TRANSLATE.CUSTOMER_PRODUCTS_LIST_TITLE_DOMAIN"></span>
+                                                                    : {{row.DomainName}}</span><br>
+                                                                }
+                                                                @if (row.AgreementDate !== null) {
+                                                                <span class="small"><span
+                                                                        translate="TRANSLATE.MICROSOFT_CLOUD_AGREEMENT_ACCEPTED_DATE"></span>
+                                                                    : {{row.AgreementDate | c3Date}}</span><br>
+                                                                }
+                                                                @if (row.EmailAddress !== null) {
+                                                                <span class="small"><span
+                                                                        translate="TRANSLATE.MICROSOFT_CLOUD_AGREEMENT_ACCEPTED_BY"></span>
+                                                                    : {{row.EmailAddress}}</span>
+                                                                }
+                                                            </td>
+                                                            <td data-title="'CUSTOMER_SUBSCRIPTIONS_TABLE_HEADER_TEXT_NAME'|translate"
+                                                                class="'text-end'">
+                                                                {{row.CustomerRefId}}
+                                                            </td>
+                                                            @if (data.length > 1) {
+                                                            <td>
+                                                                @if (!row.IsDefault) {
+                                                                <a (click)="updateDefaultValue(row)"
+                                                                    class="btn btn-light-primary btn-sm me-2">
+
+                                                                    {{'TRANSLATE.UPDATE_DEFAULT_VALUE' |translate}}
+                                                                </a>
+                                                                }
+
+                                                            </td>
+                                                            }
+
+                                                        </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    }
+
+                    }
+                    @if ((tenantArray.length === 0 || tenantArray === null || tenantArray === '') &&
+                    loadingProvidersData === false) {
+                    <div class="col-md-12">
+                        <div class="d-flex align-items-center justify-content-center" style="height: 100%;">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <app-common-no-record></app-common-no-record>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    }
+
+                    @if (loadingProvidersData === true) {
+                    <div class="col-md-12">
+                        <h3><strong>{{'TRANSLATE.COMMON_LOADING_MESSAGE' | translate}}</strong></h3>
+                    </div>
+                    }
+
+                </div>
+                }
+
+                <!-------------------------------------- Status page start ------------------------------------->
+                @if (pageMode === 'status') {
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header pb-0 pe-0">
+                            <div class="card-title" data-toggle="collapse" aria-expanded="true">
+                                <h5>
+                                    <i class="fas fa-hourglass-start fa-spin font-dark me-2"></i> <span
+                                        translate="TRANSLATE.SUBSCRIPTION_MANAGE_STATUS_CAPTION_STATUS"></span><span
+                                        class="font-blue">{{customerName}}</span>
+                                </h5>
+                            </div>
+                             <div class="col-md-7 card-title justify-content-end" *ngIf="considerNewMicrosoftCustomerAgreement =='Yes'">
+
+                            <!-- Resume Button with Icon -->
+                                <button
+                                        type="button"
+                                        class="btn btn-primary btn-sm float-end fw-semibold d-flex align-items-center gap-1"
+                                        (click)="Resumeserviceprovidercall()"
+                                        [disabled]="InProgresforResume > 0"
+                                        >
+                                        <i class="ki-outline ki-to-right fs-2"></i>
+                                        <span translate="TRANSLATE.TENANT_MANAGEMENT_RESUME_BULK_ONBOARD"></span>
+                                        </button>
+                                    <!-- Download Mapping Button -->
+                                    <a class="btn btn-primary btn-sm float-end fw-semibold ms-2 d-flex align-items-center gap-1"
+                                    (click)=" DownloadBulkonboardingbatch()">
+                                        <i class="ki-outline ki-exit-down fs-2e"></i>
+                                        <span translate="TRANSLATE.TENANT_MANAGEMENT_DOWNLOAD_BULK_LIST"></span>
+                                    </a>
+
+                        </div>
+                        </div>
+                        <div class="form-group" *ngIf="considerNewMicrosoftCustomerAgreement =='Yes'">
+                            <div
+                                class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6 mb-3 mt-3">
+                                <div class="row m-heading-1 border-green m-bordered">
+                                    <div>
+                                        <strong>{{ 'TRANSLATE.PROVIDER_BULK_CUSTOMER_ATTESTATION_AND_AGREEMENT_CREATION_STATUS_SCREEN_INSTRUCTIONS_HEADING' | translate }}</strong>
+                                        <ul class="mt-2">
+                        
+                                            <li>
+                                                {{ 'TRANSLATE.PROVIDER_BULK_CUSTOMER_ATTESTATION_AND_AGREEMENT_CREATION_STATUS_SCREEN_INSTRUCTIONS_1'
+                                                | translate }}
+                                            </li>
+                                            <li [innerHTML]="'TRANSLATE.PROVIDER_BULK_CUSTOMER_ATTESTATION_AND_AGREEMENT_CREATION_STATUS_SCREEN_INSTRUCTIONS_2' | translate">
+                                            </li>
+                                            <li [innerHTML]="'TRANSLATE.PROVIDER_BULK_CUSTOMER_ATTESTATION_AND_AGREEMENT_CREATION_STATUS_SCREEN_INSTRUCTIONS_3' | translate">
+                                            </li>
+                                            <li>
+                                                {{ 'TRANSLATE.PROVIDER_BULK_CUSTOMER_ATTESTATION_AND_AGREEMENT_CREATION_STATUS_SCREEN_INSTRUCTIONS_4'
+                                                | translate }}
+                                            </li>
+                                            <li>
+                                                {{ 'TRANSLATE.PROVIDER_BULK_CUSTOMER_ATTESTATION_AND_AGREEMENT_CREATION_STATUS_SCREEN_INSTRUCTIONS_5'
+                                                | translate }}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body form">
+                            <form role="form" class="clearfix">
+                                @if (readyToComplete===false) {
+                                <div class="note note-info">
+                                    <h5 class="block"
+                                        translate="TRANSLATE.TENANT_MANAGEMENT_STATUS_NOTIFICATION_HEADER"></h5>
+                                    <p translate="TRANSLATE.TENANT_MANAGEMENT_STATUS_NOTIFICATION_INFO"> </p>
+                                </div>
+                                }
+                                <!--{{addTenantStatus |json}}-->
+                                <ul class="list-group">
+                                    @for (row of addTenantStatus; track $index) {
+                                    <li class="list-group-item">
+                                          <div class="row">
+                                    <!-- single wrapper col-md-12 -->
+                                    <div class="col-md-12">
+                                        <div class="row align-items-center">
+
+                                        <!-- Column 1: md-4 (Icon + Tenant Name) -->
+                                        <div class="col-md-4 d-flex align-items-center">
+                                            <i class="fa"
+                                            [ngClass]="{
+                                                'fas fa-check-circle text-success': row.Status === 'Success',
+                                                'fas fa-spinner fa-spin text-success': row.Status === 'Submitted' || row.Status === 'InProgress',
+                                                'fa-circle-exclamation text-danger': (row.Status !== null && (row.Status === 'Error' || row.Status === 'Failed'))
+                                            }"
+                                            aria-hidden="true"></i>
+
+                                            <span class="ms-2">{{ row.TenantName }}</span>
+                                        </div>
+
+                                        <!-- Column 2: md-4 (Status + Description + Error details) -->
+                                        <div class="col-md-6" *ngIf="considerNewMicrosoftCustomerAgreement =='Yes'">
+                                            <div>
+                                            <span translate="TRANSLATE.TENANT_MANAGEMENT_ATTESTATION_STATUS"></span> &nbsp; <span class="text-info">{{'TRANSLATE.' + row.Status | translate}}</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Column 3: md-4 (Copy button, right-aligned) -->
+                                        <div class="col-md-2 d-flex justify-content-end" *ngIf="row.Status === 'AttestationPending' && considerNewMicrosoftCustomerAgreement =='Yes'">
+                                            <button type="button" class="btn btn-sm btn-primary" [disabled]="!row.AttestationConsentUrl"
+                                                    (click)="row.AttestationConsentUrl && copyToClipboard(row.AttestationConsentUrl)">
+                                             <span translate="TRANSLATE.TENANT_MANAGEMENT_COPY_CONSENT_URL"></span> &nbsp;
+                                           <i class="ki-outline ki-copy text-white"></i>
+                                            </button>
+                                        </div>
+
+                                        </div> <!-- inner row -->
+                                    </div> <!-- col-md-12 -->
+                                    </div> <!-- outer row -->
+                                     <br>      
+                                            @if (row.Status ==='Error'|| row.Status ==='Failed') {
+                                            <span class="text-danger">{{row.FailedStep |
+                                                translate}} : <span translate="{{row.ErrorDetails}}"></span></span>
+                                            }
+
+                                
+                                    </li>
+                                    }
+
+                                </ul>
+                                @if (readyToComplete) {
+                                <div class="mt-3">
+                                    <button class="btn btn-success btn-sm pull-right" (click)="complete()">
+                                        <span translate="TRANSLATE.ENTITLEMENT_MANAGEMENT_LABEL_COMPLETE"></span>
+                                    </button>
+                                </div>
+
+
+                                }
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>

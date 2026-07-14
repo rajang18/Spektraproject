@@ -1,0 +1,387 @@
+<div class="d-flex flex-column-fluid">
+    <!--begin::Container-->
+    <div class="container-fluid">
+        <div class="d-flex flex-column flex-lg-row">
+            <!-- Left side card -->
+            <div class="col-md-5 m-2 me-7">
+                <ul class="nav nav-tabs nav-tabs-line">
+                    <li class="nav-item">
+                        <a class="nav-link fw-bolder mb-2 cursor-pointer"
+                            [ngClass]="{'text-primary': FilterBy === 'Invoice', 'text-gray-900': FilterBy !== 'Invoice'}"
+                            [ngStyle]="{ 'border-bottom': FilterBy === 'Invoice' ? '2px solid #0d6efd' : 'none', 'padding-bottom': FilterBy === 'Invoice' ? '4px' : '0'}"
+                            (click)="filterByCategory('Invoice')">
+                            {{ 'TRANSLATE.PARTNER_COMMENTS_TAB_INVOICE' | translate }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bolder mb-2 cursor-pointer"
+                            [ngClass]="{'text-primary': FilterBy === 'CustomerProduct', 'text-gray-900': FilterBy !== 'CustomerProduct'}"
+                            [ngStyle]="{ 'border-bottom': FilterBy === 'CustomerProduct' ? '2px solid #0d6efd' : 'none', 'padding-bottom': FilterBy === 'CustomerProduct' ? '4px' : '0'}"
+                            (click)="filterByCategory('CustomerProduct')">
+                            {{ 'TRANSLATE.PARTNER_COMMENTS_TAB_PRODUCT' | translate }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bolder mb-2 cursor-pointer"
+                            [ngClass]="{'text-primary': FilterBy === 'CartLineItem', 'text-gray-900': FilterBy !== 'CartLineItem'}"
+                            [ngStyle]="{ 'border-bottom': FilterBy === 'CartLineItem' ? '2px solid #0d6efd' : 'none', 'padding-bottom': FilterBy === 'CartLineItem' ? '4px' : '0'}"
+                            (click)="filterByCategory('CartLineItem')">
+                            {{ 'TRANSLATE.PARTNER_COMMENTS_TAB_CART_ITEM' | translate }}
+                        </a>
+                    </li>
+                </ul>
+                <div class="row">
+                @if (entityName === 'Customer') {
+                <div class="col-lg-6" >
+                    <select class="form-control form-control-sm"
+                            [(ngModel)]="selectedSiteC3ID"
+                            [disabled]="!sites || sites.length === 0"
+                            (change)="getSiteDepartment()">
+                            <option [value]="''">{{'TRANSLATE.SELECT_SITES' | translate}}</option>
+                            @for(site of sites; track $index){
+                                <option [value]="site.C3SiteID">
+                                    {{site.Name}}
+                                </option>
+                                }
+                        
+                    </select>
+                </div>
+            }
+            
+            @if (entityName === 'Customer') {
+                <div class="col-lg-6">
+                    <select class="form-control form-control-sm"
+                            [(ngModel)]="SelectedSiteDepartmentC3ID"
+                            [disabled]="!departments || departments.length === 0"
+                            (change)="onCustomerSelectionChange()">
+                        <option [value]="''">{{ 'TRANSLATE.SELECT_DEPARTMENTS' | translate }}</option>
+                        @for(department of departments; track $index){
+                            <option [value]="department.C3DepartmentSitesID">
+                                {{department.Name}}
+                            </option>
+                            }
+                    </select>
+                </div>
+            }
+            @if (entityName === 'Site') {
+                <div class="col-md-12 mt-2">
+                    <select class="form-control form-control-sm"
+                            [(ngModel)]="SelectedSiteDepartmentC3ID"
+                            [disabled]="!departments || departments.length === 0"
+                            (change)="onCustomerSelectionChange()">
+                        <option [value]="''">{{ 'TRANSLATE.SELECT_DEPARTMENTS' | translate }}</option>
+                        @for(department of departments; track $index){
+                            <option [value]="department.C3DepartmentSitesID">
+                                {{department.Name}}
+                            </option>
+                            }
+                    </select>
+                </div>
+            }
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="input-group mb-3 mt-2">
+                    <input class="form-control form-control-sm "
+                        [placeholder]="NgbStartDate ? (NgbStartDate ): 'TRANSLATE.EVENT_DATA_START_DATE'|translate" name="StartDate"
+                         [(ngModel)]="NgbStartDate" ngbDatepicker #sd="ngbDatepicker"
+                         [readOnly]="true"
+                        [minDate]="{year: 2010, month: 1, day: 1}"[maxDate]="{year: maxDate.year, month: maxDate.month, day: maxDate.day}"
+                        (ngModelChange)="updateStartDate($event)"
+                        (dateSelect)="onDateSelect($event)"
+                        [footerTemplate]="footerTemplate" />
+                    <div class="input-group-append">
+                        <button class="btn btn-light-primary btn-sm ki-outline ki-calendar fs-3" (click)="sd.toggle()"
+                            type="button"></button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="input-group mb-3 mt-2">
+                    <input class="form-control form-control-sm"
+                        [placeholder]="NgbEndDate ? (NgbEndDate) : 'TRANSLATE.EVENT_DATA_END_DATE'|translate" name="EndDate"
+                        [(ngModel)]="NgbEndDate" ngbDatepicker #ed="ngbDatepicker"
+                        [readOnly]="true"
+                         [minDate]="NgbStartDate ? { year: NgbStartDate.year, month: NgbStartDate.month, day: NgbStartDate.day } : { year: 2010, month: 1, day: 1 }"[maxDate]="{year: currentDate.year, month: currentDate.month, day: currentDate.day}"
+                        (ngModelChange)="updateEndDate($event)"
+                        (dateSelect)="onEndDateSelect($event)"
+                        [footerTemplate]="footerTemplateED" />
+                    <div class="input-group-append">
+                        <button class="btn btn-light-primary btn-sm ki-outline ki-calendar fs-3" (click)="ed.toggle()"
+                            type="button"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+                
+                <div class="row">
+                    <div class="col-lg-12 fixed-height-card ">
+                        <table class="table table-borderless mb-6">
+                            <tbody>
+                                @for(i of chatData; track $index){
+                                <tr (click)="getComments(i.EntityName,i.RecordId)">
+                                    <td>
+                                        <div class="card card-custom">
+                                            <div class="card-body">
+                                                <div class="d-flex " >
+                                                    <!--begin::Pic-->
+                                                    <div class="flex-shrink-0 mr-7">
+                                                        <div class="symbol symbol-circle symbol-light-primary mr-3">
+                                                            <span
+                                                                class="symbol-label bg-light-primary text-primary font-size-h5 ng-binding tooltips"
+                                                                [ngbTooltip]="i.CustomerName">{{i.CustomerName
+                                                                | nameSymbol }}</span>
+                                                        </div>
+                                                    </div>
+                                                    <!--end::Pic-->
+                                                    <!--begin: Info-->
+                                                    <div class="flex-grow-1">
+                                                        <!--begin::Title-->
+                                                        <div
+                                                            class="d-flex align-items-center justify-content-between flex-wrap mt-2">
+                                                            <!--begin::User-->
+                                                            <div class="ms-3">
+                                                                <!--begin::Name-->
+                                                                <a
+                                                                    class="fs-5 fw-bolder text-gray-900 text-hover-primary mb-2 cursor-pointer">
+                                                                    {{i.CustomerName}}
+                                                                    <i
+                                                                        class="flaticon2-correct text-success icon-md ml-2"></i>
+                                                                </a>
+                                                                <!--end::Name-->
+                                                                <!--begin::Contacts-->
+                                                                <div class="d-flex flex-wrap my-2"
+                                                                    style="flex-direction: column;">
+                                                                    <a
+                                                                        class="text-muted text-hover-primary font-weight-bold mr-lg-8 mr-5 mb-lg-0 mb-2 pb-1">
+                                                                        <span
+                                                                            class="svg-icon svg-icon-md svg-icon-gray-500 mr-1">
+                                                                            <i class="ki-outline ki-purchase  fs-3"></i>
+                                                                        </span>
+                                                                        {{i.Description}}
+                                                                    </a>
+                                                                    @if (FilterBy === 'CartLineItem' && i.OrderID !== ''
+                                                                    && i.OrderID !== null && i.OrderID !== undefined) {
+                                                                    <a
+                                                                        class="text-muted text-hover-primary font-weight-bold mr-lg-8 mr-5 mb-lg-0 mb-2 pb-1">
+                                                                        <span
+                                                                            class="svg-icon svg-icon-md svg-icon-gray-500 mr-1">
+                                                                            <i class="ki-outline ki-document  fs-3"></i>
+                                                                        </span>
+                                                                        {{'TRANSLATE.FEATURE_COMMENTS_ORDER_NO' |
+                                                                        translate}}{{i.OrderID}}
+                                                                    </a>
+                                                                    }
+                                                                    <a
+                                                                        class="text-muted text-hover-primary font-weight-bold mr-lg-8 mr-5 mb-lg-0 mb-2 pb-1">
+                                                                        <span
+                                                                            class="svg-icon svg-icon-md svg-icon-gray-500 mr-1 mb-2 pb-1">
+                                                                            <!--begin::Svg Icon | path:assets/media/svg/icons/General/Lock.svg-->
+                                                                            <i class="ki-outline ki-calendar  fs-3"></i>
+                                                                            <!--end::Svg Icon-->
+                                                                        </span>
+                                                                       
+                                                                        {{ i.CreateDate | dateTimeFilter : globalDateFormat }}
+                                                                    </a>
+                                                                    <a
+                                                                        class="text-muted font-weight-bold text-hover-primary ">
+                                                                        <span
+                                                                            class="svg-icon svg-icon-md svg-icon-gray-500 mr-1">
+                                                                            <!--begin::Svg Icon | path:assets/media/svg/icons/Map/Marker2.svg-->
+                                                                            <i class="ki-outline ki-message-notif  fs-3"></i>
+                                                                            <!--end::Svg Icon-->
+                                                                        </span>
+                                                                        {{'TRANSLATE.COMMENTS_LATEST_COMMENT' |
+                                                                        translate}}
+                                                                    </a>
+                                                                </div>
+                                                                <!--end::Contacts-->
+                                                            </div>
+                                                            <!--end::User-->
+                                                            <!--begin::Actions-->
+                                                            <!--end::Actions-->
+                                                        </div>
+                                                        <!--end::Title-->
+                                                        <!--begin::Content-->
+                                                        <div
+                                                            class="d-flex align-items-center flex-wrap justify-content-between ps-3">
+                                                            <!--begin::Description-->
+                                                            <div
+                                                                class="flex-grow-1 fw-bold text-dark-50 py-2 py-lg-2 mr-5">
+                                                                {{i.Content}}
+                                                            </div>
+                                                            <div class="col-md-12 mt-2">
+                                                            </div>
+                                                            <!--end::Description-->
+                                                            <!--begin::Progress-->
+                                                            <div class="d-flex mt-4 mt-sm-0">
+                                                                <span class="svg-icon svg-icon-warning">
+                                                                    <i class="ki-outline ki-messages fs-3"></i> 
+                                                                     &nbsp;
+                                                                    @if (i.TotalComments > 1) {
+                                                                        <span
+                                                                        class=" fw-bold font-size-sm text-warning">
+                                                                        {{i.TotalComments}} </span>
+                                                                    <span class="font-weight-bold mr-4">
+                                                                        {{ 'TRANSLATE.MULTIPLE_COMMENT_STATIC' |
+                                                                        translate }}
+                                                                    </span>
+                                                                    } @else { <span
+                                                                        class=" fw-bold font-size-sm text-warning">
+                                                                        {{i.TotalComments}} </span>
+                                                                    <span class="font-weight-bold mr-4">
+                                                                         {{
+                                                                        'TRANSLATE.SINGLE_COMMENT_STATIC' | translate }}
+                                                                    </span>
+                                                                    }
+
+                                                                </span>
+                                                            </div>
+                                                            <!--end::Progress-->
+                                                        </div>
+                                                        <!--end::Content-->
+                                                    </div>
+                                                    <!--end::Info-->
+                                                </div>
+                                                <!--end::Top-->
+                                                <!--begin::Separator-->
+                                                <!--end::Bottom-->
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                                }
+                                @if(chatData.length < 1  && !isRecentCommentsLoading){ <div class="d-flex align-items-center justify-content-center"
+                                    style="height: 100%;">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <app-common-no-record></app-common-no-record>
+                                        </div>
+                                    </div>
+                    </div>
+                    }
+                    </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- right side card -->
+        <div class="col-md-6 m-2" *ngIf="this.shouldShowRightSide">
+            <div class="card card-custom" *ngIf="userData.length > 0">
+                <div class="card-body fixed-height-one">
+                    <div class="table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl">
+
+                        <table class="table">
+                            <thead style="background-color:white"></thead>
+                            <tbody>
+                                @for (i of userData; track $index) {
+                                <tr>
+                                    <td>
+
+                                        <div class="message">
+                                            <div class="d-flex flex-column mb-5"
+                                                [ngClass]="{'align-items-start': i.IsAuthor, 'align-items-end': !i.IsAuthor}">
+                                                @if(i.IsAuthor) {
+                                                <div class="d-flex align-items-center">
+                                                    <div
+                                                        class="symbol symbol-circle bg-light-primary text-primary symbol-light-primary mr-3">
+                                                        <span
+                                                            class="symbol-label bg-light-primary text-primary font-size-h5 ng-binding tooltips"
+                                                            data-placement="left"
+                                                            [ngbTooltip]="i.CreateBy">{{i.CreateBy
+                                                            |nameSymbol }}</span>
+                                                    </div>
+                                                    <div>
+                                                        <a
+                                                            class="ms-2 text-dark fw-bold fs-6 text-decoration-none link-primary font-size-h6">
+                                                            <span>{{i.CreateBy | limitLength:15 }}</span>
+                                                        </a>
+                                                        <span class="text-muted font-size-sm">{{i.CreateDate | dateTimeFilter : globalDateFormat }}</span>
+                                                        <span class="badge badge-pill badge-primary ms-1"
+                                                            translate="TRANSLATE.COMMENT_AUTHOR"></span>
+                                                    </div>
+                                                </div>}
+                                                @if(!i.IsAuthor) {
+                                                <div class="d-flex align-items-center">
+                                                    <div>
+                                                        <span class="text-muted font-size-sm">{{i.CreateDate | dateTimeFilter : globalDateFormat}}</span>
+                                                        <a
+                                                            class="ms-2 text-dark fw-bold fs-6 text-decoration-none link-primary font-size-h6">{{i.CreateBy
+                                                            | limitLength:15 }}</a>
+                                                    </div>
+                                                    &nbsp;
+                                                    <div class="symbol symbol-circle symbol-light-primary ml-3">
+                                                        <span
+                                                            class="symbol-label bg-light-primary text-primary font-size-h5 ng-binding tooltips"
+                                                            data-placement="left"
+                                                            [ngbTooltip]="i.CreateBy">{{i.CreateBy|nameSymbol
+                                                            }}</span>
+                                                    </div>
+                                                </div>}
+                                                <div class="mt-2 rounded p-5 text-dark-50 font-weight-bold font-size-lg text-left max-w-400px"
+                                                    [ngClass]="{'bg-light-success': i.IsAuthor, 'bg-light-info': !i.IsAuthor}">
+                                                    {{i.Content}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                }
+
+                                @if(userData.length<1  && !isUserDataLoading){ <div class="d-flex align-items-center justify-content-center"
+                                    style="height: 100%;">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <app-common-no-record></app-common-no-record>
+                                        </div>
+                                    </div>
+                    </div>
+                    }
+                    </tbody>
+                    </table>
+
+                </div>
+            </div>
+            <!--begin:comments footer-->
+            @if(userData.length>0 ){
+                <div class="card-footer">
+                   
+                    <textarea class="form-control form-control-flush mb-3" rows="1"
+                    placeholder="{{'TRANSLATE.CUSTOMER_COMMENT_TYPE_COMMENT_INPUT_PLACEHOLDER_TEXT' | translate}}"
+                    [(ngModel)]="replyToComment"></textarea>
+                <div class="d-flex align-items-center justify-content-between mt-5">
+                    <div class="mr-3"></div>
+                    <div>
+                        <button type="button" class="btn btn-primary btn-md font-weight-bold chat-send py-2 px-6"
+                            (click)="createComment()">
+                            <span>{{ 'TRANSLATE.NEW_COMMENT_SEND' | translate }}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+            <!--end:comments footer-->
+        </div>
+        <div class="flex-lg-row-fluid ms-lg-7 ms-xl-10"></div>
+
+
+    </div>
+</div>
+</div>
+</div>
+
+<ng-template #footerTemplate>
+    <hr class="my-0" />
+    <button class="btn btn-secondary btn-sm m-2 float-start" (click)="clearStartDate(sd)">Clear</button>
+    <button class="btn btn-secondary btn-sm m-2 float-end" (click)="sd.close()">Close</button>
+</ng-template>
+<ng-template #footerTemplateED>
+    <hr class="my-0" />
+    <button class="btn btn-secondary btn-sm m-2 float-start" (click)="clearEndDate(ed)">Clear</button>
+    <button class="btn btn-secondary btn-sm m-2 float-end" (click)="ed.close()">Close</button>
+</ng-template>

@@ -1,0 +1,102 @@
+<ng-container [formGroup]="adressRowForm">
+        <td>
+            <ng-select formControlName="addressType"
+                placeholder="{{'TRANSLATE.selectAddressType' |translate}}" [appendTo]="'body'">
+                <ng-option value="">{{'TRANSLATE.selectAddressType' | translate}}</ng-option>
+                @for(type of addressTypes; track $index){
+                <ng-option [value]="type?.ID">{{'TRANSLATE.'+type?.Description | translate}}</ng-option>
+                }
+            </ng-select>
+            @if(adressRowForm.get('addressType')?.errors?.required &&
+            adressRowForm.get('addressType').touched){
+            <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+            }
+        </td>
+        <td>
+            <input type="text" class="form-control form-control-sm form-control-solid" formControlName="addressLine1"
+                placeholder="{{'TRANSLATE.enterAddress1' | translate}}">
+            @if(adressRowForm.get('addressLine1')?.errors?.required &&
+            adressRowForm.get('addressLine1').touched){
+            <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+            }
+            @if(adressRowForm.get('addressLine1')?.errors?.maxlength && adressRowForm.get('addressLine1')?.touched){
+                <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_CUSTOMER_ADDRESS_1_MAX_LENGTH_256"></span> 
+            }
+        </td>
+        <td>
+            <input type="text" class="form-control form-control-sm form-control-solid" formControlName="addressLine2"
+                placeholder="{{'TRANSLATE.enterAddress2' | translate}}">
+            @if(adressRowForm.get('addressLine2')?.errors?.required &&
+            adressRowForm.get('addressLine2').touched){
+            <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+            }
+            @if(adressRowForm.get('addressLine2')?.errors?.maxlength && adressRowForm.get('addressLine2')?.touched){
+                <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_CUSTOMER_ADDRESS_2_MAX_LENGTH_256"></span> 
+            }
+        </td>
+        <td>
+            <input type="text" class="form-control form-control-sm form-control-solid" formControlName="city" placeholder="{{'TRANSLATE.enterCity' | translate}}">
+            @if(adressRowForm.get('city')?.errors?.required &&
+            adressRowForm.get('city').touched){
+            <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+            }
+        </td>
+        <td>
+            <ng-select formControlName="country" (change)="onCountrySelected($event)"
+                placeholder="{{'TRANSLATE.selectCountry' |translate}}" [appendTo]="'body'">
+                <ng-option value="">{{'TRANSLATE.selectCountry' | translate}}</ng-option>
+                @for(country of countries; track $index){
+                <ng-option [value]="country?.Code">{{country?.Name}}</ng-option>
+                }
+            </ng-select>
+            @if(adressRowForm.get('country')?.errors?.required &&
+            adressRowForm.get('country').touched){
+            <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+            }
+        </td>
+        <td>
+            @if(states?.length > 0){
+            <ng-select formControlName="state"
+                placeholder="{{'TRANSLATE.selectState' |translate}}" [appendTo]="'body'">
+                <ng-option value="">{{'TRANSLATE.selectState' | translate}}</ng-option>
+                @for(state of states; track $index){
+                <ng-option [value]="state?.StateCode">{{state?.Name}}</ng-option>
+                }
+            </ng-select>
+            }
+            @else {
+            <input type="text" class="form-control form-control-sm w-135px" formControlName="state"
+                placeholder="{{'TRANSLATE.enterState' | translate}}">
+            }
+            @if(adressRowForm.get('state')?.errors?.required &&
+            adressRowForm.get('state').touched && states?.[0]?.IsStateProvinceMandatory){
+            <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+            }
+        </td>
+        <td>
+            <input type="text" class="form-control form-control-sm form-control-solid" formControlName="zip" placeholder="{{'TRANSLATE.enterZip' | translate}}">
+            @if(adressRowForm.get('zip')?.errors?.required &&
+            adressRowForm.get('zip').touched){
+            <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+            }
+        </td>
+        <td>
+            <div class="d-flex justify-content-end">
+                <button ngbTooltip="{{'TRANSLATE.PROFILE_USER_BUTTON_TOOLTIP_TEXT_SAVE_1' | translate}}"  class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto" [appPermission]="'ADD_CUSTOMER_ADDRESS'"
+                    (click)="saveRowAddress()" [ngClass]="toolbarButtonHeightClass" [disabled]="isSaveButtonDisabled()">
+                    <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg h-20px w-20px">
+                        <i class="ki-outline ki-file text-primary">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                    </span>
+                </button>
+                <button ngbTooltip="{{'TRANSLATE.PROFILE_USER_BUTTON_TOOLTIP_TEXT_CANCEL' | translate}}" class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+                [ngClass]="toolbarButtonHeightClass"(click)="onCancel()" >
+                <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg h-20px w-20px">
+                    <i class="ki-outline ki-cross text-primary"></i>
+                </span>
+            </button>
+            </div>
+        </td>
+</ng-container>

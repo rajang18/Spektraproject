@@ -1,0 +1,48 @@
+.multiple-select-choice {
+    padding-left: 20px;
+}
+
+
+.nohtmltitle[title] {
+    display: none;
+}
+
+.disabled-select {
+    background-color: #e5e5e5;
+    cursor: not-allowed !important;
+    pointer-events: none;
+}
+
+::ng-deep {
+    app-plan-details {
+        .description .tooltip-inner {
+            max-width: none;
+            word-wrap: break-word;
+            text-align: left;
+            white-space: normal;
+        }
+
+        .width-600 {
+            width: 600px !important;
+            background: #fff !important;
+        }
+
+        .select2-search__field {
+            display: none !important;
+        }
+
+        .info-flex {
+            flex-wrap: wrap;
+
+            .flex-5 {
+                flex: 5%;
+            }
+
+            .flex-90 {
+                flex: 90%;
+                position: relative;
+                left: -16px;
+            }
+        }
+    }
+}

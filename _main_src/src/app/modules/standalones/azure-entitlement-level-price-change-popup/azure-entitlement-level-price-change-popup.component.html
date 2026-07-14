@@ -1,0 +1,70 @@
+<div class="modal-dialog m-0 modal-dialog m-0-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title">
+                <span translate="TRANSLATE.ENTITLEMENT_MANAGEMENT_LABEL_ENTITLEMENT_PRICE_CHANGE_HEDER"></span>
+                <!-- need to change name -->
+                <span>{{data.Name}}</span>
+            </h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="cancel()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+            </div>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <div>
+                {{'TRANSLATE.ENTITLEMENT_MANAGEMENT_LABEL_INFORMATION' | translate}}
+            </div>
+            <div class="form-body" [formGroup]="simpleForm">
+                <div class="table-responsive-md mt-4">
+                    <table class="table table-bordered table-striped" template-pagination="custom/pager">
+                        <thead>
+                            <tr>
+                                <th class="text-end" [translate]="'TRANSLATE.PRICE_CHANGE_OLD_PRICE'"></th>
+                                <th class="text-end" [translate]="'TRANSLATE.PRICE_CHANGE_NEW_PRICE'"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-end">
+                                    <div class="pt-4">{{data.Price}}<span class="fw-semibold">(%)</span></div>
+                                </td>
+                                <td class="text-end" [ngClass]="{'has-error':simpleForm.get('newPrice')?.errors?.required &&
+                                buttonClicked}">
+                                    <div class="input-group pull-right">
+                                        <input formControlName="newPrice" type="number" step="0.01" class="form-control"
+                                            placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_PRICE' | translate}}"
+                                            (input)="trimInputToFourDigits($event)"
+                                            (keypress)="blockInvalidChars($event)">
+                                        <span class="d-flex align-items-center ms-1 fw-semibold">(%)</span>
+                                    </div>
+                                    @if(simpleForm.get('newPrice')?.errors?.required && buttonClicked){
+                                    <div class="text-danger text-start mt-1">
+                                        {{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</div>
+                                    }
+                                    @if(simpleForm.get('newPrice')?.errors?.min || simpleForm.get('newPrice')?.errors?.max){
+                                    @if(data?.BillingTypeName.toLowerCase()=='MSCostPercentage'.toLowerCase()){
+                                    <div class="text-danger text-start mt-1">
+                                        {{'TRANSLATE.ENTITLEMENT_MANAGEMENT_VALIDATION_MESSAGE_MIN_AND_MAX_MSCOSTPERCENTAGE'|translate}}
+                                    </div>
+                                    }
+                                    @else {
+                                    <div class="text-danger text-start mt-1">
+                                        {{'TRANSLATE.ENTITLEMENT_MANAGEMENT_VALIDATION_MESSAGE_MIN_AND_MAX'|translate}}
+                                    </div>
+                                    }
+                                    }
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" type="submit" (click)="cancel()"><span
+                    translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span></button>
+            <button class="btn btn-primary" type="submit" (click)="ok()"><span
+                    translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span></button>
+        </div>
+    </div>
+</div>

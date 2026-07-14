@@ -1,0 +1,30 @@
+<div class="card card-custom">
+  <!-- begin::Header -->
+  <div class="card-header card-header-stretch overflow-auto">
+    <ul class="nav nav-stretch nav-line-tabs fw-bold border-transparent flex-nowrap" role="tablist">
+      <li class="nav-item">
+        <a routerLink="quantity" routerLinkActive="text-primary active" [routerLinkActiveOptions]="{ exact: true }" 
+           class="nav-link cursor-pointer" (click)="setActiveTab(tabs.Quantity)" role="tab">
+          {{'TRANSLATE.PARTNER_ADD_PLAN_TAB_HEADER_TEXT_QUANTITY' | translate}}
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="usage" routerLinkActive="text-primary active" [routerLinkActiveOptions]="{ exact: true }" 
+           class="nav-link cursor-pointer" (click)="setActiveTab(tabs.Usage)" role="tab">
+          {{'TRANSLATE.PARTNER_ADD_PLAN_TAB_HEADER_TEXT_USAGE' | translate}}
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a routerLink="contract" routerLinkActive="text-primary active" [routerLinkActiveOptions]="{ exact: true }" 
+           class="nav-link cursor-pointer" (click)="setActiveTab(tabs.Contract)" role="tab">
+          {{'TRANSLATE.PLANS_MANAGE_TAB_TITLE_CONTRACT' | translate}}
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="card-body">
+    <router-outlet></router-outlet>
+  </div>
+</div>

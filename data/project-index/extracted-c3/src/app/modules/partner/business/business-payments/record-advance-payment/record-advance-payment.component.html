@@ -1,0 +1,106 @@
+<div class="modal-dialog m-0 modal-dialog m-0-centered">
+    <div class="modal-content">
+        <div class="modal-header ng-scope">
+            <h2 id="modal-title">
+                <span translate="TRANSLATE.RECORD_ADVANCE_PAYMENT_MODAL_HEADER"></span>
+            </h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="cancel()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+            </div>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <div class="row">
+                <div class="col-md-12" style="padding-left: 30px">
+                    <form [formGroup]="formGroup" role="form" class="form" novalidate>
+                        <div class="form-body form-group">
+                            <!--Customers Dropdown-->
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label text-lg-right text-sm-left">
+                                    <span translate="TRANSLATE.RECORD_ADVANCE_PAYMENT_CUSTOMERS_LABEL_TEXT"></span><span class="text-danger"> *</span>
+                                </label>
+                                <div class="col-md-9">
+                                    <ng-select formControlName="selectedCustomer" name="RecordAdvancePayment_CustomerId" (change)="onCustomerChange()"
+                                        placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_CUSTOMERS_DROPDOWN' |translate}}" #t="ngbTooltip" (mouseenter)="t.open()" (mouseleave)="t.close()"
+                                        ngbTooltip="{{'TRANSLATE.RECORD_ADVANCE_PAYMENT_SELECT_CUSTOMER_TOOLTIP_TEXT'|translate}}">
+                                        @for (customer of customers; track $index) {
+                                        <ng-option [value]="customer">
+                                            <div>{{customer.Name}}</div>
+                                        </ng-option>
+                                        }
+                                    </ng-select>
+                                    <!-- @if(formGroup.get('selectedCustomer')?.errors?.required && formGroup.get('selectedCustomer')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        } -->
+                                </div>
+                            </div>
+                            <!--Customer Currency Code Dropdown-->
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label text-lg-right text-sm-left">
+                                    <span translate="TRANSLATE.RECORD_ADVANCE_PAYMENT_SELECT_CURRENCY_CODE_TOOLTIP_TEXT"></span><span class="text-danger"> *</span>
+                                </label>
+                                <div class="col-md-9 mt-5">
+                                    <ng-select formControlName="selectedCurrencyCode" name="RecordAdvancePayment_CurrencyCode" (change)="onCurrencyChange()"
+                                        placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_CURRENCY_CODE_DROPDOWN' |translate}}"
+                                        ngbTooltip="{{'TRANSLATE.RECORD_ADVANCE_PAYMENT_SELECT_CURRENCY_CODE_TOOLTIP_TEXT' | translate}}">
+                                        @for (currency of partnerSupportedCurrencies; track $index) {
+                                        <ng-option [value]="currency">
+                                            <div> {{currency.CurrencyCode}}</div>
+                                        </ng-option>
+                                        }
+                                    </ng-select>
+                                    <!-- @if(formGroup.get('selectedCurrencyCode')?.errors?.required && formGroup.get('selectedCurrencyCode')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        } -->
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label text-lg-right text-sm-left">
+                                    <span translate="TRANSLATE.RECORD_ADVANCE_PAYMENT_AMOUNT_LABEL_TEXT"></span><span class="text-danger"> *</span>
+                                </label>
+                                <div class="col-md-9">
+                                    <input type="number" min="0" step="0.01" formControlName="paidAmount" class="form-control form-control-sm roltext-right" name="RecordAdvancePayment_PaidAmount"
+                                        required />
+                                    @if(formGroup.get('paidAmount')?.errors?.required && formGroup.get('paidAmount')?.touched){
+                                    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label text-lg-right text-sm-left">
+                                    <span translate="TRANSLATE.RECORD_ADVANCE_PAYMENT_REMARKS_LABEL_TEXT"></span><span class="text-danger"> *</span>
+                                </label>
+                                <div class="col-md-9">
+                                    <input type="text" formControlName="remarks" class="form-control form-control-sm" name="RecordAdvancePayment_Remarks" required />
+                                    @if(formGroup.get('remarks')?.errors?.required && formGroup.get('remarks')?.touched){
+                                    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3 col-form-label">
+                                    <span>
+                                        <span translate="TRANSLATE.RECORD_ADVANCE_PAYMENT_TRANSACTION_DATE"></span><span class="text-danger"> *</span>
+                                    </span>
+                                </label>
+                                <div class="col-md-9 mt-3">
+                                    <div class="input-group">
+                                        <input class="form-control form-control-sm mb-3 mb-lg-0" formControlName="paymentDate" name="RecordAdvancePayment_Payment_Date" ngbDatepicker
+                                        [readOnly]="true"  #ed="ngbDatepicker" />
+                                        <button class="btn btn-light-primary btn-sm" (click)="ed.toggle()" type="button"><i class="ki-outline ki-calendar fs-3 pe-0"></i></button>
+                                    </div>
+                                    @if(formGroup.get('paymentDate')?.errors?.required && formGroup.get('paymentDate')?.touched){
+                                    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-sm btn-light btn-active-light-primary" ngbAutoFocus type="button" (click)="cancel()"><span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span></button>
+            <button class="btn btn-sm btn-primary" type="submit" (click)="submitChanges()"><span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span></button>
+        </div>
+    </div>
+</div>

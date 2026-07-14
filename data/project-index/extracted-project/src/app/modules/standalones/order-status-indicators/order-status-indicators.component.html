@@ -1,0 +1,57 @@
+<p>
+    <span *ngIf="product.ItemStatus === 'InProgress'" class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2">
+        {{ 'TRANSLATE.ORDER_STATUS_INPROGRESS' | translate }}
+    </span>
+    <span *ngIf="product.CartStatusName !== 'Onhold' && product.ItemStatus === 'Ordered'" class="label label-primary font-weight-bold label-inline text-white badge bg-primary ms-md-2">
+        {{ 'TRANSLATE.ORDER_STATUS_ORDERED' | translate }}
+    </span>
+    <span *ngIf="product.CartStatusName === 'Onhold' && product.ItemStatus === 'Ordered'" class="label label-warning label-pill label-lg label-inline">
+        {{ 'TRANSLATE.ORDER_STATUS_APPROVAL_REQUIRED' | translate }}
+    </span>
+    <span *ngIf="product.CartStatusName === 'Ordered' && product.ItemStatus === 'Onhold'" class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2">
+        {{ 'TRANSLATE.ORDER_STATUS_APPROVAL_REQUIRED' | translate }}
+    </span>
+    <span *ngIf="product.CartStatusName === 'Onhold' && product.ItemStatus === 'Onhold'" class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2">
+        {{ 'TRANSLATE.ORDER_STATUS_APPROVAL_REQUIRED' | translate }}
+    </span>
+    <span *ngIf="product.ItemStatus === 'Processing'" class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2">
+        {{ 'TRANSLATE.ORDER_STATUS_PROCESSING' | translate }}
+    </span>
+    <span *ngIf="product.ItemStatus === 'Success'" class="label label-success font-weight-bold label-inline text-white badge bg-success ms-md-2">
+        {{ 'TRANSLATE.ORDER_STATUS_SUCCESS' | translate }}
+    </span>
+    <span *ngIf="product.ItemStatus === 'Failed'" class="label label-danger font-weight-bold label-inline text-white badge bg-danger ms-md-2">
+        {{ 'TRANSLATE.ORDER_STATUS_FAILED' | translate }}
+    </span>
+    <span *ngIf="product.ItemStatus === 'Scheduled'" class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2">
+        {{ 'TRANSLATE.ORDER_STATUS_SCHEDULED' | translate }}
+    </span>
+    <span *ngIf="product.CartStatusName === 'Scheduled' && product.ItemStatus === 'Onhold'" class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2">
+        {{ 'TRANSLATE.ORDER_STATUS_APPROVAL_REQUIRED' | translate }}
+    </span>
+    <span *ngIf="product.CartStatusName === 'PartiallyFulfilled' && product.ItemStatus === 'Onhold'" class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2">
+        {{ 'TRANSLATE.ORDER_STATUS_APPROVAL_REQUIRED' | translate }}
+    </span>
+    <span *ngIf="product.ItemStatus === 'Ignore'" class="label label-danger font-weight-bold label-inline text-white badge bg-danger ms-md-2" [attr.disabled]="true"
+    [innerHTML]="'TRANSLATE.ORDER_STATUS_ERRORS_IGNORED' | translate">
+        <!-- {{ 'TRANSLATE.ORDER_STATUS_ERRORS_IGNORED' | translate }} -->
+    </span>
+    <span *ngIf="product.ItemStatus === 'Provisioning'" class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2" [attr.disabled]="true">
+        {{ 'TRANSLATE.ORDER_STATUS_PROVISIONING' | translate }}
+    </span>
+    <span *ngIf="product.ItemStatus === 'Rejected'" class="label label-danger font-weight-bold label-inline text-white badge bg-danger ms-md-2" [attr.disabled]="true">
+        {{ 'TRANSLATE.ORDER_STATUS_REJECTED' | translate }}
+    </span>
+    <span *ngIf="product.ItemStatus === 'Active'" class="label label-danger font-weight-bold label-inline text-white badge bg-danger ms-md-2" [attr.disabled]="true">
+        {{ 'TRANSLATE.ORDER_STATUS_REACTIVATED' | translate }}
+    </span>
+    <span *ngIf="product.ItemStatus === 'Suspended'" class="label label-danger font-weight-bold label-inline text-white badge bg-danger ms-md-2" [attr.disabled]="true">
+        {{ 'TRANSLATE.ORDER_STATUS_SUSPENDED' | translate }}
+    </span>
+    <span *ngIf="product.ItemStatus === 'Deleted'" class="label label-danger font-weight-bold label-inline text-white badge bg-danger ms-md-2" [attr.disabled]="true">
+        {{ 'TRANSLATE.ORDER_STATUS_DELETED' | translate }}
+    </span>
+    <span *ngIf="product.ItemStatus === 'Accepted'" class="label label-success font-weight-bold label-inline text-white badge bg-success ms-md-2" [attr.disabled]="true">
+        {{ 'TRANSLATE.ORDER_STATUS_APPROVAL_ACCEPTED' | translate }}
+    </span>
+</p>

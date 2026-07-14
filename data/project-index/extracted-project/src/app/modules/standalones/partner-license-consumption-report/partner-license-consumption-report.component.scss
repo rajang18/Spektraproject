@@ -1,0 +1,11 @@
+::ng-deep {
+  app-partner-license-consumption-report {
+    .dropdown-toggle::after {
+      display: none !important;
+    }
+
+    table.dataTable>thead .dt-ordering-asc:after {
+      display: none !important;
+    }
+  }
+}

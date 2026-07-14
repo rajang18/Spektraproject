@@ -1,0 +1,32 @@
+<div class="m-4">
+    <div class="modal-header">
+        <h4 class="modal-title text-primary" id="modal-title">
+            <span translate="TRANSLATE.GENERATE_INVOICE_REASON"></span>
+        </h4>
+    </div>
+    <div class="d-flex">
+        <form [formGroup]="frmAddEntitlement" class="w-100">
+            <div class="form-group row m-3 align-items-center">
+                <label class="col-md-2 col-form-label fw-semibold text-start">
+                    <span translate="TRANSLATE.GENERATE_INVOICE_REASON"></span>
+                    <span class="text-danger"> *</span>
+                </label>
+                <div class="col-md-7">
+                    <input type="text" name="reason" formControlName="reason" class="form-control form-control-sm"
+                        placeholder="{{'TRANSLATE.GENERATE_INVOICE_REASON_PLACEHOLDER' | translate}}" min="0" autocomplete="on" required>
+                    <div *ngIf="frmAddEntitlement.get('reason')?.errors?.required && frmAddEntitlement.get('reason')?.touched">
+                        <span class="text-danger" translate="TRANSLATE.WEBHOOK_THIS_FIELD_IS_REQUIRED"></span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-sm btn-light btn-active-light-primary" type="button" (click)="cancel()">
+        <span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span>
+    </button>
+    <button type="submit" class="btn btn-sm btn-primary tooltips ng-scope" (click)="submit()">
+        <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+    </button>
+</div>

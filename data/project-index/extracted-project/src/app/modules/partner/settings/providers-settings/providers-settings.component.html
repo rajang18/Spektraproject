@@ -1,0 +1,75 @@
+<div class="container">
+  <!-- begin::Header -->
+  <ul class="nav nav-stretch nav-line-tabs fw-bold border-transparent flex-nowrap" role="tablist">
+    @for(provider of providers; track $index) {
+    <li class="nav-item">
+      <a class="nav-link cursor-pointer" [ngClass]="{ active: activeTab === provider.Name}"
+        (click)="setActiveTab(provider.Name)" role="tab">
+        {{provider.Name}}
+      </a>
+    </li>
+    }
+  </ul>
+
+  <div class="tab-content pt-3">
+    <ng-container>
+      @for(provider of providers; track $index) {
+      <div class="tab-pane" [ngClass]="{ active: activeTab === provider.Name}">
+        <!-- <span>{{provider.Name}} works</span> -->
+        
+        <!-- Additional form group row as per old code -->
+        <div class="form-group row" *ngIf="!loadingProviderSettings">
+          <div class="col-md-12">
+            <form class="form form-horizontal" role="form" [formGroup]="microsoftProvidersSettingForm" (ngSubmit)="saveProviderSettings()">
+              <div *ngFor="let row of providerSettings">
+                <div class="form-group row" [appPermission]="'SAVE_PROVIDER_SETTINGS'" *ngIf="row.Name === 'CPVPartnerConsentURL'">
+                  <div class="col-md-12 d-flex justify-content-end">
+                    <button class="btn btn-sm fw-bold btn-primary m-6" type="submit" [disabled]="savingSettings">
+                      <i class="fa fa-refresh fa-spin" *ngIf="savingSettings"></i>{{ 'TRANSLATE.BUTTON_TEXT_SAVE' | translate }}
+                    </button>
+                  </div>
+                </div>
+                @if(row.Name !== 'pricing:ConsentUrl' && row.ControlType != 'cpvpartnerconsent' && row.Name != 'pricingapipartnerconsent' && row.ControlType != undefined && row.ControlType != null &&  row.ControlType != ''){
+                <tenantconfig [data]="row"
+                              [form]="microsoftProvidersSettingForm"
+                              [frmControlName]="row.Name"
+                              [controlType]="row.ControlType">
+                </tenantconfig>
+                }
+                <!-- <tenant-configuration *ngIf="row.Name !== 'pricing:ConsentUrl'" [datasource]="row" [controlType]="row.ControlType" (confirmCopy)="confirmCopy()"></tenant-configuration> -->
+                @if(row.ControlType == 'cpvpartnerconsent'){
+                <app-cpvpartnerconsent *ngIf="row.Name !== 'pricing:ConsentUrl' && row.ControlType === 'cpvpartnerconsent'"
+                                       [datasource]="row"
+                                       [isTenantConfiguration]="false">
+                </app-cpvpartnerconsent>
+
+                }
+              </div>
+            </form>
+          </div>
+        </div>
+        
+        <!-- Placeholder for additional content from old code if needed -->
+        <div *ngFor="let row of providerSettings" >
+          <!-- <tenant-configuration *ngIf="row.Name === 'pricing:ConsentUrl'" [datasource]="row" [controlType]="row.ControlType" (confirmCopy)="confirmCopy()"></tenant-configuration> -->
+          <app-pricingapipartnerconsent  *ngIf="row.Name === 'pricing:ConsentUrl' && row.ControlType === 'pricingapipartnerconsent'"
+          [datasource]="row"
+          [isTenantConfiguration]="false"></app-pricingapipartnerconsent>
+        </div>
+        
+        <!-- Message when no provider settings are available -->
+        <div class="form-group row" *ngIf="providerSettings.length === 0 && !loadingProviderSettings">
+          <div class="col-md-12">
+            <span>{{ 'TRANSLATE.PARTEER_SETTINGS_PROVIDERS_LABEL_TEXT_NO_KEYS_AVAILABLE' | translate }}</span>
+          </div>
+        </div>
+      </div>
+      }
+    </ng-container>
+  </div>
+</div>
+
+<!-- Message when no providers are configured -->
+<div *ngIf="providers.length === 0 && !loadingProviders">
+  <span>{{ 'TRANSLATE.PARTEER_SETTINGS_PROVIDERS_LABEL_TEXT_NO_PROVIDERS_CONFIGURED' | translate }}</span>
+</div>

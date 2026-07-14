@@ -1,0 +1,43 @@
+<ng-template #actionHeader>
+    <a class="btn btn-light-primary btn-sm fw-semibold me-4" (click)="backToCustomers()" >
+        <i class="ki-outline ki-to-left fs-2"></i>{{ 'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_BUTTON_TEXT_BACK_TO_CUSTOMERS' | translate }}
+    </a>
+</ng-template>
+
+<div class="d-flex flex-column-fluid" ng-scope block-ui="block">
+    <div class="container-fluid">
+        <div class="card card-custom">
+            <div class="card-body">
+                <div class="form" role="form" [formGroup]="formGroup" novalidate>
+                    <div class="form-body row">
+                        <div class="col-md-2 text-start col-form-label">
+                            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_PROVIDER"></span>
+                            <i class="ki-duotone ki-information-2 fs-5 ms-1" [ngbTooltip]="'TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_PROVIDER_TOOLTIP' | translate">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                        </div>
+                        <div class="col-md-5">
+                            <select class="form-control form-select form-select-sm" formControlName="providerId" name="onboardCustomerModel_ProviderId" (change)="onProviderChange()">
+                                <option value="">
+                                    {{'TRANSLATE.CUSTOMER_SEARCH_DEFAULT_OPTION'|translate}}
+                                </option>
+                                @for (item of providers; track $index) {
+                                <option [ngValue]="item.ID">{{item.Name}}</option>
+                                }
+                            
+                            </select>
+                        </div>
+                    </div>
+                    @if (providerId !== null && providerId !== undefined && providerId !=='') {
+                        <!-- <div ui-view></div> -->
+                         <router-outlet></router-outlet>
+                         
+                    }
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

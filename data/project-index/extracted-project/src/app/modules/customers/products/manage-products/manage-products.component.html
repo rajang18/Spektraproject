@@ -1,0 +1,99 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        @if (TransactionAmountLimit > 0) {
+            <div class="font-weight-bold p-0 my-2 font-size-sm">
+                <span style="margin-right: 10px; font-weight:600" [innerHTML]="('TRANSLATE.TRANSACTION_LIMIT_MESSAGE') | translate: { RemainingAmount: RemainingLimit,TotalLimit: TransactionAmountLimit }"></span>
+            </div>
+            }
+        <a class="btn btn-primary btn-sm me-2"
+           *ngIf="isManageAzurePlanEntity && !product.IsSharedEntitlement"
+           (click)="backToAzurePlanManageView()">
+            <i class="ki-outline fs-2 ki-to-left"></i>
+            {{'TRANSLATE.CUSTOMER_MANAGE_PRODUCT_BUTTON_TEXT_BACK_TO_AZURE_PLAN' | translate}}
+        </a>
+            <button type="button" class="btn btn-sm btn-light-primary me-4" (click)="backToList()" appBusyLoader>
+                <i class="ki-outline fs-2 ki-to-left" ></i> <span translate="TRANSLATE.CUSTOMER_MANAGE_PRODUCT_BUTTON_TEXT_BACK_TO_PRODUCTS"></span>
+            </button>
+        
+    </div>
+</ng-template>
+
+@if(product.ConsumptionType === 'Quantity'){
+<div class="d-flex flex-column-fluid">
+    <!--begin::Container-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2 col-lg-3">
+                <div class="card">
+                    <div class="card-body flex-row-auto">
+                        <ul class="nav nav-pills flex-column">
+                            @for (t of tabs; track $index) {
+                            @if(t.visible) {
+                            <li class="nav-item">
+                                @if(t.headingKey === 'CUSTOMER_PRODUCTS_MANAGE_NAVBAR_TITLE_CONTACT_LOGS'){
+                                    <a class="nav-link mb-2 text-gray-800 fw-semibold" routerLink="{{t.route}}" (click)="redirectToNotification(t)" routerLinkActive="active">
+                                        {{ 'TRANSLATE.'+ t.headingKey|translate }}
+                                    </a>
+                                }
+                                @else{
+                                    <a class="nav-link mb-2 text-gray-800 fw-semibold" routerLink="{{t.route}}" routerLinkActive="active" 
+                                    [ngClass]="{
+                                        'inactive-tab': !t.visible,
+                                        'active-tab': t.visible
+                                      }">
+                                        {{ 'TRANSLATE.'+ t.headingKey|translate }}
+                                    </a>
+                                }
+                                
+                            </li>
+                            }
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-10 col-lg-9">
+                <div class="tab-content">
+                    <div class=" h-100">
+                        <router-outlet></router-outlet>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}
+@if(product.ConsumptionType === 'Usage'){
+<div class="card card-custom w-99">
+    <!-- begin::Header -->
+    <div class="card-header card-header-stretch overflow-auto">
+        <ul class="nav nav-stretch nav-line-tabs fw-bold border-transparent flex-nowrap mb-2" role="tablist">
+            @for (t of tabs; track $index) {
+            @if(t.visible) {
+            <li class="nav-item">
+                @if(t.headingKey === 'CUSTOMER_PRODUCTS_MANAGE_NAVBAR_TITLE_CONTACT_LOGS'){
+                    <a class="nav-link custom-nav-link" (click)="redirectToNotification(t)" routerLinkActive="active">
+                        {{ 'TRANSLATE.'+ t.headingKey|translate }}
+                    </a>
+                }   
+                @else{
+                    <a class="nav-link custom-nav-link" routerLink="{{t.route}}" routerLinkActive="active">
+                        {{ 'TRANSLATE.'+ t.headingKey|translate }}
+                    </a>
+                }
+                
+            </li>
+            }
+            }
+        </ul>
+    </div>
+    <div class="card-body">
+        <router-outlet></router-outlet>
+    </div>
+</div>
+}
+@if(product.ConsumptionType === 'Contract'){
+    <div class="card card-custom">
+        <router-outlet></router-outlet>
+    </div>
+}

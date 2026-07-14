@@ -1,0 +1,28 @@
+select:disabled,
+select[disabled]
+{
+cursor:not-allowed !important;
+}
+
+.form-check-input:disabled {
+    cursor: not-allowed !important;
+    pointer-events: all !important;
+}
+
+th {
+    white-space: nowrap;
+}
+::ng-deep {
+    app-partner-offer-details {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+        .ng-dropdown-panel .ng-dropdown-panel-items .ng-option{
+            max-width: 100% !important;
+            overflow-x: auto !important; /* This ensures horizontal overflow is handled */
+            .webkit-scrollbar {
+                display: none; /* Hides the scrollbar */
+              }
+        }
+    }
+  }

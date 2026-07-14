@@ -1,0 +1,17 @@
+
+.label.label-light-danger {
+    color: #F64E60;
+    background-color: #FFE2E5;
+}
+
+.label.label-success {
+    color: #ffffff;
+    background-color: #1BC5BD;
+}
+::ng-deep {
+    app-distributor-offer-listing {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+  }

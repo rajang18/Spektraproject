@@ -1,0 +1,190 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-1 gap-lg-1">
+
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="customerGetPopup()"
+          [appPermission]="'EXPORTUSERLICENSEASSIGNMENTREPORT'" appBusyLoader>
+          <i class="ki-outline ki-exit-right-corner fs-4 pe-2"></i>
+          <span translate="TRANSLATE.CUSTOMER_BUTTON_TEXT_EXPORT_USER_LICENSE"></span>
+        </button>
+
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="addNewUser()"
+          [appPermission]="'ADD_NEW_SERVICE_PROVIDER_CUSTOMER_USER'" appBusyLoader>
+          <i class="ki-duotone ki-plus fs-2"></i>
+          <span translate="TRANSLATE.USERS_LIST_BUTTON_TEXT_ADD_NEW_USERS"></span>
+        </button>
+
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="BulkUserUpload()"
+          [appPermission]="'ADD_NEW_SERVICE_PROVIDER_CUSTOMER_USER'" appBusyLoader>
+          <i class="ki-duotone ki-plus fs-2"></i>
+          <span translate="TRANSLATE.USERS_LIST_BUTTON_TEXT_BULK_USER_UPLOAD"></span>
+        </button>
+    </div>
+</ng-template>
+
+<div class="d-flex flex-column-fluid">
+    <div class="container-fluid">
+        <div class="card card-custom" block-ui="block">
+            <div>
+                <div class="card m-6">
+                    <div class="card-body">
+                        @if (isPartnerLevel) {
+                        <div class="row form-group">
+                            <div class="col-lg-2 text-start text-sm-start text-md-start text-lg-start">
+                                <label class="col-form-label">
+                                    <span translate="TRANSLATE.AZURE_REPPORT_CUSTOMERS"></span> <span
+                                        class="text-danger me-1">
+                                        *</span>
+                                    <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                                        ngbTooltip="{{'TRANSLATE.AZURE_REPPORT_CUSTOMERS_TOOLTIP' | translate}}">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                        <span class="path3"></span>
+                                    </i>
+                                </label>
+                            </div>
+                            <div class="col-lg-5 col-md-5 col-12 col-sm-5 pt-1" (click)="setNgSelectText()">
+                                <ng-select [(ngModel)]="currentC3CustomerId"
+                                    (change)="onCustomerChange();hideCursorInNgSelect()">
+                                    @for (item of allCustomers; track $index) {
+                                    <ng-option [value]="item.C3Id">{{item.Name}}</ng-option>
+                                    }
+                                </ng-select>
+                            </div>
+                        </div>
+                        }
+
+                        <div class="form-group row pt-3">
+                            <div class="col-lg-2 text-start text-sm-start text-md-start text-lg-start">
+                                <label class="col-form-label ">
+                                    <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_TENANTS"></span> <i
+                                        class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                                        ngbTooltip="{{'TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_MICROSOFT_TENANT_SELECTOR' | translate}}">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                        <span class="path3"></span>
+                                    </i>
+                                </label>
+                            </div>
+                            <div class="col-lg-5 col-md-5 col-12 col-sm-5 pt-1"
+                                ngbTooltip="{{'TRANSLATE.TENANT TOOLTIP' | translate}}">
+                                <ng-select [disabled]="disableUserSearchFilters || tenants.length <2"
+                                    [(ngModel)]="selectedServiceProviderCustomer" (change)="reloadUsersList()">
+                                    <ng-option *ngFor="let item of tenants; let i = index"
+                                        [value]="item">{{item.CustomerName}}
+                                        ({{item.CustomerRefId}})</ng-option>
+                                </ng-select>
+                            </div>
+                        </div>
+                        <div class="form-group row pt-5">
+                            <div class="col-lg-2 col-form-label">
+
+                            </div>
+                            <div class="col-form-label col-lg-5 col-12 col-md-5 col-sm-5">
+                                <input type="text" ng-disabled="vm.disableUserSearchFilters" [(ngModel)]="filterString"
+                                    class="form-control form-control-sm" name="filterString"
+                                    (keydown)="($event.key === 'Enter')? filterData(): ''"
+                                    placeholder="{{'TRANSLATE.USER_LISTING_FILTER_PLACEHOLDER_TEXT'|translate}}" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer py-4">
+                        <div class="row">
+                            <div class="col-lg-12 text-end">
+                                <button class="btn  btn-sm btn-primary me-2 btn-sm"
+                                    [disabled]="disableUserSearchFilters || dataLoading" (click)="filterData()">
+                                    <i class="ki-outline ki-magnifier fs-4">
+                                        <!-- <span class="path1"></span>
+                                        <span class="path2"></span> -->
+                                    </i>
+                                    <span translate="TRANSLATE.USER_LISTING_SEARCH_BUTTON"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- </c3-form-body> -->
+
+            <div class="table-responsive-md ms-7 me-7">
+                <ng-template #actions let-data="adtData">
+                    <div class="d-flex justify-content-end">
+
+                        @if (!isPartnerLevel ){
+                        <a class="btn btn-active-light-primary btn-icon btn-sm tooltips ng-scope"
+                            (click)="editUserLicense(data)"
+                            [appPermission]="'GET_PROVIDER_USER_LICENSES'"
+                            ngbTooltip="{{'TRANSLATE.LICENSES_TOOLTIP_MS_USER' | translate}}">
+                            <i class="ki-outline ki-key-square text-primary" aria-hidden="true"></i>
+                        </a>
+                        }
+                        @if (!isPartnerLevel) {
+                        <a class="btn btn-active-light-primary btn-icon btn-sm tooltips ng-scope"
+                            (click)="ResetUserPassword(data)"
+                            ngbTooltip="{{'TRANSLATE.USERS_LIST_TABLE_ACTION_BUTTON_TOOLTIP_RESET_PASSWORD' | translate}}"
+                            [appPermission]="'CHANGE_PASSWORD_OF_SERVICE_PROVIDER_CUSTOMER_USER'">
+                            <i class="ki-outline ki-key text-primary"></i>
+                        </a>
+                        }
+
+                        @if (!isPartnerLevel) {
+                        <a class="btn btn-active-light-primary btn-icon btn-sm tooltips ng-scope"
+                            ngbTooltip="{{'TRANSLATE.USERS_LIST_TABLE_ACTION_BUTTON_TOOLTIP_EDIT_USER_DETAILS' | translate}}"
+                            [appPermission]="'EDIT_SERVICE_PROVIDER_CUSTOMER_USER'">
+                            <i class="ki-outline ki-pencil text-primary" (click)="editUser(data.UserId)"></i>
+                        </a>
+                        }
+
+                        @if (data.ButtonAccess&&(data.RoleName === "User")) {
+                        <a class="btn btn-active-light-primary btn-icon btn-sm tooltips ng-scope"
+                            ngbTooltip="{{'TRANSLATE.USERS_LIST_TABLE_ACTION_BUTTON_TOOLTIP_GRAND_ACCESS_TO_PORTAL' | translate}}"
+                            [appPermission]="'GRANT_ACCESS_TO_SERVICE_PROVIDER_CUSTOMER_USER'">
+                            <i class="ki-outline ki-user text-primary" (click)="grantAccessToPortal(data)"></i>
+                        </a>
+                        }
+
+                        @if (!isPartnerLevel && !data.DisableAccessButton) {
+                        <a class="btn btn-active-light-primary btn-icon btn-sm tooltips ng-scope"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TOOLTIP_DELETE_USER' | translate}}"
+                            [appPermission]="'DELETE_SERVICE_PROVIDER_CUSTOMER_USER'">
+                            <i class="ki-outline ki-trash text-primary" (click)="deleteUser(data)"></i>
+                        </a>
+                        }
+
+                        @if ((data.RoleName === 'CustomerAdmin' || data.RoleName === 'CustomerReader'||
+                        data.RoleName === 'CustomerAdminLite' || data.RoleName === 'CustomerAdminLitePlus')) {
+                        <a class="btn btn-active-light-primary btn-icon btn-sm tooltips ng-scope"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TOOLTIP_IMPERSONATE' | translate}}"
+                            *ngIf="data.RoleName!='User' && isPartnerLevel === true" [appPermission]="'IMPERSONATION'"
+                            (click)="proccedToImpersonate(data)">
+                            <i class="ki-outline ki-profile-user text-primary"></i>
+                        </a>
+                        }
+
+                    </div>
+                </ng-template>
+
+                <ng-template #status let-data="adtData">
+                    <div>
+                        <span *ngIf="data.Status ==='active'"><i class="fas fa-check font-green-jungle"></i></span>
+                        <span *ngIf="data.Status !== 'active'"><i class="ki-outline ki-cross fs-1 text-danger"></i></span>
+                    </div>
+                </ng-template>
+
+                <div class="d-flex justify-content-center align-items-center col-md-12" *ngIf="dataLoading">
+                    <span class="spinner-border text-primary" role="status"></span>
+                    <span class="text-muted fs-6 fw-semibold ms-5" [translate]="'TRANSLATE.LOADING_MESSAGE'"></span>
+                </div>
+                <ng-container *ngIf="datatableConfig">
+                    @if(shouldShow){
+                    <div class="card-body">
+                        <app-c3-table [datatableConfig]="datatableConfig" [searchFilter]="false">
+                        </app-c3-table>
+                    </div>
+                    }
+
+                </ng-container>
+
+            </div>
+        </div>
+    </div>
+</div>

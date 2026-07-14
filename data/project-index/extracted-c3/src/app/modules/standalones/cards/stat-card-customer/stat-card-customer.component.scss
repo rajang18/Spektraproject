@@ -1,0 +1,20 @@
+.ki-duotone, .ki-outline, .ki-solid {
+    font-size: 2rem;
+    color: var(--bs-text-white);
+}
+::ng-deep{
+    app-stat-card-customer{
+        .bg-danger{
+            background-color: #F1416C !important;
+            background-image:url('/assets/media/svg/shapes/wave-bg-red.svg');
+        }
+        .bg-success{
+            background-color: #17C653 !important;
+            background-image:url('/assets/media/svg/shapes/top-green.png');
+        }
+        .bg-primary{
+            background-color: #1B84FF !important;
+            background-image:url('/assets/media/svg/shapes/wave-bg-primary.svg');
+        }
+    }
+}

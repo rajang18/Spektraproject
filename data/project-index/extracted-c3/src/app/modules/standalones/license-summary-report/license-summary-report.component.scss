@@ -1,0 +1,15 @@
+::ng-deep {
+    app-license-summary {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+  }
+
+.TermLabelColor {
+    background-color: #3D9C49 !important;  
+}
+
+.labelcolor {
+    background-color: #DF2B03 !important;
+}

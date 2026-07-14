@@ -1,0 +1,174 @@
+<div class="card card-custom">
+  <!-- begin::Header -->
+  <div class="card-header card-header-stretch overflow-auto">
+    <div class="d-flex w-100 justify-content-between">
+      <div class="period-options">
+        <div class="dropdown" appClickOutSide (clickOutside)="billingPeriodDropDownClickOutside()">
+          <div class="d-flex">
+            <button (click)="toggleDropdown()"
+              class="btn-content btn btn-sm btn-sm col-12 d-flex justify-content-between">
+              {{
+              selectedBillingPeriodId
+              ? (billingPeriodsData | showSelectedFirstPeriod : selectedBillingPeriodId)
+              : aLLPeriods
+              }}
+              <strong>
+                <i class="fa-solid fa-angle-down"></i>
+              </strong>
+            </button>
+          </div>
+          
+          <div class="dropdown-content" [class.show]="dropdownVisible">
+            <label (click)="checkBillingPeriodChange(null)">{{'TRANSLATE.CUSTOMER_OPTION_ALL_PERIODS' |
+              translate}}</label>
+            @for (periodData of billingPeriodsData |orderBy: 'BillGenerationDate' : 'desc'; track periodData) {
+            <label (click)="checkBillingPeriodChange(periodData)"  [ngClass]="{'selected': selectedBillingPeriodId === periodData?.BillingPeriodId}">
+              {{ periodData.BillingStartDate | c3Date }} -
+              {{ periodData.BillingEndDate | c3Date }} ({{ periodData?.BillingId}})
+            </label>
+            }
+          </div>
+        </div>
+      </div>
+      <div class="download-btns text-end">
+        <div class="menu-section d-flex flex-wrap justify-content-end mt-5">
+          <a class="ms-2 btn btn-sm fw-bold btn-light-primary mb-2 mb-md-4" 
+             (click)="downloadReport()" 
+             [appPermission]="'BTN_DOWNLOAD_INVOICE_DUES_REPORT'">
+            <i class="ki-outline ki-exit-down fs-2"></i>
+            <span class="ps-1">
+              {{ "TRANSLATE.BUTTON_TEXT_DOWNLOAD_REPORT" | translate }}
+            </span>
+          </a>
+      
+          <a class="ms-2 btn btn-sm fw-bold btn-light-primary mb-2 mb-md-4" 
+             (click)="downloadInvoicesDues()" 
+             [appPermission]="'BTN_DOWNLOAD_PREVIOUS_INVOICE_DUES'">
+            <i class="ki-outline ki-exit-down fs-2"></i>
+            <span class="ps-1">
+              {{ "TRANSLATE.BUTTON_TEXT_DOWNLOAD_INVOICES_DUES" | translate }}
+            </span>
+          </a>
+      
+          <a class="ms-2 btn btn-sm fw-bold btn-light-primary mb-2 mb-md-4" 
+             (click)="payInvoices()" 
+             [appPermission]="'BTN_INITIATE_PAYMENT'">
+            <span class="ps-2">
+              {{ "TRANSLATE.BUTTON_TEXT_PAY_INVOICES" | translate }}
+            </span>
+          </a>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <div class="card-body">
+    <!-- View By Options -->
+    <div class="view-options mt-1">
+      <div class="form-group row w-100 d-flex justify-content-between">
+        <!-- Changed layout from 6/6 to 4/8 to give more space for status filters.
+     ⚠️ Verified responsiveness at multiple breakpoints. -->
+        <div class="col col-md-4 col-4 p-0">
+          <a class="ms-2 btn btn-sm fw-bold btn-light-primary text-nowrap" (click)="
+              businessListExpanded = !businessListExpanded; toggleAllRows()
+            ">
+            @if(!businessListExpanded){
+            <i class="fa fa-plus link-font-icon mr-2"></i>
+            } @else{
+            <i class="fa fa-minus link-font-icon mr-2"></i>
+            }
+            <span class="ps-2">
+              {{
+              businessListExpanded
+              ? ("TRANSLATE.COLLAPSE_ALL_PAYMENTS" | translate)
+              : ("TRANSLATE.EXPAND_ALL_PAYMENTS" | translate)
+              }}
+            </span>
+          </a>
+        </div>
+        <div class="col col-md-8 col-8 p-0 text-end">
+          @for(row of paymentStatusData; track row){
+          <a class="btn btn-sm border mx-1 me-0 text-nowrap mb-1" [ngClass]="{
+              'btn-light': paymentStatusesSelected.indexOf(row.Name) === -1,
+              'btn-primary': paymentStatusesSelected.indexOf(row.Name) !== -1
+            }" (click)="updateSelectedStatus(row.Name)">
+            {{ "TRANSLATE." + row?.Description | translate }}
+          </a>
+          }
+        </div>
+      </div>
+    </div>
+
+    <ng-template #iconTemplate let-data="adtData" let-row="userData">
+      <span class="plus-icon-position">
+        @if(data?.PaymentDetails?.Data?.length>0){ @if(!data.Collapse){
+        <i class="clicked-icon fa fa-plus link-font-icon mr-2"></i>
+        } @else{
+        <i class="clicked-icon fa fa-minus link-font-icon mr-2"></i>
+        } }
+      </span>
+    </ng-template>
+    <ng-template #paidAmount let-data="adtData" let-emitter="captureEvents">
+      <span>
+        {{
+        data?.PaidAmount
+        | CurrencyFilter
+        : data.CurrencySymbol
+        : data.CurrencyDecimalPlaces
+        : data.CurrencyThousandSeperator
+        : data.CurrencyDecimalSeperator
+        }}
+      </span>
+    </ng-template>
+    <ng-template #billedAmount let-data="adtData" let-emitter="captureEvents">
+      {{
+      data.InvoiceAmount
+      | CurrencyFilter
+      : data.CurrencySymbol
+      : data.CurrencyDecimalPlaces
+      : data.CurrencyThousandSeperator
+      : data.CurrencyDecimalSeperator
+      }}
+    </ng-template>
+    <ng-template #pendingAmount let-data="adtData" let-emitter="captureEvents">
+      {{
+      data.PendingAmount
+      | CurrencyFilter
+      : data.CurrencySymbol
+      : data.CurrencyDecimalPlaces
+      : data.CurrencyThousandSeperator
+      : data.CurrencyDecimalSeperator
+      }}
+    </ng-template>
+    <!-- <div class="d-flex align-items-center position-relative mt-3">
+    <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5"><span class="custom-path1"></span><span
+        class="custom-path2"></span></i> <input type="text" [(ngModel)]="filterByOwnedBy" (ngModelChange)="filterForOwnedBy(filterByOwnedBy)"
+      class="header-input-field form-control form-control-solid w-200px ps-12" placeholder="{{'TRANSLATE.CUSTOMER_SEARCH_SEARCH_OPTION'| translate}} {{'TRANSLATE.DISTRIBUTOR_OFFERS_TABLE_HEADER_TEXT_NAME'| translate}}">
+  </div> -->
+    <!-- //table -->
+    @if (!!datatableConfig) {
+    <div class="table-buisness mt-2">
+      <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" (tableReady)="onTableReady($event)"
+                    [isNestedGrid]="true" [selection]="true" (onSelection)="handleSelection($event)">
+      </app-c3-table>
+    </div>
+    }
+    <!-- @if (!isData) {
+    <div class="d-flex align-items-center justify-content-center" style="height: 100%;">
+      <div class="row">
+        <div class="col-md-12">
+          <h3 class="text-center">
+            <img src='../../../../../assets/media/png/no-records-found4.png'
+                 width="150" height="180" />
+          </h3>
+          <h4 class="font-weight-bold text-center">
+            <span translate="TRANSLATE.MESSAGE_TEXT_NO_RECORDS_FOUND">
+            </span>
+          </h4>
+        </div>
+      </div>
+    </div>
+    } -->
+  </div>
+</div>

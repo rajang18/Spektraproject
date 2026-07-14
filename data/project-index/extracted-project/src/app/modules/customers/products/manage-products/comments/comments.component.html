@@ -1,0 +1,62 @@
+<div class="card">
+    <div class="card-body pt-0 " style="overflow-x: hidden;">
+        <ng-template #actions let-i="adtData" let-emitter="captureEvents">
+            <div class="message">
+                <div class="d-flex flex-column mb-5"
+                    [ngClass]="{'align-items-start':i.IsAuthor== true,'align-items-end': i.IsAuthor == false}">
+                    <div class="d-flex align-items-center" *ngIf="i.IsAuthor== true">
+                        <div class="symbol symbol-circle symbol-light-primary pe-2">
+                            <span class="symbol-label font-size-h5 ng-binding"> {{i.CreateBy | formatforinitials}} </span>
+                        </div>
+                        &nbsp;
+                        <div>
+                            <span class="text-gray-800 text-hover-primary fw-semibold fs-5">
+                                {{i.CreateBy}}
+                            </span>
+                            &nbsp;
+                            <span class="text-muted font-size-sm">{{i.CreateDate | c3Date : true}}</span>
+                            &nbsp;
+                            <span class="badge badge-pill badge-primary" translate="TRANSLATE.COMMENT_AUTHOR"></span>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center" *ngIf="i.IsAuthor== false">
+                        <div>
+                            <span class="text-muted font-size-sm">{{i.CreateDate | c3Date : true}}</span>
+                            &nbsp;
+                            <span class="text-gray-800 text-hover-primary fw-semibold fs-5">
+                                {{i.CreateBy}}
+                            </span>
+                        </div>&nbsp;
+                        <div class="symbol symbol-circle symbol-light-primary ps-2">
+                            <span class="symbol-label font-size-h5 ng-binding"> {{i.CreateBy | formatforinitials}} </span>
+                        </div>
+                    </div>
+                    <div class="mt-2 rounded p-5 bg-light-success text-dark-50 font-weight-bold font-size-lg text-left max-w-400px"
+                        [ngClass]="{'bg-light-success':i.IsAuthor== true,'bg-light-info': i.IsAuthor == false}">
+                        {{i.Content}}
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    
+        <!-- Check if datatableConfig is defined and then render the table -->
+        <div class="fixed-height-card">
+            <ng-container *ngIf="datatableConfig">
+                <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" [isPaginationHide]="true">
+                </app-c3-table >
+            </ng-container>
+        </div>
+    
+        <!-- Textarea and submit button -->
+        <div class="portlet-title">
+            <div class="col-md-12">
+                <textarea class="form-control form-control-flush"
+                    placeholder="{{'TRANSLATE.CUSTOMER_COMMENT_TYPE_COMMENT_INPUT_PLACEHOLDER_TEXT' | translate}}" required
+                    [(ngModel)]="Content"></textarea>
+            </div>
+            <div class="col-md-1 float-end">
+              <button class="btn btn-sm btn-primary mt-2 float-end" (click)="saveComments()" appBusyLoader [isIconOnly]="true"> {{ 'TRANSLATE.NEW_COMMENT_SEND' | translate }}</button>
+            </div>
+        </div>
+    </div>
+</div>

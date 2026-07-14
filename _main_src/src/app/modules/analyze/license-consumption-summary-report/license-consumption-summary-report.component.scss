@@ -1,0 +1,7 @@
+::ng-deep {
+    app-license-consumption-summary-report {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}

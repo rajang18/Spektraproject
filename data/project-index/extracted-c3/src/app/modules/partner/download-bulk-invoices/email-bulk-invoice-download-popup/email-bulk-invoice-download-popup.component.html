@@ -1,0 +1,40 @@
+<div class="modal-header">
+  <div class="modal-text-primary">
+    <h3 class="modal-title text-primary"><span translate="TRANSLATE.BULK_INVOICE_DOWNLOAD_MODAL_HEADER"></span></h3>
+  </div>
+  <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="close()" data-bs-dismiss="modal">
+    <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+  </div>
+</div>
+<div class="modal-body">
+    <div class="callout callout-info">
+        <div class="col-md-12">
+            <p>
+                <span translate="TRANSLATE.BULK_INVOICE_DOWNLOAD_MODAL_INSTRUCTION"></span>
+            </p>
+        </div>
+    </div>
+    <form [formGroup]="emailForm">
+        <div class="form-group row">
+            <div class="col-md-2">
+                <label class="col-form-label">
+                    <span translate="TRANSLATE.BULK_INVOICE_DOWNLOAD_LABEL_TEXT_EMAILS"></span><span
+                        class="text-danger">*</span>
+                </label>
+            </div>
+            <div class="col-md-10 mt-5">
+                <textarea type="text" [(ngModel)]="emailList" class="form-control" name="emails" maxlength="3000"
+                    formControlName="emails" required (ngModelChange)="validateEmail()"></textarea>
+                    <span *ngIf="emailForm.get('emails')?.hasError('required') && emailForm.get('emails')?.touched" class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                    <span *ngIf="!isEmailValid && emailForm.get('emails')?.touched && !emailForm.get('emails')?.hasError('required')" class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_PLEASE_ENTER_A_VALID_EMAIL"></span>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-sm btn-light btn-active-light-primary" type="button" (click)="close()"> <span
+            translate="TRANSLATE.BULK_INVOICE_DOWNLOAD_CANCEL"></span></button>
+    <button class="btn btn-sm btn-primary" (click)="Submit()"> <span
+            translate="TRANSLATE.BULK_INVOICE_DOWNLOAD_SUBMIT"></span></button>
+</div>

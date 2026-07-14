@@ -1,0 +1,157 @@
+.row-break-inside {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  .pdf-no-break {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-before: auto;
+    page-break-after: auto;
+  }
+
+  .summary-section,
+  .subtotal-row,
+  .grand-total-row {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  .table-rounded {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .background-white {
+    background-color: #F8F8F8;
+  }
+  .border-color {
+    border: var(--border-style);
+  }
+  .border-right-black {
+    border-right: 2px solid black;
+  }
+
+  .scrollable {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .pdf-half-col {
+    flex: 0 0 50% !important;
+    max-width: 50% !important;
+    width: 50% !important;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    box-sizing: border-box;
+  }
+
+  .pdf-inline-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    vertical-align: middle;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+
+  
+  ::ng-deep{
+    app-quote-pdf-view{
+      .pdf-class-custom{
+        background-color: white;
+      }
+
+      .pdf-no-break,
+      .summary-section,
+      .subtotal-row,
+      .grand-total-row,
+      .card,
+      .card-body,
+      table,
+      tr,
+      td,
+      th {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      .font-weight-normal {
+        color: #071437 !important;
+      }
+      .bg-light {
+        background-color: #F9F9F9 !important;
+      }
+      h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
+     
+      color: #071437 !important;
+      }
+      .text-gray-700 {
+        color: #4B5675     !important;
+      }
+      .font-weight-600{
+        color: #071437 !important;
+      }
+      .text-muted {
+        color: #99A1B7 !important; 
+      }
+      p{
+        color: #071437 !important;
+      }
+      .fw-semibold {
+        color: #071437 !important;
+      }
+      .border{
+        color: #DBDFE9 !important;
+      }
+      .table {
+        border: 1px solid #f1f1f4 !important;
+      }
+      .table > :not(caption) > * > * {
+        color: #071437 !important;
+      }
+      .bg-success{
+        background-color: #17C653 !important; 
+      }
+      .bg-info{
+        background-color: #8950FC !important; 
+      }
+      
+      .bg-primary{
+        background-color: #3699FF !important; 
+      }
+      
+      .bg-warning{
+        background-color: #F6C000 !important; 
+      }
+      
+      .bg-light-danger{
+        background-color: #F64E60 !important; 
+      }
+      
+      .TermLabelColor {
+      background-color: #3D9C49 !important;  
+      }
+      .labelcolor {
+          background-color: #DF2B03 !important;
+      }
+      .TermLabelColor {
+      background-color: #3D9C49 !important;  
+      }
+      .labelcolor {
+      background-color: #DF2B03 !important;
+      }
+      }
+
+    }
+
+    .space-after {
+    margin-right: 5px;
+    display: inline-block;
+    font-weight: 500!important;
+    font-size: 1rem!important;
+}
+
+    
+  
+  
+  

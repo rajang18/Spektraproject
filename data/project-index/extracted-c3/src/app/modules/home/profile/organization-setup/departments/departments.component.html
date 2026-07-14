@@ -1,0 +1,129 @@
+<div>
+    @if(!iseditable){
+    <div class="d-flex justify-content-end">
+
+        <button class="btn btn-sm btn-primary" (click)="editTable()" [appPermission]="'ADD_CUSTOMER_DEPARTMENT'" appBusyLoader>
+            <i class="ki-outline ki-plus fs-2"></i>
+             {{'TRANSLATE.CUSTOMER_DEPARTMENT_ADD_DEPARTMENT'| translate}}
+        </button>
+    </div>
+    }
+    <div>
+       
+            @if (!!datatableConfig){
+                <ng-container>
+                    <div class="table" [ngClass]="{ 'hide': iseditable, 'hide-no-data': isLoading}">
+                    <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig"></app-c3-table>
+                    </div>
+                </ng-container>
+                }
+        
+    </div>
+    @if(iseditable){
+    <div class="card-header" style="padding: 0;">
+        <div class="card-title align-items-start flex-column dashboard-tile-title">
+
+            @if(!isEditDepartment){
+            <span class="card-label fw-bold text-gray-900"><span
+                    translate="TRANSLATE.CUSTOMER_DEPARTMENT_ADD_DEPARTMENT"></span>
+            </span>
+            }
+
+            @if(!!isEditDepartment){
+            <span class="card-label fw-bold text-gray-900"><span
+                    translate="TRANSLATE.CUSTOMER_DEPARTMENT_EDIT_DEPARTMENT"></span>
+            </span>
+            }
+        </div>
+    </div>
+    <div [formGroup]="departmentsForm">
+        <div class="fv-row mb-7 mt-2">
+            <label class="required fw-semibold fs-6 mb-2"
+                translate="TRANSLATE.CUSTOMER_DEPARTMENT_TABLE_HEADER_TEXT_NAME"></label>
+            <input type="text" class="form-control form-control-sm " formControlName="name">
+            @if(departmentsForm.get('name')?.errors?.required &&
+            departmentsForm.get('name').touched){
+            <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+            }
+        </div>
+        <div class="fv-row mb-7" [ngClass]="!!isEditDepartment ? 'hide-cross' : 'show-cross'">
+            <label class="required fw-semibold fs-6 mb-2"
+                translate="TRANSLATE.CUSTOMER_DEPARTMENT_TABLE_HEADER_TEXT_SITE"></label>
+            <select2 [data]="sitesData" formControlName="site"
+                [templates]="template" [multiple]="true" data-allow-clear="false" [hideSelectedItems]="true">
+                <ng-template #template let-data="data">
+                    <span Class="multiple-select-choice" [id]="'temp'+getName(data?.name)">
+                        {{data?.name}}
+                    </span>
+                </ng-template>
+            </select2>
+            <span *ngIf="departmentsForm.get('site')?.value?.length > 0 && !!isEditDepartment">
+                <span translate="TRANSLATE.CUSTOMER_DEPARTMENT_TABLE_HEADER_TEXT_ASSIGNED_SITES"></span>
+             : {{getSiteName()}}</span>
+            @if(departmentsForm.get('site')?.errors?.required && departmentsForm.get('site').touched){
+            <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+            }
+        </div>
+        <div class="fv-row mb-7">
+            <label class="required fw-semibold fs-6 mb-2"
+                translate="TRANSLATE.CUSTOMER_DEPARTMENT_TABLE_HEADER_TEXT_DESCRIPTION"></label>
+            <input type="text" class="form-control form-control-sm" formControlName="description">
+            @if(departmentsForm.get('description')?.errors?.required && departmentsForm.get('description').touched){
+            <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+            }
+        </div>
+    </div>
+    <div class="card-footer d-flex justify-content-end mb-5">
+        <button class="btn btn-sm btn-secondary me-3" translate="TRANSLATE.BUTTON_TEXT_CANCEL" (click)="onDiscard()">
+        </button>
+                @if (!isEditDepartment) {
+        <button class="btn  btn-sm btn-primary" (click)="saveDepartmentsDetails()" [appPermission]="'SAVE_CUSTOMER_DEPARTMENT'"
+            translate="TRANSLATE.BUTTON_TEXT_SUBMIT" appBusyLoader></button>
+        }
+
+        @if (!!isEditDepartment) {
+        <button class="btn  btn-sm btn-primary" (click)="editDepartmentsDetails()" [appPermission]="'SAVE_CUSTOMER_DEPARTMENT'"
+            translate="TRANSLATE.BUTTON_TEXT_SUBMIT" appBusyLoader></button>
+        }
+    </div>
+    <div class="customer-profile" *ngIf="pageMode === 'edit'">
+        <app-addresses-details [contactEntityName]="contactEntityName" [contactRecordId]="contactRecordId"></app-addresses-details>
+        <app-phone-numbers-details [contactEntityName]="contactEntityName" [contactRecordId]="contactRecordId"></app-phone-numbers-details>
+        <app-email-addresses-details [contactEntityName]="contactEntityName" [contactRecordId]="contactRecordId"></app-email-addresses-details>
+    </div>
+    }
+
+
+</div>
+
+<ng-template #actions let-data="adtData" let-emitter="captureEvents">
+    <div class="d-flex justify-content-end">
+        <div class="d-flex align-items-end">
+            <div class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+                [ngClass]="toolbarButtonHeightClass" (click)="editDepartment(data)" [appPermission]="'EDIT_CUSTOMER_DEPARTMENT'">
+                <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg  h-20px w-20px" ngbTooltip="{{'TRANSLATE.CUSTOMER_TAGS_TABLE_BUTTON_TOOLTIP_EDIT' | translate}}">
+                    <i class="ki-outline ki-pencil text-primary"
+                    >
+                        <!-- <span class="path1"></span>
+                        <span class="path2"></span> -->
+                    </i>
+                </span>
+            </div>
+        </div>
+        <div class="d-flex align-items-end">
+            <div class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+                [ngClass]="toolbarButtonHeightClass" (click)="deleteDepartments(data)" [appPermission]="'DELETE_CUSTOMER_DEPARTMENT'">
+                <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg  h-20px w-20px" ngbTooltip="{{'TRANSLATE.CUSTOMER_TAGS_TABLE_BUTTON_TOOLTIP_DELETE' | translate}}">
+                    <i class="ki-outline ki-trash text-primary"
+                      >
+                      <!-- <span class="path1"></span>
+                      <span class="path2"></span>
+                      <span class="path3"></span>
+                      <span class="path4"></span>
+                      <span class="path5"></span> -->
+                    </i>
+                </span>
+            </div>
+        </div>
+    </div>
+</ng-template>

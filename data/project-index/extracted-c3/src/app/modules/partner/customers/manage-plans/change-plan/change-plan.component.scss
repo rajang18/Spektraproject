@@ -1,0 +1,64 @@
+.custom {
+    flex-direction: column;
+}
+
+.d-flex .small {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.d-flex .small label {
+    color: #333;
+    font-size: 14px;
+}
+
+.d-flex .small label span {
+    font-weight: bold;
+}
+
+.text-warning {
+    color: #ffc107;
+}
+
+.form-check-input:disabled {
+    cursor: not-allowed !important;
+    pointer-events: all !important;
+}
+
+::ng-deep {
+    app-change-plan {
+        .ki-duotone.ki-information-2 {
+            display: none !important;
+        }
+
+        table.dataTable>thead .dt-ordering-asc:after {
+            display: none !important;
+        }
+
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}
+
+/* Hide the checked symbol but keep the checkbox visible */
+.hidden-checkbox {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+    cursor: pointer;
+    position: relative;
+}
+
+/* When checked, don't show the check symbol */
+.hidden-checkbox:checked {
+    background-color: white;
+    /* Keep the background white */
+    border-color: #ccc;
+}

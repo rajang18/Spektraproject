@@ -1,0 +1,21 @@
+<div class="payment-transacttion-details-wrapper w-100 ms-10">
+    <table class="my_table w-53">
+      <thead
+        class="border-bottom border-gray-200 fs-6 fw-semibold"
+      >
+        <tr>
+          <th class="col-md-4 ps-4" translate="TRANSLATE.PAYMENTS_AND_DUES_TABLE_HEADER_INVOICE_NUMBER"></th>
+          <th class="col-md-2 text-end pe-4" translate="TRANSLATE.INVOICE_INVOICE_INVOICE_REMAINING_PAYMENTS_TABLE_HEADER_PAID_AMOUNT"></th>
+        </tr>
+      </thead>
+      <tbody class="fw-semibold text-gray-600">
+        @for (payment of data; track payment) {
+        <tr>
+          <td class="ps-4">{{ payment?.InvoiceNumber}}</td>
+          <td class="text-end pe-4">{{ payment?.PaidAmount  | CurrencyFilter : payment.CurrencySymbol : payment.CurrencyDecimalPlaces : payment.CurrencyThousandSeperator : payment.CurrencyDecimalSeperator}}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  

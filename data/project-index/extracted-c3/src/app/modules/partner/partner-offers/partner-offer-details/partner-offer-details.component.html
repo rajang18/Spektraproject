@@ -1,0 +1,807 @@
+<ng-template #actionHeader>
+  <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+    <button type="button" class="btn btn-sm fw-semibold btn-light-primary" (click)="backToPartnerOffer()">
+      <i class="ki-outline ki-to-left fs-2"></i> <span
+        translate="TRANSLATE.CUSTOM_OFFERS_CAPTION_BUTTON_TEXT_BACK_TO_CUSTOM_OFFERS"></span>
+    </button>
+  </div>
+</ng-template>
+
+<div class="">
+  <div class="">
+    @if(isDataLoaded){
+    <form [formGroup]="customOfferRegisterForm">
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="fw-semibold fs-6 mb-2 required" translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_PROVIDER"></label>
+          <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+            [ngbTooltip]="'TRANSLATE.BULK_ONBOARDING_RESELLERS_LABEL_TEXT_PROVIDER_TOOLTIPS' | translate">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+        </div>
+        <div class="col-md-6">
+          <select class="form-select  form-select-sm fw-bold" (change)="providerChange()"
+            formControlName="providerName">
+            @for(option of providers; track $index){
+            <option [value]="option.ID" [disabled]="isEditMode">
+              {{option.Description | translate}}
+            </option>
+            }
+          </select>
+          @if(customOfferRegisterForm.get('providerName')?.errors?.required &&
+          customOfferRegisterForm.get('providerName')?.touched){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+
+      </div>
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="required fw-semibold fs-6" translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_CATEGORY"></label>
+        </div>
+        <div class="col-md-6">
+          <select class="form-select  form-select-sm fw-bold" formControlName="category" (change)="categoryChange()">
+            @for(option of (categories | ignoreFromList :'Name':['customtrial']); track $index){
+            <option [value]="option.ID">
+              {{option.CategoryDescriptionKey | translate}}
+            </option>
+            }
+          </select>
+          @if(customOfferRegisterForm.get('category')?.errors?.required &&
+          customOfferRegisterForm.get('category')?.touched){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+   <div class="form-group row mt-5" *ngIf="customOfferRegisterForm.get('isTrialOffer').value == false && selectedConsumptionType?.Name?.toLowerCase() !== 'usage'">
+      @if(permissions.HasGetSubcategoryOffers === 'Allowed'){
+          <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+             <label class="fw-semibold fs-6" translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_SUBCATEGORY_NAME"></label>
+          </div>
+          <div class="col-md-6">
+             <ng-select class="form-control p-0" formControlName="SubCategoryId" [placeholder]="'TRANSLATE.PLACEHOLDER_FOR_SUBCATEGORY_DROPDOWN' | translate">
+                 @for(option of subCategory; track $index){
+                 <ng-option [value]="option.Id">
+                  {{option.Name | translate}}
+                  </ng-option>
+                    }
+               </ng-select>
+          </div>
+      }
+</div>
+
+      <div class="form-group row mt-5">
+  <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="required fw-semibold fs-6" translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_CONSUMPTION_TYPE">
+          </label>
+        </div>
+        <div class="col-md-6">
+          <select class="form-select  form-select-sm fw-bold" formControlName="consumptionType"
+            (change)="filterBillingCycle()">
+            @for(option of (consumptionTypes| ignoreFromList :'Name':['Contract']); track $index){
+            <option [value]="option.ID">
+              {{option.Description | translate}}
+            </option>
+            }
+          </select>
+          @if(customOfferRegisterForm.get('consumptionType')?.errors?.required &&
+          customOfferRegisterForm.get('consumptionType')?.touched){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      @if (selectedConsumptionType?.Name?.toLowerCase() !== 'usage' && selectedCategory[0]?.Name !==
+      'LicenseSupported' && (permissions.HasAddTrailOffer === 'Allowed')) {
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="fw-semibold fs-6 mb-2"
+            translate="TRANSLATE.CUSTOM_OFFER_LABEL_TEXT_IS_THIS_A_TRIAL_OFFER"></label>
+          <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+            [ngbTooltip]="'TRANSLATE.PARTNER_OFFER_IS_TRIAL_TOOLTIP' | translate">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+        </div>
+        <div class="col-md-6">
+          <div class="form-check">
+            <input type="checkbox" (change)="checkForFormValidation()" class="form-check-input"
+              formControlName="isTrialOffer">
+          </div>
+        </div>
+      </div>
+      }
+      @if(customOfferRegisterForm.get('isTrialOffer')?.value === true){
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="required fw-semibold fs-6"
+            translate="TRANSLATE.CUSTOM_OFFER_TEXT_PRODUCTS_FOR_TRIAL_OFFERS"></label>
+        </div>
+        <div class="col-md-6">
+          <ng-select formControlName="productFortrial" [ngClass]="{'background-Color-grey' : offerType == 'edit'}" (change)="SelectedProductForTrail()" name="selectedPlan"
+            [bindValue]="'ProductVariantId'"
+            placeholder="{{'TRANSLATE.CUSTOM_OFFER_TEXT_PRODUCTS_FOR_TRIAL_OFFERS' | translate}}"
+            [items]="trailOffersBuffer" [virtualScroll]="true" [loading]="loading" [typeahead]="input$"
+            (scrollToEnd)="fetchMore(select.searchTerm)" #select>
+            <ng-template ng-label-tmp let-row="item">
+              <span>{{row.Name}}</span>
+              <span *ngIf="!row.Name">{{parentProductNameOfTrialOffer}}</span>
+            </ng-template>
+            <ng-template ng-option-tmp let-option="item" let-search="searchTerm">
+              <div>
+                <div>
+                  <span>{{option.Name}}</span>
+
+                </div>
+                    <span *ngIf="option.Subcategory !== null && option.Subcategory !== ''" [appPermission]="'GET_SUBCATEGORIES_PILLS'"
+                        class="badge badge-danger fw-semibold label-inline ms-md-1 mt-1 ">
+                        {{ option.Subcategory }}
+                    </span>
+                    <span class="badge bg-warning text-white bg-opacity-25e"
+                      *ngIf="option.Validity!==null && option.ValidityType === 'Month(s)'">
+                      {{option.Validity}} {{(option.Validity === 1? (option.ValidityType === 'Month(s)'?
+                      'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                      'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate
+                      }}
+                    </span>
+                    <span class="badge bg-warning text-white bg-opacity-25e" aria-hidden="true"
+                      *ngIf="option.ValidityType === 'Year(s)' || option.ValidityType === 'Year'"
+                      [ngClass]="{'labelcolor':option.BillingCycleName == 'Monthly','TermLabelColor': option.BillingCycleName == 'Annual'}">
+                      {{option.Validity}}
+                      {{(option.Validity === 1? (option.ValidityType === 'Month(s)'?
+                      'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                      'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate
+                      }}
+                    </span>
+                    <span class="label fw-semibold label-inline text-white badge"
+                    [ngClass]="{
+                      'bg-warning': option.BillingCycleName?.toLowerCase() === 'monthly',
+                      'bg-success': option.BillingCycleName?.toLowerCase() === 'annual',
+                      'bg-dark': option.BillingCycleName?.toLowerCase() === 'triennial',
+                      'bg-info': option.BillingCycleName?.toLowerCase() === 'onetime'
+                    }">
+                      {{'TRANSLATE.' + option.BillingCycleDescription | translate }}
+                    </span>
+                    <span class="badge label label-light-info fw-semibold">
+                      {{"TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_Sale_PRICE" | translate}}:
+                      {{option.CurrencySymbol}}{{option.ProviderSellingPrice}}
+                    </span>
+                    <span class="badge bg-light-danger ms-md-2"> {{option.BillingTypeName}} </span>
+                    <span class="badge bg-success text-white">
+                      {{'TRANSLATE.' + option.ConsumptionDescription | translate}}
+                    </span>
+                    <span class="badge bg-primary text-white"> {{option.SaleTypeName | translate}}</span>
+                    <span class="badge bg-gray-300 text-black">
+                      <span translate="TRANSLATE.CUSTOM_OFFER_TEXT_IS_RENEWAL_LABEL_TEXT"></span>
+                      <span> :{{option.IsAutoRenewal ? 'Yes' : 'No'}}</span>
+                    </span>
+                  </div>
+
+
+            </ng-template>
+          </ng-select>
+          @if(customOfferRegisterForm.get('productFortrial')?.errors?.required &&
+          customOfferRegisterForm.get('productFortrial')?.touched){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      }
+      @if(customOfferRegisterForm.get('isTrialOffer')?.value === true){
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="required fw-semibold fs-6"
+            translate="TRANSLATE.CUSTOM_OFFER_TEXT_PRODUCT_FOR_TRAIL_OFFER_QUANTITY"></label>
+          <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+            [ngbTooltip]="'TRANSLATE.PARTNER_OFFER_DEFAULT_QUANTITY_TOOLTIP' | translate">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+        </div>
+        <div class="col-md-6">
+          <input type="number" [disabled]="isEditMode" formControlName="trailOfferquantity"
+            class="form-control form-control-lg " />
+          @if(customOfferRegisterForm.get('trailOfferquantity')?.errors?.required &&
+          customOfferRegisterForm.get('trailOfferquantity')?.touched){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+          @if(customOfferRegisterForm.get('trailOfferquantity')?.hasError('pattern') &&
+          !customOfferRegisterForm.get('trailOfferquantity')?.errors?.min){
+          <span class="text-danger" translate="TRANSLATE.TRIAL_OFFER_TEXT_QUANTITY_DECIMAL_ERROR"></span>
+          }
+          @if(customOfferRegisterForm.get('trailOfferquantity')?.errors?.min &&
+          customOfferRegisterForm.get('trailOfferquantity')?.touched){
+          <span class="text-danger" translate="TRANSLATE.TRIAL_OFFER_TEXT_QUANTITY_SUBCEEDS_MIN_OF_1"></span>
+          }
+          @if(customOfferRegisterForm.get('trailOfferquantity')?.errors?.max &&
+          customOfferRegisterForm.get('trailOfferquantity')?.touched){
+          <span class="text-danger" translate="TRANSLATE.TRIAL_OFFER_TEXT_QUANTITY_SUBCEEDS_MAX_OF_10000"></span>
+          }
+
+        </div>
+      </div>
+      }
+      @if(customOfferRegisterForm.get('isTrialOffer')?.value === true){
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="required fw-semibold fs-6"
+            translate="TRANSLATE.PARTNER_TRIAL_OFFER_CREATION_LABEL_TEXT_TRIAL_PERIOD_OPTIONS"></label>
+          <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+            [ngbTooltip]="'TRANSLATE.PARTNER_OFFER_TRIAL_PERIOD_DAYS_TOOLTIP' | translate">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+        </div>
+        <div class="col-md-6">
+          <select class="form-select  form-select-sm fw-bold" formControlName="trialPeriodDays">
+            @for(option of trialPeriodDays; track $index){
+            <option [value]="option.Days" [disabled]="isEditMode">
+              {{option.Days}} {{'TRANSLATE.' +option.TrialPeriodKey | translate}}
+            </option>
+            }
+          </select>
+          @if(customOfferRegisterForm.get('trialPeriodDays')?.errors?.required &&
+          customOfferRegisterForm.get('trialPeriodDays')?.touched){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      }
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="required fw-semibold fs-6" translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_NAME">
+          </label>
+        </div>
+        <div class="col-md-6">
+          <input type="text" formControlName="name"
+            [ngClass]="{'disabled-select': !partnerCustomOfferDetails.IsActive || !(permissions.HasSaveOrUpdatePartnerOffer === 'Allowed')}"
+            class="form-control form-control-lg ">
+          @if(customOfferRegisterForm.get('name')?.errors?.required &&
+          customOfferRegisterForm.get('name')?.touched){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="required fw-semibold fs-6" translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_DESCRIPTION"></label>
+        </div>
+        <div class="col-md-6">
+          <textarea type="text" formControlName="description"
+            [ngClass]="{'disabled-select': !partnerCustomOfferDetails.IsActive || !(permissions.HasSaveOrUpdatePartnerOffer === 'Allowed')}"
+            placeholder="{{'TRANSLATE.PLACEHOLDER_ENTER_TEXT' | translate}}" class="form-control form-control-lg">
+                    </textarea>
+          @if(customOfferRegisterForm.get('description')?.errors?.required &&
+          customOfferRegisterForm.get('description')?.touched){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      @if(isCategoryLicenseSupported){
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="fw-semibold fs-6 mb-2" translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_OFFER_REF_ID"></label>
+        </div>
+        <div class="col-md-6">
+          <input type="text" formControlName="offerRefId" class="form-control form-control-lg ">
+        </div>
+      </div>
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="fw-semibold fs-6 mb-2" translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_APPROVAL_QUANTITY"></label>
+        </div>
+        <div class="col-md-6">
+          <input type="number" [disabled]="isEditMode" formControlName="approvalQuantity"
+            class="form-control form-control-lg " />
+        </div>
+      </div>
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="fw-semibold fs-6 mb-2" translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_INSTRUCTIONS"></label>
+        </div>
+        <div class="col-md-6">
+          <input [ngxSummernote]="config" type="text" class="form-control form-control-sm" formControlName="instruction"
+            name="instructions">
+        </div>
+      </div>
+      }
+
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="fw-semibold fs-6 mb-2" translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_PRODUCT_ICON"></label>
+        </div>
+        <div class="col-md-6">
+          <div class="input-group mb-3">
+            <input #inputFile type="file" class="form-control" id="inputGroupFile02" (change)="onFileSelected($event)">
+            <label class="input-group-text" for="inputGroupFile02"><span class="buttonText"> <i
+                  class="ki-outline ki-folder fs-4" aria-hidden="true"><span class="path1"></span><span
+                    class="path2"></span></i> </span></label>
+          </div>
+          <span class="help-block text-muted" translate="TRANSLATE.CUSTOM_ICON_HELP_TEXT"></span>
+        </div>
+      </div>
+      @if(!!url){
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="fw-semibold fs-6 mb-2" translate="TRANSLATE.NEW_PARTNER_PRODUCT_ICON"></label>
+        </div>
+        <div class="col-md-6">
+          <img [src]="url" width="120">
+          <button class="ms-4 btn btn-danger btn-xs mt-2" (click)="ClearImage()"><span
+              translate="TRANSLATE.REMOVE_PARTNER_PRODUCT_ICON"></span></button>
+        </div>
+      </div>
+      }
+      @if (customOfferRegisterForm.get('ImageUrl')?.value) {
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="fw-semibold fs-6 mb-2" translate="TRANSLATE.CURRENT_PARTNER_PRODUCT_ICON"></label>
+        </div>
+        <div class="col-md-6">
+          <img [src]="customOfferRegisterForm.get('ImageUrl')?.value" width="120" />
+          <button class="ms-4 btn btn-danger btn-xs" (click)="ClearImage()"><i class="fa fa-trash"></i> <span
+              translate="TRANSLATE.REMOVE_PARTNER_PRODUCT_ICON"></span></button>
+        </div>
+      </div>
+      }
+
+      @if(selectedCategory[0]?.Name !== 'LicenseSupported' && customOfferRegisterForm.get('isTrialOffer')?.value
+      !== true){
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="required fw-semibold fs-6"
+            translate="TRANSLATE.PARTNER_BUNDLE_CREATION_LABEL_TEXT_TERM_DURATION"></label>
+        </div>
+        <div class="col-md-6">
+          <select class="form-select form-select-sm fw-bold" formControlName="termDuration"
+                  (change)="termDurationChange()">
+            <option class="disabled-select" value="" disabled selected>
+              {{
+              "TRANSLATE.CUSTOM_OFFERS_SELECT_TERM_DURATION" |
+              translate
+              }}
+            </option>
+            @for(option of (termDuration | ignoreFromDropdown: (selectedConsumptionType.Name.toLowerCase()
+            == cloudHubConstants.CONSUMPTION_USAGE_BASED ? {Validity : [999]} : {})); track $index){
+            <option [value]="option.validityData">
+              {{option.validityDataDescriptionValue}}
+            </option>
+            }
+          </select>
+          @if(customOfferRegisterForm.get('termDuration')?.errors?.required &&
+          customOfferRegisterForm.get('termDuration')?.touched){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      }
+      @if(customOfferRegisterForm.get('isTrialOffer')?.value !== true){
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="required fw-semibold fs-6" translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_BILLING_CYCLE"></label>
+        </div>
+        <div class="col-md-6">
+          <select class="form-select  form-select-sm fw-bold" (change)="billingCycleChange()"
+            formControlName="billingCycle" required>
+            <option value="" disabled selected>
+              {{
+              "TRANSLATE.CUSTOM_OFFERS_SELECT_BILLING_CYCLE" |
+              translate
+              }}
+            </option>
+            @for(option of billingCycles; track $index){
+            <option [value]="option.BillingCycleId">
+              {{'TRANSLATE.' + option.BillingCycleDescription | translate}}
+            </option>
+            }
+          </select>
+          @if(customOfferRegisterForm.get('billingCycle')?.errors?.required &&
+          customOfferRegisterForm.get('billingCycle')?.touched){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      }
+      @if(customOfferRegisterForm.get('isTrialOffer')?.value !== true){
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="required fw-semibold fs-6" translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_BILLING_Type"></label>
+        </div>
+        <div class="col-md-6">
+          <select class="form-select  form-select-sm fw-bold" (change)="billingCycleChange()"
+            formControlName="billingType" required>
+            @for(option of billingTypes; track $index){
+            <option [value]="option.BillingTypeId" [disabled]="isEditMode || isCategoryLicenseSupported">
+              {{'TRANSLATE.' + option.BillingTypeDescription | translate}}
+            </option>
+            }
+          </select>
+          @if(customOfferRegisterForm.get('billingType')?.errors?.required &&
+          customOfferRegisterForm.get('billingType')?.touched){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      }
+
+      @if(customOfferRegisterForm.get('isTrialOffer')?.value !== true &&
+      selectedConsumptionType?.Name?.toLowerCase() !== 'usage' && selectedCategory[0]?.Name !== 'LicenseSupported'
+      && HasAccessUserLicenseTracking === 'Denied'){
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="fw-semibold fs-6 mb-2"
+            translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_IMMEDIATE_PROVISONING"></label>
+        </div>
+        <div class="col-md-6">
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" formControlName="isImmediateProvisioning">
+          </div>
+        </div>
+      </div>
+      }
+      @if(customOfferRegisterForm.get('isTrialOffer')?.value !== true){
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="required fw-semibold fs-6" translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_SALE_TYPE"></label>
+        </div>
+        <div class="col-md-6">
+          <select class="form-select  form-select-sm fw-bold" formControlName="saleType">
+            @for(option of saleTypes; track $index){
+            <option [value]="option.ID">
+              {{option.Description | translate}}
+            </option>
+            }
+          </select>
+          @if(customOfferRegisterForm.get('saleType')?.errors?.required &&
+          customOfferRegisterForm.get('saleType')?.touched){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      }
+      @if((customOfferRegisterForm.get('isTrialOffer')?.value !== true) && (selectedBillingTypeName?.toLowerCase()
+      === 'price' || selectedBillingTypeName?.toLowerCase() == 'unit')){
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="required fw-semibold fs-6" translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_COST_PRICE"></label>
+          <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+            [ngbTooltip]="'TRANSLATE.CUSTOM_OFFERS_TOOLTIP_TEXT_COST_PRICE' | translate">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+        </div>
+        <div class="col-md-6">
+          <div class="input-group">
+            <span class="input-group-text">{{currencySymbol}}</span>
+            <input type="number" [disabled]="isEditMode" formControlName="costPrice"
+              class="form-control form-control-lg " />
+          </div>
+          @if(customOfferRegisterForm.get('costPrice')?.errors?.required &&
+          customOfferRegisterForm.get('costPrice')?.touched){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      }
+      @if((customOfferRegisterForm.get('isTrialOffer')?.value !== true) && (selectedBillingTypeName?.toLowerCase()
+      === 'price' || selectedBillingTypeName?.toLowerCase() == 'unit')){
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="required fw-semibold fs-6" translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_Sale_PRICE"></label>
+          <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+            [ngbTooltip]="'TRANSLATE.CUSTOM_OFFERS_TOOLTIP_TEXT_SALE_PRICE' | translate">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+        </div>
+        <div class="col-md-6">
+          <div class="input-group">
+            <span class="input-group-text">{{currencySymbol}}</span>
+            <input type="number" [disabled]="isEditMode" formControlName="salePrice"
+              class="form-control form-control-lg " />
+          </div>
+          @if(customOfferRegisterForm.get('salePrice')?.errors?.required &&
+          customOfferRegisterForm.get('salePrice')?.touched){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      }
+      @if(selectedBillingTypeName?.toLowerCase() === 'meteredbilling' &&
+      selectedConsumptionType?.Name?.toLowerCase() === 'usage'){
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="fw-semibold fs-6 mb-2 required" translate="TRANSLATE.PARTNER_OFFER_SLAB_DATA"></label>
+          <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+            ngbTooltip="{{'TRANSLATE.CONTRACT_OFFER_SLABDATA_TOOLTIP' | translate}}">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+        </div>
+        <div class="col-md-6">
+        <div class="table-container">
+          <table class="table table-striped table-hover table-bordered table-sm w-100" id="mytable">
+            <thead>
+              <tr>
+                <th style="text-align: center;" scope="col">
+                  <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_DISPLAY_NAME"></span>
+                </th>
+                <th style="text-align: right;" scope="col">
+                  <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_MINVALUE"></span>
+                </th>
+                <th style="text-align: right;" scope="col">
+                  <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_MAXVALUE"></span>
+                </th>
+                <th style="text-align: right;" scope="col">
+                  <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_COST_PRICE"></span>
+                </th>
+                <th style="text-align: right;" scope="col">
+                  <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_SELLING_PRICE"></span>
+                </th>
+                <th style="text-align: center;" scope="col">
+                  <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_TYPE"></span>
+                </th>
+                @if(!isEditMode){
+                <th style="text-align: center;" scope="col">
+                  <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_ACTIONS"></span>
+                </th>
+                }
+              </tr>
+            </thead>
+            <tbody *ngIf="!!formArray?.controls">
+              <tr formArrayName="slabData" *ngFor="let item of formArray.controls; let i = index">
+                <ng-container [formGroupName]="i">
+                  <td *ngIf="item?.get('isEditing')?.value">
+                    <!-- ajmal:todo: need to check -->
+                    <span *ngIf="item?.get('isEditing')?.value === false">
+                      {{ item?.get('DisplayName')?.value }}
+                    </span> 
+                    <input *ngIf="item?.get('isEditing')?.value"
+                      class="editable-input form-control input-sm form-control-sm" formControlName="DisplayName"
+                      type="text" [disabled]="isEditMode">
+                  </td>
+                  <td *ngIf="!item?.get('isEditing')?.value">
+                    <span *ngIf="!item?.get('isEditing')?.value">{{item?.get('DisplayName').getRawValue()}}</span>
+                  </td>
+                  <td style="text-align: right;">
+                    {{item?.get('MinValue').getRawValue()}}
+                  </td>
+                  <td style="text-align: right;">
+                    {{item?.get('MaxValue').getRawValue()}}
+                  </td>
+                  <td style="text-align: center;">
+                    <div class="d-flex align-items-center" *ngIf="item?.get('isEditing')?.value">
+                      <span>{{currencySymbol}}</span>
+                      <span style="text-align: right;"
+                        *ngIf="!item?.get('isEditing')?.value">{{item?.get('CostToPartner').getRawValue()}}</span>
+                      <input *ngIf="item?.get('isEditing')?.value"
+                        class="editable-input form-control input-sm form-control-sm" formControlName="CostToPartner"
+                        type="number" [disabled]="isEditMode">
+                    </div>
+                    <div class="text-end" *ngIf="!item?.get('isEditing')?.value">
+                      <span>{{currencySymbol}}</span>
+                      <span style="text-align: right;"
+                        *ngIf="!item?.get('isEditing')?.value">{{item?.get('CostToPartner').getRawValue()}}</span>
+                    </div>
+                  </td>
+                  <td style="text-align: center;">
+                    <div class="d-flex align-items-center" *ngIf="item?.get('isEditing')?.value">
+                      <span>{{currencySymbol}}</span>
+                      <span style="text-align: right;"
+                        *ngIf="!item?.get('isEditing')?.value">{{item?.get('SalePrice').getRawValue()}}</span>
+                      <input *ngIf="item?.get('isEditing')?.value"
+                        class="editable-input form-control input-sm form-control-sm" formControlName="SalePrice"
+                        type="number" [disabled]="isEditMode">
+                    </div>
+                    <div class="text-end" *ngIf="!item?.get('isEditing')?.value">
+                      <span>{{currencySymbol}}</span>
+                      <span style="text-align: right;"
+                        *ngIf="!item?.get('isEditing')?.value">{{item?.get('SalePrice').getRawValue()}}</span>
+                    </div>
+                  </td>
+                  <td class="col-md-3" style="text-align: center;">
+                    <select class="form-select form-select-sm fw-bold" [disabled]="isEditMode"
+                      formControlName="BillingTypeId">
+                      <option [value]="''">
+                        {{ 'TRANSLATE.SLAB_TYPE_SELECT_OPTION' | translate }}
+                      </option>
+                      @for(option of meteredBillingBillingTypes; track $index){
+                      <option [value]="option.BillingTypeId">
+                        {{option.BillingTypeDescription|translate}}
+                      </option>
+                      }
+                    </select>
+                  </td>
+                  @if(!isEditMode){
+                  <td class="d-flex justify-content-center ps-3">
+                    <a form="rowForm" class="btn btn-active-light-primary btn-sm tooltips"
+                      ngbTooltip="{{'TRANSLATE.PARTNER_CONTRACT_OFFERS_TOOLTIP_TEXT_SAVE' | translate}}"
+                      (click)="saveSlabTableData(item)" *ngIf="item?.get('isEditing')?.value">
+                      <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+                        <span class="ki-outline ki-file-added fs-6 text-primary"></span>
+                      </span>
+                    </a>
+                    <a form="rowForm" class="btn btn-active-light-primary btn-sm tooltips"
+                      ngbTooltip="{{'TRANSLATE.PARTNER_CONTRACT_OFFERS_TOOLTIP_TEXT_CANCEL' | translate}}"
+                      (click)="cancelSlabTableChanges(item, i)" *ngIf="item?.get('isEditing')?.value">
+                      <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+                        <span class="ki-outline ki-cross fs-6 text-primary"></span>
+                      </span>
+                    </a>
+                    <a form="rowForm" class="btn btn-active-light-primary btn-sm tooltips"
+                      ngbTooltip="{{'TRANSLATE.PARTNER_CONTRACT_OFFERS_TOOLTIP_TEXT_EDIT' | translate}}"
+                      (click)="editSlabTableData(item)" *ngIf="!item?.get('isEditing')?.value">
+                      <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+                        <span class="ki-outline ki-pencil fs-6 text-primary"></span>
+                      </span>
+                    </a>
+                    <a form="rowForm" class="btn btn-active-light-primary btn-sm tooltips"
+                      ngbTooltip="{{'TRANSLATE.PARTNER_CONTRACT_OFFERS_TOOLTIP_TEXT_ADD' | translate}}"
+                      *ngIf="!getSladdataEditing(item)" (click)="addGroup(i)">
+                      <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+                        <span class="ki-outline ki-plus fs-6 text-primary"></span>
+                      </span>
+                    </a>
+                    <a form="rowForm" class="btn btn-active-light-primary btn-sm tooltips"
+                      ngbTooltip="{{'TRANSLATE.PARTNER_CONTRACT_OFFERS_TOOLTIP_TEXT_DELETE' | translate}}"
+                      (click)="removeGroup(i)" *ngIf="!item?.get('isEditing')?.value && i != 0">
+                      <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg">
+                        <span class="ki-outline ki-trash fs-6 text-primary"></span>
+                      </span>
+                    </a>
+                  </td>
+                  }
+                </ng-container>
+              </tr>
+            </tbody>
+          </table>
+      </div>
+          
+        </div>
+      </div>
+      }
+      @if(customOfferRegisterForm.get('isTrialOffer')?.value !== true &&
+      selectedConsumptionType?.Name?.toLowerCase() === 'quantity' && selectedBillingCycle?.IsRecurring){
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="required fw-semibold fs-6"
+            translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_CHARGE_PERIODS"></label>
+          <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+            [ngbTooltip]="'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CHARGE_PERIODS_HELP_TEXT' | translate">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+        </div>
+        <div class="col-md-6">
+          <select class="form-select  form-select-sm fw-bold" formControlName="billingPeriodType">
+            @for(option of billingPeriodType; track $index){
+            <option [value]="option.ID">
+              {{option.NameKey | translate}}
+            </option>
+            }
+          </select>
+          @if(customOfferRegisterForm.get('billingPeriodType')?.errors?.required &&
+          customOfferRegisterForm.get('billingPeriodType')?.touched){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      }
+      @if(selectedBillingCycle?.IsRecurring && customOfferRegisterForm.get('isTrialOffer')?.value !== true){
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="required fw-semibold fs-6"
+            translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_ON_PURCHASE_BILLING_ACTION"></label>
+          <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+            [ngbTooltip]="'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_ON_PURCHASE_BILLING_ACTION_HELP_TEXT' | translate">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+        </div>
+        <div class="col-md-6">
+          <select class="form-select  form-select-sm fw-bold" formControlName="onPurchaseBillingActionName"
+            (change)="ChangeBillingActionsForPurchase()">
+            @for(option of BillingActionsForPurchase; track $index){
+            <option [value]="option.ID">
+              {{option.NameKey|translate}}
+            </option>
+            }
+          </select>
+          @if(customOfferRegisterForm.get('onPurchaseBillingActionName')?.errors?.required &&
+          customOfferRegisterForm.get('onPurchaseBillingActionName')?.touched){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      }
+      @if(selectedBillingCycle?.IsRecurring && customOfferRegisterForm.get('isTrialOffer')?.value !== true){
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="required fw-semibold fs-6"
+            translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_ON_RELEASE_BILLING_ACTION"></label>
+          <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+            [ngbTooltip]="'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_ON_RELEASE_BILLING_ACTION_HELP_TEXT' | translate">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+        </div>
+        <div class="col-md-6">
+          <select class="form-select  form-select-sm fw-bold" formControlName="onReleaseBillingActionName">
+            @for(option of BillingActionsForRelease; track $index){
+            <option [value]="option.ID">
+              {{option.NameKey|translate}}
+            </option>
+            }
+          </select>
+          @if(customOfferRegisterForm.get('onReleaseBillingActionName')?.errors?.required &&
+          customOfferRegisterForm.get('onReleaseBillingActionName')?.touched){
+          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+          }
+        </div>
+      </div>
+      }
+      @if(customOfferRegisterForm.get('isTrialOffer')?.value == true ||
+      selectedConsumptionType?.Name?.toLowerCase() !== 'usage' && selectedCategory[0]?.Name !==
+      'LicenseSupported'){
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="fw-semibold fs-6 mb-2" translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_AUTO_RENEWAL"></label>
+        </div>
+        <div class="col-md-6">
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" formControlName="isAutoRenewal">
+          </div>
+        </div>
+      </div>
+      }
+      @if(customOfferRegisterForm.get('isTrialOffer')?.value !== true &&
+      selectedConsumptionType?.Name.toLowerCase() === 'quantity' && selectedCategory[0]?.Name !==
+      'LicenseSupported'){
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="fw-semibold fs-6 mb-2" translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_BUNDLING"></label>
+        </div>
+        <div class="col-md-6">
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" formControlName="isAvailableForBundling">
+          </div>
+        </div>
+      </div>
+      }
+      @if(false){
+      <div class="form-group row mt-5">
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class=" fw-semibold fs-6 mb-2" translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_FEED_SOURCE">
+          </label>
+        </div>
+        <div class="col-md-6">
+          <select class="form-select  form-select-sm fw-bold" formControlName="feedSource">
+            @for(option of feedSource; track $index){
+            <option [value]="option.ID" [disabled]="isEditMode">
+              {{option.Name}}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+      }
+
+    </form>
+    }
+    <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3 mt-2">
+      <button type="button" class="btn btn-primary" [appPermission]="'SAVE_OR_UPDATE_PARTNER_OFFER'"
+        *ngIf="isSubmitEnable" (click)="saveCustomOffer()" appBusyLoader>
+        <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+      </button>
+    </div>
+  </div>

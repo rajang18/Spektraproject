@@ -1,0 +1,101 @@
+
+<div class="card card-border gutter-b" style="margin-bottom: 0px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px;padding-right: 10px;">
+    <div class="card-body p-3">
+        <div class="row">
+            <div class="col-md-10">
+                <div class="row">
+                    <div class="col-md-6">
+                        <span>
+                            <strong>{{product.Name}}</strong>
+                            @if (product.Settings && product.Settings.IsAddon?.toLowerCase() === 'true') {
+                                <span >
+                                    <sup class="text-warning fw-bold ms-2">
+                                        <span translate="TRANSLATE.PLAN_MANAGE_ADD_FORM_TABLE_1_HEADER_TEXT_OFFER_ADD_ON"></span></sup>
+                                </span>
+                            }
+                            
+                        </span>
+                        <div>
+                            @if (product.ValidityType!=null && product.ValidityType == 'Month(s)') {
+                            <span class="label label-warning font-weight-bold label-inline text-white badge bg-warning" aria-hidden="true" 
+                               ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}" > 
+                                {{product.Validity}}  
+                                {{ (product.Validity === 1 ? (product.ValidityType === 'Month(s)' ? 'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') : 'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                            </span>
+                            }
+                            @if (product.ValidityType === 'Year(s)' || product.ValidityType === 'Year') {
+                            <span class="label label-dark font-weight-bold label-inline text-white badge bg-warning" aria-hidden="true"  [ngClass]="{'labelcolor':product.BillingCycleName == 'Monthly','TermLabelColor': product.BillingCycleName == 'Annual'}" 
+                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                {{product.Validity}} 
+                                {{ (product.Validity === 1 ? (product.ValidityType === 'Month(s)' ? 'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') : 'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                                 
+                            </span>
+                            }
+                            <span class="label fw-bold label-inline text-white badge ms-md-2" [ngClass]="{
+                                'bg-warning': product.BillingCycleName?.toLowerCase() === 'monthly',
+                                'bg-success': product.BillingCycleName?.toLowerCase() === 'annual',
+                                'bg-dark': product.BillingCycleName?.toLowerCase() === 'triennial',
+                                'bg-info': product.BillingCycleName?.toLowerCase() === 'onetime'
+                                }" aria-hidden="true"
+                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}" placement="top"> 
+                                {{'TRANSLATE.'+product.BillingCycleDescriptionKey | translate}} 
+                            </span>
+                            <span class="label label-light-info font-weight-bold label-inline badge" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}" placement="top">
+                                {{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE' | translate}} 
+                            </span>
+                            @if(product.ProviderSettings && product.ProviderSettings?.ProviderCategory){
+                                <span class="label label-light-primary font-weight-bold badge " placement="top"
+                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_SERVICE_TYPE' | translate}}"> 
+                                {{product.ProviderSettings.ProviderCategory | translate}}
+                                </span>
+                            }
+                            @if(product.MarketCode){
+                                <span class="badge badge-info" ngbTooltip="{{product.MarketRegion}}" >{{product.MarketCode}}</span>
+                            }
+                            @if(product.IsEST){
+                                <span class="badge EST-Pill-styling text-white " ngbTooltip="{{'TRANSLATE.CATEGORY_PILL_EST_TOOLTIP' | translate }}" >{{ 'TRANSLATE.CATEGORY_PILL_NAME_EST' | translate}}</span>
+                            }
+                            @if(product.ShowPromotionLink){
+                                <span ngbTooltip="{{'TRANSLATE.NCE_PROMOTIONS_AVAILABLE_TEXT' | translate}}" (click)="viewPromotion(product)" class="font-weight-normal  separator-primary text-primary cursor-pointer ms-md-2">
+                                    <span><i class="ki-outline ki-discount text-primary"></i></span>
+                                </span>
+                            }
+                            @if(product.ProviderSettings && product.ProviderSettings.EnforceAttestation == 'TRUE'){
+                            <span  ngbTooltip="{{'MICROSOFT_ATTESTATION_TYPE_TOOLTIP' | translate}}{{product.ProviderSettings.AttestationType | translate}}" class="font-weight-normal  separator-primary text-primary cursor-pointer ms-md-2">
+                                <span><i class="ki-outline ki-verify text-primary"></i></span>
+                            </span>
+                            }
+                            @if(product.PlanProductMacroName != null){
+                                <span  class="label label-light-warning font-weight-bold badge" ngbTooltip="{{'PLAN_MACRO_DETAILS_LABEL_TEXT' | translate}}"> 
+                                    {{'TRANSLATE.'+product.PlanProductMacroName | translate}}
+                                    @if(product.PlanProductMacroValue != null && product.PlanProductMacroValue != 0){
+                                        <span >({{'TRANSLATE.'+product.PlanProductMacroValue | translate}})</span>
+                                    }
+                                </span>
+                            }
+                        </div>
+                    </div>  
+                    <div class="col-md-3 col-6 col-sm-6 text-end text-sm-left mt-2 mt-sm-2 mt-lg-0 mt-xl-0">
+                        <span>{{ 'TRANSLATE.LABLE_TEXT_COST_TO_PARTNER' | translate}}</span>
+                        <br />
+                        <strong>{{product.PriceforPartner  | CurrencyFilter : product.CurrencySymbol :
+                            product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                            product.CurrencyDecimalSeperator }}</strong>
+                    </div>
+                    <div class="col-md-3 col-6 col-sm-6 text-end mt-2 mt-sm-2 mt-lg-0 mt-xl-0">
+                        <span>{{'TRANSLATE.LABEL_TEXT_RETAIL_PRICE' | translate}}</span>
+                        <br />
+                        <strong>{{product.ProviderSellingPrice  | CurrencyFilter : product.CurrencySymbol :
+                            product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                            product.CurrencyDecimalSeperator}}</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mt-2 text-end"  [appPermission]="'SAVE_PLAN'" [hidden]="!showAddButton">
+                <a class="btn btn-sm btn-primary" (click)="callOnAction(product, 'addtoplan')">
+                    {{'TRANSLATE.BUTTON_TEXT_ADD' | translate}}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

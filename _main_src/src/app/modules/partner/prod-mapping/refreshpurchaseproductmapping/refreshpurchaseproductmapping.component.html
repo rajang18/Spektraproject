@@ -1,0 +1,91 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="backToSubscriptionHistory()">
+            <i class="ki-outline ki-to-left fs-2"></i>
+            <span translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_BTN_TEXT_BACK_TO_SUBSCRIPTION_HISTORY"></span>
+        </button>
+    </div>
+</ng-template>
+<div class="card">
+    <div class="card-body pt-0 overflow-auto">
+        @if(!isDataLoaded){
+        @if (!isRefreshInprocess) {
+        <div class="pt-5">
+            <p>
+                <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_HEADER_TEXT_LAST_REFRESHED_ON"></span>:<strong>
+                    {{lastRefreshedOn | minutesToTimepassed}}</strong>
+            </p>
+        </div>
+        }
+        }
+        <div class="m-heading-1 border-green m-bordered">
+            @if(!isDataLoaded){
+            @if (!isRefreshInprocess) {
+
+            <div
+                class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6 mt-5 ng-star-inserted">
+
+                <div class="row m-heading-1 border-green m-bordered">
+
+                    <p style="padding-left: 10px;font-size: 15px;">
+                        <strong>
+                            <span class="ng-scope" translate="TRANSLATE.INSTRUNCTION_PSA_REFRESH_BUTTON"></span>
+                        </strong>
+                    </p>
+                    <ol class="ps-10 pt-4">
+                        <li>
+                            <span class="ng-scope" translate-compile=""
+                                translate="TRANSLATE.INSTRUNCTION_PSA_REFRESH_BUTTON_POINT1"></span>
+                        </li>
+                        <li>
+                            <span class="ng-scope" translate="TRANSLATE.INSTRUNCTION_PSA_REFRESH_BUTTON_POINT2"></span>
+                        </li>
+                        <li>
+                            <span class="ng-scope" translate="TRANSLATE.INSTRUNCTION_PSA_REFRESH_BUTTON_POINT3"></span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.INSTRUNCTION_PSA_REFRESH_BUTTON_POINT4" class="ng-scope"> </span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.INSTRUNCTION_PSA_REFRESH_BUTTON_POINT5" class="ng-scope"> </span>
+                        </li>
+                        <li [appPermission]="'REFRESH_EXTERNAL_ENTITY_LIST_IN_LOCAL'">
+                            <span [innerHTML]="'TRANSLATE.INSTRUNCTION_PSA_REFRESH_BUTTON_POINT6' | translate"
+                                translate-compile class="ng-scope"> </span>
+                            <button type="button" class="btn btn-sm fw-bold btn-primary" (click)="onRefresh()">
+                                <span translate="TRANSLATE.BUTTON_INSTRUNCTION_PSA_REFRESH_BUTTON"></span>
+                            </button>
+                            <span [innerHTML]="'TRANSLATE.INSTRUNCTION_PSA_REFRESH_BUTTON_POINT7' | translate"
+                                translate-compile class="ng-scope"></span>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+            }
+            @else{
+            <div class="form-group bs-callout bs-callout-info ng-scope">
+                <div
+                    class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6 mt-10 ng-star-inserted">
+                    <div class="row m-heading-1 border-green m-bordered">
+                        <div class="col-md-12 control-label">
+                            <i class="fas fa-spinner fa-spin"></i> &nbsp;
+                            {{'TRANSLATE.PSA_REFRESH_LOCAL_ENTITY_MAAPING_INPROGRESS_MESSAGE' | translate}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+            }
+            @else {
+            <div class="row m-5">
+                <div class="col-md-12">
+                    <!--<i class="fas fa-spinner fa-spin"></i> &nbsp; {{'PSA_REFRESH_LOCAL_ENTITY_MAAPING_LOADING_MESSAGE' | translate}}-->
+                    <!--<span translate="PSA_REFRESH_LOCAL_ENTITY_MAAPING_INPROGRESS_MESSAGE" class="ng-scope" />-->
+                    <h3>Loading ...</h3>
+                </div>
+            </div>
+
+            }
+        </div>
+    </div>
+</div>

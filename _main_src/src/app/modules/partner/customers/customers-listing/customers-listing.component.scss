@@ -1,0 +1,8 @@
+::ng-deep {
+    app-customers-listing {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}
+

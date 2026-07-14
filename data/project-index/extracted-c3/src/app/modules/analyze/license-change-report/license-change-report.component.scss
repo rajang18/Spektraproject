@@ -1,0 +1,7 @@
+::ng-deep {
+    app-license-change-report {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}

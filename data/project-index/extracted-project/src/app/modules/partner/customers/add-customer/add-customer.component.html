@@ -1,0 +1,287 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-semibold btn-light-primary" (click)="backToCustomers()">
+            <i class="ki-outline ki-to-left fs-2"></i><span
+                translate="TRANSLATE.PARTNER_CUSTOMER_PLANS_BTN_TEXT_BACK_TO_CUSTOMERS"></span>
+        </button>
+    </div>
+</ng-template>
+<div class="add-customer-container">
+    <div class="card custom-card">
+        <!-- <div class="card-header ">
+            <span class="fw-semibold fs-3 d-flex align-items-center"
+                translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_BUTTON_TEXT_ADD_CUSTOMER"></span>
+        </div> -->
+        <div class="card-body">
+            <form [formGroup]="customerRegisterForm">
+                <div class="form-group row">
+                    <div class="col-md-4">
+                        <label class="required fw-semibold fs-6 mb-2">Plan</label>
+                        <!-- <select class="form-select  form-select-sm " formControlName="plan">
+                            <option value="">{{'TRANSLATE.ADD_CUSTOMER_PLEASE_SELECT_A_PLAN' | translate}}</option>
+                            @for(plan of plansData; track $index){
+                            <option [value]="plan?.ID">{{plan?.Name}}</option>
+                            }
+                        </select> -->
+                        <ng-select formControlName="plan"
+                            placeholder="{{'TRANSLATE.ADD_CUSTOMER_PLEASE_SELECT_A_PLAN' |translate}}">
+                            <ng-option value="">{{'TRANSLATE.ADD_CUSTOMER_PLEASE_SELECT_A_PLAN' |
+                                translate}}</ng-option>
+                            @for (plan of plansData; track $index) {
+                            <ng-option [value]="plan?.ID">{{plan?.Name}}</ng-option>
+                            }
+                        </ng-select>
+                        @if(customerRegisterForm.get('plan')?.errors?.required &&
+                        customerRegisterForm.get('plan')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div>
+                    <div class="col-md-4">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_CUSTOMER_CURRENCY_CODE"></label>
+                        <!-- <select class="form-select  form-select-sm " formControlName="customerCurrencyCode">
+                            <option value="">{{'TRANSLATE.ADD_CUSTOMER_PLEASE_SELECT_A_CURRENCY_CODE' | translate}}
+                            </option>
+                            @for(currency of supportedCurrenciesData; track $index){
+                            <option [value]="currency?.CurrencyCode">{{currency?.CurrencyCode}}</option>
+                            }
+                        </select> -->
+                        <ng-select formControlName="customerCurrencyCode"
+                            placeholder="{{'TRANSLATE.ADD_CUSTOMER_PLEASE_SELECT_A_CURRENCY_CODE' |translate}}">
+                            <ng-option value="">{{'TRANSLATE.ADD_CUSTOMER_PLEASE_SELECT_A_CURRENCY_CODE' | translate}}
+                            </ng-option>
+                            @for (currency of supportedCurrenciesData; track $index) {
+                            <ng-option [value]="currency?.CurrencyCode">{{currency?.CurrencyCode}}</ng-option>
+                            }
+                        </ng-select>
+                        @if(customerRegisterForm.get('customerCurrencyCode')?.errors?.required &&
+                        customerRegisterForm.get('customerCurrencyCode')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div>
+                    <!-- <div class="col-md-4">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_COMPANY_NAME"></label>
+                        <input type="text"
+                            placeholder="{{'TRANSLATE.ADD_CUSTOMER_PLEASE_ENTER_THE_COMPANY_NAME' | translate}}"
+                            class="form-control form-control-sm " formControlName="companyName">
+                        @if(customerRegisterForm.get('companyName')?.errors?.required &&
+                        customerRegisterForm.get('companyName')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div> -->
+                </div>
+
+                <div class="mb-5 mt-7">
+                    <span class="fw-semibold fs-3 d-flex align-items-center"
+                        translate="TRANSLATE.ONBOARD_NEW_CUSTOMER_HEADING_PRIMARY_ACCOUNT_DETAILS_TEXT">
+                    </span>
+                </div>
+                <hr>
+                <div class="form-group row mt-7">
+                    <div class="col-md-4">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_FIRST_NAME"></label>
+                        <input type="text"
+                            placeholder="{{'TRANSLATE.ADD_CUSTOMER_PLEASE_ENTER_THE_FIRST_NAME' | translate}}"
+                            class="form-control form-control-sm " formControlName="firstName">
+                        @if(customerRegisterForm.get('firstName')?.errors?.required &&
+                        customerRegisterForm.get('firstName')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> }
+                        @if(customerRegisterForm.get('firstName')?.errors?.minlength){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_MIN_LENGTH_3"></span> }
+                        @if(customerRegisterForm.get('firstName')?.errors?.maxlength &&
+                        customerRegisterForm.get('firstName')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_MAX_LENGTH_50"></span> }
+                    </div>
+                    <div class="col-md-4">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_LAST_NAME"></label>
+                        <input type="text"
+                            placeholder="{{'TRANSLATE.ADD_CUSTOMER_PLEASE_ENTER_THE_LAST_NAME' | translate}}"
+                            class="form-control form-control-sm " formControlName="lastName">
+                        @if(customerRegisterForm.get('lastName')?.errors?.required &&
+                        customerRegisterForm.get('lastName')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                        @if(customerRegisterForm.get('lastName')?.errors?.minlength){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_MIN_LENGTH_3"></span> }
+                        @if(customerRegisterForm.get('lastName')?.errors?.maxlength &&
+                        customerRegisterForm.get('lastName')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_MAX_LENGTH_50"></span> }
+                    </div>
+                </div>
+                <div class="form-group row mt-7">
+                    <div class="col-md-4">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_EMAIL"></label>
+                        <input type="text"
+                            placeholder="{{'TRANSLATE.ADD_CUSTOMER_PLEASE_ENTER_THE_EMAIL_ADDRESS' | translate}}"
+                            class="form-control form-control-sm " formControlName="email"
+                            (blur)="onEmailAddressChange()">
+                        @if(customerRegisterForm.get('email')?.errors?.required &&
+                        customerRegisterForm.get('email')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                        @if(customerRegisterForm.get('email')?.errors?.invalidEmail &&
+                        customerRegisterForm.get('email')?.touched &&
+                        !customerRegisterForm.get('email')?.errors?.required){
+                        <span class="text-danger"
+                            translate="TRANSLATE.VALIDATION_MESSAGE_PLEASE_ENTER_A_VALID_EMAIL"></span>
+
+                        }
+                    </div>
+                    <div class="col-md-4">
+                        <label class=" fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_PHONE_NUMBER"></label>
+                            <input type="text"
+                            placeholder="{{'TRANSLATE.ADD_CUSTOMER_PLEASE_ENTER_THE_PHONE_NUMBER' | translate}}"
+                            class="form-control form-control-sm " formControlName="phoneNumber">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_COMPANY_NAME"></label>
+                        <input type="text"
+                            placeholder="{{'TRANSLATE.ADD_CUSTOMER_PLEASE_ENTER_THE_COMPANY_NAME' | translate}}"
+                            class="form-control form-control-sm " formControlName="companyName">
+                        @if(customerRegisterForm.get('companyName')?.errors?.required &&
+                        customerRegisterForm.get('companyName')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div>
+                </div>
+                <div class="form-group row mt-7">
+                    <div class="col-md-12">
+                        <div class="input-group-with-checkbox">
+                            <label class="form-check form-check-inline  me-5"><input type="checkbox"
+                                    class="form-check-input" formControlName="checkbox1"><span
+                                    class="fw-semibold ps-2 fs-6 text-gray-700"
+                                    translate="TRANSLATE.ADD_NEW_CUSTOMER_LBL_TEXT_GRANT_ACCESS_TO_THE_PRIMARY_CONTACT">
+                                </span></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row mt-7">
+                    <div class="col-md-12">
+                        <div class="input-group-with-checkbox">
+                            <label class="form-check form-check-inline  me-5"><input type="checkbox"
+                                    class="form-check-input" formControlName="checkbox2"><span
+                                    class="fw-semibold ps-2 fs-6 text-gray-700"
+                                    translate="TRANSLATE.ADD_NEW_CUSTOMER_LBL_TEXT_SEND_INVITATION_TO_ACCESS_THE_APPLICATION">
+                                </span></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row mt-7">
+                    <div class="col-md-4">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.LABEL_TEXT_ADDRESS_1"></label>
+                        <input type="text"
+                            placeholder="{{'TRANSLATE.ADD_CUSTOMER_PLEASE_ENTER_THE_ADDRESS1' | translate}}"
+                            class="form-control form-control-sm " formControlName="addressOne">
+                        @if(customerRegisterForm.get('addressOne')?.errors?.required &&
+                        customerRegisterForm.get('addressOne')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                        @if(customerRegisterForm.get('addressOne')?.errors?.maxlength &&
+                        customerRegisterForm.get('addressOne')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_CUSTOMER_ADDRESS_1_MAX_LENGTH_256"></span> }
+                    </div>
+                    <div class="col-md-4">
+                        <label class=" fw-semibold fs-6 mb-2" translate="TRANSLATE.LABEL_TEXT_ADDRESS_2"></label>
+                        <input type="text"
+                            placeholder="{{'TRANSLATE.ADD_CUSTOMER_PLEASE_ENTER_THE_ADDRESS2' | translate}}"
+                            class="form-control form-control-sm " formControlName="addressTwo">
+                        @if(customerRegisterForm.get('addressTwo')?.errors?.maxlength &&
+                        customerRegisterForm.get('addressTwo')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_CUSTOMER_ADDRESS_2_MAX_LENGTH_256"></span> }
+                    </div>
+                    <div class="col-md-4">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_CITY"></label>
+                        <input type="text" placeholder="{{'TRANSLATE.ADD_CUSTOMER_PLEASE_ENTER_THE_CITY' | translate}}"
+                            class="form-control form-control-sm " formControlName="city">
+                        @if(customerRegisterForm.get('city')?.errors?.required &&
+                        customerRegisterForm.get('city')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div>
+                </div>
+                <div class="form-group row mt-7">
+                    <div class="col-md-4">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.ADD_CUSTOMER_LABEL_TEXT_COUNTRY"> </label>
+                        <!-- <select class="form-select  form-select-sm " formControlName="country"
+                            (change)="getStatesByCountryCode()">
+                            <option value="" translate="TRANSLATE.ADD_CUSTOMER_PLEASE_SELECT_A_COUNTRY"></option>
+                            @for(country of countriesData; track $index){
+                            <option [value]="country.Code">{{country?.Name}}</option>
+                            }
+                        </select> -->
+                        <ng-select formControlName="country"
+                            placeholder="{{'TRANSLATE.ADD_CUSTOMER_PLEASE_SELECT_A_COUNTRY' | translate}}"
+                            (change)="getStatesByCountryCode()" [searchFn]="searchFn" [items]="countriesData"
+                            bindLabel="Name" bindValue="Code" [clearable]="true">
+                        </ng-select>
+                        @if(customerRegisterForm.get('country')?.errors?.required &&
+                        customerRegisterForm.get('country')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div>
+                    <div class="col-md-4">
+                        <label class="control-label mb-2">
+                            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_STATE"></span>
+                            @if (statesData?.[0]?.IsStateProvinceMandatory) {
+                            <span class="text-danger">*</span>
+                            }
+                        </label>
+                        @if(customerRegisterForm.get('country')?.value === ''|| !isStateDataAvailable){
+                        <input type="text" placeholder="{{'TRANSLATE.ADD_CUSTOMER_PLEASE_SELECT_A_STATE' | translate}}"
+                            class="form-control form-control-sm" formControlName="state">
+                        }
+                        @else if(!!isStateDataAvailable) {
+                        <ng-select formControlName="state">
+                            <ng-option value="" translate="TRANSLATE.ADD_CUSTOMER_PLEASE_SELECT_A_STATE"></ng-option>
+                            @for(state of statesData; track $index){
+                            <ng-option [value]="state.StateCode">{{state?.Name}}</ng-option>
+                            }
+                        </ng-select>
+                        <!-- <ng-select formControlName="state"
+                        [placeholder]="_translateService.instant('TRANSLATE.ADD_CUSTOMER_PLEASE_SELECT_A_COUNTRY')"
+                        [searchFn]="searchStateFn" [items]="statesData" bindLabel="Name" bindValue="Name"
+                            [clearable]="true">
+                        </ng-select> -->
+                        }
+                        @if(customerRegisterForm.get('state')?.errors?.required &&
+                        customerRegisterForm.get('state')?.touched && statesData?.[0]?.IsStateProvinceMandatory){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div>
+                    <div class="col-md-4">
+                        <label class="required fw-semibold fs-6 mb-2"
+                            translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_ZIP"></label>
+                        <input type="text"
+                            placeholder="{{'TRANSLATE.ADD_CUSTOMER_PLEASE_ENTER_A_ZIP_CODE' | translate}}"
+                            class="form-control form-control-sm " formControlName="zip">
+                        @if(customerRegisterForm.get('zip')?.errors?.required &&
+                        customerRegisterForm.get('zip')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div>
+                </div>
+            </form>
+
+        </div>
+        @if(customerRegisterForm.get('plan')?.value !== ''){
+        <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3">
+            <button type="button" class="btn btn-sm btn-light btn-active-light-primary" (click)="backToCustomers()">
+                {{'TRANSLATE.BUTTON_TEXT_CANCEL' | translate}}
+            </button>
+            <button type="button" class="btn btn-sm btn-primary" (click)="submitForm()" appBusyLoader>
+                {{'TRANSLATE.BUTTON_TEXT_SUBMIT' |translate}}
+            </button>
+        </div>
+        }
+
+    </div>
+</div>

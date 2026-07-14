@@ -1,0 +1,7 @@
+::ng-deep {
+    app-azure-reports-by-tag-popup {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}

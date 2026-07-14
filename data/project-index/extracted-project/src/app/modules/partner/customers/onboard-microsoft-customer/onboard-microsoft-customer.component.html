@@ -1,0 +1,698 @@
+<div class="mt-5">
+  <div>
+    @if (pageVisibleList.indexOf('BasicDetails') >= 0 && !(entityName ==='Reseller' && (hasSupportForResellersWithMPNID
+    === 'Yes' && canProceedForOnboardingResellerCustomer === false))) {
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <h5 class="caption-subject fw-semibold uppercase text-primary">
+          <span translate="TRANSLATE.CUSTOMER_ONBOARDING_HEADER_TEXT_BASIC_DETAILS"></span>
+        </h5>
+      </div>
+      <div class="col-md-6 text-end">
+        <a class="btn btn-primary btn-sm" (click)="downloadNonOnboardedCustomerData()">
+          <i class="ki-outline ki-exit-down fs-3"></i>
+          <span translate="TRANSLATE.DOWNLOAD_NON_ONBOARDED_CUSTOMERS"></span>
+        </a>
+      </div>
+      @if(onboardCustomerModel.ProviderId !== null){
+      <div class="form-body col-md-12 mt-4">
+        <form role="form" name="frmCustomerBasicDetails" [formGroup]="formGroupCustomerBasicDetails">
+          <!--Provider Customer Id-->
+          @if ((entityName === 'Partner' || (entityName === 'Reseller' && hasSupportForResellersWithMPNID === 'Yes' &&
+          canProceedForOnboardingResellerCustomer === true))) {
+          <div class="form-group row"
+            ng-class="{'has-error':( vm.frmCustomerBasicDetails.$submitted || vm.frmCustomerBasicDetails.ProviderCustomerId.$dirty) &amp;&amp; vm.frmCustomerBasicDetails.ProviderCustomerId.$error.required}">
+            <label class="col-form-label col-md-2 text-start">
+              <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_CUSTOMER_ID"></span>
+              <span class="text-danger">*</span>
+              <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                ngbTooltip="{{'TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_PROVIDER_CUSTOMER_ID' | translate}}">
+                <span class="path1"></span>
+                <span class="path2"></span>
+                <span class="path3"></span>
+              </i>
+            </label>
+            <div class="col-md-5">
+              <!--pls do not add inline width to ui-select gives problems in mobile devices -->
+             <ng-select formControlName="selectedProviderCustomer" name="selectedProviderCustomer"
+                [readonly]="loadingCSPCustomers || lookingUpCustomerDetails" [items]="filterednonOnboardedCustomers"
+                (change)="selectNonOnboardedCustomer()"
+                (scrollToEnd)="fetchMore()"
+                placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_PROVIDER_CUSTOMERS_DROPDOWN'| translate}}"
+                [typeahead]="searchCustomer"
+                (search)="onSearch($event)"
+                #select>
+                @if (getFormControlValue(formGroupCustomerBasicDetails,'selectedProviderCustomer') !== null &&
+                getFormControlValue(formGroupCustomerBasicDetails,'selectedProviderCustomer') !== '') {
+              <ng-template ng-label-tmp let-row="item" let-search="searchTerm">
+              <span>{{ row.CompanyName }} ({{ row.TenantId }})</span>
+              </ng-template>
+                }
+                <ng-template ng-option-tmp let-row="item" let-search="searchTerm">
+                  <div>
+                    <div>
+                      <span>{{ row.CompanyName }}</span>
+                    </div>
+                    <div ng-bind-html="person.TenantId | highlight: $select.search">
+                      {{ row.TenantId }}
+                    </div>
+                    <div ng-bind-html="person.Domain | highlight: $select.search">
+                      {{ row.Domain }}
+                    </div>
+                  </div>
+                </ng-template>
+              </ng-select>
+
+              @if (loadingCSPCustomers) {
+              <span>
+                <span class="spinner-border spinner-border-sm text-primary" role="status"> 
+                  <span class="sr-only">&nbsp;{{'TRANSLATE.LOADING_MESSAGE' | translate}}</span>
+                </span>
+                &nbsp;
+                <span translate="TRANSLATE.ONBOARDING_THE_MICROSOFT_CUSTOMER_LOADING_PROVIDER_CUSTOMERS"></span>
+              </span>
+              }
+
+              @if (lookingUpCustomerDetails) {
+              <span>
+                <span class="spinner-border spinner-border-sm text-primary" role="status">
+                  <span class="sr-only">&nbsp;{{'TRANSLATE.LOADING_MESSAGE' | translate}}</span>
+                </span>
+                &nbsp;
+                <span translate="TRANSLATE.ONBOARDING_THE_MICROSOFT_CUSTOMER_LOOKING_UP_CUSTOMER_DETAILS_IN_C3"></span>
+              </span>
+              }
+
+              @if (loadingSubscriptions) {
+              <span>
+                <span class="spinner-border spinner-border-sm text-primary" role="status"> </span>
+                <span class="desc text-gray-500"
+                  translate="TRANSLATE.ONBOARDING_THE_MICROSOFT_CUSTOMER_LOADING_MESSAGE_FOR_MAPPING_PRODUCTS"></span>
+              </span>
+              }
+
+              @if (loadingPlans) {
+              <span>
+                <span class="spinner-border spinner-border-sm text-primary" role="status"> </span>
+                <span translate="TRANSLATE.ONBOARDING_THE_MICROSOFT_CUSTOMER_LOADING_MESSAGE_PLAN"></span>
+              </span>
+              }
+            </div>
+          </div>
+          }
+
+          <!--Provider Customer Id-->
+          @if ((entityName === 'Reseller' && hasSupportForResellersWithMPNID ==='No')) {
+          <div class="form-group row"
+            ng-class="{'has-error':vm.frmCustomerBasicDetails.$submitted &amp;&amp; vm.frmCustomerBasicDetails.CustomerDetails_TenantId.$error.required}">
+            <label class="col-md-2 control-label text-start fw-semibold">
+              <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_CUSTOMER_ID"></span><span class="text-danger">
+                *</span>
+            </label>
+            <div class="col-md-5">
+              <div class="input-group">
+                <input class="form-control form-control-sm" type="text"
+                  ng-model="vm.onboardCustomerModel.ProviderCustomerId" formControlName="providerCustomerId"
+                  name="CustomerDetails_TenantId" required />
+                <button class="btn btn-success btn-sm" (click)="lookUpCustomerDetails()" style="float: end">
+                  {{"TRANSLATE.CUSTOMER_ONBOARDING_BUTTON_TEXT_LOOKUP"| translate}}
+                </button>
+              </div>
+              @if(formGroupCustomerBasicDetails.get('providerCustomerId')?.errors?.required &&
+              formGroupCustomerBasicDetails.get('providerCustomerId')?.touched){
+              <span class="text-danger">
+                <span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+              </span>
+              }
+            </div>
+          </div>
+          }
+        </form>
+
+        <!--<div class="row">&nbsp;</div>-->
+      </div>
+      }
+    </div>
+    }
+    @if (pageVisibleList.indexOf('BasicDetails') >= 0 && onboardCustomerModel.ProviderId !== null && (entityName ===
+    'Reseller' && (hasSupportForResellersWithMPNID === 'Yes' && canProceedForOnboardingResellerCustomer === false))) {
+    <div class="row">
+      <div class="col-md-12">
+        <div class="bs-callout bs-callout-warning">
+          <h4 class="block"
+            translate="TRANSLATE.BULK_ONBOARDING_MICROSOFT_CSP_CUSTOMERS_IS_NOT_ALLOWED_FOR_RESELLER_TITLE"></h4>
+          <p translate="TRANSLATE.BULK_ONBOARDING_MICROSOFT_CSP_CUSTOMERS_IS_NOT_ALLOWED_FOR_RESELLER"></p>
+        </div>
+      </div>
+    </div>
+    }
+
+    <!---- Plans and currency area ---->
+    @if (pageVisibleList.indexOf('PlanDetails') >= 0) {
+    <div class="row ms-0 mt-8">
+
+      @if (customerC3Id === null) {
+      <h5 class="caption-subject fw-semibold text-primary uppercase ms-0 px-0">
+        <span translate="TRANSLATE.CUSTOMER_ONBOARDING_HEADER_TEXT_PLAN_DETAILS"></span>
+      </h5>
+      }
+
+      @if (customerC3Id === null && false) {
+      <hr />
+      }
+
+      <form class="form-horizontal col-md-12 mb-3 px-0" role="form" name="vm.frmCustomerOnboardingPlans"
+        [formGroup]="formGroupCustomerOnboardingPlans">
+        <div class="form-body">
+          @if (customerC3Id === null) {
+          <div class="form-group mb-4 row">
+            <label class="col-form-label col-lg-2 col-md-2 col-sm-auto">
+              <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_CUSTOMER_CURRENCY_CODE"></span><span
+                class="text-danger"> *</span>
+            </label>
+            <div class="col-md-5">
+              <ng-select formControlName="selectedCurrencyCode" name="selectedCurrencyCode"
+                [readonly]="loadingSubscriptions"
+                placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_CURRENCY_CODE_DROPDOWN' | translate }}"
+                (change)="onCurrencyChange()">
+                @for (item of partnerSupportedCurrencies; track $index) {
+                <ng-option [value]="item">{{ item.CurrencyCode }}</ng-option>
+                }
+              </ng-select>
+            </div>
+          </div>
+          }
+
+          @if (customerC3Id === null) {
+          <div class="form-group mb-4 row">
+            <label class="col-form-label col-lg-2 col-md-2 col-sm-auto">
+              <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_PLAN"></span><span class="text-danger"> *</span>
+            </label>
+            <div class="col-md-5">
+              <ng-select formControlName="selectedPlan" [readonly]="loadingSubscriptions" name="selectedPlan"
+                placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_INPUT_FIELD_TO_SEARCH_A_PLAN'| translate}}"
+                (change)="onPlanChange()">
+                @for (item of plans; track $index) {
+                <ng-option [value]="item">{{ item.Name }}</ng-option>
+                }
+              </ng-select>
+
+
+              @if (loadingSubscriptions) {
+              <span class="desc color-secondary"
+                translate="TRANSLATE.ONBOARDING_THE_MICROSOFT_CUSTOMER_LOADING_MESSAGE_FOR_MAPPING_PRODUCTS"></span>
+              }
+            </div>
+          </div>
+          }
+          @if (false) {
+          <div class="input-group-with-checkbox form-check mb-2">
+            <label class="checkbox checkbox-outline checkbox-outline-2x control-label">
+              &nbsp;
+              <input class="form-check-input" type="checkbox" formControlName="isProductSharable"
+                (click)="defineProductSubscriptionType()" />
+              <span></span>
+            </label>
+            <span class="" translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_IS_PRODUCT_SHAREABLE"></span>
+          </div>
+          }
+
+          <div class="col-md-12">
+            <router-outlet></router-outlet>
+          </div>
+
+          <!-- <div ui-view="" class="col-md-12"></div> -->
+        </div>
+      </form>
+    </div>
+    }
+    <!---- formGroupCustomerOnboardingPlans End ----->
+
+    <!-- formGroupCustomerDetails form -->
+    @if (pageVisibleList.indexOf('CustomerDetails') >= 0) {
+    <div class="row mt-3">
+      <div class="col-md-12">
+        <h5 class="caption-subject bold text-primary uppercase">
+          <span translate="TRANSLATE.CUSTOMER_ONBOARDING_HEADER_TEXT_CUSTOMER_DETAILS"></span>
+        </h5>
+        <hr class="custom-class">
+        <form class="form" role="form" name="vm.frmCustomerDetails" [formGroup]="formGroupCustomerDetails">
+          <div class="form-body">
+            <!--FirstName, LastName-->
+            <div class="row mt-7">
+              <div class="col-md-4">
+                <div class="form-group"
+                  ng-class="{'has-error':vm.frmCustomerDetails.$submitted &amp;&amp; vm.frmCustomerDetails.onboardCustomerModel_FirstName.$error.required}">
+                  <label class="control-label mb-2">
+                    <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_FIRST_NAME"></span>
+                    <span class="text-danger">*</span>
+                  </label>
+                  <input type="text" ng-model="vm.ProviderCustomer.FirstName" formControlName="firstName"
+                    class="form-control form-control-sm" name="onboardCustomerModel_FirstName" required />
+
+                  @if(formGroupCustomerDetails.get('firstName')?.errors?.required &&
+                  formGroupCustomerDetails.get('firstName')?.touched) {
+                  <span
+                    ng-show="vm.frmCustomerDetails.$submitted &amp;&amp; vm.frmCustomerDetails.onboardCustomerModel_FirstName.$error.required"
+                    class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                  }
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <div class="form-group"
+                  ng-class="{'has-error':vm.frmCustomerDetails.$submitted &amp;&amp; vm.frmCustomerDetails.onboardCustomerModel_LastName.$error.required}">
+                  <label class="control-label mb-2">
+                    <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_LAST_NAME"></span>
+                    <span class="text-danger">*</span>
+                  </label>
+                  <input type="text" ng-model="vm.ProviderCustomer.LastName" formControlName="lastName"
+                    class="form-control form-control-sm" name="onboardCustomerModel_LastName" required />
+
+                  @if(formGroupCustomerDetails.get('lastName')?.errors?.required &&
+                  formGroupCustomerDetails.get('lastName')?.touched) {
+                  <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                  }
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="control-label mb-2">
+                    <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_MIDDLE_NAME"></span>
+                  </label>
+                  <input type="text" ng-model="vm.ProviderCustomer.MiddleName" formControlName="middleName"
+                    class="form-control form-control-sm" name="onboardCustomerModel_MiddleName" />
+                </div>
+              </div>
+
+              <div class="col-md-4 mt-7">
+                <div class="form-group">
+                  <label class="control-label mb-2">
+                    <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_ORGANIZATION_REGISTRATION_NUMBER"></span>
+                  </label>
+                  <input type="text" ng-model="vm.ProviderCustomer.OrganizationRegistrationNumber"
+                    formControlName="organizationRegistrationNumber" class="form-control form-control-sm disabled-input"
+                    name="onboardCustomerModel_OrganizationRegistrationNumber" />
+                </div>
+              </div>
+              <div class="col-md-4 mt-7">
+                <div class="form-group"
+                  ng-class="{'has-error':vm.frmCustomerDetails.$submitted &amp;&amp; (vm.frmCustomerDetails.onboardCustomerModel_Email.$error.required || vm.frmCustomerDetails.onboardCustomerModel_Email.$error.email)}">
+                  <label class="control-label mb-2">
+                    <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_EMAIL"></span>
+                    <span class="text-danger">*</span>
+                  </label>
+                  <input type="email" ng-model="vm.ProviderCustomer.Email" (blur)="onEmailAddressChange()"
+                    formControlName="email" class="form-control form-control-sm" name="onboardCustomerModel_Email"
+                    required />
+
+                  @if (thisEmailAddressIsAlredyExistMessage.length > 0) {
+                  <div class="text-danger" ng-show="vm.thisEmailAddressIsAlredyExistMessage.length > 0">
+                    {{ thisEmailAddressIsAlredyExistMessage }}
+                  </div>
+                  }
+
+                  @if (formGroupCustomerDetails.get('email')?.errors?.required &&
+                  formGroupCustomerDetails.get('email')?.touched) {
+                  <span
+                    ng-show="vm.frmCustomerDetails.$submitted &amp;&amp; vm.frmCustomerDetails.onboardCustomerModel_Email.$error.required"
+                    class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                  }
+
+                  @if(formGroupCustomerDetails.get('email')?.hasError('email') &&
+                  formGroupCustomerDetails.get('email')?.touched) {
+                  <span class="text-danger"><span
+                      translate="TRANSLATE.VALIDATION_MESSAGE_PLEASE_ENTER_A_VALID_EMAIL"></span></span>
+                  }
+
+                  <!-- <div class="input-group-with-checkbox form-check mt-2 mb-2">
+                      <label class="checkbox checkbox-outline checkbox-outline-2x control-label">
+                        &nbsp;
+                        <input class="form-check-input" type="checkbox" id="AddEmailAsCustomerAdmin" formControlName="addEmailAsCustomerAdmin" (change)="onAddEmailAsCustomerAdminChange()" ng-model="vm.onboardCustomerModel.AddEmailAsCustomerAdmin" name="AddEmailAsCustomerAdmin"/>
+                        <span></span>
+                      </label>
+                      <span class=""translate="TRANSLATE.ADD_NEW_CUSTOMER_LBL_TEXT_GRANT_ACCESS_TO_THE_PRIMARY_CONTACT"></span>
+                    </div>
+  
+                    <div class="input-group-with-checkbox form-check mb-2">
+                      <label class="checkbox checkbox-outline checkbox-outline-2x control-label">
+                        &nbsp;
+                        <input class="form-check-input" type="checkbox" id="NotifyCustomer" formControlName="notifyCustomer" ng-model="vm.onboardCustomerModel.NotifyCustomer" name="NotifyCustomer" [disabled]="!onboardCustomerModel.AddEmailAsCustomerAdmin"/>
+                        <span></span>
+                      </label>
+                      <span class="" translate="TRANSLATE.ADD_NEW_CUSTOMER_LBL_TEXT_SEND_INVITATION_TO_ACCESS_TH_APPLICATION"></span>
+                    </div> -->
+                </div>
+              </div>
+
+              <div class="col-md-4 mt-7"
+                ng-class="{'has-error':vm.frmCustomerDetails.$submitted &amp;&amp; vm.frmCustomerDetails.onboardCustomerModel_PhoneNumber.$error.pattern}">
+                <div class="form-group">
+                  <label class="control-label mb-2">
+                    <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_PHONE_NUMBER"></span>
+                  </label>
+                  <input type="text" ng-model="vm.ProviderCustomer.PhoneNumber" formControlName="phoneNumber"
+                    class="form-control form-control-sm" name="onboardCustomerModel_PhoneNumber"
+                    [pattern]="countryValidationRules.PhoneNumberRegex" />
+
+                  @if (formGroupCustomerDetails.get('phoneNumber')?.errors?.pattern &&
+                  formGroupCustomerDetails.get('phoneNumber')?.touched) {
+                  <span class="text-danger"><span
+                      translate="TRANSLATE.VALIDATION_MESSAGE_ENTER_VALID_PHONE_NUMBER"></span></span>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <!--MiddleName, OrganizationRegistrationNumber-->
+            <!-- <div class="row mt-7">
+              </div> -->
+
+            <!--Email, Phone Number-->
+            <!-- <div class="row mt-7">
+              </div> -->
+
+            <!--Line 1, Line 2-->
+            <div class="row mt-7">
+              <div class="col-md-6">
+                <div class="form-group"
+                  ng-class="{'has-error':vm.frmCustomerDetails.$submitted &amp;&amp; vm.frmCustomerDetails.onboardCustomerModel_AddressLine1.$error.required}">
+                  <label class="control-label mb-2">
+                    <span translate="TRANSLATE.LABEL_TEXT_ADDRESS_1"></span>
+                    <span class="text-danger">*</span>
+                  </label>
+                  <input type="text" ng-model="vm.ProviderCustomer.Address.Line1" formControlName="addressLine1"
+                    class="form-control form-control-sm" name="onboardCustomerModel_AddressLine1" required />
+
+                  @if(formGroupCustomerDetails.get('addressLine1')?.errors?.required &&
+                  formGroupCustomerDetails.get('addressLine1')?.touched) {
+                  <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                  }
+                  @if(formGroupCustomerDetails.get('addressLine1')?.errors?.maxlength && formGroupCustomerDetails.get('addressLine1')?.touched){
+                  <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_CUSTOMER_ADDRESS_1_MAX_LENGTH_256"></span> 
+                  }
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="control-label mb-2">
+                    <span translate="TRANSLATE.LABEL_TEXT_ADDRESS_2"></span>
+                  </label>
+                  <input type="text" ng-model="vm.ProviderCustomer.Address.Line2" formControlName="addressLine2"
+                    class="form-control form-control-sm" />
+                  @if(formGroupCustomerDetails.get('addressLine2')?.errors?.maxlength && formGroupCustomerDetails.get('addressLine2')?.touched){
+                  <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_CUSTOMER_ADDRESS_2_MAX_LENGTH_256"></span> 
+                  }
+                </div>
+              </div>
+            </div>
+
+            <!--City, State, Zip-->
+            <div class="row mt-7">
+              <div class="col-md-6">
+                <div class="form-group"
+                  [ngClass]="{'has-error':formGroupCustomerDetails.get('addressCity')?.errors?.required && formGroupCustomerDetails.get('addressCity')?.touched}">
+                  <label class="control-label mb-2">
+                    <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_CITY">
+                    </span>
+                    <span class="text-danger">*</span>
+                  </label>
+                  <input type="text" ng-model="vm.ProviderCustomer.Address.City" formControlName="addressCity"
+                    class="form-control form-control-sm" name="onboardCustomerModel_City"
+                    [required]="countryValidationRules.IsCityRequired" />
+
+                  @if(formGroupCustomerDetails.get('addressCity')?.errors?.required &&
+                  formGroupCustomerDetails.get('addressCity')?.touched) {
+                  <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                  }
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="form-group"
+                  ng-class="{'has-error':vm.frmCustomerDetails.$submitted &amp;&amp; vm.frmCustomerDetails.onboardCustomerModel_StateProvince.$error.required}">
+                  <label class="control-label mb-2">
+                    <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_STATE"></span>
+                    @if (countryValidationRules.IsStateRequired) {
+                    <span class="text-danger">*</span>
+                    }
+                  </label>
+
+                  @if ((stateProvinces !== null && stateProvinces.length > 0)) {
+                  <select class="form-control form-select-sm form-select" formControlName="addressState"
+                    name="onboardCustomerModel_StateProvince">
+                    <option value="" translate="TRANSLATE.SELECT_DEFAULT_OPTION_SELECT"></option>
+                    @for (item of stateProvinces; track $index) {
+                    <option [value]="item.StateCode">{{ item.Name }}</option>
+                    }
+                  </select>
+                  }
+
+                  @if ((stateProvinces === null || stateProvinces.length ===0)) {
+                  <span>
+                    <input class="form-control form-control-sm" type="text" ng-model="vm.ProviderCustomer.Address.State"
+                      formControlName="addressState" name="onboardCvm.omerModel_StateProvince" />
+                  </span>
+                  }
+
+                  @if
+                  (formGroupCustomerDetails.get('addressState')?.errors?.required
+                  && formGroupCustomerDetails.get('addressState')?.touched) {
+                  <span
+                    ng-show="vm.frmCustomerDetails.$submitted &amp;&amp; vm.frmCustomerDetails.onboardCustomerModel_StateProvince.$error.required"
+                    class="text-danger">
+                    <span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                  </span>
+                  }
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="form-group"
+                  ng-class="{'has-error':vm.frmCustomerDetails.$submitted &amp;&amp; (vm.frmCustomerDetails.onboardCustomerModel_PostalCode.$error.required || vm.frmCustomerDetails.onboardCustomerModel_PostalCode.$error.pattern)}">
+                  <label class="control-label mb-2">
+                    <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_ZIP"></span>
+                    @if (countryValidationRules.IsPostalCodeRequired) {
+                    <span class="text-danger">*</span>
+                    }
+                  </label>
+                  <input type="text" formControlName="addressZip" class="form-control form-control-sm"
+                    name="onboardCustomerModel_PostalCode" [required]="countryValidationRules.IsPostalCodeRequired"
+                    [pattern]="countryValidationRules.PostalCodeRegex" />
+
+                  @if(formGroupCustomerDetails.get('addressZip')?.errors?.required &&
+                  formGroupCustomerDetails.get('addressZip')?.touched) {
+                  <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                  }
+
+                  @if(formGroupCustomerDetails.get('addressZip')?.errors?.pattern &&
+                  formGroupCustomerDetails.get('addressZip')?.touched) {
+                  <span class="text-danger"><span
+                      translate="TRANSLATE.VALIDATION_MESSAGE_FOR_VALID_ZIP_CODE"></span></span>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-5">
+            <div class="col-md-12">
+              <!-- Need to add permission related thing vm.Permissions.HasCustomerOnboard-->
+              @if ((pageVisibleList.indexOf('PlanDetails') >= 0)) {
+              <button class="btn btn-primary btn-sm float-end" (click)="onboardCustomer()" appBusyLoader>
+                {{ "TRANSLATE.BUTTON_TEXT_SUBMIT" | translate }}
+                <!-- <busy-message><i class="fas fa-spinner fa-pulse"></i>{{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}</busy-message>  -->
+              </button>
+              }
+
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      }
+  
+      <br />
+  
+      @if (pageVisibleList.indexOf('OnboardedSucess') >= 0) {
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <div class="text-start mb-2">
+            <span>
+              <i class="far fa-thumbs-up"></i>
+              <span class="bold text-uppercase ms-1"><span translate="TRANSLATE.CUSTOMER_ONBOARDING_CAPTION_TEXT_ONBOARD_SUCCESS"></span></span>
+            </span>
+          </div>
+          <h3 class="text-start">
+            <span class="bold text-uppercase text-primary">
+              {{providerCustomer.CompanyName}}
+            </span>
+            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_HEADER_TEXT_IS_ONBOARDED_SUCCESSFULLY"></span>
+          </h3>
+          <div class="portlet-body">
+            <div class="float-end">
+              <button class="btn btn-sm btn-primary me-3" (click)="doneOnbaording()">
+                <span translate="TRANSLATE.CUSTOMER_ONBOARDING_BUTTON_TEXT_DONE"></span>
+              </button>
+              @if (customerC3Id === null) {
+              <button class="btn btn-sm btn-light-primary" (click)="tryAnother()">
+                <span translate="TRANSLATE.CUSTOMER_ONBOARDING_BUTTON_TEXT_TRY_ANOTHER"></span>
+              </button>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+  
+  
+  
+  <!-- Ng-template for  collect all  -->
+  <ng-template let-modal #collectCustomerDetailsRef>
+    <div class="">
+      <div class="modal-header">
+        <h2 id="modal-title">
+          <i class="ki-duotone ki-information-2 fs-6 text-danger me-1" aria-hidden="true">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+          <span translate="TRANSLATE.NOT_MAPPED_PRODUCTS_AGAINEST_PLAN_HEADER" class="text-danger fs-6"></span>
+        </h2>
+        <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closePopup()" data-bs-dismiss="modal">
+          <i class="ki-outline ki-cross fs-1"></i>                
+        </div>
+      </div>
+      <div class="modal-body" id="modal-body" style="overflow-y: auto; max-height: 250px">
+        <div class="table-responsive-md">
+          <table class="table table-bordered table-striped table-condensed">
+            <thead>
+              <tr>
+                <th>
+                  <span
+                    translate="TRANSLATE.NOT_MAPPED_PRODUCTS_HEADER_PROVIDER_PRODUCTS"
+                  ></span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (subscriptions of notMappedSubscriptions; track $index) {
+              <tr ng-repeat="subscriptions in vm.notMappedSubscriptions | orderBy:['ProviderId','ProviderUnitType']">
+                <td>
+                  @if (subscriptions.ProviderSubscriptionBillingQualifiedOfferId.length > 40) {
+                    <span>
+                      <!-- ng-repeat="i in getTimes(subscriptions.ProviderSubscriptionBillingQualifiedOfferId.length / 36) track by $index" -->
+                      <span>
+                        &nbsp;&nbsp;
+                      </span>
+                    </span>
+                  }                
+                  {{ subscriptions.ProviderSubscriptionFriendlyName }}
+                  @if (subscriptions.ProviderSubscriptionBillingQualifiedOfferId.length > 40 || (subscriptions.CategoryName !== undefined && subscriptions.CategoryName !== null && subscriptions.CategoryName !== '' && subscriptions.CategoryName === 'OnlineServicesNCE' && subscriptions.IsAddon === true) ) {
+                    <span><sup class="text-warning fw-bold ms-1"><span
+                      translate="TRANSLATE.PLAN_MANAGE_ADD_FORM_TABLE_1_HEADER_TEXT_OFFER_ADD_ON"></span></sup></span>
+                }
+
+                @if (subscriptions.Status === 'deleted' && subscriptions.CategoryName !== undefined &&
+                subscriptions.CategoryName !== null && subscriptions.CategoryName !== '' && subscriptions.CategoryName
+                === 'OnlineServicesNCE') {
+                <sup class="text-danger fw-bold ms-1"><span
+                    translate="TRANSLATE.CUSTOMER_ONBOARDING_LBL_DELETED"></span></sup>
+                }
+
+                @if (subscriptions.Status === 'suspended' && subscriptions.CategoryName !== undefined &&
+                subscriptions.CategoryName !== null && subscriptions.CategoryName !== '' && subscriptions.CategoryName
+                === 'OnlineServicesNCE') {
+                <sup class="text-danger fw-bold ms-1"><span
+                    translate="TRANSLATE.CUSTOMER_ONBOARDING_LBL_SUSPENDED"></span></sup>
+                }
+
+                @if (subscriptions.Status === 'expired' && subscriptions.CategoryName !== undefined &&
+                subscriptions.CategoryName !== null && subscriptions.CategoryName !== '' && subscriptions.CategoryName
+                === 'OnlineServicesNCE') {
+                <sup class="text-danger fw-bold ms-1"><span
+                    translate="TRANSLATE.CUSTOMER_ONBOARDING_LBL_EXPIRED"></span></sup>
+                }
+
+                @if (subscriptions.Status === 'disabled' && subscriptions.CategoryName !== undefined &&
+                subscriptions.CategoryName !== null && subscriptions.CategoryName !== '' && subscriptions.CategoryName
+                === 'OnlineServicesNCE') {
+                <sup class="text-danger fw-bold ms-1"><span
+                    translate="TRANSLATE.CUSTOMER_ONBOARDING_LBL_DISABLED"></span></sup>
+                }
+                @if (subscriptions.ValidityType !== undefined && subscriptions.ValidityType !== null &&
+                subscriptions.ValidityType !== '' && subscriptions.CategoryName !== undefined &&
+                subscriptions.CategoryName !== null && subscriptions.CategoryName !== '' && subscriptions.CategoryName
+                === 'OnlineServicesNCE') {
+                <div>
+                  <span class="font-weight-bold"
+                    translate="TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE_VALIDITY_TERM"></span>
+
+                  @if (subscriptions.ValidityType === 'Month(s)') {
+                  <span class="label label-warning font-weight-bold label-inline text-white badge bg-warning"
+                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION'| translate }}">
+                    {{ subscriptions.Validity }}
+                    {{(subscriptions.Validity === 1 ? (subscriptions.ValidityType === "Month(s)"?
+                    "TRANSLATE.TERM_DURATION_DESC_MONTH" : "TRANSLATE.TERM_DURATION_DESC_YEAR"):
+                    "TRANSLATE.TERM_DURATION_DESC_YEAR(S)") | translate}}
+                  </span>
+                  }
+
+                  @if (subscriptions.ValidityType === 'Year(s)' || subscriptions.ValidityType === 'Year') {
+                  <span class="label label-warning font-weight-bold label-inline text-white badge bg-warning"
+                    [ngClass]="{labelcolor: subscriptions.BillingCycleName === 'Monthly',TermLabelColor: subscriptions.BillingCycleName === 'Annual'}"
+                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION'| translate}}">
+                    {{ subscriptions.Validity }}
+                    {{(subscriptions.Validity === 1? (subscriptions.ValidityType === "Month(s)"?
+                    "TRANSLATE.TERM_DURATION_DESC_MONTH" : "TRANSLATE.TERM_DURATION_DESC_YEAR"):
+                    "TRANSLATE.TERM_DURATION_DESC_YEAR(S)") | translate}}
+                  </span>
+                  }
+
+                </div>
+                }
+
+                @if (subscriptions.CategoryName !== undefined && subscriptions.CategoryName !== null &&
+                subscriptions.CategoryName !== '' &&subscriptions.CategoryName === 'OnlineServicesNCE') {
+                <span class="label font-weight-bold label-inline badge text-white"
+                [ngClass]="{
+                  'bg-warning': subscriptions.BillingCycleName?.toLowerCase() === 'monthly',
+                  'bg-success': subscriptions.BillingCycleName?.toLowerCase() === 'annual',
+                  'bg-dark': subscriptions.BillingCycleName?.toLowerCase() === 'triennial',
+                  'bg-info': subscriptions.BillingCycleName?.toLowerCase() === 'onetime'
+                }">{{
+                  "TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_BILLING_CYCLE"| translate}}{{
+                  subscriptions.BillingCycleName }}</span>
+                }
+
+                @if (subscriptions.CategoryName !== undefined && subscriptions.CategoryName !== null &&
+                subscriptions.CategoryName !== '' &&subscriptions.CategoryName === 'OnlineServicesNCE') {
+                <div>
+                  <span class="label label-light-info label-pill label-lg label-inline badge"
+                    translate="TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE"></span>
+                </div>
+                <div>
+                    <span *ngIf="subscriptions.LocalIsEST" class="badge EST-Pill-styling text-white ms-md-2" ngbTooltip="{{'TRANSLATE.CATEGORY_PILL_EST_TOOLTIP' | translate }}" >{{ 'TRANSLATE.CATEGORY_PILL_NAME_EST' | translate}}</span>
+                </div>
+                }
+
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-sm btn-light btn-active-light-primary" type="button" [tabIndex] = "-1" (click)="closePopup()">
+        <span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span>
+      </button>
+      <button class="btn btn-sm btn-primary" type="button" (click)="proceed()">
+        <span translate="TRANSLATE.BTN_TEXT_PROCEED"></span>
+      </button>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,39 @@
+<div class="card card-custom card-stretch bgi-no-repeat bgi-size-cover bgi-position-y-top bgi-position-x-center" [ngClass]="bgColor" style="cursor: pointer;">
+    <div class="card-body p0" style="height:150px;">
+        <div class="d-flex align-items-center justify-content-between flex-grow-1">
+            <span class="svg-icon svg-icon-4x svg-icon-white">
+                @if(cardType === cardsTypes.seats){
+                    <i class="ki-outline ki-basket fs-3x"></i>
+                }
+                @else{
+                    <i class="ki-outline ki-element-plus fs-3x"></i>
+                }
+            </span>
+            <div class="d-flex flex-column text-right">
+                @if(cardType === cardsTypes.seats){
+                <span class="fw-bolder text-white fs-2 text-end">{{seatsCount?.Data?.SeatsCount}} </span>
+                }
+                @else {
+                <span
+                    class="fw-bolder text-white fs-2 text-end">{{subscriptionsCount?.Data?.TotalPurchasedProductCount}}
+                </span>
+
+                }
+                <span class="card-title  text-white fs-4">
+                    @if(cardType === cardsTypes.seats){
+                    <span translate="TRANSLATE.PARTNER_DASHBOARD_TILE_CUSTOMERS_SEATS"></span>
+                    }
+                    @else{
+                    <span translate="TRANSLATE.PARTNER_DASHBOARD_TILE_CUSTOMERS_SUBSCRIPTIONS"></span>
+                    }
+                </span>
+            </div>
+        </div>
+        <div class="d-flex flex-row  gap-2">
+            <apx-chart [series]="chartOptions?.series" [xaxis]="chartOptions?.xaxis"
+                [plotOptions]="chartOptions?.plotOptions" [chart]="chartOptions?.chart" [stroke]="chartOptions?.stroke"
+                [markers]="chartOptions?.markers" [yaxis]="chartOptions?.yaxis"
+                [tooltip]=" chartOptions?.tooltip"></apx-chart>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+@if (!cc.IsTenantConfiguration && data.IsShowOnScreen && data.Value !== undefined && data.Value !== null && data.Value !== '') {
+    <div class="form-group">
+        <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+    
+            <div class="row m-heading-1 border-green m-bordered">
+                <div>
+                    <strong><span translate="TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_HEADING"></span></strong>
+                    <ul>
+                        <li>
+                            <!-- <span class="text-primary cursor-pointer" [innerHTML]="'TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_5' | translate:{ consentURL: data.Value}"></span> -->
+                            <span class="text-primary cursor-pointer">
+                                <b>Click <span translate="TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_PARTNER_6"
+                                        (click)="confirmCopy()"></span></b>
+                            </span>
+                            <span translate="TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_1"></span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_2"></span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_3"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-12 control-label">
+                <a class="btn btn-primary btn-xs mr-2" (click)="testPartnerAccess()">
+                    <!-- <busy-message><i class="fa fa-refresh fa-spin"></i>{{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}</busy-message> -->
+                    {{'TRANSLATE.TEST_PARTNER_ACCESS_BTN_TEXT' | translate}}
+                </a>
+                <span class="ms-2" translate="TRANSLATE.ACCEPT_THE_CONSENT_BTN_TEXT"></span>
+                <!--<a class="btn btn-outline-primary btn-xs mr-2" ng-if="cc.HasNewTestSecureModelSuccess" busy busy-when-url="api/PartnerSettings/DisableOrEnableOldPCSettings" busy-add-classes="disabled" not-busy-remove-classes="disabled" ng-click="cc.SwitchToNewSecureModel()">
+                        <busy-message><i class="fa fa-refresh fa-spin"></i>{{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}</busy-message>
+                        <span translate="SWITCH_TO_NEW_SECURE_MODEL_BTN_TEXT"></span>
+                    </a>-->
+            </div>
+        </div>
+    </div>
+}
+

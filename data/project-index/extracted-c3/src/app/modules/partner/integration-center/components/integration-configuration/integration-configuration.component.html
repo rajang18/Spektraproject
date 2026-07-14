@@ -1,0 +1,59 @@
+<div class="tab-content">
+    <div class="tab-pane fade show active">
+        <div class="container-fluid">
+            @if(!!partnerSettings){
+            <div class="mb-4">
+                <div
+                    [ngClass]="currentState?.toLowerCase() === SettingsEnum.EmailConfigurations.toLowerCase()? '': 'card'">
+                     @if(permissions.HasGetBusinessCentralConfiguration === 'Allowed'){
+                    <div class="card-header">
+                        <div class="card-title">
+                            <h4 translate="TRANSLATE.BUSINESS_CENTRAL_CUSTOMER_CONFIGURATION_HEADER_TEXT"></h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="col-md-12 notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6" [appPermission]="'SYNC_BUSINESS_CENTRAL_DATA'">
+                            <h6><span translate="TRANSLATE.BUSINESS_CENTRAL_INSTRUCTIONS_HEADER"></span></h6>
+                            
+                            <a class="btn btn-primary btn-sm me-2" (click)="testConnectivityToBusinessCentral()" >
+                                {{'TRANSLATE.EXTERNAL_SERVICE_BC_BUTTON_TEXT_TEST_CONNECTIVITY' | translate}}
+                            </a>
+                            
+                            <span>&nbsp;</span>
+                            
+                            <span translate="TRANSLATE.EXTERNAL_SERVICE_BC_TEST_CONNECTIVITY_INSTRUCTIONS"></span>
+                        </div>  
+                        
+                            
+                            <form [formGroup]="partnerSettingsForm">
+                                @for(data of visiblePartnerSettings; track $index){
+                                <div class="form-group row mt-5">
+                                    <div class="col-md-12">
+                                        <tenantconfig [data]="data" [form]="partnerSettingsForm"
+                                            [frmControlName]="data.Name" [controlType]="data.ControlType"
+                                            (smtpOptionChange)="handleInit($event)"></tenantconfig>
+                                    </div>
+                                </div>
+                                }
+                            </form>
+                    </div>
+
+                    <div class="card-footer" [appPermission]="'UPDATE_BUSINESS_CENTRAL_CONFIGURATION'">
+                        <div class="mt-4 d-flex justify-content-end">
+                            <button class="btn btn-sm btn-primary" (click)="Save()"
+                            appBusyLoader>{{'TRANSLATE.BUTTON_TEXT_SAVE' | translate}}</button>
+                        </div>
+                    </div>
+                      } @else {
+
+                            <div class="p-5 mt-5 text-center bg-light rounded">
+                                <p class="text-danger fw-bold fs-5 mb-0" translate="TRANSLATE.BUSINESS_CENTRAL_GENERAL_NO_PERMISSION"></p>
+                            </div>
+
+                        }
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>

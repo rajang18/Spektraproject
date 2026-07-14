@@ -1,0 +1,283 @@
+<div class="modal-dialog m-0 modal-dialog-centered w-100">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>
+                @if (isLinkedBaseOffer) {
+                {{ 'TRANSLATE.PONUMBER_POPUP_TITLE' | translate }}
+                }
+                @else if (!hideAddonMenu && product.CategoryName?.toLowerCase() === cloudHubConstants.CATEGORY_ONLINE_SERVICES_NCE 
+                && (permissions.HasTextBoxPONumberInHistory === 'Allowed')) {
+                {{ 'TRANSLATE.SHOP_PONUMBER_ADD-ON_POPUP_TITLE' | translate }}
+                }
+                @else if (isQuoteFeature || ((permissions.HasTextBoxPONumberInHistory === 'Denied') && !hideAddonMenu &&
+                product.CategoryName?.toLowerCase() === cloudHubConstants.CATEGORY_ONLINE_SERVICES_NCE)) {
+                {{ 'TRANSLATE.QUOTE_LINE_ITEM_NCE_BASE_OFFER_ADD-ON_POPUP_TITLE' | translate }}
+                }
+                @else{
+                {{ 'TRANSLATE.PONUMBER_POPUP_TITLE' | translate }}
+                }
+            </h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModalPopup()"
+                data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1">
+                    <span class="path1"></span><span class="path2"></span>
+                </i>
+            </div>
+        </div>
+
+        <div class="modal-body pt-2" id="modal-body">
+            <!-- Tabs header -->
+            @if(!isQuoteFeature) {
+            <ul class="nav nav-stretch nav-line-tabs fw-semibold border-transparent flex-nowrap mb-8" role="tablist">
+                <li class="nav-item" [appPermission]="'TEXT_BOX_PO_NUMBER_IN_HISTORY'">
+                    <a class="nav-link active" [ngClass]="{'active text-primary':activeTab === 'po'}"
+                        (click)="setActiveTab('po')" type="button" role="tab">
+                        {{ 'TRANSLATE.PONUMBER_POPUP_TITLE' | translate }}
+                    </a>
+                </li>
+
+                @if((hideAddonMenu == false && product.CategoryName.toLowerCase() ===
+                cloudHubConstants.CATEGORY_ONLINE_SERVICES_NCE) && !isLinkedBaseOffer){
+                <li class="nav-item" [appPermission]="'SHOW_NCE_PREREQUISITE_BASE_OFFER'">
+                    <a class="nav-link" [ngClass]="{'active text-primary':activeTab === 'addon'}"
+                        (click)="setActiveTab('addon')" type="button" role="tab">
+                        {{ 'TRANSLATE.SHOP_NCE_BASE_OFFER_ADDON_TAB_TITLE' | translate }}
+                    </a>
+                </li>
+                }
+            </ul>
+            }
+
+            <!-- Tabs content -->
+            <div class="mt-3">
+                <!-- PO Number Tab -->
+                @if (activeTab === 'po' && !isQuoteFeature) {
+                <div class="form-group col-md-12" [appPermission]="'TEXT_BOX_PO_NUMBER_IN_HISTORY'">
+                    <input type="text" class="form-control"
+                        placeholder="{{ 'TRANSLATE.PONUMBER_PLACEHOLDER' | translate }}" [(ngModel)]="PONumber">
+                    @if (validate) {
+                    <span class="text-danger">{{ 'TRANSLATE.NOTIFIER_ERROR_PONUMBER_LENGTH_ERROR' | translate
+                        }}</span>
+                    }
+                </div>
+                }
+
+                <!-- Add-On Tab -->
+                @if (baseOffers) {
+                @if (activeTab === 'addon' || isQuoteFeature) {
+                <div class="form-group">
+                    <div class="radio-list">
+                        @if (baseOffers?.length > 0) {
+                        <div class="d-flex align-items-center position-relative my-1">
+                            <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
+                                <span class="custom-path1">
+                                </span><span class="custom-path2"></span>
+                            </i>
+                            <input type="text" [(ngModel)]="SearchValue" (ngModelChange)="searchBasedOnValue()"
+                                class="header-input-field form-control form-control-solid w-250px ps-12"
+                                placeholder="Search...">
+                        </div>
+                        <cdk-virtual-scroll-viewport class="product-wrapper" [itemSize]="10">
+                            @if(baseOffersData.length > 0){
+                            @for (product of baseOffersData; track $index) {
+                            <label class="radio radio-outline radio-outline-2x control-label mt-3 d-flex w-100">
+                                <input type="radio" class="form-check-input" name="addonProduct"
+                                    (click)="updateBaseOfferSelection(product)">
+                                <span class="ms-1"></span>
+                                <span>
+                                    {{ product.Name}}
+                                    <br />
+                                    @if (product.IsPrimaryInLinkedProduct) {
+                                    <span style="display: table">
+                                        <i class="ki-outline ki-fasten text-warning"></i>&nbsp;
+                                        {{ product.LinkedSubscriptionName }}
+                                        <span *ngIf="product.LinkedProduct">
+                                            <i
+                                                class="ki-outline ki-fasten text-warning small small"></i>&nbsp;{{product.LinkedProduct.DisplayFinalSalePrice
+                                            | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces :
+                                            product.CurrencyThousandSeperator :
+                                            product.CurrencyDecimalSeperator}}
+                                        </span>
+                                    </span>
+                                    }
+                                </span>
+                            </label>
+                            <div class="ms-6">
+                                <span
+                                    *ngIf="product.Validity !== null && product.Validity !== '' && (product.CategoryName == 'OnlineServicesNCE' || product.CategoryName == 'Custom')">
+                                    @if (product.ValidityType!=null && product.ValidityType == 'Month(s)') {
+                                    <span
+                                        class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2"
+                                        aria-hidden="true"
+                                        ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                        {{product.Validity}}
+                                        {{ (product.Validity === 1 ? (product.ValidityType === 'Month(s)' ?
+                                        'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                        'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                                    </span>
+                                    }
+                                    @if (product.ValidityType === 'Year(s)' || product.ValidityType === 'Year') {
+                                    <span
+                                        class="label font-weight-bold label-inline text-white badge bg-warning ms-md-2"
+                                        aria-hidden="true"
+                                        [ngClass]="{'labelcolor':product.BillingCycleName == 'Monthly','TermLabelColor': product.BillingCycleName == 'Annual'}"
+                                        ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                        {{product.Validity}}
+                                        {{ (product.Validity === 1 ? (product.ValidityType === 'Month(s)' ?
+                                        'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                        'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                                    </span>
+                                    }
+                                </span>
+                                <span *ngIf="product.BillingCycleName !== null && product.BillingCycleName !== ''">
+                                    <span *ngIf="product.BillingCycleName !== null && product.BillingCycleName !== ''"
+                                        class="label font-weight-bold label-inline text-white badge ms-md-2"
+                                        [ngClass]="{
+                                            'bg-warning': product.BillingCycleName?.toLowerCase() === 'monthly',
+                                            'bg-success': product.BillingCycleName?.toLowerCase() === 'annual',
+                                            'bg-dark': product.BillingCycleName?.toLowerCase() === 'triennial',
+                                            'bg-info': product.BillingCycleName?.toLowerCase() === 'onetime'
+                                        }"
+                                        ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}">
+                                        {{'TRANSLATE.'+ product.BillingCycleDescription | translate}}</span>
+                                </span>
+                                @if(product.CategoryName?.toLowerCase() == "onlineservicesnce") {
+                                <span class="label label-light-info font-weight-bold label-inline badge ms-md-2"
+                                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}">
+                                    {{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE' | translate}}
+                                </span>
+                                }
+                                @if(product.MarketCode){
+                                <span class="badge badge-info ms-md-2"
+                                    ngbTooltip="{{product.MarketRegion}}">{{product.MarketCode}}</span>
+                                }
+                                @if(product.ProviderSettings && product.ProviderSettings.ProviderCategory){
+                                <span class="label label-light-warning font-weight-bold mt-1 badge  "
+                                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_SERVICE_TYPE' | translate}}">
+                                    {{product.ProviderSettings.ProviderCategory | translate}}
+                                </span>
+                                }
+                                @if(product.IsPromotionAvailableForCustomer &&
+                                product.ShowPromotionLink){
+                                <span class="mb-0 mr-2 font-weight-normal separator-primary text-primary cursor-pointer"
+                                    (click)="showPromotionDetail(product)"><span tooltip-append-to-body="true"
+                                        ngbTooltip="{{'TRANSLATE.NCE_PROMOTIONS_AVAILABLE_TEXT' | translate}}">
+                                        <i class="ki-outline ki-discount text-primary"></i></span></span>
+                                }
+                                <span class="price text-primary fw-bolder">
+                                    <span
+                                        *ngIf="product.ConsumptionType == 'Quantity' || product.BillingTypeName == 'Unit'">
+                                        <span class="font-size-h3  text-primary font-weight-boldest">
+                                            {{product.FinalSalePrice | megaNumber : product.CurrencySymbol :
+                                            product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                                            product.CurrencyDecimalSeperator}}
+                                        </span>
+                                        <span *ngIf="product.Discount != null && product.Discount > 0">
+                                            <small class="small">
+                                                <span class="text-danger mr-2">
+                                                    <del>
+                                                        &nbsp;{{product.OriginlaSalePrice | megaNumber :
+                                                        product.CurrencySymbol :
+                                                        product.CurrencyDecimalPlaces :
+                                                        product.CurrencyThousandSeperator :
+                                                        product.CurrencyDecimalSeperator}}
+                                                    </del>
+                                                </span>
+
+                                                <span *ngIf="product.DiscountType == 'Percentage'" class="text-danger">
+                                                    &#40;{{product.Discount}}%
+                                                </span>
+                                                <span *ngIf="product.DiscountType != 'Percentage'" class="text-danger">
+                                                    &#40;{{product.Discount | CurrencyFilter : product.CurrencySymbol :
+                                                    product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                                                    product.CurrencyDecimalSeperator }}
+                                                </span>
+                                            </small>
+                                            <span class="text-danger">
+                                                <span class="small" translate="TRANSLATE.TEXT_OFF"></span>
+                                            </span>
+                                        </span>
+                                    </span>
+                                </span>
+                            </div>
+                            }
+                            }
+                            @else{
+                            <div class="pt-20">
+                                <app-common-no-record></app-common-no-record>
+                            </div>
+                            }
+                        </cdk-virtual-scroll-viewport>
+                        }
+                        @else {
+                        <span class="text-danger">{{
+                            'TRANSLATE.SHOP_NCE_BASE_OFFER_ADDON_NOT_PURCHASABLE_WARNING_MESSAGE' |
+                            translate}}</span>
+                        }
+                    </div>
+                </div>
+                }
+                }
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            @if(activeTab !== 'addon' && !isQuoteFeature) {
+            <button type="submit" [appPermission]="'TEXT_BOX_PO_NUMBER_IN_HISTORY'"
+                class="btn btn-light btn-active-light-primary me-auto cursor-pointer" tabindex="-1" (click)="skip()">
+                {{ 'TRANSLATE.PONUMBER_BUTTON_SKIP' | translate }}
+            </button>
+            }
+
+            @if(!hideAddonMenu && activeTab !== 'addon') {
+            <button type="submit" [appPermission]="'TEXT_BOX_PO_NUMBER_IN_HISTORY'" class="btn btn-primary"
+                tabindex="-1" (click)="goToAddonTab()" [ngClass]="{'opacity-50': !PONumber, 'btn-primary': true}"
+                [ngStyle]="{'pointer-events': PONumber === null || PONumber === '' ? 'none' : 'auto'}">
+                {{ 'TRANSLATE.PONUMBER_BUTTON_NEXT' | translate }}
+            </button>
+            }
+
+            @if(activeTab === 'addon') {
+            <button type="submit" [appPermission]="'SHOW_NCE_PREREQUISITE_BASE_OFFER'"
+                class="btn btn-light btn-active-light-primary me-auto cursor-pointer" tabindex="-1"
+                (click)="skipNCEPrerequisiteInShop()">
+                {{ 'TRANSLATE.SHOP_NCE_BASE_OFFER_COMPATIBLE_BASE_PRODUCTS_BUTTON_SKIP' | translate }}
+            </button>
+            }
+
+            @if(isQuoteFeature) {
+            <button type="submit" [appPermission]="'SHOW_NCE_PREREQUISITE_BASE_OFFER'"
+                class="btn btn-light btn-active-light-primary me-auto cursor-pointer" tabindex="-1"
+                (click)="skipNCEPrerequisiteInQuote()">
+                {{ 'TRANSLATE.SHOP_NCE_BASE_OFFER_COMPATIBLE_BASE_PRODUCTS_BUTTON_SKIP' | translate }}
+            </button>
+            }
+
+            @if(hideAddonMenu || activeTab === 'addon') {
+            @if(hideAddonMenu && !isQuoteFeature){
+            <button type="submit" class="btn" tabindex="-1" (click)="copyPONumber()" [ngClass]="{'btn-secondary': ((PONumber === null || PONumber === '')),
+                        'btn-primary': (PONumber !== '' && PONumber !== null)}"
+                [ngStyle]="{'pointer-events': (PONumber === null || PONumber === '') ? 'none' :  'auto'}">
+                {{ 'TRANSLATE.PONUMBER_BUTTON_SUBMIT' | translate }}
+            </button>
+            }@else {
+            @if(isQuoteFeature) {
+            <button type="submit" class="btn" tabindex="-1" (click)="copyPONumberWithAddon()"
+                [ngClass]="{'btn-secondary': (!selectedBaseOfferForAddon),'btn-primary': (selectedBaseOfferForAddon)}"
+                [ngStyle]="{'pointer-events': (!selectedBaseOfferForAddon) ? 'none' :  'auto'}">
+                {{ 'TRANSLATE.PONUMBER_BUTTON_SUBMIT' | translate }}
+            </button>
+                }
+                @else {
+                    <button type="submit" class="btn" tabindex="-1" (click)="copyPONumberWithAddon()"
+                [ngClass]="{'btn-secondary': (((PONumber === null || PONumber === '') && !isSkipPO) || !selectedBaseOfferForAddon),
+                        'btn-primary': (((PONumber !== '' && PONumber !== null) || isSkipPO || isQuoteFeature) && selectedBaseOfferForAddon)}"
+                [ngStyle]="{'pointer-events': (((PONumber === null || PONumber === '') && !isSkipPO) || !selectedBaseOfferForAddon) ? 'none' :  'auto'}">
+                {{ 'TRANSLATE.PONUMBER_BUTTON_SUBMIT' | translate }}
+            </button>
+                }
+            }
+            }
+        </div>
+    </div>
+</div>

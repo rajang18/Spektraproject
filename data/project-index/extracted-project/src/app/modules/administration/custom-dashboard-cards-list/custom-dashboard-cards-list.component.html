@@ -1,0 +1,221 @@
+<ng-template #actionHeader>
+    <div class="d-flex justify-content-between">
+        @if(PageMode === 'list'){
+        <div ngbDropdown class="d-flex align-items-center" *ngIf="PageMode === 'list'" autoClose="outside">
+            <button class="btn btn-sm btn-lg btn-md btn-xs text-nowrap fw-bold btn-secondary" type="button"
+                id="statusDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle #tooltipRef="ngbTooltip" (click)="hideTooltip()" 
+                ngbTooltip="{{'TRANSLATE.BTN_TEXT_SHOW_FILTERS' | translate}}">
+                <i class="ki-outline ki-filter fs-2">
+                </i>&nbsp;<span translate="TRANSLATE.BTN_TEXT_FILTER"></span>
+            </button>
+            <div ngbDropdownMenu aria-labelledby="statusDropdownButton">
+                <div class="row">
+                    <div class="col ml-5">
+                        <label role="button" ngbDropdownItem class="form-check form-check-inline ms-10 no-hover">
+                            <input type="checkbox" class="form-check-input me-1" [checked]="selectedValues.length === 4" (change)="toggleStatusSelection(null)">
+                            <span></span><strong> <span translate="TRANSLATE.QUOTE_ALL_SELECTION"></span></strong>
+                        </label>
+                        <label role="button" ngbDropdownItem class="form-check form-check-inline ms-10 no-hover">
+                            <input type="checkbox" class="form-check-input me-1" [checked]="selectedValues.includes(3)" (change)="toggleStatusSelection(3)">
+                            <span></span><span translate="TRANSLATE.CUSTOM_DASHBOARD_CARD_WORKSPACE_FILTER_LABEL_ACTIVE_SELF_WORKSPACE"></span>
+                        </label>
+                        <label role="button" ngbDropdownItem class="form-check form-check-inline ms-10 no-hover">
+                            <input type="checkbox" class="form-check-input me-1" [checked]="selectedValues.includes(2)" (change)="toggleStatusSelection(2)">
+                            <span></span><span translate="TRANSLATE.CUSTOM_DASHBOARD_CARD_WORKSPACE_FILTER_LABEL_INACTIVE_SELF_WORKSPACE"></span>
+                        </label>
+                        <label role="button" ngbDropdownItem class="form-check form-check-inline ms-10 no-hover">
+                            <input type="checkbox" class="form-check-input me-1" [checked]="selectedValues.includes(1)" (change)="toggleStatusSelection(1)">
+                            <span></span><span translate="TRANSLATE.CUSTOM_DASHBOARD_CARD_WORKSPACE_FILTER_LABEL_ACTIVE_WORKSPACE"></span>
+                        </label>
+                        <label role="button" ngbDropdownItem class="form-check form-check-inline ms-10 no-hover">
+                            <input type="checkbox" class="form-check-input me-1" [checked]="selectedValues.includes(0)" (change)="toggleStatusSelection(0)">
+                            <span></span><span translate="TRANSLATE.CUSTOM_DASHBOARD_CARD_WORKSPACE_FILTER_LABEL_INACTIVE_WORKSPACE"></span>
+                        </label>
+                        <label class="checkbox" style="display: none"></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-sm fw-bold btn-primary ms-2" [appPermission]="'SAVE_OR_UPDATE_CUSTOM_CARDS'" (click)="addCustomCard()" appBusyLoader>
+            <i class="ki-outline ki-plus fs-2"></i>
+            <span translate="TRANSLATE.CUSTOM_DASHBOARD_CARD_BUTTON_ACTIONS_ADD"></span>
+        </button>
+        }
+        @if(PageMode === 'assign'){
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="backToCustomCard()">   
+            <i class="ki-outline ki-to-left fs-2"></i>
+            <span translate="TRANSLATE.CUSTOM_DASHBOARD_CARD_BUTTON_BACK_TO_LIST"></span>
+        </button>
+        }
+    </div>
+</ng-template>
+
+@if(PageMode === 'list'){
+<div class="ps-9 pt-0 overflow-auto">
+    <ng-template #cardTemplate let-row="adtData">
+        <div>
+            <div class="card card-custom card-stretch gutter-b"
+                [ngStyle]="{'background-color': row.Color || 'black'}"
+                [ngClass]="{'disabled-card': !row.IsActive}">
+                @if (row.SelfCustomCard) {
+                <div class="ribbon ribbon-top">
+                    <div class="ribbon-label" style="right: 0.5rem;">
+                        <span class="Schedulelabelbackgroundcolor ribbon-inner text-white rounded-bottom"></span>
+                        <span translate="TRANSLATE.CUSTOM_DASHBOARD_CARD_SELF_CARD_BADGE"></span>
+                    </div>
+                </div>
+                }
+                <a ng-disabled="true" href="{{row.Link}}" target="_blank">
+                    <div class="card-body customCardsSize">
+                        <div class="d-flex align-items-center justify-content-between flex-grow-1">
+                            <span class="svg-icon svg-icon-4x svg-icon-white" style="width: 48px; height: 48px;">
+                                <img *ngIf="row.ImageUrl" [src]="row.ImageUrl" alt="image" width="48" height="48">
+                            </span>
+                            <div class="d-flex flex-column text-right">
+                                <span
+                                    class="ms-4 card-title fs-4 text-white mb-4 text-hover-state-dark d-block"
+                                    ngbTooltip="{{row.Title.length > 15 ? row.Title : ''}}">
+                                    <span [innerHtml]="row.Title | limitLength:15"></span> <span
+                                        *ngIf="row.Title !=null && row.Title.length > 15">...</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <a href="{{row.Link}}" target="_blank" class="btn btn-link btn-link-white text-white pt-2">
+                                <span>{{row.LinkText}}</span>
+                                <i class="ki-outline ki-black-right fs-3 text-white"></i>
+                            </a>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #description let-row="adtData">
+        <div>
+            <span>
+                <span *ngIf="row.Description.length <= 350 || showFullDescription">{{row.Description}}</span>
+                <span *ngIf="row.Description.length > 350 && !showFullDescription">{{row.Description
+                    |limitLength:350}}</span>
+                <a href="javascript:void(0)" *ngIf="row.Description.length > 350"
+                    (click)="showFullDescription = !showFullDescription"
+                    [innerHtml]="showFullDescription ? ('TRANSLATE.PRODUCT_DETAILS_READ_LESS_LINK_TEXT' | translate) : ('TRANSLATE.PRODUCT_DETAILS_READ_MORE_LINK_TEXT' | translate)"></a>
+            </span>
+        </div>
+    </ng-template>
+
+    <ng-template #sequenceData let-row="adtData">
+        <div>
+            <strong class="pe-0">
+                @if (!row.isEditing) {
+                    <a href="javascript:void(0)" editable-number="row.Sequence" buttons="no" 
+                       class="editable editable-click" 
+                       (click)="editSequence(row)"
+                       [ngClass]="{'cursor-pointer': row.IsActive, 'cursor-not-allowed text-muted': !row.IsActive}">
+                        {{ row.Sequence || 0 }}
+                    </a>
+                }
+                @if (row.isEditing) {
+                    <span class="d-flex align-items-center icon-align">
+                        <input #fieldName class="form-control" 
+                        [(ngModel)]="row.Sequence" type="number" min="0" step="1" 
+                        (input)="validatePositiveNumber($event, row)"
+                        [disabled]="permissions.HasSaveCustomCards !== 'Allowed'">
+                        
+                        <i class="ki-outline ki-check fs-1 text-success cursor-pointer ms-4" *ngIf="permissions.HasSaveCustomCards === 'Allowed'" (click)="updateSequence(row)"></i>
+    
+                        <i class="ki-outline ki-cross fs-1 text-danger cursor-pointer ms-2" (click)="cancelEdit(row)"></i>
+                    </span>
+                }
+            </strong>
+        </div>
+    </ng-template>
+    
+
+    <ng-template #actions let-row="adtData">
+        <div>
+            <div class="d-flex justify-content-end">
+                <div class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+                    [ngClass]="toolbarButtonHeightClass"
+                    *ngIf="permissions.HasSaveCustomCards === 'Allowed' && row.IsActive == true"
+                    (click)="editCustomCard(row)">
+                    <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+                        <i class="ki-outline ki-pencil text-primary"
+                            ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_EDIT' | translate}}"></i>
+                    </span>
+                </div>
+                <div class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+                    [ngClass]="toolbarButtonHeightClass" *ngIf="!row.SelfCustomCard &&  row.IsActive == true" [appPermission]="'SAVE_OR_UPDATE_CUSTOM_CARDS'"
+                    (click)="assignCard(row)">
+                    <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+                        <i class="ki-outline ki-burger-menu-2 text-primary"
+                            ngbTooltip="{{'TRANSLATE.ACCOUNT_MANAGERS_TABLE_TD_BUTTON_TOOLTIP_TEXT_VIEW_CUSTOMERS_ASSIGNED' | translate}}"></i>
+                    </span>
+                </div>
+                <div class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+                    [ngClass]="toolbarButtonHeightClass"
+                    *ngIf="permissions.HasDeleteCustomCards === 'Allowed' && row.IsActive == true"
+                    (click)="deleteCustomCardById(row.id)">
+                    <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+                        <i class="ki-outline ki-trash text-primary"
+                            ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_DELETE' | translate}}"></i>
+                    </span>
+                </div>
+
+                <div class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+                    [ngClass]="toolbarButtonHeightClass" *ngIf="row.IsActive != true" [appPermission]="'SAVE_OR_UPDATE_CUSTOM_CARDS'" (click)="reActivateCard(row)">
+                    <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+                        <i class="ki-outline ki-arrow-circle-left text-primary"
+                            ngbTooltip="{{'TRANSLATE.SUBSCRIPTIONS_REACTIVATE_TABLE_ACTION_BUTTON_MANAGE' | translate}}"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-container *ngIf="datatableConfig">
+        <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+        </app-c3-table>
+    </ng-container>
+</div>
+}
+
+
+@if(PageMode === 'assign'){
+<div class="d-flex justify-content-end py-0 px-9 gap-3">
+    <div>
+        <button class="btn btn-light-success btn-sm"
+            *ngIf="AssignToAllButton == false" (click)="AssignToAll()">
+            <span translate="TRANSLATE.PARTNER_ASSIGNED_CARD_ASSIGN_TO_All"></span>
+        </button>
+        <button class="btn btn-light-warning btn-sm" 
+            *ngIf="AssignToAllButton == true" (click)="UnAssignToAll()">
+            <span translate="TRANSLATE.PARTNER_ASSIGNED_CARD_UNASSIGN_TO_All"></span>
+        </button>
+    </div>
+</div>
+<div class="card border-0">
+    <div class="card-body pt-0 overflow-auto">
+        <ng-container *ngIf="assignDatatableConfig">
+            <app-c3-table [reload]="reloadAssignEvent" [datatableConfig]="assignDatatableConfig">
+            </app-c3-table>
+        </ng-container>
+    </div>
+</div>
+}
+
+
+<ng-template #assignActions let-row="adtData">
+    <div>
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-light-success btn-sm mr-2 ng-scope tooltips" *ngIf="row.IsActive != true" (click)="AssignCustomCard(row, 'assign')">
+                <span translate="TRANSLATE.PARTNER_ASSIGNED_CARD_CUSTOMER_BUTTON_TEXT_ASSIGN"></span>
+            </button>
+            <button class="btn btn-light-warning btn-sm mr-2  tooltips" *ngIf="row.IsActive === true"  (click)="AssignCustomCard(row, 'unassign')">
+                <span translate="TRANSLATE.PARTNER_ASSIGNED_CARD_CUSTOMER_BUTTON_TEXT_UNASSIGN"></span>
+            </button>
+        </div>
+    </div>
+</ng-template>
+

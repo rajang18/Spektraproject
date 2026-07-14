@@ -1,0 +1,118 @@
+<div class="card-header">
+    <div class="card-title">
+        <div class="card-icon">
+            <i class="fa fa-table font-dark"></i>
+        </div>
+        <div class="card-label">
+            <span class="caption-subject font-dark sbold uppercase"><span
+                    translate="TRANSLATE.CARD_TITLE_PARTNER_PRODUCT_USAGE_DATA"></span></span>
+        </div>
+    </div>
+</div>
+<div class="card-body pt-0 overflow-auto">
+    <div class="row">
+        <div class="col-md-4 mt-3">
+            <label class="control-label pb-2">
+                <span translate="TRANSLATE.PARTNER_USAGE_PRODUCT_USAGE_TAB_DESCRIPTION_TEXT_MONTH"></span>
+            </label>
+            <div class="input-group">
+                <div class="period-options">
+                    <div class="dropdown w-100">
+                        <!-- <div class="d-flex">
+                            <button (click)="toggleDropdown()"
+                                class="btn-content btn btn-sm d-flex justify-content-between">
+                                <div class="one-line-text">
+                                    <span *ngIf="billingPeriodId">
+                                      {{ selectedBillingPeriod.BillGenerationDate | date: dateFormat }} 
+                                      ({{ selectedBillingPeriod.BillingStartDate | date: dateFormat }} - 
+                                      {{ selectedBillingPeriod.BillingEndDate | date: dateFormat }})
+                                    </span>
+                                    <span *ngIf="!billingPeriodId">
+                                      {{ aLLPeriods }}
+                                    </span>
+                                  </div>
+                                <strong>
+                                    <i class="fa-solid fa-angle-down"></i>
+                                </strong>
+                            </button>
+                        </div> -->
+                        <div [class.show]="dropdownVisible"> 
+                            <select class="form-select form-select-sm" (ngModelChange)="checkBillingPeriodChange(billingPeriodId)" [(ngModel)]="billingPeriodId">
+                                @for (option of billingPeriods; track option) {
+                                    <option [value]="option.BillingPeriodId" >
+                                        {{option.BillGenerationDate| c3Date}} ( {{option.BillingStartDate | c3Date}} - {{option.BillingEndDate | c3Date}} )
+                                    </option>
+                                    }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <!-- <select class="form-control form-control-sm form-select form-select-sm" [(ngModel)]="billingPeriodId"
+                    dropdownPosition="bottom">
+                    <option *ngFor="let option of billingPeriods" [value]="option.BillingPeriodId">
+                        {{option.BillGenerationDate| date: dateFormat}} ( {{option.BillingStartDate | date:
+                        dateFormat}} - {{option.BillingEndDate | date: dateFormat}} )
+                    </option>
+                </select> -->
+            </div>
+        </div>
+        <div class="col-md-4 mt-3">
+            <label class="control-label pb-2">
+                <span translate="TRANSLATE.PARTNER_USAGE_PRODUCT_USAGE_TAB_LABEL_USAGE_DATE"></span>
+            </label>
+            <div class="input-group">
+                <input class="form-control form-control-sm" [ngClass]="{'custom':usageDate}" [(ngModel)]="usageDate"
+                    (ngModelChange)="updateDate($event)"
+                    [placeholder]="usageDate ? (usageDate | c3Date) : ('TRANSLATE.PARTNER_USAGE_PRODUCT_USAGE_TAB_LABEL_USAGE_DATE'| translate)"
+                    [readOnly]="true"
+                    name="usageDate" ngbDatepicker #sd="ngbDatepicker" [maxDate]="maxDate" readonly />
+                <button class="btn btn-light-primary btn-sm" (click)="sd.toggle()" type="button">
+                    <em class="fa fa-calendar"></em>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="form-actions text-end">
+        <button class="btn btn-light-primary btn-sm me-2" (click)="searchFilter()">
+            <i class="ki-outline ki-magnifier fs-3">
+            </i>
+            <span translate="TRANSLATE.BUTTON_TEXT_SEARCH"></span>
+        </button>
+        <button class="btn btn-light-primary btn-sm" (click)="resetFilters()">
+            <span translate="TRANSLATE.BUTTON_TEXT_RESET"></span>
+        </button>
+    </div>
+    <div class="mt-5">
+        <ng-template #costtocustomer let-data="adtData" let-emitter="captureEvents">
+            <div>{{data.CostToCustomer | CurrencyFilter : data.CurrencySymbol : data.CurrencyDecimalPlaces :
+                data.CurrencyThousandSeperator : data.CurrencyDecimalSeperator}}</div>
+        </ng-template>
+        <ng-template #usagedateTemp let-data="adtData" let-emitter="captureEvents">
+            <div>{{data.UsageDate | c3Date}}</div>
+        </ng-template>
+        <table class="table table-responsive table-condensed table-bordered table-striped" *ngIf="totalCost > 0">
+            <tbody>
+                <tr>
+                    <td class="col-md-3">
+                        <span class="fw-bold text-gray-800"
+                            translate="TRANSLATE.PARTNER_USAGE_PRODUCT_USAGE_TAB_DESCRIPTION_TOTAL_COST"></span>
+                    </td>
+                    <td class="col-md-1 text-end">
+                        <span class="fw-bold text-gray-800">{{totalCost | CurrencyFilter :
+                            currentSubscription.CurrencySymbol : currentSubscription.CurrencyDecimalPlaces :
+                            currentSubscription.CurrencyThousandSeparator :
+                            currentSubscription.CurrencyDecimalSeparator}}</span>
+                    </td>
+                    <td class="col-md-8">
+                        <span></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- Check if datatableConfig is defined and then render the table -->
+        <ng-container *ngIf="datatableConfig">
+            <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+            </app-c3-table>
+        </ng-container>
+    </div>
+</div>

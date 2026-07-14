@@ -1,0 +1,30 @@
+.custom-height {
+    height: 300px;
+}
+
+::ng-deep {
+    app-entity-mapping-contract-popup{
+        .dt-container.dt-bootstrap5.dt-empty-footer {
+            .row:nth-child(1) {
+                .col-sm-12.p-0{
+                    height: 260px;
+                    overflow: auto;
+                }
+            }
+        }
+        .custom-height.no-height{
+            .dt-container.dt-bootstrap5.dt-empty-footer {
+                .row:nth-child(1) {
+                    .col-sm-12.p-0{
+                        height: 0px !important;
+                    }
+                }
+            }
+        }
+        .position-relative.top-70px.row.fixed-height-card.pt-0.mt-0 {
+            height: 200px; 
+            overflow-y: auto; 
+            overflow-x: hidden;
+        }
+    }
+}

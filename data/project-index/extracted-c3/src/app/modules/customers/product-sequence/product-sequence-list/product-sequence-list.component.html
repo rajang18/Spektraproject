@@ -1,0 +1,73 @@
+<div class="card">
+    <div class="card-body overflow-auto">
+        <ng-template  #namePills let-data="adtData" let-emitter="captureEvents" >   
+        <div class="d-flex justify-content-start">
+            <span>  <span class="fw-semibold"> {{data.ProductName}}</span>
+            @if(data.ProductForTrial !== null && data.ProductForTrial !== undefined && data.ProductForTrial !== ''){
+                 <sup class="text-warning shop-nce-addon fw-bold"> {{'TRANSLATE.PLAN_MANAGE_TRAIL_OFFER_SYMBOL_TRAIL_OFFER' | translate}} </sup>
+            }
+            @if(data.CategoryName === 'OnlineServicesNCE'){
+                <span class="label label-light-info label-pill label-lg label-inline badge ms-md-2" [ngbTooltip]="'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate"> {{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE' | translate}} </span>
+            }
+            @if(data.CategoryName === 'SoftwareSubscriptions'){
+                <span class="label label-light-info label-pill label-lg label-inline badge ms-md-2" [ngbTooltip]="'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate"> {{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE_SOFTWARE_SUBSCRIPTIONS' | translate}} </span>
+            }
+            @if(data.CategoryName === 'PerpetualSoftware'){
+                <span class="label label-light-info label-pill label-lg label-inline badge ms-md-2" [ngbTooltip]="'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate"> {{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE_PERPETUAL_SOFTWARE' | translate}} </span>
+            }
+            @if(data.CategoryName === 'ReservedInstances'){
+                <span class="label label-light-info font-weight-bold label-inline text-white badge bg-info ms-md-2" [ngbTooltip]="'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate"> {{'TRANSLATE.LABEL_TEXT_RESERVED_INSTANCES' | translate}} </span>
+            }
+            @if(data.CategoryName === 'DistributorOffers'){
+                <span class="label label-light-info label-pill label-lg label-inline badge ms-md-2" [ngbTooltip]="'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate"> {{'TRANSLATE.DISTRIBUTOR_OFFERS_CAPTION_TEXT_CUSTOM_OFFERS' | translate}} </span>
+            }
+            @if(data.MarketCode){
+                <span class="label label-light-info font-weight-bold label-inline text-white badge bg-info ms-md-2" ngbTooltip="{{data.MarketRegion}}"> {{data.MarketCode}} </span>
+            }
+            @if(data.LinkedProductName !== null){
+                <span style="padding-left:15px;">{{ data.LinkedProductName }}</span>
+                <span class="badge badge-primary"> {{'TRANSLATE.CUSTOMER_PRODUCT_SEQUENCE_TABLE_PRODUCT_DESCRIPTION_LINKED_PRODUCT_SUFFIX' | translate}} </span>
+            }
+            @if(data.IsAddon === true){
+                <span class="label label-light-info font-weight-bold label-inline text-white badge bg-info ms-md-2"> {{'TRANSLATE.CUSTOMER_PRODUCT_SEQUENCE_TABLE_PRODUCT_DESCRIPTION_ADDON_SUFFIX' | translate}} </span>
+            }
+        </span> 
+        </div>
+        </ng-template>
+
+        <ng-template  #productSequenceAction let-data="adtData" let-emitter="captureEvents">   
+            <input type="number" [disabled]="hasUpdatePermission()"  [(ngModel)]="data.ProductSequence" (change)="changeSequence(data)" min="0" max="99"  class="form-control" />
+        </ng-template>
+        
+
+
+        <!-- Check if datatableConfig is defined and then render the table -->
+    @if(isGridDataLoading === false){
+      <ng-container *ngIf="datatableConfig">
+        @if(dataLength == 0){
+            <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" [isPaginationHide]="true" [isPaginationRowHide]="true">
+            </app-c3-table>
+        }
+        @else {
+            <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+            </app-c3-table>
+        }
+      </ng-container>
+        
+      <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3">
+        <button [appPermission]="'UPDATECUSTOMPRODUCTSEQUENCE'" type="button" class="btn btn-sm btn-light btn-active-light-primary" (click)="cancelProductSequence()" appBusyLoader>
+            {{'TRANSLATE.BUTTON_TEXT_CANCEL' | translate}}
+        </button>
+
+        <button [appPermission]="'UPDATECUSTOMPRODUCTSEQUENCE'" type="button" class="btn btn-primary btn-sm" (click)="submit()" appBusyLoader>
+            {{ 'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate }}
+        </button>
+    </div>
+    }
+    @else{
+        <div class="text-center fw-semibold">
+            <span>{{'TRANSLATE.LOADING_MESSAGE'| translate}}</span>
+        </div>
+    }
+    </div>
+</div>

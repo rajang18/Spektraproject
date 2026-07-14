@@ -1,0 +1,67 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+      <button type="button" class="btn btn-sm fw-bold btn-primary" [routerLink]="['/partner/plans']">
+        <i class="ki-outline ki-to-left fs-2"></i>
+       <span translate="TRANSLATE.PLAN_MANAGE_ADD_BUTTON_TEXT_BACK_TO_PLAN"></span>
+      </button>
+    </div>
+</ng-template>
+<div class="d-flex flex-column-fluid"> 
+    <div class="container-fluid"> 
+        <div class="card card-custom">
+            <div class="card-body">
+                <div class="form-group row">
+                    <div class="col-md-12">
+                        <h4 class="block"><span translate="TRANSLATE.ADD_MISSING_OFFERS_STATUS"></span></h4>
+                    </div>
+                </div>
+                @if(isAlertEnabled){
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="alert alert-custom alert-notice alert-light-warning fade show mb-5 pt-0 pb-0" role="alert">
+                            <div class="alert-icon">
+                                <i class="flaticon-warning fa-3x"></i>
+                            </div>
+                            <div class="alert-text">
+                                <span>
+                                    <i class="fa fa-warning"></i> {{'TRANSLATE.NO_PLAN_WITH_OFFER_AVAILABLE' | translate}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+                @if(!isAlertEnabled){
+                <div class="form-group row">
+                    <div class="col-lg-12">
+                        <ul class="list-group">
+                            @for (row of reloadPlans; track $index) {
+                            <li class="list-group-item" >
+                                <span>
+                                    <i class="fa" [ngClass]="{'far fa-check-circle text-success':row.Status === 'Success',
+                                                              'fas fa-spinner text-success fa-pulse' : (row.Status ===undefined || row.Status==='Queued'|| row.Status==='InProgress'),
+                                                              'fas fa-exclamation-circle text-danger' : (row.Status === 'Error' || row.Status === 'Failed')}"></i>
+                                    &nbsp;
+                                    {{row.Name}}
+                                    &nbsp;
+                                    <span class="text-danger">{{row.ErrorMessage |translate}}</span>
+                                </span>
+                            </li>
+                            }
+                        </ul>
+                    </div>
+                    <div class="col-lg-12 d-grid gap-2 d-md-flex justify-content-md-end">                       
+                        @if(!isAlertEnabled){
+                        <button class="btn  btn-sm btn-light-primary uppercase float-right mt-2 mr-2"  [disabled]="isAnyActivePlanLeft" (click)="completeJobStatus()">
+                         <span translate="TRANSLATE.ADD_MISSING_OFFERS_COMPLETE_BUTTON"></span></button>
+                        }
+                        <button class="btn  btn-sm btn-light-primary uppercase float-right mt-2 mr-2" (click)="backToPlans()">
+                            <span translate="TRANSLATE.BUTTON_CLOSE"></span>
+                        </button>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

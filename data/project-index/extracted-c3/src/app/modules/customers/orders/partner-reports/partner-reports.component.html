@@ -1,0 +1,32 @@
+<ng-template #actionHeader>
+  <div class="d-flex justify-content-end align-items-center gap-2 gap-lg-3 mt-3 mb-5" *ngIf="entityName.toLowerCase() === cloudHubConstants.ENTITY_PARTNER.toLowerCase() || entityName.toLowerCase() === cloudHubConstants.ENTITY_RESELLER.toLowerCase() ">
+    <button type="button" class="btn btn-sm fw-bold btn-primary" (click)="backToList()">
+      <i class="ki-outline ki-to-left fs-2"></i> <span
+        translate="TRANSLATE.PARTNER_REPORTS_BTN_TEXT_BACK_TO_CUSTOMERS"></span></button>
+  </div>
+</ng-template>
+
+<div class="card card-custom">
+  <!-- begin::Header -->
+  <div class="card-header card-header-stretch overflow-auto">
+    <ul class="nav nav-stretch nav-line-tabs fw-bold border-transparent flex-nowrap" role="tablist">
+      <li class="nav-item" [appPermission]="'GET_RECONCILIATION_REPORT'">
+        <a (click)="navigateTab('partnerReconciliationReport')" routerLinkActive="active" class="nav-link cursor-pointer"
+          role="tab">
+          <span translate="TRANSLATE.CUSTOMER_RECONCILIATION_REPORT"></span>
+        </a>
+      </li>
+      <li class="nav-item" [appPermission]="'VIEW_LICENSE_CONSUMPTION_REPORT'">
+        <a (click)="navigateTab('partnerLicenseConsumptionReport')" routerLinkActive="active" class="nav-link cursor-pointer"
+          role="tab">
+          <span translate="TRANSLATE.LICENSE_CONSUMPTION_REPORT"></span>
+        </a>
+      </li>
+    </ul>
+
+  </div>
+
+  <div class="card-body">
+    <router-outlet></router-outlet>
+  </div>
+</div>

@@ -1,0 +1,59 @@
+<div class="modal-dialog m-0 modal-dialog m-0-centered w-100">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title">
+                <span translate="TRANSLATE.UPDATE_INVOICE_PROPERTIES"></span>
+            </h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="cancel()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+            </div>
+        </div>
+        <div class="modal-body " id="modal-body">
+            <div class="col-md-12">
+                <form name="frmAddEntitlement" role="form" class="form form-horizontal">
+                    <div class="" *ngIf="propertyName==='DueDate'">
+                        <!-- Name-->
+                        <div class="form-group row mt-6">
+                            <label class="col-md-3 col-form-label text-lg-end text-sm-start">
+                                <span translate="TRANSLATE.UPDATE_DUE_DATE_NAME"></span><span class="text-danger">*</span>
+                            </label>
+                            <div class="col-md-9">
+                                <div class="input-group input-group-sm">
+                                    <input class="form-control form-control-sm  mb-lg-0" [minDate]="minDate" [readOnly]="true" placeholder="{{ dueDate |date}}" name="startDate" [(ngModel)]="propertyValue" ngbDatepicker #sd="ngbDatepicker" />
+                                    <button class="btn btn-light-primary btn-sm" (click)="sd.toggle()" type="button"><i class="ki-outline ki-calendar fs-3 pe-0"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row mt-6" *ngIf=" propertyName==='PONumber'">
+                        <!-- PO#-->
+                        <label class="col-form-label col-md-3 text-lg-end text-sm-start">
+                            <span translate="TRANSLATE.UPDATE_INVOICE_PONUMBER"></span><!--<span class="text-danger">*</span>-->
+                        </label>
+                        <div class="col-md-9">
+                            <input type="text" name="reason" [(ngModel)]="propertyValue" class="form-control input-sm" min="0">
+                        </div>
+                    </div>
+                    <!--PONumberLineItem-->
+                    <div class="form-group row mt-6" *ngIf=" propertyName==='PONumberLineItem'">
+                        <!-- Line Item PO#-->
+                        <label class="col-form-label col-md-3 text-lg-end text-sm-start">
+                            <span translate="TRANSLATE.UPDATE_INVOICE_LINEITEM_PONUMBER"></span>
+                        </label>
+                        <div class="col-md-9">
+                            <input type="text" name="reason" [(ngModel)]="propertyValue" class="form-control input-sm" min="0">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn btn-light-primary tooltips me-2" (click)="submit()">
+                <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+            </a>
+            <button class="btn btn-light-danger" type="button" (click)="cancel()">
+                <span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span>
+            </button>
+        </div>
+    </div>
+</div>

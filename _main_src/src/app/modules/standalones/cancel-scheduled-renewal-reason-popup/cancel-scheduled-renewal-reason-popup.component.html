@@ -1,0 +1,47 @@
+<div class="modal-dialog m-0 modal-dialog m-0-centered w-100">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title">
+                <span translate="TRANSLATE.CANCEL_SCHEDULED_RENEWAL_REASON"></span>
+            </h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModalPopup()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+            </div>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <div class=" form">
+                <form [formGroup]="reasonForm" (ngSubmit)="onSubmit()" class="form form-horizontal">
+                    <div class="form-body form-group ">
+                        <div class="form-group row mt-2"
+                            [ngClass]="{'has-error': reasonForm.get('reason')?.touched && reasonForm.get('reason')?.invalid}">
+                            <div class="col-md-2 ps-5">
+                                <label class="col-form-label col-md-3 text-end">
+                                    <span translate="TRANSLATE.CANCEL_SCHEDULED_RENEWAL_REASON"></span><span
+                                        class="text-danger">*</span>
+                                </label>
+                            </div>
+                            <div class="col-md-10">
+                                <input type="text" formControlName="reason" class="form-control input-sm"
+                                    placeholder="{{'TRANSLATE.CANCEL_SCHEDULED_RENEWAL_REASON_PLACEHOLDER' | translate}}"
+                                    required>
+                                <span *ngIf="reasonForm.get('reason')?.touched && reasonForm.get('reason')?.invalid && isSubmitClicked"
+                                    class="text-danger"><span
+                                        translate="TRANSLATE.CANCEL_SCHEDULED_RENEWAL_REASON_REQUIRED_ERROR"></span></span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+        <div class="modal-footer">
+            <button class="btn btn-light btn-active-light-primary btn-sm" type="button" (click)="closeModalPopup()">
+                <span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span>
+            </button>
+            <button class="btn btn-light-danger btn-sm"  type="submit" (click)="onSubmit()">
+                <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+            </button>
+        </div>
+    </div>
+</div>

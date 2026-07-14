@@ -1,0 +1,27 @@
+<div class="container-fluid" *ngIf="!loadingData">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card card-custom">
+        <div class="card-header card-header-tabs-line">
+          <div class="card-toolbar">
+            <div class="nav nav-tabs nav-bold nav-tabs-line border-0">
+              <ul class="nav nav-stretch nav-line-tabs fw-bold border-transparent flex-wrap" role="tablist">
+                @for (tab of settingsTab; track $index) {
+                  <li class="nav-item" *ngIf="tab.visible">
+                    <a routerLink="{{tab.route}}" class="nav-link cursor-pointer" role="tab"  routerLinkActive="text-primary active"  (click)="setActiveTab(tab)">
+                      {{'TRANSLATE.'+tab.headingKey| translate}}
+                    </a>
+                  </li>
+                } 
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</div>

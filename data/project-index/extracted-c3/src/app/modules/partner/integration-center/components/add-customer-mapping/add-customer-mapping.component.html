@@ -1,0 +1,97 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="back()">
+            <i class="ki-outline ki-to-left fs-2"></i> <span
+                translate="TRANSLATE.BUTTON_TEXT_BACK_TO_LIST"></span></button>
+    </div>
+</ng-template>
+<div class="card">
+    <div class="card-body">
+        <div class="row" [appPermission]="'GET_BUSINESS_CENTRAL_ENTITY_MAPPING_DETAILS'">
+            <div class="col-md-12">
+                <div class="form-group row">
+                    <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                        <label class="fw-semibold fs-6 mb-2 mt-2">
+                            <span translate="">{{'TRANSLATE.INTEGRATION_CENTER_CUSTOMER_MAPPING_TABLE_HEADER_TEXT_C3_CUSTOMER' |
+                                translate }}</span><span class="text-danger">*</span>
+                        </label>
+                    </div>
+                    <div class="col-md-5 col-4">
+                        <input class="form-control form-control-sm" type="text" 
+                            [class]="themeMode.mode.getValue() == 'light' && BusinessCentralEntityMapping?.RecordName != null ? 'text-dark' : 'custom'"
+                            [(ngModel)]="BusinessCentralEntityMapping.RecordName" [disabled]="true"
+                            placeholder="{{'TRANSLATE.INTEGRATION_CENTER_CUSTOMER_MAPPING_PLACEHOLDER_TEXT_SELECT_CUSTOMER'| translate}}" />
+                    </div>
+                    <div class="col-md-2">
+                        <a class="btn btn-sm btn-light-primary btn-xs mr-2"
+                        (click)="getActiveC3Customers()"
+                            >{{'TRANSLATE.SELECT_DEFAULT_OPTION_SELECT' |
+                            translate}}</a>
+                    </div>
+                </div>
+                @if(BusinessCentralEntityMapping.RecordName){
+                <div class="form-group row mt-5">
+                    <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                        <label class="fw-semibold fs-6 mb-2 mt-2">
+                            <span translate="">{{'TRANSLATE.INTEGRATION_CENTER_CUSTOMER_MAPPING_TABLE_HEADER_TEXT_BUSINESS_CENTRAL_COMPANY' |
+                                translate }}</span><span class="text-danger">*</span>
+                        </label>
+                    </div>
+                    <div class="col-md-5 col-4">
+                        <input class="form-control form-control-sm" type="text"
+                            [class]="themeMode.mode.getValue() == 'light' && BusinessCentralEntityMapping?.BusinessCentralCompanyName != null ? 'text-dark' : 'custom'"
+                            [(ngModel)]="BusinessCentralEntityMapping.BusinessCentralCompanyName" [disabled]="true"
+                            placeholder="{{'TRANSLATE.INTEGRATION_CENTER_CUSTOMER_MAPPING_PLACEHOLDER_TEXT_SELECT_BUSINESS_CENTRAL_COMPANY'| translate}}" />
+                    </div>
+                    <div class="col-md-2">
+                        <a class="btn btn-sm btn-light-primary btn-xs mr-2"
+                        (click)="getActiveCompanies()"
+                            >{{'TRANSLATE.SELECT_DEFAULT_OPTION_SELECT' |
+                            translate}}</a>
+                    </div>
+                </div>
+            }
+            
+            @if(BusinessCentralEntityMapping.BusinessCentralCompanyName){
+                <div class="form-group row mt-5">
+                    <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+                        <label class="fw-semibold fs-6 mb-2 mt-2">
+                            <span translate="">{{'TRANSLATE.INTEGRATION_CENTER_CUSTOMER_MAPPING_TABLE_HEADER_TEXT_BUSINESS_CENTRAL_CUSTOMER' |
+                                translate }}</span><span class="text-danger">*</span>
+                        </label>
+                    </div>
+                    <div class="col-md-5 col-4">
+                        <input class="form-control form-control-sm" type="text"
+                            [class]="themeMode.mode.getValue() == 'light' && BusinessCentralEntityMapping?.BusinessCentralCustomerName != null ? 'text-dark' : 'custom'"
+                            [(ngModel)]="BusinessCentralEntityMapping.BusinessCentralCustomerName" [disabled]="true"
+                            placeholder="{{'TRANSLATE.INTEGRATION_CENTER_CUSTOMER_MAPPING_PLACEHOLDER_TEXT_SELECT_BUSINESS_CENTRAL_CUSTOMER'| translate}}" />
+                    </div>
+                    <div class="col-md-2">
+                        <a class="btn btn-sm btn-light-primary btn-xs mr-2"
+                        (click)="getActiveBusinessCentralCustomers()"
+                            >{{'TRANSLATE.SELECT_DEFAULT_OPTION_SELECT' |
+                            translate}}</a>
+                    </div>
+                </div>
+            }
+                <div class="form-group row">
+                    <div class="col-md-12 text-end">
+                        <div>
+                                <a class="btn btn-sm btn-light-primary btn-xs" ng-if="true" busy busy-when-url=""
+                                busy-add-classes="disabled" not-busy-remove-classes="disabled" 
+                                appBusyLoader (click)="resetForm()">
+                                {{'TRANSLATE.BUTTON_TEXT_CANCEL' | translate}}
+                            </a>
+                                <a class="btn btn-sm btn-primary btn-xs ms-2" ng-if="true" busy busy-when-url=""
+                                busy-add-classes="disabled" not-busy-remove-classes="disabled" 
+                                 *ngIf="BusinessCentralEntityMapping.RecordName && BusinessCentralEntityMapping.BusinessCentralCompanyName && BusinessCentralEntityMapping.BusinessCentralCustomerName"
+                                appBusyLoader (click)="SaveMappingcustomer()" [appPermission]="'ADD_BUSINESS_CENTRAL_ENTITY_MAPPING'"> 
+                                {{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

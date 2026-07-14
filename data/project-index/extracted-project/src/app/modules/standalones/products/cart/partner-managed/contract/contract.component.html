@@ -1,0 +1,90 @@
+<div class="card card-custom gutter-b card-stretch" ng-if=" !cc.openCreateComment">
+    <div class="card-body">
+        <div class="d-flex align-items-center">
+            @if (product.ImageUrl) {
+                <div class="flex-shrink-0 me-4 symbol symbol-65 mr-4">
+                    <img [src]="product.ImageUrl">
+                </div>
+            }
+            @if (!product.ImageUrl) {
+                <div class="flex-shrink-0 me-4 symbol symbol-dark symbol-50 mr-4">
+                    <span class="symbol-label font-size-h1 bg-dark text-white">
+                        {{product.Name | formatforinitials}}
+                    </span>
+                </div>
+            }
+            <div class="d-flex flex-column mr-auto">
+                <div>
+                    <!--START::To update-->
+                    @if(!product.IsEdit){
+                    <span class="h5 font-weight-boldest" ngbTooltip="{{product.Name}}" tooltip-append-to-body="true" tooltip-class="text-capitalize" tooltip-placement="bottom">{{product.Name | limitLength:50}}</span>
+                    }
+                    @if(product.IsEdit != true && product.Name !=null && product.Name.length > 50){
+                    <span class="card-title text-hover-primary font-weight-bolder font-size-h5 text-dark mb-1">...</span>
+                    }
+                    @if(product.IsEdit != true){
+                            
+                    <button class="btn btn-icon" (click)="product.IsEdit = true" appBusyLoader [isDisabledOnly]="true" ngbTooltip="{{'TRANSLATE.TOOLTIP_TEXT_EDIT_NAME'|translate}}">
+                        <i class="ki-outline ki-pencil text-primary " aria-hidden="true" data-toggle="tooltip" data-placement="top" ></i>
+                    </button>
+                    }
+                    @if(product.IsEdit){
+                    <div class="row" ng-if="product.IsEdit === true">
+                        <div class="col-md-9">
+                            <input type="text" [(ngModel)]="product.UpdatedProductName" class="form-control form-control-sm">
+                        </div>
+
+                        <div class="btn-group col-md-2 p-0">
+                            <a class="btn btn-icon" (click)="callUpdateProductNameInCart(product.UpdatedProductName);" [hidden]="product.IsEdit === false">
+                                <i class="ki-outline ki-check fs-1 text-success"></i>
+                            </a>
+                            <a class="btn btn-icon" (click)="product.IsEdit = false;product.UpdatedProductName=product.Name;" [hidden]="product.IsEdit === false">
+                                <i class="ki-outline ki-cross fs-1 text-danger"></i>
+                            </a>
+                        </div>
+                    </div>
+                    }
+                    <!--END :: To update-->
+                </div>
+                @if (product.Name !=null && product.Name.length > 50) 
+                {
+                    <span class="card-title text-hover-primary font-weight-bolder font-size-h5 text-dark mb-1">...</span>
+
+                }
+                <span>
+                    @if(product.BillingCycleName && product.BillingCycleName !== ''){
+                        <span class="label fw-bold label-inline text-white badge ms-md-2" [ngClass]="{
+                            'bg-warning': product.BillingCycleName?.toLowerCase() === 'monthly',
+                            'bg-success': product.BillingCycleName?.toLowerCase() === 'annual',
+                            'bg-dark': product.BillingCycleName?.toLowerCase() === 'triennial',
+                            'bg-info': product.BillingCycleName?.toLowerCase() === 'onetime'
+                            }" aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}">{{product.BillingCycleName}}</span>
+                    }
+                    @if(product.ProviderSettings && product.ProviderSettings.ProviderCategory){
+                        <span class="label label-light-warning font-weight-bold label-inline text-warning badge bg-light-warning ms-md-2">{{product.ProviderSettings.ProviderCategory | translate}}</span>
+                    }
+                 </span>
+            </div>
+            <div class="card-toolbar mb-auto">
+                <button #buttonRef [appPermission]="'menu_customer_comments'" class="btn btn-circle btn-sm btn-icon btn-light-primary me-2" ng-if="HasGetComments === 'Allowed'" (click)="callManageProduct()" ngbTooltip="{{'TRANSLATE.CART_CARD_COMMENT_ACTION' | translate}}" tooltip-placement="bottom" appBusyLoader [isDisabledOnly]="true">
+                    <i class="ki-outline ki-messages"></i>
+                </button>
+                <button [appPermission]="'DELETE_CART_ITEM'" class="btn btn-circle btn-sm btn-icon btn-light-danger me-2" ng-if="HasDeleteCartItem === 'Allowed'" (click)="callDeleteProductFromCart()" ngbTooltip="{{'TRANSLATE.CART_CARD_DELETE_PRODUCT' | translate}}"  tooltip-placement="bottom" appBusyLoader [isDisabledOnly]="true">
+                    <i class="ki-outline ki-trash"> </i>
+                </button>
+            </div>
+        </div>
+        <div class="d-flex">
+            <div class="flex-grow-1">
+                <div class="d-flex align-items-center justify-content-between flex-wrap mt-2">
+                    <div class="flex-grow-1 font-weight-bold text-dark-50 py-2 py-lg-2 mr-5">
+                        <p class="mb-0 width-text-wrapper">
+                            {{product.Description}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end::Card--> 

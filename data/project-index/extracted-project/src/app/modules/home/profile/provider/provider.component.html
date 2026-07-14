@@ -1,0 +1,1121 @@
+<ng-template #mailpopup>
+    <div class="modal-dialog m-0 modal-dialog m-0-centered W-100">
+        <form name="paymentForm" [formGroup]="sendMailToCustomer" role="form" class="form">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>
+                        {{'TRANSLATE.ATTESTATION_SEND_MAIL_TO_CUSTOMER_POP_UP_HEADING' | translate}}
+                    </h2>
+                    <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closePopup()"
+                        data-bs-dismiss="modal">
+                        <i class="ki-duotone ki-cross fs-1">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="p-2 mb-4 bs-callout notice bg-light-primary rounded border-primary border border-dashed">
+                        <div class="col-md-12">
+                            <p>
+                                <span class="fw-bold" translate="TRANSLATE.REPORT_POPUP_EMAIL_TEXT"></span>
+                                <br />
+                                <span translate="TRANSLATE.ATTESTATION_EMAIL_INSTRUCTION">
+                                </span>
+
+                            </p>
+                        </div>
+                    </div>
+                    <textarea appEmailValidation [formSubmitted]="popupSubmitted" class="form-control" rows="5"
+                        formControlName="Mail"
+                        placeholder="{{'TRANSLATE.ACCOUNT_MANAGERS_TABLE_HEADER_EMAIL_ADDRESS' | translate}}">
+                    </textarea>
+                    <!-- @if(sendMailToCustomer.get("Mail").errors?.required){
+                    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                    } -->
+
+                </div>
+                <div class="modal-footer float-end">
+                    <button class="btn btn-sm btn-secondary" (click)="closePopup()">
+                        {{'TRANSLATE.BUTTON_TEXT_CANCEL' | translate}}
+                    </button>
+                    <button class="btn btn-sm btn-primary" (click)="submitEmailPopup(null)">
+                        {{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}
+                    </button>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+
+<div class="col-lg-12">
+  <div class="card card-custom">
+    <div class="card-header">
+      <div class="card-title">
+        <strong>
+          {{providerName}} <span>
+            {{
+'TRANSLATE.CUSTOMER_PROFILE_PROVIDER_HEADER_TEXT_USER_ACCOUNTS' |
+                        translate
+            }}
+          </span>
+        </strong>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    @for (data of ServiceProviderCustomers; track data.Id; let i = $index) {
+    <div>
+      <div ngbAccordion>
+        <div ngbAccordionItem [collapsed]="i !== 0">
+          <div ngbAccordionHeader class=" text-primary">
+            <button ngbAccordionButton class="text-primary">
+              <i class="ki-outline ki-user text-primary fs-2 me-3"></i>
+              {{data.ServiceProviderCustomerName}}
+            </button>
+          </div>
+          <div ngbAccordionCollapse>
+            <div>
+              <!-- ngbAccordionBody -->
+              <div class="card card-custom">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-lg-12" style="padding-left: 30px">
+                      <div [appPermission]="'BUTTON_UPDATE_DEFAULT_TENANT'"
+                           class="row static-info mb-2">
+                        <a *ngIf="!data.IsDefault" (click)="UpdateDefaultValue(data)"
+                           class="btn btn-sm btn-success">
+                          {{'TRANSLATE.UPDATE_DEFAULT_VALUE' |translate}}
+                        </a>
+                      </div>
+                      <div class="row static-info mb-2">
+                        <div class="col-lg-4">
+                          {{
+'TRANSLATE.CUSTOMER_PROFILE_PROVIDER_LABEL_TEXT_CANONICAL_NAME' |
+                                                    translate
+                          }}
+                        </div>
+                        <div class="col-lg-8  fw-bold value">
+                          {{data.ServiceProviderCustomerName}}
+                          <span *ngIf="data.IsDefault">
+                            <i class="ki-outline ki-check-circle text-success tooltips"
+                               ngbTooltip="{{'TRANSLATE.SERVICE_PROVIDER_TENANT_DEFAULT_CUSTOMER'|translate}}"></i>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="row static-info mb-2">
+                        <div class="col-lg-4">
+                          {{providerName}}
+                          {{
+'TRANSLATE.CUSTOMER_PROFILE_PROVIDER_LABEL_TEXT_ACCOUNT_CREATION_DATE'
+                                                    | translate
+                          }}
+                        </div>
+                        <div class="col-lg-8 fw-bold value">
+                          {{
+data.ProviderCustomerCreateDate
+                                                    |c3Date
+                          }}
+                        </div>
+                      </div>
+                      <div class="row static-info mb-2">
+                        <div class="col-lg-4">
+                          {{
+'TRANSLATE.CUSTOMER_PROFILE_PROVIDER_LABEL_TEXT_C3_ONBOARDING_DATE'
+                                                    | translate
+                          }}
+                        </div>
+                        <div class="col-lg-8 fw-bold value">
+                          {{data.ProviderCustomerOnBoardDateInC3 | c3Date}}
+                        </div>
+                      </div>
+                      <!--need to add the provider condition if needed below -->
+                      <!-- added rbac condition - customer admin-->
+                      <!-- need to bring the customer configuration -->
+                      <div class="row static-info mb-2"
+                           *ngIf="data.ShouldShowTenantSpecialQualifications == 'Yes'">
+                        <div class="col-4 ">
+                          <!--{{  | translate}}-->
+                          <span>
+                            {{
+'TRANSLATE.PLACEHOLDER_SPECIAL_QUALIFICATION' |
+                                                        translate
+                            }}
+                          </span>
+                        </div>
+                        <div class="col-8 d-inline-flex align-items-start m-0 p-0 ">
+
+                          <!--<ul ng-repeat="recipient in (row.ToRecipients | convertCommaSeparatedStringToList)">
+                                  <li> <span translate="{{recipient }}" /></li>
+                              </ul>-->
+                          <!---->
+                          <!--{{}}-->
+                          <ul class="m-0 fw-bold">
+                            @for(option of data.ProviderSpecialQualifications; track
+                            option.Id; let i = $index){
+                            <li>
+                              {{ formatQualification(option.qualification) }}
+                            </li>
+                            <!-- <li ng-repeat="i in customer.ProviderSpecialQualifications">
+                                    {{i.qualification | azureAdvisor}}
+                                </li> -->
+                            }
+                            <li *ngIf="data.ProviderSpecialQualifications?.length === 0">
+                              <span translate="">
+                                {{
+'TRANSLATE.PLACEHOLDER_SPECIAL_QUALIFICATION_NONE'
+                                                                | translate
+                                }}
+                              </span>
+                            </li>
+                          </ul>
+                          <button #buttonRef
+                                  class="ms-1 btn btn-light-primary btn-icon btn-sm inline-flex"
+                                  [appPermission]="'SHOW_SPECIAL_QUALIFICATIONS'"
+                                  *ngIf="data.ProviderSpecialQualifications?.length <2"
+                                  ng-init="vm.currentIndex = $index"
+                                  ng-click="vm.currentIndex = $index"
+                                  (click)="openspecialQualificationsModal(i)">
+                            <div *ngIf="!isUpdateSpecialQualification">
+                              <span ngbTooltip="{{'TRANSLATE.SPECIAL_QUALIFICATIONS_TOOLTIP_DESCRIPTION' | translate}}"
+                                    tooltip-placement="right">
+                                <i class="ki-outline ki-pencil ps-5">
+                                  <span class="path1"></span>
+                                  <span class="path2"></span>
+                                </i>
+                              </span>
+                            </div>
+
+                            <div *ngIf="isUpdateSpecialQualification">
+                              <i class="fa fa-spinner fa-spin"></i><span translate="TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT"></span>
+                            </div>
+
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mt-4"></div>
+                    <div class="col-lg-6 mt-6">
+                      <div class="card card-custom">
+                        <div class="card-header justify-content-end ribbon ribbon-start ribbon-clip">
+                          <div class="ribbon-label">
+                            <span>
+                              <i class="ki-outline ki-delivery text-white"></i>&nbsp;
+                              <span class="caption-subject">
+                                {{
+'TRANSLATE.CUSTOMER_PROFILE_PROVIDER_HEADER_TEXT_SHIPPING_ADDRESS'
+                              | translate
+                                }}
+                              </span>
+                            </span>
+                          </div>
+                        </div>
+                        <div class="card-body">
+                          <ul style="list-style-type:none;">
+                            <li>{{data.ShippingAddressLine1}}</li>
+                            <li>{{data.ShippingAddressLine2}}</li>
+                            <li>{{data.ShippingAddressCity}}</li>
+                            <li>
+                              {{data.ShippingAddressState}}, {{data.ShippingAddressZip}}
+                            </li>
+                            <li>{{data.ShippingAddressCountry}}</li>
+                            <li>{{data.ShippingAddressPhone}}</li>
+                            <li>{{data.ShippingAddressEmail}}</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-6 mt-6">
+                      <div class="card card-custom">
+                        <div class="card-header justify-content-end ribbon ribbon-start ribbon-clip">
+                          <div class="ribbon-label bg-success">
+                            <span class="">
+                              <i class="ki-outline ki-document text-white"></i>&nbsp;
+                              <span class="caption-subject">
+                                {{
+'TRANSLATE.CUSTOMER_PROFILE_PROVIDER_LABEL_TEXT_Billing_ADDRESS'
+                              | translate
+                                }}
+                              </span>
+                            </span>
+                          </div>
+                        </div>
+                        <div class="card-body">
+                          <ul style="list-style-type:none">
+                            <li>{{data.BillingAddressLine1}}</li>
+                            <li>{{data.BillingAddressLine2}}</li>
+                            <li>{{data.BillingAddressCity}}</li>
+                            <li>
+                              {{data.BillingAddressState}}, {{data.BillingAddressZip}}
+                            </li>
+                            <li>{{data.BillingAddressCountry}}</li>
+                            <li>{{data.BillingAddressPhone}}</li>
+                            <li>{{data.BillingAddressEmail}}</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mt-4">
+                    <div class="col-lg-12 mt-2">
+                      <strong>
+                        <span class="font-size-h4">
+                          {{
+'TRANSLATE.CUSTOMER_CONSENT_OR_AGREEMENT_TITLE_MICROSOFT'
+                  | translate
+                          }}
+                        </span>
+                      </strong>
+                    </div>
+                    <div class="col-12 mt-2" *ngIf="ConsiderNewMicrosoftCustomerAgreement === 'Yes'">
+                      <div class="card">
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="col-12">
+                              <p class="font-weight-bold">
+                                {{'TRANSLATE.ATTESTATION_FLOW' | translate}}
+                              </p>
+                            </div>
+                            <div class="form-group">
+                              <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6 mb-3">
+                                <div class="row m-heading-1 border-green m-bordered">
+                                  <div>
+                                    <strong>{{ 'TRANSLATE.CUSTOMER_SIDE_CONSENT_VIEW_INSTRUCTIONS_FOR_ATTESTATION_HEADING' | translate }}</strong>
+                                    <ul class="mt-2">
+                                      <li>
+                                        <span [innerHTML]="'TRANSLATE.CUSTOMER_SIDE_CONSENT_VIEW_INSTRUCTIONS_FOR_ATTESTATION_1' | translate"></span>
+                                      </li>
+                                      <li>
+                                        {{ 'TRANSLATE.CUSTOMER_SIDE_CONSENT_VIEW_INSTRUCTIONS_FOR_ATTESTATION_2' | translate }}
+                                      </li>
+                                      <li>
+                                        <span [innerHTML]="'TRANSLATE.CUSTOMER_SIDE_CONSENT_VIEW_INSTRUCTIONS_FOR_ATTESTATION_3' | translate"></span>
+                                      </li>
+                                      <li>
+                                        <span [innerHTML]="'TRANSLATE.CUSTOMER_SIDE_CONSENT_VIEW_INSTRUCTIONS_FOR_ATTESTATION_4' | translate"></span>
+                                      </li>
+                                      <li class="fw-bold text-primary">
+                                        <span> {{'TRANSLATE.CUSTOMER_SIDE_CONSENT_VIEW_INSTRUCTIONS_FOR_ATTESTATION_5' | translate }} </span>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-4">
+                              <button class="btn btn-light-primary btn-sm" [appPermission]="'BTN_SAVE_MICROSOFT_CUSTOMER_CONSENT'"
+                                      (click)="openModal(data, i)" ngbTooltip="{{'TRANSLATE.ATTESTATION_CREATE_TOOLTIP'|translate}}" triggers="hover">
+                                <i class="ki-outline ki-document"></i>
+                                <span>
+                                  {{'TRANSLATE.ATTESTATION_CREATE' | translate}}
+                                </span>
+                              </button>
+                            </div>
+                            <div class="col-4">
+                              <button *ngIf="attestationStatusArr[i]?.Status === 'Pending'" class="btn btn-light-primary btn-sm" [appPermission]="'BTN_SAVE_MICROSOFT_CUSTOMER_CONSENT'"
+                                      (click)="RefreshStatus(data,i)" ngbTooltip="{{'TRANSLATE.ATTESTATION_REFRESH_STATUS_TOOLTIP'|translate}}" triggers="hover">
+                                <i class="ki-outline ki-arrows-circle"></i>
+                                <span>
+                                  {{'TRANSLATE.ATTESTATION_REFRESH_STATUS' | translate}}
+                                </span>
+                              </button>
+                            </div>
+                            <div class="col-4">
+                              <button *ngIf="attestationStatusArr[i]?.Status === 'Pending' && this.isCustomerImpersonation" class="btn btn-light-primary btn-sm" [appPermission]="'BTN_SAVE_MICROSOFT_CUSTOMER_CONSENT'" (click)="openMailPopup(data)" ngbTooltip="{{'TRANSLATE.ATTESTATION_SEND_MAIL_TO_CUSTOMER_TOOLTIP'|translate}}" triggers="hover">
+                                <i class="ki-outline ki-sms"></i>
+                                <span>
+                                  {{'TRANSLATE.ATTESTATION_SEND_MAIL_TO_CUSTOMER' | translate}}
+                                </span>
+                              </button>
+                            </div>
+                            @if(attestationStatusArr[i]?.AttestationConsentUrl){
+                            <div class="col-12 mt-2" *ngIf="attestationStatusArr[i] != null">
+                              <p>{{'TRANSLATE.ATTESTATION_LINK' | translate}}</p>
+                              <span class="d-flex">
+                                <input class="form-control" type="url"
+                                       value="{{attestationStatusArr[i]?.AttestationConsentUrl}}" disabled>
+                                <button class="btn btn-sm btn-light-primary ms-2" (click)="Copy(i)" ngbTooltip="{{'TRANSLATE.ATTESTATION_LINK_TOOLTIP'|translate}}" triggers="hover">
+                                  <i class="ki-outline ki-copy"></i>
+                                </button>
+                              </span>
+                            </div>
+                            }
+                          </div>
+                        </div>
+                        <div class="card-body pt-0">
+                          <div class="row" *ngIf="attestationStatusArr[i] != null">
+                            <div class="col-12">
+                              <p class="font-weight-bold">
+                                {{'TRANSLATE.ATTESTATION_STATUS' | translate}}
+                              </p>
+                            </div>
+
+                            <div class="col-8">
+                              <div class="form-group row">
+                                <div class="col-6">
+                                  <p class="text-muted">
+                                    {{'TRANSLATE.ATTESTATION_STATUS_COMPANY_NAME' | translate}}
+                                  </p>
+                                  <p>{{attestationStatusArr[i]?.CompanyName}}</p>
+                                </div>
+                                <div class="col-6">
+                                  <p class="text-muted">
+                                    {{'TRANSLATE.ATTESTATION_STATUS_EMAIL' | translate}}
+                                  </p>
+                                  <p>{{attestationStatusArr[i]?.EmailAddress}}</p>
+                                </div>
+                                <div class="col-6">
+                                  <p class="text-muted">
+                                    {{'TRANSLATE.ATTESTATION_STATUS_COUNTRY' | translate}}
+                                  </p>
+                                  <p>{{attestationStatusArr[i]?.Country}}</p>
+                                </div>
+                                <div class="col-6">
+                                  <p class="text-muted">
+                                    {{'TRANSLATE.ATTESTATION_STATUS_STATUS' | translate}}
+                                  </p>
+                                  <span class="badge text-white" ngbTooltip="{{'TRANSLATE.ATTESTATION_STATUS_STATUS_TOOLTIP'|translate}}" [ngClass]="{
+                                  'bg-warning': attestationStatusArr[i]?.Status === 'Pending',
+                                  'bg-success': attestationStatusArr[i]?.Status === 'Accepted',
+                                  'bg-danger':  attestationStatusArr[i]?.Status === 'Rejected'
+                                }">
+                                    {{'TRANSLATE.' + attestationStatusArr[i]?.Status | translate}}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-4">
+                              <button class="btn btn-secondary btn-sm"
+                                      (click)="attestationAcceptedDocumentPreview(attestationStatusArr[i])" ngbTooltip="{{'TRANSLATE.ATTESTATION_PREVIEW_TOOLTIP'|translate}}" triggers="hover">
+                                <i class="ki-outline ki-document"></i>
+                                <span>
+                                  {{'TRANSLATE.ATTESTATION_PREVIEW' | translate}}
+                                </span>
+                              </button>
+                            </div>
+                          </div>
+                          <div class="text-warning" *ngIf="attestationStatusArr[i] === null">
+                            {{'TRANSLATE.ATTESTATION_NO_DETAILS_FOUND_MESSAGE' | translate}}
+                          </div>
+                        </div>
+                        <div class="card-body d-flex align-items-center pt-0">
+                            <div>
+                            <span class="font-weight-bold">
+                                {{'TRANSLATE.MICROSOFT_CUSTOMER_AGREEMENT_TITLE_CUSTOMER_ACCEPTANCE_CONFIRMED_BY_PARTNER' | translate}}
+                            </span>
+                            <br>
+                            <span *ngIf="(data.ProviderCustomerConsentDetails === null ||data.ProviderCustomerConsentDetails?.length === 0) && isGridDataLoading === false" class="text-danger">
+                                {{
+                                'TRANSLATE.MICROSOFT_CUSTOMER_AGREEMENT_CUSTOMER_ACCEPTANCE_THROUGH_MICROSOFT_STATUS_TEXT_NOT_PROVIDED'| translate
+                                }}
+                            </span>
+                            </div>
+                        
+                            <button class="btn btn-sm btn-light-primary ms-2" [appPermission]="'BTN_SAVE_MICROSOFT_CUSTOMER_CONSENT'"
+                                [disabled]="attestationStatusArr[i]?.Status !== 'Accepted'"
+                                (click)="CreateAgreement(data.ServiceProviderCustomerId, i, data)"
+                                ngbTooltip="{{'TRANSLATE.CREATE_AGREEMENT_TOOLTIP'|translate}}" triggers="hover">
+                                <i class="ki-outline ki-document"></i>
+                                {{'TRANSLATE.CREATE_AGREEMENT' | translate}}
+                            </button>
+                        </div>
+                        <div class="card-body pt-0 pb" *ngFor="let customerConsent of data?.ProviderCustomerConsentDetails">
+                          <table class="table  table-condensed table-bordered table-striped m-heading-1 border-blue m-bordered">
+                            <tbody>
+                              @for(customerConsent of data.ProviderCustomerConsentDetails; track
+                              customerConsent.Id; let i = $index){
+
+                              <tr class="row">
+                                <td data-title="'TRANSLATE.DASHBOAR_HEADER_TEXT_TERMS_AND_CONDITIONS_ACCEPTED'|translate"
+                                    class="col-md-12 mr-2">
+                                  <div class="row">
+                                    <div class="col-md-5">
+                                      <strong>
+                                        <span>
+                                          {{
+'TRANSLATE.CUSTOMER_CONSENT_LABELS_FIRST_NAME'
+                                                  | translate
+                                          }}
+                                        </span>
+                                      </strong>
+                                      <br />
+                                      {{customerConsent.FirstName}}
+                                    </div>
+                                    <div class="col-md-5">
+                                      <strong>
+                                        <span>
+                                          {{
+'TRANSLATE.CUSTOMER_CONSENT_LABELS_LAST_NAME'
+                                                  | translate
+                                          }}
+                                        </span>
+                                      </strong>
+                                      <br />
+                                      {{customerConsent.LastName}}
+                                    </div>
+                                  </div>
+                                  <div class="row mt-4">
+                                    <div class="col-md-5">
+                                      <strong>
+                                        <span>
+                                          {{
+'TRANSLATE.CUSTOMER_CONSENT_TEXT_EMAIL'
+                                                  | translate
+                                          }}
+                                        </span>
+                                      </strong>
+                                      <br />
+                                      {{customerConsent.EmailAddress}}
+                                    </div>
+                                    <div class="col-md-3">
+                                      <strong>
+                                        <span>
+                                          {{
+'TRANSLATE.CUSTOMER_CONSENT_TEXT_DATE'
+                                                  | translate
+                                          }}
+                                        </span>
+                                      </strong>
+                                      <br />
+                                      {{customerConsent.AgreementDate | c3Date}}
+                                    </div>
+                                    <div class="col-md-4">
+                                      <strong>
+                                        <span>
+                                          {{
+'TRANSLATE.CUSTOMER_CONSENT_TEXT_IP'
+                                                  | translate
+                                          }}
+                                        </span>
+                                      </strong>
+                                      <br />
+                                      {{customerConsent.UserIPAddress}}
+                                    </div>
+                                  </div>
+                                  <div class="row mt-4">
+                                    <div class="col-md-12">
+                                      <strong>
+                                        <span>
+                                          {{
+'TRANSLATE.CUSTOMER_CONSENT_CLOUD_AGREEMENT_URL'
+                                                  | translate
+                                          }}
+                                        </span>
+                                      </strong>
+                                      <br />
+          
+                                      <a class="text-break" href="{{customerConsent.AgreementLink}}" target="_blank" rel="noopener noreferrer">
+                                        <span [innerHTML]="'TRANSLATE.CLICK_HERE' | translate"></span>
+                                      </a>
+                                      <span [innerHTML]="'TRANSLATE.CUSTOMER_CONSENT_TO_OPEN_DOCUMENT_URL' | translate"></span>
+                                    </div>
+                                  </div>
+                                </td>
+                              </tr>
+                              }
+
+                              <tr *ngIf="data.ProviderCustomerConsentDetails?.length === 0 && isGridDataLoading === false">
+                                <td>
+                                  <span translate="TRANSLATE.MESSAGE_NO_RECORDS_FOUND"></span>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-12 mt-2">
+                      <strong>
+                        <span class="font-size-h5">
+                          {{
+'TRANSLATE.MICROSOFT_CUSTOMER_AGREEMENT_TITLE_CUSTOMER_ACCEPTANCE_THROUGH_MICROSOFT'
+                  | translate
+                          }}
+                        </span>
+                      </strong>
+                    </div>
+                    <div class="col-md-12 mt-2">
+                      <table class="table table-condensed table-bordered table-striped">
+                        <tbody>
+                          @for(row of data.DirectSignedProviderCustomerConsentDetails; track
+                          row.Id; let i = $index){
+                          <tr ng-repeat="row in customer.DirectSignedProviderCustomerConsentDetails"
+                              class="row">
+                            <td class="col-md-12 mr-2">
+                              <div class="row">
+                                <div class="col-md-12">
+                                  <strong>
+                                    <span>
+                                      {{
+'TRANSLATE.MICROSOFT_CUSTOMER_AGREEMENT_CUSTOMER_ACCEPTANCE_THROUGH_MICROSOFT_STATUS_HEADER_TEXT'
+                                          | translate
+                                      }}
+                                    </span>
+                                  </strong>
+                                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                  <span *ngIf="row.IsDirectAcceptanceProvided === false">
+                                    {{
+'TRANSLATE.MICROSOFT_CUSTOMER_AGREEMENT_CUSTOMER_ACCEPTANCE_THROUGH_MICROSOFT_STATUS_TEXT_NOT_PROVIDED'
+                                      | translate
+                                    }}
+                                  </span>
+                                  <span *ngIf="row.IsDirectAcceptanceProvided === true">
+                                    {{
+'TRANSLATE.MICROSOFT_CUSTOMER_AGREEMENT_CUSTOMER_ACCEPTANCE_THROUGH_MICROSOFT_STATUS_TEXT_PROVIDED'
+                                      | translate
+                                    }}
+                                  </span>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                          }
+
+                          <tr *ngIf="data.DirectSignedProviderCustomerConsentDetails?.length === 0 && isGridDataLoading === false">
+                            <td>
+                              <span translate="TRANSLATE.MESSAGE_NO_RECORDS_FOUND"></span>
+                            </td>
+                          </tr>
+                          <!-- <tr ng-show="isGridDataLoading === true">
+                                  <td><h3><strong>{{gridLoadingDataMessage}}</strong></h3></td>
+                              </tr> -->
+                        </tbody>
+                      </table>
+                    </div>
+                     <div class="col-lg-12 mt-2" *ngIf="ConsiderNewMicrosoftCustomerAgreement === 'No'">
+                        <strong><span
+                                class="font-size-h5 me-2">{{'TRANSLATE.MICROSOFT_CUSTOMER_AGREEMENT_TITLE_CUSTOMER_ACCEPTANCE_CONFIRMED_BY_PARTNER'
+                                | translate}}</span></strong>
+                        &nbsp;&nbsp;
+                        <button class="btn btn-sm btn-light-primary"
+                            [appPermission]="'BTN_SAVE_MICROSOFT_CUSTOMER_CONSENT'" busy=""
+                            busy-add-classes="disabled" not-busy-remove-classes="disabled"
+                            (click)="SaveProviderCustomerConsent(data.CustomerC3Id, data.ServiceProviderCustomerId)">
+                            <i class="ki-outline ki-plus fs-2"></i>
+                            {{'TRANSLATE.CUSTOMER_CONSENT_BTN_TEXT_ADD' | translate}}
+                             <!-- // <busy-message><i class="fa fa-refresh fa-spin"></i>{{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}</busy-message> -->
+                        </button>
+                    </div>
+                    <div class="col-md-12 mt-2"
+                         *ngFor="let customerConsent of data?.ProviderCustomerConsentDetails">
+                      <table *ngIf="ConsiderNewMicrosoftCustomerAgreement === 'No'"
+                          class="table  table-condensed table-bordered table-striped m-heading-1 border-blue m-bordered">
+                          <tbody>
+                              @for(customerConsent of data.ProviderCustomerConsentDetails; track
+                              customerConsent.Id; let i = $index){
+
+                              <tr class="row">
+                                  <td data-title="'TRANSLATE.DASHBOAR_HEADER_TEXT_TERMS_AND_CONDITIONS_ACCEPTED'|translate"
+                                      class="col-md-12 mr-2">
+                                      <div class="row mt-4">
+                                          <div class="col-md-5">
+                                              <strong><span>{{'TRANSLATE.CUSTOMER_CONSENT_TEXT_EMAIL'
+                                                      | translate}}</span></strong>
+                                              <br />
+                                              {{customerConsent.EmailAddress}}
+                                          </div>
+                                          <div class="col-md-3">
+                                              <strong><span>{{'TRANSLATE.CUSTOMER_CONSENT_TEXT_DATE'
+                                                      | translate}}</span></strong>
+                                              <br />
+                                              {{customerConsent.AgreementDate | c3Date}}
+                                          </div>
+                                          <div class="col-md-4">
+                                              <strong><span>{{'TRANSLATE.CUSTOMER_CONSENT_TEXT_IP'
+                                                      | translate}}</span></strong>
+                                              <br />
+                                              {{customerConsent.UserIPAddress}}
+                                          </div>
+                                      </div>
+                                      <div class="row mt-4">
+                                          <div class="col-md-12">
+                                              <strong>
+                                                  <span>{{'TRANSLATE.CUSTOMER_CONSENT_CLOUD_AGREEMENT_URL'
+                                                      | translate}}</span>
+                                              </strong>
+                                              <br />
+                                              <a class="text-break" href="{{customerConsent.AgreementLink}}"
+                                                  target="_blank">
+                                                  {{customerConsent.AgreementLink}}</a>
+
+                                                  <!-- <a class="text-break" href="{{customerConsent.AgreementLink}}" target="_blank" rel="noopener noreferrer">
+                                                    <span [innerHTML]="'TRANSLATE.CLICK_HERE' | translate"></span>
+                                                  </a>
+                                                  <span [innerHTML]="'TRANSLATE.CUSTOMER_CONSENT_TO_OPEN_DOCUMENT_URL' | translate"></span> -->
+                                          </div>
+                                      </div>
+                                  </td>
+                              </tr>
+                              }
+
+                              <tr
+                                  *ngIf="data.ProviderCustomerConsentDetails?.length === 0 && isGridDataLoading === false">
+                                  <td><span translate="TRANSLATE.MESSAGE_NO_RECORDS_FOUND"></span>
+                                  </td>
+                              </tr>
+                              <!-- <tr *ngIf="isGridDataLoading === true">
+                                          <td><h3><strong>{{gridLoadingDataMessage}}</strong></h3></td>
+                                      </tr> -->
+                          </tbody>
+                      </table>
+                      <div class="datatable-row"
+                           [appPermission]="'SIDEBAR_PARTNER_MICROSOFT_AZURE_ADVISOR'"
+                           *ngIf="cpvApplicationID !== null &&  cpvApplicationID !=='' && providerName === 'Microsoft' &&  (reservedInstancesCategory || hasMicrosoftAzureRecommendation =='Allowed')">
+                        <!-- <tenant-configuration datasource="customer.ServiceProviderCustomerId" controlType={{"cpvcustomerconsent"}} confirm-copy="vm.confirmCopy()"></tenant-configuration> -->
+                        <tenantconfig [data]="data.ServiceProviderCustomerId"
+                                      [controlType]="'cpvcustomerconsent'" [metadata]="metadata">
+                        </tenantconfig>
+                        <!-- <span>{{data.ServiceProviderCustomerId}}</span> -->
+                      </div>
+
+                    </div>
+                    <div class="col-md-12 mt-2"
+                         *ngIf="data.ProviderCustomerConsentDetails === null || data.ProviderCustomerConsentDetails?.length == 0">
+                      <span class="text-danger">
+                        {{'TRANSLATE.LBL_TEXT_NOT_PROVIDED' | translate}}
+                      </span>
+                      <div class="datatable-row mt-5"
+                           [appPermission]="'SIDEBAR_PARTNER_MICROSOFT_AZURE_ADVISOR'"
+                           *ngIf="cpvApplicationID !== null &&  cpvApplicationID !=='' && providerName == 'Microsoft' &&  (reservedInstancesCategory || hasMicrosoftAzureRecommendation =='Allowed')">
+                        <!-- <tenant-configuration datasource="customer.ServiceProviderCustomerId" controlType={{"cpvcustomerconsent"}} confirm-copy="vm.confirmCopy()"></tenant-configuration> -->
+                        <tenantconfig [data]="data.ServiceProviderCustomerId"
+                                      [controlType]="'cpvcustomerconsent'" [metadata]="metadata">
+                        </tenantconfig>
+
+                        <!-- <span>{{data.ServiceProviderCustomerId}}</span> -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+    
+  </div>
+</div>
+
+ <ng-template #AgreementCreationPopUp>
+      <div class="modal-dialog m-0 modal-dialog m-0-centered W-100">
+        <form name="paymentForm" [formGroup]="AgreementCreation" role="form" class="form">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2>
+                {{'TRANSLATE.AGREEMENT_CREATION' | translate}}
+              </h2>
+              <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closePopup()"
+                   data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+              </div>
+            </div>
+            <div class="modal-body">
+              <div class="row mt-5">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="firstName" class="form-label">{{'TRANSLATE.ATTESTATION_FORM_LABELS_FIRST_NAME'| translate}}</label>
+                    <span class="text-danger ms-1">*</span>
+                    <input type="text" formControlName="FirstName" class="form-control form-control-sm"
+                           id="firstName">
+                    @if(AgreementCreation.get('FirstName')?.errors?.required &&
+                    AgreementCreation.get('FirstName')?.touched){
+                    <span class="text-danger">
+                      {{
+'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' |
+                                    translate
+                      }}
+                    </span>
+                    }
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="lastName" class="form-label">{{'TRANSLATE.ATTESTATION_FORM_LABELS_LAST_NAME'| translate}}</label><span class="text-danger ms-1">*</span>
+                    <input type="text" formControlName="LastName" class="form-control form-control-sm"
+                           id="lastName">
+                    @if(AgreementCreation.get('LastName')?.errors?.required &&
+                    AgreementCreation.get('LastName')?.touched){
+                    <span class="text-danger">
+                      {{
+'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' |
+                                    translate
+                      }}
+                    </span>
+                    }
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-5">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="PhoneNumber" class="form-label">{{'TRANSLATE.ATTESTATION_FORM_LABELS_PHONE_NUMBER'| translate}}</label><span class="text-danger ms-1">*</span>
+
+                    <input type="text" formControlName="PhoneNumber" ng-pattern="phoneNumberRegex"
+                           maxlength="25" id="PhoneNumber" class="form-control form-control-sm">
+
+                    @if(AgreementCreation.get('PhoneNumber')?.errors?.required &&
+                    AgreementCreation.get('PhoneNumber')?.touched){
+                    <span class="text-danger">
+                      {{
+'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' |
+                                    translate
+                      }}
+                    </span>
+                    }
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="emailAddress" class="form-label">{{'TRANSLATE.ATTESTATION_FORM_LABELS_EMAIL_ADDRESS'| translate}}</label><span class="text-danger ms-1">*</span>
+
+                    <input type="text" formControlName="EmailAddress" id="emailAddress"
+                           class="form-control form-control-sm">
+
+                    @if(AgreementCreation.get('EmailAddress')?.errors?.required &&
+                    AgreementCreation.get('EmailAddress')?.touched){
+                    <span class="text-danger">
+                      {{
+'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' |
+                                    translate
+                      }}
+                    </span>
+                    }
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-5">
+                <div class="col-md-6">
+                  <div ng-controller="DatePickerUiController as dpCtrl">
+                    <div class="form-group">
+                      <label class="control-label mb-1">
+                        <span translate="TRANSLATE.REGISTER_CUSTOMER_CONSENT_AGREEMENT_DATE"></span><span class="text-danger ms-1">*</span>
+                      </label>
+                      <div class="input-group">
+                        <input class="form-control form-control-sm mb-3 mb-lg-0"
+                               [value]="formattedDate || '' "
+                               [placeholder]="StartDate ? (StartDate | date): 'yyyy-mm-dd'"
+                               formControlName="AgreementDate"
+                               [readOnly]="true"
+                               ngbDatepicker
+                               #sd="ngbDatepicker"
+                               (ngModelChange)="updateStartDate($event)"
+                               [maxDate]="maxDate" />
+                        <button class="btn btn-light-primary btn-icon" (click)="sd.toggle()" type="button">
+                          <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+                            <i class="ki-outline ki-calendar"></i>
+                          </span>
+
+                        </button>
+                      </div>
+                      @if(AgreementCreation.get('AgreementDate')?.errors?.required &&
+                      (AgreementCreation.get('AgreementDate')?.touched)){
+                      <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <div class="float-end">
+                <button class="btn btn-sm btn-light btn-active-light-primary me-2"
+                        (click)="closePopup()">
+                  {{'TRANSLATE.BUTTON_TEXT_CANCEL' | translate}}
+                </button>
+                <button class="btn btn-sm btn-primary" (click)="submitAgreementCreation(currentCustomerData.CustomerC3Id,currentCustomerData.ServiceProviderCustomerId)">
+                  {{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </ng-template>
+
+<ng-template #attestationPopUp>
+  <div class="modal-dialog m-0 modal-dialog m-0-centered W-100">
+    <form name="paymentForm" [formGroup]="attestation" role="form" class="form">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>
+            {{'TRANSLATE.CREATE_ATTESTATION' | translate}}
+          </h2>
+          <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closePopup()"
+               data-bs-dismiss="modal">
+            <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="row mt-5">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="firstName" class="form-label">{{'TRANSLATE.ATTESTATION_FORM_LABELS_FIRST_NAME'| translate}}</label>
+                <span class="text-danger ms-1">*</span>
+                <input type="text" formControlName="FirstName" class="form-control form-control-sm"
+                       id="firstName">
+                @if(attestation.get('FirstName')?.errors?.required &&
+                attestation.get('FirstName')?.touched){
+                <span class="text-danger">
+                  {{
+'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' |
+                                    translate
+                  }}
+                </span>
+                }
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="lastName" class="form-label">{{'TRANSLATE.ATTESTATION_FORM_LABELS_LAST_NAME'| translate}}</label><span class="text-danger ms-1">*</span>
+                <input type="text" formControlName="LastName" class="form-control form-control-sm"
+                       id="lastName">
+                @if(attestation.get('LastName')?.errors?.required &&
+                attestation.get('LastName')?.touched){
+                <span class="text-danger">
+                  {{
+'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' |
+                                    translate
+                  }}
+                </span>
+                }
+              </div>
+            </div>
+          </div>
+          <div class="row mt-5">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="companyName" class="form-label">{{'TRANSLATE.ATTESTATION_FORM_LABELS_COMPANY_NAME'| translate}}</label><span class="text-danger ms-1">*</span>
+                <input type="text" formControlName="CompanyName" id="companyName"
+                       class="form-control form-control-sm">
+                @if(attestation.get('CompanyName')?.errors?.required &&
+                attestation.get('CompanyName')?.touched){
+                <span class="text-danger">
+                  {{
+'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' |
+                                    translate
+                  }}
+                </span>
+                }
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="emailAddress" class="form-label">{{'TRANSLATE.ATTESTATION_FORM_LABELS_EMAIL_ADDRESS'| translate}}</label><span class="text-danger ms-1">*</span>
+
+                <input type="text" formControlName="EmailAddress" id="emailAddress"
+                       class="form-control form-control-sm">
+
+                @if(attestation.get('EmailAddress')?.errors?.required &&
+                attestation.get('EmailAddress')?.touched){
+                <span class="text-danger">
+                  {{
+'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' |
+                                    translate
+                  }}
+                </span>
+                }
+              </div>
+            </div>
+          </div>
+          <div class="row mt-5">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="PhoneNumber" class="form-label">{{'TRANSLATE.ATTESTATION_FORM_LABELS_PHONE_NUMBER'| translate}}</label><span class="text-danger ms-1">*</span>
+
+                <input type="text" formControlName="PhoneNumber" ng-pattern="phoneNumberRegex"
+                       maxlength="25" id="PhoneNumber" class="form-control form-control-sm">
+
+                @if(attestation.get('PhoneNumber')?.errors?.required &&
+                attestation.get('PhoneNumber')?.touched){
+                <span class="text-danger">
+                  {{
+'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' |
+                                    translate
+                  }}
+                </span>
+                }
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="Country" class="form-label">{{'TRANSLATE.ATTESTATION_FORM_LABELS_COUNTRY_NAME'| translate}}</label><span class="text-danger ms-1">*</span>
+
+                <input type="text" formControlName="Country" id="Country"
+                       class="form-control form-control-sm">
+
+                @if(attestation.get('Country')?.errors?.required &&
+                attestation.get('Country')?.touched){
+                <span class="text-danger">
+                  {{
+'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' |
+                                    translate
+                  }}
+                </span>
+                }
+              </div>
+            </div>
+          </div>
+          <div class="row mt-5">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="Language" class="form-label">{{'TRANSLATE.ATTESTATION_FORM_LABELS_LANGUAGE'| translate}}</label>
+
+                <input type="text" formControlName="Language" id="Language"
+                       class="form-control form-control-sm">
+
+                <!-- @if(attestation.get('Language')?.errors?.required &&
+                attestation.get('Language')?.touched){
+                <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' |
+                    translate}}</span>
+                } -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="float-end">
+            <button class="btn btn-sm btn-light btn-active-light-primary me-2"
+                    (click)="closePopup()">
+              {{'TRANSLATE.BUTTON_TEXT_CANCEL' | translate}}
+            </button>
+            <button class="btn btn-sm btn-primary" (click)="submit()">
+              {{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+
+<ng-template #specialQualificationsModal>
+  <div>
+    <div class="modal-dialog m-0 modal-dialog m-0-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="exampleModalLabel">
+            <span translate="TRANSLATE.PLACEHOLDER_SPECIAL_QUALIFICATION_EDIT_HEADING"></span>
+          </h2>
+          <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModal()"
+               data-bs-dismiss="modal">
+            <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+          </div>
+        </div>
+        <div class="modal-body">
+          <form class="form" [formGroup]="specialqualificationsform" role="form">
+            <div class="form-group row">
+              <div class="col-form-label col-4">
+                <span translate="TRANSLATE.PLACEHOLDER_SPECIAL_QUALIFICATION"></span><span class="text-danger">*</span>
+              </div>
+              <div class="col-8">
+                <ng-select formControlName="Qualification"
+                           placeholder="{{'TRANSLATE.PLACEHOLDER_SPECIAL_QUALIFICATIONS_MODAL_NONE' |translate}}"
+                           (change)="onQualificationChange()">
+                  <!--<option value="None" selected disabled translate="PLACEHOLDER_SPECIAL_QUALIFICATIONS_MODAL_NONE" >
+                  </option>-->
+                  <ng-option [value]="'StateOwnedEntity'"
+                             translate="TRANSLATE.PLACEHOLDER_SPECIAL_QUALIFICATIONS_MODAL_STATE_OWNED_ENTITY"
+                             *ngIf="!CategoryExistsInMainArray('StateOwnedEntity')">
+                  </ng-option>
+                  <ng-option [value]="'Education'"
+                             translate="TRANSLATE.PLACEHOLDER_SPECIAL_QUALIFICATIONS_MODAL_EDUCATION"
+                             *ngIf="!CategoryExistsInMainArray('Education')">
+                  </ng-option>
+                </ng-select>
+                @if(specialqualificationsform.get('Qualification')?.errors?.required &&
+                specialqualificationsform.get('Qualification')?.touched){
+                <span class="text-danger"
+                      translate="TRANSLATE.PLACEHOLDER_SPECIAL_QUALIFICATION_REQUIRED"></span>
+                }
+              </div>
+            </div>
+            @if(specialqualificationsform.get('Qualification').value === 'Education'){
+            <div class="form-group row mt-2">
+              <div class="col-form-label col-4">
+                <span translate="TRANSLATE.PLACEHOLDER_SPECIAL_QUALIFICATIONS_MODAL_EDUCATION_SEGMENT"></span><span class="text-danger">*</span>
+              </div>
+              <div class="col-8">
+                <ng-select formControlName="EducationSegment"
+                           ng-required="vm.specialQualificationDetails.Qualification == 'Education'"
+                           name="education">
+                  <ng-option [value]="''" disabled selected
+                             translate="TRANSLATE.SELECT_EDU_SEGMENT"></ng-option>
+                  <ng-option [value]="'K12'"
+                             translate="TRANSLATE.PLACEHOLDER_SPECIAL_QUALIFICATIONS_MODAL_EDUCATION_SEGMENT_OPTION_1">
+                  </ng-option>
+                  <ng-option [value]="'HigherEducation'"
+                             translate="TRANSLATE.PLACEHOLDER_SPECIAL_QUALIFICATIONS_MODAL_EDUCATION_SEGMENT_OPTION_2">
+                  </ng-option>
+                </ng-select>
+                @if(specialqualificationsform.get('EducationSegment')?.errors?.required &&
+                isCheck){
+                <span class="text-danger"
+                      translate="TRANSLATE.PLACEHOLDER_SPECIAL_QUALIFICATION_REQUIRED"></span>
+                }
+              </div>
+            </div>
+            }
+            @if(specialqualificationsform.get('Qualification').value === 'Education'){
+            <div class="form-group row mt-5">
+              <div class="col-form-label col-4">
+                <span translate="TRANSLATE.PLACEHOLDER_SPECIAL_QUALIFICATIONS_MODAL_EDUCATION_SEGMENT_WEBSITE"></span>
+              </div>
+              <div class="col-8">
+                <input class="form-control form-control-sm" formControlName="Website" name="website"
+                       ng-minlength="1" ng-maxlength="50">
+                @if(specialqualificationsform.get('Website')?.errors?.required &&
+                specialqualificationsform.get('Website')?.touched){
+                <span class="text-danger"
+                      translate="TRANSLATE.PLACEHOLDER_SPECIAL_QUALIFICATION_REQUIRED"></span>
+                }
+                <!-- <span class="text-danger" *ngIf="specialqualificationsform.website.$error.required && specialqualificationsform.$submitted"><span translate="PLACEHOLDER_SPECIAL_QUALIFICATION_REQUIRED"></span></span>
+                    <span class="text-danger" *ngIf="specialqualificationsform.website.$error.minlength && specialqualificationsform.$submitted"><span translate="PLACEHOLDER_SPECIAL_QUALIFICATION_MIN_ERROR"></span></span>
+                    <span class="text-danger" *ngIf="specialqualificationsform.website.$error.maxlength && specialqualificationsform.$submitted"><span translate="PLACEHOLDER_SPECIAL_QUALIFICATION_MAX_ERROR"></span></span> -->
+              </div>
+            </div>
+            }
+          </form>
+        </div>
+        <div class="modal-footer">
+          <!--closeModal-->
+          <!--data-dismiss="modal"-->
+          <button type="button" class="btn btn-secondary" (click)="closeModal()" busy
+                  busy-add-classes="disabled" not-busy-remove-classes="disabled" ng-if="true">
+            <!-- <busy-message>
+                <i class="fa fa-spinner fa-spin"></i> {{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}
+            </busy-message> -->
+            <!--<span translate="" ng-if="true"></span>-->
+            <div *ngIf="isUpdateSpecialQualification">
+              <i class="fa fa-spinner fa-spin"></i><span translate="TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT"></span>
+            </div>
+            <span *ngIf="!isUpdateSpecialQualification">
+              {{
+"TRANSLATE.PLACEHOLDER_SPECIAL_QUALIFICATIONS_MODAL_CLOSE"
+                            | translate
+              }}
+            </span>
+          </button>
+          <button type="button" class="btn btn-primary" (click)="updateSpecialQualification()" busy
+                  busy-add-classes="disabled" not-busy-remove-classes="disabled" ng-if="true">
+            <div *ngIf="isUpdateSpecialQualification">
+              <i class="fa fa-spinner fa-spin"></i><span translate="TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT"></span>
+            </div>
+            <span *ngIf="!isUpdateSpecialQualification">
+              {{
+"TRANSLATE.PLACEHOLDER_SPECIAL_QUALIFICATION_MODAL_SAVE"
+                            | translate
+              }}
+            </span>
+            <!--<span translate="" ng-if="true"></span>-->
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

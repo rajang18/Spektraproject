@@ -1,0 +1,157 @@
+::ng-deep {
+    app-expiring-granular-relationships {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}
+
+
+.horizontal-separator {
+    border: none;
+    height: 0.02cm;
+    background: repeating-linear-gradient(to right,
+            #ffffff 0,
+            #ffffff 4px,
+            transparent 2px,
+            transparent 6px);
+    width: 100%;
+}
+
+.horizontal-separator-dark {
+    border: none;
+    height: 0.02cm;
+    background: repeating-linear-gradient(to right,
+            #252f4a 0,
+            #252f4a 4px,
+            transparent 2px,
+            transparent 6px);
+    width: 100%;
+}
+
+.card-title {
+    color: #ffffff;
+}
+
+.card-columns {
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+}
+
+.card-cell {
+    margin-top: 14px;
+    width: 50%;
+}
+
+.vertical-separator {
+    margin-top: 14px;
+    width: 0.02cm;
+    background: repeating-linear-gradient(to bottom,
+            #ffffff 0,
+            #ffffff 4px,
+            transparent 2px,
+            transparent 6px);
+    display: block;
+    height: auto;
+    align-self: stretch;
+}
+
+.vertical-separator-dark {
+    margin-top: 14px;
+    width: 0.02cm;
+    /* Thickness of the vertical line */
+    background: repeating-linear-gradient(to bottom,
+            #252f4a 0,
+            #252f4a 4px,
+            /* Length of white dots */
+            transparent 2px,
+            /* Transparent gap */
+            transparent 6px);
+    display: block;
+    height: auto;
+    /* Adjust height dynamically */
+    align-self: stretch;
+    /* Stretch the vertical line to fill the parent height */
+}
+
+.cell-padding-lt {
+    padding-left: 19px;
+}
+
+.card-cell-title {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 16px;
+    padding-bottom: 14px;
+    color: #ffffff;
+}
+
+.card-cell-title-dark {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 16px;
+    padding-bottom: 14px;
+    color: #252f4a;
+}
+
+.card-cell-header {
+    display: flex;
+    -webkit-box-align: start;
+    align-items: start;
+    gap: 3px;
+}
+
+.card-cell-content {
+    font-size: 24px;
+    display: inline-block;
+    font-weight: 700;
+    margin-right: 8px;
+    color: #ffffff;
+}
+
+.card-cell-content-dark {
+    font-size: 24px;
+    display: inline-block;
+    font-weight: 700;
+    margin-right: 8px;
+    color: #252f4a;
+}
+
+.statusActive {
+    background-color: #17c6531a;
+    color: #17c653;
+}
+
+.statusExpired {
+    background-color: #f8285a1a;
+    color: #f8285a;
+}
+
+.cust-bg-1 {
+    background-color: #1b84ff !important;
+}
+
+.cust-bg-2 {
+    background-color: #dbdfe9c9 !important;
+}
+
+.cust-bg-3 {
+    background-color: #f6c000 !important;
+}
+
+.cust-bg-4 {
+    background-color: #1e2129 !important;
+}
+
+.cust-bg-5 {
+    background-color: #f8285a !important;
+}
+
+.cust-bg-6 {
+    background-color: #7239ea !important;
+}
+
+.cust-bg-7 {
+    background-color: #17c653 !important;
+}

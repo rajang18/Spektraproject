@@ -1,0 +1,165 @@
+<ng-template #actionHeader>
+  <div class="header-actions d-flex align-items-center gap-1 gap-lg-1">
+    <a class="btn btn-light-primary btn-sm" (click)="backToCustomers()">
+      <i class="ki-outline ki-to-left"></i>&nbsp;<span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_BUTTON_TEXT_BACK_TO_CUSTOMERS"></span>
+    </a>
+  </div>
+</ng-template>
+<div class="card">
+  <div class="card-body pt-0 overflow-auto">
+    <form [formGroup]="billingDetailsForm">
+      <div class="form-group row mt-7">
+        <label class="required fw-semibold fs-6 mb-2" translate="TRANSLATE.CUSTOMER_ONBOARDING_BILLINGID_LABEL"></label>
+      </div>
+      <div class="input-group mb-2">
+        <input type="text" class="form-control" formControlName="BillingProviderReferenceID"
+          aria-describedby="basic-addon2">
+        <div class="input-group-append">
+          <button class="btn btn-success" type="button" (click)="onClickLookUpCustomerDetails()">
+            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_BUTTON_TEXT_LOOKUP"></span>
+          </button>
+        </div>
+      </div>
+      @if(billingDetailsForm.get('BillingProviderReferenceID')?.errors?.required &&
+      billingDetailsForm.get('BillingProviderReferenceID')?.touched){
+      <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+      }
+
+      <!-- Authorize.Net -->
+      @if (billingProviderHelplines === 'Authorize.Net') {
+      <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+        <ul>
+          <li>
+            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_BILLING_STEP_1_FOR_AUTHRORIZENET"></span>
+          </li>
+          <li>
+            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_BILLING_STEP_2_FOR_AUTHRORIZENET"></span>
+            <div>
+              <small><span translate="TRANSLATE.CUSTOMER_ONBOARDING_BILLING_STEP_FOR_AUTHRORIZENET_ROOT"></span><span
+                  class="text-success"><span
+                    translate="TRANSLATE.CUSTOMER_ONBOARDING_BILLANDPAY_STEP5_PART_3"></span></span></small>
+            </div>
+          </li>
+        </ul>
+      </div>
+      }
+
+      <!-- Bill And Pay -->
+      @if (activeBillingProvider === 'BillAndPay') {
+      <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+        <p translate="TRANSLATE.CUSTOMER_ONBOARDING_BILLANDPAY_STEP_HEADING"></p>
+        <ul>
+          <li>
+            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_BILLANDPAY_STEP1"></span>
+          </li>
+          <li>
+            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_BILLANDPAY_STEP2"></span>
+          </li>
+          <li>
+            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_BILLANDPAY_STEP3"></span>
+          </li>
+          <li>
+            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_BILLANDPAY_STEP5_PART_1"></span>
+            <div>
+              <small><span translate="TRANSLATE.CUSTOMER_ONBOARDING_BILLANDPAY_STEP5_PART_2"></span>
+                https://www.billandpay.com/business/view_customer.php?__recordkey=<span class="text-success"><span
+                    translate="TRANSLATE.CUSTOMER_ONBOARDING_BILLANDPAY_STEP5_PART_3"></span></span></small>
+            </div>
+          </li>
+        </ul>
+      </div>
+      }
+
+      <!-- EziDebit -->
+      @if (activeBillingProvider === 'EziDebit') {
+      <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+        <p translate="TRANSLATE.CUSTOMER_ONBOARDING_EZIDEBIT_STEP_HEADING"></p>
+        <ul>
+          <li>
+            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_EZIDEBIT_STEP1"></span>
+          </li>
+          <li>
+            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_EZIDEBIT_STEP2"></span>
+          </li>
+          <li>
+            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_EZIDEBIT_STEP3"></span>
+          </li>
+          <li>
+            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_EZIDEBIT_STEP5_PART_1"></span>
+            <div>
+              <small><span translate="TRANSLATE.CUSTOMER_ONBOARDING_EZIDEBIT_STEP5_PART_2"></span>
+                <span class="text-success"><span
+                    translate="TRANSLATE.CUSTOMER_ONBOARDING_EZIDEBIT_STEP5_PART_3"></span></span></small>
+            </div>
+          </li>
+        </ul>
+      </div>
+      }
+
+      <!-- Stripe -->
+      @if (billingProviderHelplines === 'Stripe') {
+      <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+        <ul>
+          <li>
+            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_BILLANDPAY_STEP1"></span>
+          </li>
+          <li>
+            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_BILLANDPAY_STEP2"></span>
+          </li>
+          <li>
+            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_BILLANDPAY_STEP3"></span>
+          </li>
+          <li>
+            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_BILLING_STEP5_PART_1"></span>
+            <div>
+              <small><span translate="TRANSLATE.CUSTOMER_ONBOARDING_BILLANDPAY_STEP5_PART_2"></span>
+                https://dashboard.stripe.com/customers/
+                <span class="text-success"><span
+                    translate="TRANSLATE.CUSTOMER_ONBOARDING_BILLANDPAY_STEP5_PART_3"></span></span></small>
+            </div>
+          </li>
+        </ul>
+      </div>
+      }
+      <div class="form-group row mt-5">
+        <div class="col-md-12">
+          <ul class="list-group">
+            @for(row of customerBillingProfileLookUpStatus; track $index){
+            <li class="list-group-item">
+              <span>
+                <i class="fa"
+                  [ngClass]="{'fa-check-circle-o text-success' : row.status === 'done','fas fa-spinner fa-spin text-success' : row.status === 'inprogress', 'fa-exclamation-circle text-danger' : row.status === 'error' }"></i>
+                {{row.name}}
+                <span class="text-danger">
+                  @if(row.errors)
+                  {
+                    @if(activeBillingProvider == 'BillAndPay' || activeBillingProvider == 'Stripe'){
+                      {{row.errors}}
+                    }
+                    @else{
+                      {{'TRANSLATE.' + row.errors | translate}}
+                    }
+                    
+                  }
+                </span>
+                <span class="text-success" [innerHTML]="row.successMessage"></span>
+              </span>
+            </li>
+            }
+          </ul>
+        </div>
+      </div>
+        <div class="form-group row  mt-5 text-end" *ngIf="proceedToOnboardBillingProfile">
+        <div class="col-md-12">
+          <div class="float-right">
+            <a *ngIf="true" class="btn btn-success" type="button" (click)="proceedToOnboard()"
+              [class.disabled]="">
+              <span *ngIf=""><i class="fa fa-refresh fa-spin"></i></span>
+              {{'TRANSLATE.CUSTOMER_BILLING_ONBOARDING_BUTTON_TEXT_PROCEED_TO_ONBOARD' | translate}}
+            </a>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

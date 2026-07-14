@@ -1,0 +1,359 @@
+<!------------------------------------------------------------ List page mode ----------------------------------------------------------->
+
+@if (pageMode === 'list') {
+<div class="card">
+    <div class="card-body pt-0 overflow-auto">
+        <div class="card-body">
+            @if(this.Permissions.HasGetResellersWithCustomerHavingUsageProduct==='Allowed'){
+            <div class="form-group row">
+                <label class="col-md-2 col-form-label fw-semibold fs-6 mb-2">
+                    <span translate="TRANSLATE.AZURE_REPORT_ENTITY_LIST"></span>
+                    <span class="text-danger ms-1">*</span>
+                    <i class="ki-duotone ki-information-2 fs-6  ms-1" aria-hidden="true"
+                    [ngbTooltip]="'TRANSLATE.AZURE_REPORT_ENTITY_TOOLTIP' | translate">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                </i>
+                </label>
+                <div class="col-md-5">
+                    <ng-select  [(ngModel)]="selectedSellerId"
+                        name="SellerId" (change)="onSellerChange()">
+                        @for (seller of resellers; track $index) {
+                        <ng-option [value]="seller.C3Id">{{seller.Name |
+                            translate}}</ng-option>
+                        }
+                    </ng-select>
+                </div>
+            </div>
+            }
+            <div class="form-group row mt-7">
+                <label class="col-md-2 col-form-label  fw-semibold fs-6 mb-2">        
+                    <span translate="TRANSLATE.AZURE_REPPORT_CUSTOMERS"></span>
+                    <span class="text-danger ms-1">*</span>
+                    <i class="ki-duotone ki-information-2 0 fs-6 ms-2" aria-hidden="true"
+                    [ngbTooltip]="'TRANSLATE.AZURE_REPPORT_CUSTOMERS_TOOLTIP' | translate">
+                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <span class="path3"></span>
+                </i>
+                </label>
+                <div class="col-md-5">
+                    <ng-select 
+                        [(ngModel)]="currentC3CustomerId" name="CustomerId" (change)="onCustomerChange()">
+                        @for (customer of allCustomers; track $index) {
+                        <ng-option [value]="customer.C3Id">{{customer.Name |
+                            translate}}</ng-option>
+                        }
+                    </ng-select>
+                </div>
+            </div>
+            <div class="form-group row mt-7">
+                <label class="col-md-2  col-form-label fw-semibold fs-6 mb-2">
+                    <span translate="TRANSLATE.AZURE_REPPORT_CURRENCY"></span>
+                    <span class="text-danger ms-1">*</span>
+                    <i class="ki-duotone ki-information-2 fs-6 ms-2" aria-hidden="true"
+                    [ngbTooltip]="'TRANSLATE.AZURE_REPPORT_CURRENCY_TOOLTIP' | translate">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                </i>
+                </label>
+                <div class="col-md-5">
+                    <ng-select 
+                        [(ngModel)]="currentCurrencyCode" name="CustomerId" (change)="onCurrencyChange()">
+                        @for (currency of currencies; track $index) {
+                        <ng-option [value]="currency.CurrencyCode">{{currency.CurrencyCode |
+                            translate}}</ng-option>
+                        }
+                    </ng-select>
+                </div>
+            </div>
+            <div class="form-group row mt-7">
+                <label class="col-md-2 col-form-label fw-semibold fs-6 mb-2">
+                    <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_TENANTS"></span>
+                    <span class="text-danger ms-1">*</span>
+                    <i class="ki-duotone ki-information-2 fs-6 ms-2" aria-hidden="true"
+                        [ngbTooltip]="'TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_MICROSOFT_TENANT_SELECTOR' | translate">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                    </i>
+                </label>
+                <div class="col-md-5">
+                    <ng-select 
+                        [(ngModel)]="selectedServiceProviderCustomer" name="CustomerId">
+                        @for (tenant of Tenants; track $index) {
+                        <ng-option [value]="tenant">{{tenant.CustomerName |
+                            translate}} ({{tenant.CustomerRefId}})</ng-option>
+                        }
+                    </ng-select>
+                </div>
+            </div>
+            <div class="actions form-group col-md-12 text-left text-sm-left text-md-left text-lg-right text-end">
+                <button class="btn btn-sm btn-primary btn-sm p-3 m-4" (click)="getSubscriptionDetails()">
+                    <i class="ki-outline ki-magnifier fs-4">
+                        <!-- <span class="path1"></span>
+                        <span class="path2"></span> -->
+                    </i> 
+                        <span
+                        translate="TRANSLATE.AZURE_REPORTS_BITTON_TEXT_GET_DETAILS"></span></button>
+            </div>
+        </div>
+        <ng-template #nameTemplate let-data="adtData" let-row="usageData">
+            <div>
+                <div>
+                    <b>{{data.SubscriptionName}} </b><br /> {{data.SubscriptionId}}
+                    @if (data.Entitlements.length > 0) {
+                    <span><br /><b> {{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_HEADER_TEXT_ENTITLEMENTS' |
+                            translate}}</b></span>
+                    }
+                    @if (data.Entitlements.length > 0) {
+                    <ul>
+                        @for (entitlement of data.Entitlements; track $index) {
+                        <li>{{ entitlement.Name }} - {{entitlement.EntitlementId}}</li>
+                        }
+                    </ul>
+                    }
+
+                </div>
+            </div>
+
+        </ng-template>
+        <ng-template #estimatedCost let-data="adtData">
+            <div>
+                {{data.CurrentSpend | CurrencyFilter}}
+            </div>
+        </ng-template>
+        <ng-template #costOnPartner let-data="adtData">
+            <div>
+                {{data.BilledByMS | CurrencyFilter}}
+            </div>
+        </ng-template>
+        <ng-template #profit let-data="adtData">
+            <div>
+                {{data.Profit | CurrencyFilter}}
+            </div>
+        </ng-template>
+        <ng-template #thresholds let-data="adtData">
+            <div>
+                <span class="tooltips"
+                    [ngbTooltip]="'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_TOOLTIP_MONTHLY_BUDGET_INFO_WARN_ERROR_DANGER' | translate">
+                    {{data.MonthlyBudget | CurrencyFilter}}-{{data.InfoThreshold}}%-{{data.WarnThreshold}}%-{{data.ErrorThreshold}}%-{{data.DangerThreshold}}%
+                </span>
+            </div>
+        </ng-template>
+        <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+            <div>
+                <div ngbTooltip="{{'TRANSLATE.AZURE_SUBSCRIPTION_BUTTON_EDIT' | translate}}" class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto"
+                    [ngClass]="toolbarButtonHeightClass" (click)="editDetails(data)">
+                    <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg me-md-2 h-20px w-20px">
+                        <i class="ki-outline ki-pencil text-primary"> </i>
+                    </span>
+                </div>
+            </div>
+        </ng-template>
+
+        @if (!IsLoadingTable) {
+        @if (!!datatableConfig) {
+        <app-c3-table [datatableConfig]="datatableConfig" [searchFilter]="false">
+        </app-c3-table>
+        }
+        }
+    </div>
+</div>
+}
+
+<!------------------------------------------------------------ Edit page mode ----------------------------------------------------------->
+
+@if (pageMode === 'edit') {
+<div class="card">
+    <div class="card-body pt-0 overflow-auto">
+        <form [formGroup]="azureSubscriptionForm">
+            <div class="form-group row mt-7">
+                <label
+                    class="required col-md-2 col-form-label text-end text-sm-end text-md-end text-lg-right fw-semibold fs-6 mb-2">
+                    {{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_SUBSCRIPTION_NAME' | translate}}
+                </label>
+                <div class="col-md-10">
+                    <input type="text" class="form-control form-control-lg form-control-solid"
+                        formControlName="subscriptionName" required />
+                    @if(azureSubscriptionForm.get('subscriptionName')?.errors?.required &&
+                    azureSubscriptionForm.get('subscriptionName')?.touched){
+                    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                    }
+                </div>
+            </div>
+
+            <div
+                class="form-group row notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-4">
+                <ul>
+                    <li>{{'TRANSLATE.AZURE_THRESHOLD_HELP_TEXT_FIRST'|translate}}</li>
+                    <li>{{'TRANSLATE.AZURE_THRESHOLD_HELP_TEXT_SECOND'|translate}}</li>
+                    <li>{{'TRANSLATE.AZURE_THRESHOLD_HELP_TEXT_THIRD'|translate}}</li>
+                </ul>
+            </div>
+
+            <div class="form-group row mt-7">
+                <label
+                    class="col-md-2 col-form-label text-end text-sm-end text-md-end text-lg-right fw-semibold fs-6 mb-2">
+                    {{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_MONTHLY_BUDGET' | translate}}
+                </label>
+                <div class="col-md-10">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                $
+                            </span>
+                        </div>
+                        <input type="number" class="form-control form-control-lg form-control-solid"
+                            formControlName="monthlyBudget" required min="0" />
+                    </div>
+                    @if(azureSubscriptionForm.get('monthlyBudget')?.errors?.required &&
+                    azureSubscriptionForm.get('monthlyBudget')?.touched){
+                    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                    }
+                    @if(azureSubscriptionForm.get('monthlyBudget')?.errors?.min &&
+                    azureSubscriptionForm.get('monthlyBudget')?.touched){
+                    <span class="text-danger"
+                        translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_VALIDATION_MESSAGE_VALUE_SHOULD_BE_BETWEEN_0_AND_100"></span>
+                    }
+                </div>
+            </div>
+
+            <div class="form-group row mt-7">
+                <label
+                    class="col-md-2 col-form-label text-end text-sm-end text-md-end text-lg-right fw-semibold fs-6 mb-2">
+                    {{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_INFO_THRESHOLD' | translate}}
+                </label>
+                <div class="col-md-10">
+                    <div class="input-group">
+                        <input type="number" class="form-control form-control-lg form-control-solid"
+                            formControlName="infoThreshold" required min="0" />
+                        <div class="input-group-append">
+                            <span class="input-group-text">
+                                %
+                            </span>
+                        </div>
+                    </div>
+                    @if(azureSubscriptionForm.get('infoThreshold')?.errors?.required &&
+                    azureSubscriptionForm.get('infoThreshold')?.touched){
+                    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                    }
+                    @if(azureSubscriptionForm.get('infoThreshold')?.errors?.min &&
+                    azureSubscriptionForm.get('infoThreshold')?.touched){
+                    <span class="text-danger"
+                        translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_VALIDATION_MESSAGE_VALUE_SHOULD_BE_BETWEEN_0_AND_100"></span>
+                    }
+                </div>
+            </div>
+
+            <div class="form-group row mt-7">
+                <label
+                    class="col-md-2 col-form-label text-end text-sm-end text-md-end text-lg-right fw-semibold fs-6 mb-2">
+                    {{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_WARN_THRESHOLD' | translate}}
+                </label>
+                <div class="col-md-10">
+                    <div class="input-group">
+                        <input type="number" class="form-control form-control-lg form-control-solid"
+                            formControlName="warnThreshold" required min="0" />
+                        <div class="input-group-append">
+                            <span class="input-group-text">
+                                %
+                            </span>
+                        </div>
+                    </div>
+                    @if(azureSubscriptionForm.get('warnThreshold')?.errors?.required &&
+                    azureSubscriptionForm.get('warnThreshold')?.touched){
+                    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                    }
+                    @if(azureSubscriptionForm.get('warnThreshold')?.errors?.min &&
+                    azureSubscriptionForm.get('warnThreshold')?.touched){
+                    <span class="text-danger"
+                        translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_VALIDATION_MESSAGE_VALUE_SHOULD_BE_BETWEEN_0_AND_100"></span>
+                    }
+                </div>
+            </div>
+
+            <div class="form-group row mt-7">
+                <label
+                    class="col-md-2 col-form-label text-end text-sm-end text-md-end text-lg-right fw-semibold fs-6 mb-2">
+                    {{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_ERROR_THRESHOLD' | translate}}
+                </label>
+                <div class="col-md-10">
+                    <div class="input-group">
+                        <input type="number" class="form-control form-control-lg form-control-solid"
+                            formControlName="errorThreshold" required min="0" />
+                        <div class="input-group-append">
+                            <span class="input-group-text">
+                                %
+                            </span>
+                        </div>
+                    </div>
+                    @if(azureSubscriptionForm.get('errorThreshold')?.errors?.required &&
+                    azureSubscriptionForm.get('errorThreshold')?.touched){
+                    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                    }
+                    @if(azureSubscriptionForm.get('errorThreshold')?.errors?.min &&
+                    azureSubscriptionForm.get('errorThreshold')?.touched){
+                    <span class="text-danger"
+                        translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_VALIDATION_MESSAGE_VALUE_SHOULD_BE_BETWEEN_0_AND_100"></span>
+                    }
+                </div>
+            </div>
+
+            <div class="form-group row mt-7">
+                <label
+                    class="col-md-2 col-form-label text-end text-sm-end text-md-end text-lg-right fw-semibold fs-6 mb-2">
+                    {{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_DANGER_THRESHOLD' | translate}}
+                </label>
+                <div class="col-md-10">
+                    <div class="input-group">
+                        <input type="number" class="form-control form-control-lg form-control-solid"
+                            formControlName="dangerThreshold" required min="0" />
+                        <div class="input-group-append">
+                            <span class="input-group-text">
+                                %
+                            </span>
+                        </div>
+                    </div>
+                    @if(azureSubscriptionForm.get('dangerThreshold')?.errors?.required &&
+                    azureSubscriptionForm.get('dangerThreshold')?.touched){
+                    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                    }
+                    @if(azureSubscriptionForm.get('dangerThreshold')?.errors?.min &&
+                    azureSubscriptionForm.get('dangerThreshold')?.touched){
+                    <span class="text-danger"
+                        translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_VALIDATION_MESSAGE_VALUE_SHOULD_BE_BETWEEN_0_AND_100"></span>
+                    }
+                </div>
+            </div>
+
+            <div class="form-group row mt-7">
+                <label
+                    class="col-md-2 col-form-label text-end text-sm-end text-md-end text-lg-right fw-semibold fs-6 mb-2">
+                    
+                    {{'TRANSLATE.LABEL_NOTIFICATION_RECIPIENTS' | translate}}
+                    <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.AZURE_REPPORT_CUSTOMERS_TOOLTIP' | translate}}">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                    </i>
+                </label>
+                <div class="col-md-10">
+                    <input type="text" class="form-control form-control-lg form-control-solid"
+                        formControlName="notificationRecipients" />
+                </div>
+            </div>
+            <div class="form-group-row d-flex justify-content-end py-6 px-9 gap-3">
+                <button type="button" class="btn btn-primary" (click)="saveUsageSubscriptionDetail()">
+                    {{ 'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate }}
+                </button>
+                <button type="button" class="btn btn-primary" (click)="cancel()">
+                    {{ 'TRANSLATE.BUTTON_TEXT_CANCEL' | translate }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+}

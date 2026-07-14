@@ -1,0 +1,78 @@
+<div class="card">
+    @if (permissions.HasGetBusinessCentralEntityMappingDetails === 'Allowed') {
+        
+        <div class="card-body pt-0 overflow-auto">
+            <div class="m-heading-1 border-green m-bordered">
+                <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6 mt-10 ng-star-inserted">
+                    <div class="row m-heading-1 border-green m-bordered">
+                        <p style="padding-left: 10px;font-size: 15px;">
+                            <strong><span class="ng-scope"
+                                    translate="TRANSLATE.INSTRUNCTION_BUSINESS_CENTRAL_BULK_MAPPING_BUTTON"></span></strong>
+                        </p> 
+                        <ol class="ps-10 pt-4">
+                            <li >
+                                <span #dynamicHtmlBusinessCentralPoint1> </span>
+                            </li>
+                            <li>
+                                <span class="ng-scope" translate-compile="" translate="TRANSLATE.INSTRUNCTION_BUSINESS_CENTRAL_BULK_BUTTON_POINT2"></span>
+                            </li>
+                            <li>
+                                <span class="ng-scope" translate-compile="" [innerHTML]="'TRANSLATE.INSTRUNCTION_BUSINESS_CENTRAL_BULK_BUTTON_POINT3' | translate"></span>
+                            </li>
+                            <li>
+                                <span class="ng-scope" translate-compile="" translate="TRANSLATE.INSTRUNCTION_BUSINESS_CENTRAL_BULK_BUTTON_POINT4"></span>
+                            </li>
+                             <li >  
+                                <span #dynamicHtmlBusinessCentralPoint5> </span>
+                            </li>
+                            <li>
+                                <span class="ng-scope" translate-compile="" [innerHTML]="'TRANSLATE.INSTRUNCTION_BUSINESS_CENTRAL_BULK_BUTTON_POINT6' | translate"></span>
+                            </li>
+                            <li>
+                                <span class="ng-scope" translate-compile="" translate="TRANSLATE.INSTRUNCTION_BUSINESS_CENTRAL_BULK_BUTTON_POINT7"></span>
+                            </li>
+                            <li>
+                                <span class="ng-scope" translate-compile="" translate="TRANSLATE.INSTRUNCTION_BUSINESS_CENTRAL_BULK_BUTTON_POINT8"></span>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12" [appPermission]="'ADD_BUSINESS_CENTRAL_ENTITY_MAPPING'">
+                    <form name="frmpurchasedProductMapping" role="form" class="form form-horizontal" novalidate>
+                        <div class="form-group row">
+                            <label class="col-form-label col-md-2 text-lg-right text-sm-left">
+                                <span translate-compile="" translate="TRANSLATE.BULK_DATA_MAPPING_CSV_UPLOAD"></span><span class="text-danger">*</span>
+                            </label>
+                            <div class="col-md-9" >
+                                <input filestyle type="file" [(ngModel)]="filename" #fileUpload accept=".csv" data-class-button="btn-outline-secondary"
+                                    class="form-control form-control-sm inline p0" (change)="fileChange($event)"/>
+                            </div>
+                        </div> 
+                    </form>
+                    <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3 mt-2" >
+                        <button  *ngIf="isuploading === false" class="btn btn-primary" (click)="SaveBusinessCentralMapping()" appBusyLoader>
+                            <span>{{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}</span>
+                        </button>  
+                        <a class="btn btn-primary btn-xs mr-2" *ngIf="isuploading === true" busy busy-when-url="api/psa" busy-add-classes="disabled" not-busy-remove-classes="disabled">
+                            <i class="fas fa-sync-alt fa-spin"></i>{{'TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}
+                        </a>  
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    } @else {
+
+        <div class="card-body">
+            <div class="p-5">
+                <p class="text-danger fw-bold" translate="TRANSLATE.BUSINESS_CENTRAL_GENERAL_NO_PERMISSION"></p>
+            </div>
+        </div>
+
+    }
+</div>

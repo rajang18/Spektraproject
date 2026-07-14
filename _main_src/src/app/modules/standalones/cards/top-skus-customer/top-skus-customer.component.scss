@@ -1,0 +1,15 @@
+::ng-deep{
+    app-top-skus-customer{
+        .apexcharts-legend.apexcharts-align-center.apx-legend-position-bottom{
+            display: flex;
+            justify-content: flex-start;
+        }
+        .apexcharts-legend-text{
+            width: 95px; /* Set the desired width */
+            white-space: nowrap; /* Prevent text from wrapping to the next line */
+            overflow: hidden; /* Hide overflow text */
+            text-overflow: clip; /* Default behavior, but you can customize further */
+            position: relative; /* To position the custom ellipsis */
+        }
+    }
+}

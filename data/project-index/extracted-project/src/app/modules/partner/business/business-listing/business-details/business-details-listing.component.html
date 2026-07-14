@@ -1,0 +1,94 @@
+<!-- //table -->
+
+<ng-template #nameTemplate let-data="adtData" let-row="userData">
+    <div>
+        <span class="item-title text-wrap">{{data?.ProductName}}</span>
+        <div class="item-duration small text-wrap" style="font-weight: normal;">({{ data?.ChargeStartDate | c3Date }} - {{ data?.ChargeEndDate | c3Date }})</div>
+        <div class="item-fee small text-wrap" style="font-weight: normal;">{{data?.InvoiceLineDetail}}</div>
+        <div class="item-source small text-wrap" style="font-weight: normal;">{{data?.TenantName}}</div>
+    </div>
+  </ng-template>
+  <ng-template #costonPartner let-data="adtData" let-emitter="captureEvents">
+    <span>
+      <!-- ${{
+        data?.TotalCostOnPartner
+      }} -->
+      {{
+        data.TotalCostOnPartner
+        | CurrencyFilter
+        : data?.CurrencySymbol
+        : data?.CurrencyDecimalPlaces
+        : data?.CurrencyThousandSeperator
+        : data?.CurrencyDecimalSeperator
+        }}
+        </span
+    >
+  </ng-template>
+  <ng-template #billedAmount let-data="adtData" let-emitter="captureEvents">
+    {{
+      data.TotalBilledAmount | CurrencyFilter
+        : data?.CurrencySymbol
+        : data?.CurrencyDecimalPlaces
+        : data?.CurrencyThousandSeperator
+        : data?.CurrencyDecimalSeperator
+        }}
+  </ng-template>
+  <ng-template #profit let-data="adtData" let-emitter="captureEvents">
+    {{
+      data.TotalProfitAmount | CurrencyFilter
+        : data?.CurrencySymbol
+        : data?.CurrencyDecimalPlaces
+        : data?.CurrencyThousandSeperator
+        : data?.CurrencyDecimalSeperator
+        }}
+  </ng-template>
+  <ng-template #profitpercentage let-data="adtData" let-emitter="captureEvents">
+
+    <span>
+      @if(data?.TotalProfitPercentage){
+        @if(data?.TotalProfitPercentage > 0){
+            <span class="text-primary font-green-jungle"> <i class="font-green-jungle fa-solid fa-arrow-up"></i>
+                {{data?.TotalProfitPercentage?.toFixed(2)}}
+                %</span>
+        }@else{
+            <span class="text-primary font-red-sunglo"> <i class="font-red-sunglo fa-solid fa-arrow-down"></i>
+                {{data?.TotalProfitPercentage?.toFixed(2)}}
+                %</span>
+        }
+      }
+    </span>
+  </ng-template>
+  <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+    <div class="d-flex align-items-center">
+      <!-- <button
+        title="View Invoices"
+        class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+        [ngClass]="toolbarButtonHeightClass"
+      >
+        <span class="svg-icon svg-icon-primary svg-icon-sm h-20px w-20px">
+          <i class="fa-solid fa-money-bill"></i>
+        </span>
+      </button>
+      <button
+        title="View subscription history"
+        class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+        [ngClass]="toolbarButtonHeightClass"
+      >
+        <span class="svg-icon svg-icon-primary svg-icon-sm h-20px w-20px">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+        </span>
+      </button> -->
+    </div>
+  </ng-template>
+@if (!!datatableConfig) {
+    <div class="table-buisness position-relative">
+      <app-c3-table
+        [reload]="reloadEvent"
+        [datatableConfig]="datatableConfig"
+        [searchFilter]="false"
+        [isPaginationHide]="true"
+        [isPaginationRowHide]="true"
+      >
+      </app-c3-table>
+    </div>
+    }

@@ -1,0 +1,18 @@
+<div class="row mt-12">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="row" style="text-align:center">
+                    <div class="col-md-12 mb-0" *ngIf="!isLoading">
+                        <p translate="TRANSLATE.CPV_PC_CAPTURED_THANKS_MESSAGE_LINE_1" class="mb-0 fs-5"></p>
+                        <!-- <p translate="CPV_PC_CAPTURED_THANKS_MESSAGE_LINE_2" translate-values="{ applicationName: '{{ApplicationName}}' }"></p> -->
+                        <p class="fs-5" [innerHTML]="'TRANSLATE.CPV_PC_CAPTURED_THANKS_MESSAGE_LINE_2'| translate:{ applicationName:applicationName }"></p>
+                    </div>
+                    <div class="col-md-12" *ngI="isLoading">
+                        <b><p class="fs-5" translate="TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT"></p></b>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

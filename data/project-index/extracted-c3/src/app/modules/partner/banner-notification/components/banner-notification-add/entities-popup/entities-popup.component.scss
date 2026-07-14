@@ -1,0 +1,5 @@
+.adjustable-height {
+    overflow-y: auto !important;
+    max-height: 600px !important;
+    height: auto !important; /* This allows the height to adjust based on content */
+  }

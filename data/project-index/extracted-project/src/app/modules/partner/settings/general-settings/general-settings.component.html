@@ -1,0 +1,139 @@
+<div class="tab-content">
+    <div class="tab-pane fade show active">
+        <!-- uiView: -->
+        <div class="container-fluid">
+            @if(!!partnerSettings && !!customerSettings ){
+            @if(!!partnerSettings){
+            <div class="mb-4">
+               <div [ngClass]="currentState?.toLowerCase() === SettingsEnum.EmailConfigurations.toLowerCase()? '': 'card'">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <h4 translate="TRANSLATE.SETTINGS_HEADING_TEXT_PARTNER_DEFAULTS"></h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form [formGroup]="partnerSettingsForm">
+                            @if(currentState?.toLowerCase() === SettingsEnum.EmailConfigurations.toLowerCase()){
+                               <div class="form-group row notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+                                   <div class="col-md-12 control-label">
+                                       <span translate="TRANSLATE.SMTP_SETTINGS_TEST"></span> &nbsp;&nbsp;
+                                       <a class="btn btn-primary btn-sm mr-2" busy
+                                          busy-add-classes="disabled"
+                                          not-busy-remove-classes="disabled"
+                                          (click)="testSmtpSettings()">
+                                           <!-- <busy-message><i class="fa fa-refresh fa-spin"></i>{{'TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}</busy-message> -->
+                                           {{'TRANSLATE.SMTP_TEST_BUTTON' | translate}}
+                                       </a>
+                                   </div>
+                               </div>
+                           }
+                           @if(currentState?.toLowerCase() === SettingsEnum.Autotask.toLowerCase()){
+                               <div class="col-md-12 notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+                                   <h6><span translate="TRANSLATE.USERS_UPLOAD_FORM_INSTRUCTIONS"></span></h6>
+                                   <a class="btn btn-primary btn-sm me-2" busy busy-add-classes="disabled"  not-busy-remove-classes="disabled" (click)="testConnectivityToPSA()">
+                                       <!-- <busy-message><i class="fa fa-refresh fa-spin"></i>{{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}</busy-message> -->
+                                       {{'TRANSLATE.EXTERNAL_SERVICE_PSA_BUTTON_TEXT_TEST_CONNECTIVITY' | translate}}
+                                   </a>
+                                       <span translate="TRANSLATE.EXTERNAL_SERVICE_PSA_TEST_CONNECTIVITY_INSTRUCTIONS"></span>
+                               </div>}                          
+                               @for(data of partnerSettings; track $index){
+                               <div class="form-group row">
+                                   <div class="col-md-12">
+                                    
+                                       <tenantconfig [data]="data" [form]="partnerSettingsForm" [frmControlName]="data.Name" [controlType]="data.ControlType" (smtpOptionChange)="handleInit($event)"></tenantconfig>
+                                   </div>
+                               </div>
+                               }
+                           </form>
+                    </div>
+                    <div class="card-footer">
+                        <div class="mt-4 d-flex justify-content-end">
+                            <button class="btn btn-sm btn-primary" (click)="saveData('partner')" [appPermission]="'SAVE_GENERAL_SETTINGS'" appBusyLoader>{{'TRANSLATE.BUTTON_TEXT_SAVE' | translate}}</button>
+                        </div>
+                    </div>
+               </div>
+            </div>
+
+                }
+
+            @if(!!customerSettings && customerSettings.length > 0 ){
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <h4 translate="TRANSLATE.SETTINGS_HEADING_TEXT_CUSTOMER_DEFAULTS"></h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <form [formGroup]="customerSettingsForm">
+                                @for(data of customerSettings; track $index){
+                                <div class="form-group row">
+                                    <div class="col-md-12">    
+                                        <tenantconfig [data]="data" [form]="customerSettingsForm" [frmControlName]="data.Name" [controlType]="data.ControlType" (smtpOptionChange)="handleInit($event)"></tenantconfig>
+                                    </div>
+                                </div>
+                                }
+            
+                                </form>
+                        </div>
+                        <div class="card-footer">
+                            <div class="mt-4 d-flex justify-content-end">
+                                <button class="btn btn-sm btn-primary" (click)="saveData('customer')" [appPermission]="'SAVE_GENERAL_SETTINGS'" appBusyLoader>{{'TRANSLATE.BUTTON_TEXT_SAVE' | translate}}</button>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+             
+            }
+            <!-- } -->
+        </div>
+    </div>
+
+</div>
+
+
+<!-- Modal for SMTP Settings  -->
+<ng-template #testSmtpModal>
+    <div type="text/ng-template">
+        <div class="modal-dialog m-0 modal-dialog m-0-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modal-title"><span translate="TRANSLATE.TEST_SMTP_SETTING_TITLE"></span></h2>
+                    <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="cancel()" data-bs-dismiss="modal">
+                        <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+                    </div>
+                </div>
+                <form [formGroup]="frmSmtpTest" name="frmSmtpTest" role="form" class="form form-horizontal">
+                    <div class="form-body form-group">
+                        <div class="modal-body" id="modal-body">
+                            <div class="form-group row">
+                                <label class="control-label col-md-3 text-sm-left text-lg-right">
+                                    <span translate="TRANSLATE.TEST_EMAIL_LABEL"></span><span class="text-danger">*</span>
+                                    <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.HELP_TEXT_SMTP_TEST_USERNAME' | translate}}">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                        <span class="path3"></span>
+                                    </i>
+                                </label>
+                                <div class="col-md-9">
+                                    <input type="email" formControlName ="testSmtpSettingsModel" class="form-control" name="Name" required />
+                                    @if(frmSmtpTest.get('testSmtpSettingsModel')?.errors?.required && frmSmtpTest.get('testSmtpSettingsModel').touched){
+                                        <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                                    }
+                                    @if(frmSmtpTest.get('testSmtpSettingsModel')?.errors?.email && frmSmtpTest.get('testSmtpSettingsModel').touched){
+                                    <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_PLEASE_ENTER_A_VALID_EMAIL"></span></span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-light-primary" type="button" (click)="ok()"><span translate="TRANSLATE.SEND_MAIL_BUTTON" ></span></button>
+                        <button class="btn btn-light-primary" type="button" (click)="cancel()"><span translate="TRANSLATE.BUTTON_TEXT_CANCEL" ></span></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</ng-template>

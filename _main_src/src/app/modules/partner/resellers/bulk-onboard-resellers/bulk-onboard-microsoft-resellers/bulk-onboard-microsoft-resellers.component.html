@@ -1,0 +1,128 @@
+<ng-template #actionHeader>
+    <a class="btn btn-primary btn-sm fw-bold btn-light-primary" (click)="backToResellers()">
+        <i class="ki-outline ki-to-left fs-2"></i> {{ 'TRANSLATE.BULK_ONBOARDING_RESELLERS_BUTTON_TEXT_BACK_TO_RESELLERS' | translate }}
+    </a>
+</ng-template>
+<div class="form-group row mt-5">
+    <label class="control-label col-md-2 mt-3 text-start" style="text-align:right">
+        <span translate="TRANSLATE.BULK_ONBOARD_RESELLERS_LBL_OPTION"></span>
+    </label>
+    <div class="col-md-5 mb-4">
+        <span [appPermission]="'BTN_BULK_ONBOARD_RESELLERS_BY_UPLOAD'">
+            <label class="btn btn-light-primary btn-sm" (click)="selectedOption('upload')">
+                <i class="fa fa-upload fa-1x"></i> <span translate="TRANSLATE.BULK_ONBOARD_RESELLERS_BTN_TEXT_UPLOAD_CSV"></span>
+                <input type="radio" class="toggle" value="upload">
+            </label>
+        </span>
+        &nbsp;&nbsp;
+        <span [appPermission]="'BTN_BULK_ONBOARD_RESELLERS_BY_LIST'">
+            <label class="btn btn-light-primary btn-sm" (click)="selectedOption('list')">
+                <i class="fa fa-list fa-1x"></i> <span translate="TRANSLATE.BULK_ONBOARD_RESELLERS_BTN_TEXT_SELECT_FROM_LIST"></span>
+                <input type="radio" class="toggle" value="list">
+            </label>
+        </span>
+    </div>
+</div>
+@if(pageMode === 'list'){
+<div class="row">
+    <div class="col-md-12 my-3">
+        @if (selectedResellersList?.length>0) {
+        <div class="row mt-3">
+            <div class="alert alert-info" style="display: inline-block; max-width: max-content;background: #f2f2f2;">
+                <span [innerHTML]="'TRANSLATE.BULK_ONBOARD_RESELLERS_SELECTED_COUNT_OUT_OF_TOTAL_RESELLERS' | translate :{selectedResellers: selectedResellersList?.length, totalResellers: nonOnboardedResellers?.length}">
+                </span>
+            </div>
+        </div>
+        }
+        <div class="table-responsive-md">
+            <div class="datatable datatable-bordered datatable-head-custom datatable-default datatable-primary datatable-loaded">
+                <ng-container *ngIf="datatableConfig">
+                    <app-c3-table [datatableConfig]="datatableConfig" [searchFilter]="false" [selection]="true" (onSelection)="handleSelection($event)">
+                    </app-c3-table>
+                </ng-container>
+                <ng-template #billingEmailColumnTemplate let-data="adtData">
+                    <div>
+                        @if (data?.IsSelectedForOnboarding) {
+                        <input type="email" name="bulkOnboardResellers_Billing_Email_{{data.UniqueKey}}" class="form-control form-control-sm" placeholder="{{'TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_BILLING_EMAIL' | translate}}" [(ngModel)]="data.Email" (ngModelChange)="onEmailUpdate(data);" />
+                        <span id="bulkOnboardResellers_Billing_Email_{{data.UniqueKey}}" style="display: none;" class="text-danger text-center"><span translate="TRANSLATE.BULK_ONBOARD_VALIDATION_MESSAGE_PLEASE_ENTER_A_VALID_EMAIL"></span></span>
+                        }
+                    </div>
+                </ng-template>
+            </div>
+            <hr />
+            <div class="d-flex justify-content-end" [appPermission]="'BTN_SUBMIT_BULKONBOARD_RESELLERS'">
+                @if(nonOnboardedResellers?.length > 0){
+                <button class="btn btn-primary btn-md" [disabled]="isuploading" (click)="bulkOnboardResellers()"><span translate="TRANSLATE.BUTTON_TEXT_SUBMIT" appBusyLoader></span></button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+}
+@if(pageMode === 'upload'){
+<div class="row">
+    <div class="col-md-12">
+        <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+            <h6><span translate="TRANSLATE.USERS_UPLOAD_FORM_INSTRUCTIONS"></span></h6>
+            <ol>
+                <li>
+                    <span translate="TRANSLATE.ONBOARD_RESELLER_UPLOAD_FORM_INSTRUCTIONS_PART_1_1"></span>
+                    <strong>
+                        <a href='javascript:void(0)' (click)='downloadTemplate()'><span translate="TRANSLATE.ONBOARD_RESELLER_UPLOAD_FORM_INSTRUCTIONS_PART_1_2"></span> </a>
+                    </strong>
+                    <span translate="TRANSLATE.ONBOARD_RESELLER_UPLOAD_FORM_INSTRUCTIONS_PART_1_3"></span>
+                </li>
+                <li>
+                    <span translate="TRANSLATE.ONBOARD_RESELLER_UPLOAD_FORM_INSTRUCTIONS_PART_2"></span>
+                </li>
+                <li>
+                    <span translate="TRANSLATE.ONBOARD_RESELLER_UPLOAD_FORM_INSTRUCTIONS_PART_3"></span>
+                    <ul>
+                        <li>
+                            <span translate="TRANSLATE.ONBOARD_RESELLER_UPLOAD_FORM_INSTRUCTIONS_PART_4"></span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.ONBOARD_RESELLER_UPLOAD_FORM_INSTRUCTIONS_PART_5"></span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.ONBOARD_RESELLER_UPLOAD_FORM_INSTRUCTIONS_PART_6"></span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.ONBOARD_RESELLER_UPLOAD_FORM_INSTRUCTIONS_PART_7"></span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.ONBOARD_RESELLER_UPLOAD_FORM_INSTRUCTIONS_PART_8"></span>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <span [innerHTML]="'TRANSLATE.ONBOARD_RESELLER_UPLOAD_FORM_INSTRUCTIONS_PART_9' | translate"></span>
+                </li>
+                <li>
+                    <span translate="TRANSLATE.ONBOARD_RESELLER_UPLOAD_FORM_INSTRUCTIONS_PART_10"></span>
+                </li>
+            </ol>
+        </div>
+        <div class="form-group row my-5">
+            <form>
+                <div class="form-group row">
+                    <div class="form-group row">
+                        <div class="col-md-2">
+                            <label class="col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                                <span translate="TRANSLATE.USERS_UPLOAD_FORM_LABEL_UPLOAD_FILE"></span><span class="text-danger"> *</span>
+                            </label>
+                        </div>
+                        <div class="col-md-9">
+                            <input filestyle type="file" #fileUpload accept=".csv" data-class-button="btn-outline-secondary" class="form-control form-control-sm inline p0" (change)="fileChange($event)" />
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <hr />
+        <div class="d-flex justify-content-end" [appPermission]="'BTN_SUBMIT_BULKONBOARD_RESELLERS'">
+            <button class="btn btn-primary btn-md" [disabled]="isuploading" (click)="bulkOnboardResellers()" appBusyLoader><span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span></button>
+        </div>
+    </div>
+</div>
+}

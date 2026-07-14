@@ -1,0 +1,85 @@
+
+<div class="table-responsive">
+	<table class="table">
+		<tbody *ngFor="let data of childTableData">
+			<tr>
+               
+				<td class="col-md-2 ps-9">
+                    <span class="fw-semibold">{{data.ProductName}}</span><br>
+                    <span class="small" style="font-weight: normal;">({{data.ChargeStartDate | c3Date}}-{{data.ChargeEndDate| c3Date}})</span><br>
+                    <span class="small"style="font-weight: normal;">{{data.InvoiceLineItemDetail}}</span><br>
+                    <span class="small"style="font-weight: normal;">{{data.CustomerName}}</span><br>
+                    <span class="small"style="font-weight: normal;" *ngIf="Agg !== 'Customer'">{{data.ResellerName}}<span translate="TRANSLATE.RESELLER"></span></span><br>
+                </td>
+				<td class="col-md-1 text-end">
+                    <span>
+                        {{
+                          data.CostOnPartner
+                            | CurrencyFilter
+                        }}</span>
+                </td>
+				<td class="col-md-2 text-end">
+                    <span>
+                        {{
+                          data.BilledAmount
+                            | CurrencyFilter
+                        }}</span>
+                </td>
+				<td class="col-md-1 text-end">
+                    <span>
+                        {{
+                          data.ProfitAmount
+                            | CurrencyFilter
+                        }}</span>
+                </td>
+				<td class="col-md-1 text-end">
+                    <span *ngIf="data.ProfitPercentage > 0" class="text-success font-green-jungle">
+                        <i class="text-success fa-solid fa-arrow-up"></i>
+                        {{ data.ProfitPercentage | number:'1.2-2' }}%
+                    </span>
+                    <span *ngIf="data.ProfitPercentage < 0" class="text-danger font-green-jungle">
+                        <i class="text-danger fa-solid fa-arrow-down"></i>
+                        {{ data.ProfitPercentage | number:'1.2-2' }}%
+                    </span>
+                    <span *ngIf="data.ProfitPercentage == 0">
+                    <span></span>
+                    </span>
+                </td>
+				<td class="col-md-1 text-end">
+                    <span>
+                    {{
+                        data.CostOnReseller
+                          | CurrencyFilter
+                      }}</span>
+                </td>
+                <td class="col-md-2 text-end">
+                    <span>
+                    {{
+                        data.ResellerBilledAmount
+                          | CurrencyFilter
+                      }}</span>
+                </td>
+				<td class="col-md-1 text-end">
+                    <span>
+                    {{
+                        data.ResellerProfitAmount
+                          | CurrencyFilter
+                      }}</span>
+                </td>
+				<td class="col-md-1 text-end">
+                    <span *ngIf="data.ResellerProfitPercentage > 0" class="text-success font-green-jungle">
+                        <i class="text-success fa-solid fa-arrow-up"></i>
+                        {{ data.ResellerProfitPercentage | number:'1.2-2' }}%
+                    </span>
+                    <span *ngIf="data.ResellerProfitPercentage < 0" class="text-danger font-green-jungle">
+                        <i class="text-danger fa-solid fa-arrow-down"></i>
+                        {{ data.ResellerProfitPercentage | number:'1.2-2' }}%
+                    </span>
+                    <span *ngIf="data.ResellerProfitPercentage == 0">
+                    <span></span>
+                    </span>
+                </td>
+			</tr>
+		</tbody>
+	</table>
+</div>

@@ -1,0 +1,14 @@
+::ng-deep {
+    .mr-auto {
+        margin-right: auto !important;
+    }
+
+    .max-width-300 {
+        max-width: 300px;
+    }
+}
+
+.disabled-button {
+    pointer-events: none;
+    cursor: not-allowed !important;
+}

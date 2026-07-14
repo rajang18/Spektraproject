@@ -1,0 +1,7 @@
+::ng-deep {
+    app-bulk-onboard-microsoft-customers {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+  }

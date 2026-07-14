@@ -1,0 +1,104 @@
+<!-- <ng-template #actionHeader >
+    <div class="actions col-md-12 text-lg-end text-sm-left" >
+        <a class="btn btn-secondary btn-sm btn-lg btn-md btn-xs mb-5 ms-md-2"
+            ngbTooltip="{{'TRANSLATE.BTN_TEXT_SHOW_FILTERS'|translate}}" (click)="filtersExpanded = !filtersExpanded">
+            <i class="ki-outline ki-filter fs-2"></i>&nbsp;<span translate="TRANSLATE.BTN_TEXT_FILTER"></span>
+        </a>
+   
+    </div>
+</ng-template> -->
+    
+
+<div class="card card-custom">
+<div class="card-body">
+    <div class="actions col-md-12 text-lg-end text-sm-left" >
+        <a class="btn btn-secondary btn-sm btn-lg btn-md btn-xs mb-5 ms-md-2"
+            ngbTooltip="{{'TRANSLATE.BTN_TEXT_SHOW_FILTERS'|translate}}" (click)="filtersExpanded = !filtersExpanded">
+            <i class="ki-outline ki-filter fs-2"></i>&nbsp;<span translate="TRANSLATE.BTN_TEXT_FILTER"></span>
+        </a>
+   
+    </div>
+    <div *ngIf="filtersExpanded">
+        <div class="card">
+            <div class="card-body">
+                <div class="form-group row">
+                    <!-- Customer Name -->
+
+                    <div class="col-md-4">
+                        <label class="fw-semibold">
+                            {{ 'TRANSLATE.LICENSE_CONSUMPTION_REPORT_FORM_LABEL_CUSTOMER_NAME' | translate }}
+                        </label>
+                        <ng-select [(ngModel)]="this.searchCriteria.CustomerId" 
+                                   name="searchCriteria_CustomerId" #selectElement
+                                   placeholder="{{ 'TRANSLATE.LICENSE_CONSUMPTION_REPORT_PLACEHOLDER_CUSTOMER_NAME' | translate }}">
+                            <ng-option *ngFor="let customer of allcustomers; let i = index" 
+                                       [value]="customer.ID">
+                                {{ customer.Name }}
+                            </ng-option>
+                        </ng-select>
+                    </div>
+                
+                    <!-- Tenant Name -->
+                    <div class="col-md-4">
+                        <label class="fw-semibold">
+                            {{ 'TRANSLATE.LICENSE_CONSUMPTION_REPORT_FORM_LABEL_TENANT_NAME' | translate }}
+                        </label>
+                        <ng-select [(ngModel)]="this.searchCriteria.TenantId"
+                                   name="searchCriteria_TenantId" #selectElement1
+                                   placeholder="{{ 'TRANSLATE.LICENSE_CONSUMPTION_REPORT_PLACEHOLDER_TENANT_NAME' | translate }}">
+                            <ng-option *ngFor="let tenant of allTenants; let i = index" 
+                                       [value]="tenant.ServiceProviderCustomerId">
+                                {{ tenant.CustomerName }}
+                            </ng-option>
+                        </ng-select>
+                    </div>
+                
+                    <!-- Subscription Name -->
+                    <div class="col-md-4">
+                        <label class="fw-semibold">
+                            {{ 'TRANSLATE.LICENSE_CONSUMPTION_REPORT_FORM_LABEL_SUBSCRIPTION_NAME' | translate }}
+                        </label>
+                        <input type="text" class="form-control form-control-sm"
+                               [(ngModel)]="this.searchCriteria.SubscriptionName"
+                               placeholder="{{ 'TRANSLATE.PLACEHOLDER_TEXT_FOR_INPUT_FIELD_TO_SEARCH_A_SUBSCRIPTION' | translate }}">
+                    </div>
+                </div>
+                
+            </div>
+            <div class="card-footer py-3">
+                <div class="form-actions text-end">
+                    <button class="btn btn-sm btn-light-primary me-2" (click)="filter()">
+                        {{'TRANSLATE.SUBSCRIPTION_HISTORY_SEARCH_OPTION' | translate}}
+                    </button>
+                    <button class="btn btn-sm btn-light-primary me-2"
+                        (click)="resetFilters()">{{'TRANSLATE.SUBSCRIPTION_HISTORY_SEARCH_RESET_OPTION' |
+                        translate}}</button>
+                    <button class="btn btn-sm btn-light-primary me-2"
+                        (click)="filtersExpanded = false;">{{'TRANSLATE.SUBSCRIPTION_HISTORY_SEARCH_CLOSE_OPTION' |
+                        translate}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@if (!!datatableConfig) {
+    <div class="table-buisness mt-2">
+      <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" (tableReady)="onTableReady($event)"
+        [isNestedGrid]="true"  >
+      </app-c3-table>
+    </div>
+    }
+</div>
+</div>
+
+<ng-template #iconTemplate let-data="adtData" let-row="userData">
+    <span>
+      <ng-container >
+        <ng-container *ngIf="!data.Collapse; else collapsed">
+          <i class="clicked-icon fa fa-plus link-font-icon text-primary mr-2" ></i>
+        </ng-container>
+        <ng-template #collapsed>
+          <i class="clicked-icon fa fa-minus link-font-icon text-primary mr-2"></i>
+        </ng-template>
+      </ng-container>
+    </span>
+  </ng-template>

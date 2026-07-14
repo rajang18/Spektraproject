@@ -1,0 +1,152 @@
+@if(!cc?.IsTenantConfiguration){
+    <div class="form-group row mt-6" [formGroup]="form"
+        *ngIf="data.IsRequired &&  data.Name !== 'LinkToContact' && data.Name !== 'LinkToSupport' && data.Name !== 'LinkToFAQ' && data.Name !== 'CustomerConsentURL' && data.Name !== 'PathToPartnerAgreement' && data.IsShowOnScreen">
+        <label class="col-4 col-form-label"
+            [ngClass]="{'': data.IsRequired}">
+            <span>{{'TRANSLATE.'+ data.DisplayName |translate}}</span>
+            <span class="text-danger" *ngIf="data.IsRequired">*</span>
+            <i class="ki-duotone ki-information-2 fs-8 ms-1 bottom-10" ngbTooltip="{{'TRANSLATE.'+data.Description | translate }}">
+                <span class="path1"></span>
+                <span class="path2"></span>
+                <span class="path3"></span>
+            </i>
+        </label>
+        <div class="col-md-6">
+            <input type="url" [disabled]="!data.IsManagedByPartner" class="form-control form-control-sm "
+                [ngClass]="{'input-disable': !data.IsManagedByPartner}" #text (input)="onChange(text.value)"
+                [ngStyle]="{'pointer-events': !data.IsManagedByPartner ? 'none':'initial','cursor': !data.IsManagedByPartner? 'not-allowed':'initial'}"
+                (blur)="onTouched()" [value]="data.Value" [formControlName]="frmControlName">
+    
+            <!-- <div *ngIf="isInvalid" class="text-danger">This field is required</div> -->
+            @if(form.get(data.Name)?.touched && form.get(data.Name)?.errors?.required){
+            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+            }
+        </div>
+    </div>
+    
+    
+    <div class="form-group row mt-6" [formGroup]="form"
+        *ngIf="!data.IsRequired && data.Name !== 'LinkToContact' && data.Name !== 'LinkToSupport' && data.Name !== 'LinkToFAQ' && data.Name !== 'CustomerConsentURL' && data.Name !== 'PathToPartnerAgreement' && data.IsShowOnScreen">
+        <label class="col-4 col-form-label"
+            [ngClass]="{'': data.IsRequired}">
+            <span>{{'TRANSLATE.'+ data.DisplayName |translate}}</span>
+            <i class="ki-duotone ki-information-2 fs-8 ms-1 bottom-10" ngbTooltip="{{'TRANSLATE.'+data.Description | translate }}">
+                <span class="path1"></span>
+                <span class="path2"></span>
+                <span class="path3"></span>
+            </i>
+        </label>
+        <div class="col-md-6">
+            <input type="url" [disabled]="!data.IsManagedByPartner" class="form-control form-control-sm "
+                [ngClass]="{'input-disable': !data.IsManagedByPartner}" #text (input)="onChange(text.value)"
+                [ngStyle]="{'pointer-events': !data.IsManagedByPartner ? 'none':'initial','cursor': !data.IsManagedByPartner? 'not-allowed':'initial'}"
+                (blur)="onTouched()" [value]="data.Value" [formControlName]="frmControlName">
+    
+            <!-- <div *ngIf="isInvalid" class="text-danger">This field is required</div> -->
+            @if(form.get(data.Name)?.touched && form.get(data.Name)?.errors?.required){
+            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+            }
+        </div>
+    </div>
+    
+    
+    <div class="form-group row mt-6" [formGroup]="form" *ngIf="data.Name === 'LinkToContact' && data.IsShowOnScreen">
+        <label class="col-4 col-form-label"
+        [ngClass]="{'': data.IsRequired}">
+        <span>{{'TRANSLATE.'+ data.DisplayName |translate}}</span>
+        <i class="ki-duotone ki-information-2 fs-8 ms-1 bottom-10" ngbTooltip="{{'TRANSLATE.'+data.Description | translate }}">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+        </i>
+    </label>
+    <div class="col-md-6">
+        <input type="url" [disabled]="!data.IsManagedByPartner" class="form-control form-control-sm "
+            [ngClass]="{'input-disable': !data.IsManagedByPartner}" #text (input)="onChange(text.value)"
+            [ngStyle]="{'pointer-events': !data.IsManagedByPartner ? 'none':'initial','cursor': !data.IsManagedByPartner? 'not-allowed':'initial'}"
+            (blur)="onTouched()" [value]="data.Value" [formControlName]="frmControlName">
+    
+        <!-- <div *ngIf="isInvalid" class="text-danger">This field is required</div> -->
+        @if(form.get(data.Name)?.touched && form.get(data.Name)?.errors?.required){
+        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+        }
+    </div>
+    </div>
+    
+    
+    <div class="form-group row mt-6" [formGroup]="form" *ngIf="data.Name === 'LinkToFAQ' && data.IsShowOnScreen">
+        <label class="col-4 col-form-label"
+        [ngClass]="{'': data.IsRequired}">
+        <span>{{'TRANSLATE.'+ data.DisplayName |translate}}</span>
+        <span class="text-danger" *ngIf="data.IsRequired">*</span>
+        <i class="ki-duotone ki-information-2 fs-8 ms-1 bottom-10" ngbTooltip="{{'TRANSLATE.'+data.Description | translate }}">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+        </i>
+    </label>
+    <div class="col-6">
+        <input type="url" [disabled]="!data.IsManagedByPartner" class="form-control form-control-sm "
+            [ngClass]="{'input-disable': !data.IsManagedByPartner}" #text (input)="onChange(text.value)"
+            [ngStyle]="{'pointer-events': !data.IsManagedByPartner ? 'none':'initial','cursor': !data.IsManagedByPartner? 'not-allowed':'initial'}"
+            (blur)="onTouched()" [value]="data.Value" [formControlName]="frmControlName">
+    
+        <!-- <div *ngIf="isInvalid" class="text-danger">This field is required</div> -->
+        @if(form.get(data.Name)?.touched && form.get(data.Name)?.errors?.required){
+        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+        }
+    </div>
+    </div>
+    
+    <!-- pattern below -->
+    
+    <div class="form-group row mt-6" [formGroup]="form" *ngIf="data.Name === 'LinkToSupport' && data.IsShowOnScreen">
+        <label class="col-4 col-form-label"
+            [ngClass]="{'': data.IsRequired}">
+    
+            <span>{{'TRANSLATE.'+ data.DisplayName |translate}}</span>
+            <i class="ki-duotone ki-information-2 fs-8 ms-1 bottom-10" ngbTooltip="{{'TRANSLATE.'+data.Description | translate }}">
+                <span class="path1"></span>
+                <span class="path2"></span>
+                <span class="path3"></span>
+            </i>
+        </label>
+        <div class="col-6">
+            <input type="url" [disabled]="!data.IsManagedByPartner" class="form-control form-control-sm "
+                [ngClass]="{'input-disable': !data.IsManagedByPartner}" #text (input)="onChange(text.value)"
+                [ngStyle]="{'pointer-events': !data.IsManagedByPartner ? 'none':'initial','cursor': !data.IsManagedByPartner? 'not-allowed':'initial'}"
+                (blur)="onTouched()" [value]="data.Value" [formControlName]="frmControlName">
+            <!-- 
+            <div *ngIf="isInvalid" class="text-danger">This field is required</div> -->
+            @if(form.get(data.Name)?.touched && form.get(data.Name)?.errors?.required){
+            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+            }
+        </div>
+    </div>
+    
+    <div class="form-group row mt-6" [formGroup]="form"
+        *ngIf="(data.Name === 'CustomerConsentURL' || data.Name === 'PathToPartnerAgreement') && data?.ResellerInternalId == null && data.IsShowOnScreen">
+        <label class="col-4 col-form-label"
+        [ngClass]="{'': data.IsRequired}">
+    
+        <span>{{'TRANSLATE.'+ data.DisplayName |translate}}</span>
+        <span class="text-danger" *ngIf="data.IsRequired">*</span>
+        <i class="ki-duotone ki-information-2 fs-8 ms-1 bottom-10" ngbTooltip="{{'TRANSLATE.'+data.Description | translate }}">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+        </i>
+    </label>
+    <div class="col-6">
+        <input type="url" [disabled]="!data.IsManagedByPartner" class="form-control form-control-sm "
+            [ngClass]="{'input-disable': !data.IsManagedByPartner}" #text (input)="onChange(text.value)"
+            [ngStyle]="{'pointer-events': !data.IsManagedByPartner ? 'none':'initial','cursor': !data.IsManagedByPartner? 'not-allowed':'initial'}"
+            (blur)="onTouched()" [value]="data.Value" [formControlName]="frmControlName">
+    
+        <!-- <div *ngIf="isInvalid" class="text-danger">This field is required</div> -->
+        @if(form.get(data.Name)?.touched && form.get(data.Name)?.errors?.required){
+        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+        }
+    </div>
+    </div>
+    }

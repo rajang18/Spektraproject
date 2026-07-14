@@ -1,0 +1,11 @@
+select:disabled,
+select[disabled]
+{
+cursor:not-allowed !important;
+}
+
+.form-check-input:disabled {
+    cursor: not-allowed !important;
+    pointer-events: all !important;
+}
+

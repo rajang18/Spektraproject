@@ -1,0 +1,40 @@
+::ng-deep{
+      .buissness-transacttion-details-wrapper{
+        padding-left: 16%;
+        padding-right: 5%;
+        .label.label-inline {
+            width: auto;
+            padding: 0.15rem 0.75rem;
+            border-radius: 0.42rem;
+        }
+        .label.label-success {
+            color: #ffffff;
+            background-color: #1BC5BD;
+        }
+        .label.label-danger {
+            color: #ffffff;
+            background-color: #F64E60;
+        }
+        .label.label-info {
+            color: #ffffff;
+            background-color: #F64E60;
+        }
+        table {
+            border-collapse: collapse;
+          }
+
+          th{
+            background-color: #fafbfc;
+          }
+          
+          th, td {
+            border: 1px solid #ECF0F3;
+            padding: 8px;
+            padding-left: 15px !important;
+          }
+          
+          tr:nth-child(even) {
+            background: #fafbfc;
+          }
+      }
+}

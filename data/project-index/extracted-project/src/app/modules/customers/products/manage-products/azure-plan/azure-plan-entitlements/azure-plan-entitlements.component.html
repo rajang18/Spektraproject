@@ -1,0 +1,33 @@
+<div class="card card-custom gutter-b">
+    <div class="card-body">
+        <div class="col-md-2">
+            <a class="btn btn-light-primary btn-sm mr-2" (click)="addEntitlements()">
+                <i class="fa fa-plus"></i> {{'TRANSLATE.ADD_ENTITLEMENT' | translate}}
+            </a>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-12">
+                <div *ngIf="!loadingEntitlements && !(entitlements && entitlements.length)">
+                    <strong>
+                        <i>{{'TRANSLATE.CUSTOMER_MANAGE_PRODUCT_INFO_TEXT_NO_ENTITLEMENTS_FOUND' | translate}}</i>
+                    </strong>
+                </div>
+                <!-- <perfect-scrollbar class="scroller-custom" wheel-propagation="true" swipe-propagation="true" on-scroll="onScroll(scrollTop, scrollHeight)" always-visible="true" suppress-scroll-X="true" ng-style="{'height': '{{vm.frameHeight-250}}px'}"> -->
+                    <div class="col-md-12">
+                        <div class="row">
+                            @for (item of entitlements; track $index) {
+                                <div class="col-md-6" appLazyLoad (lazyLoad)="onLazyLoad(item)">
+                                    <div class="p-2">
+                                        <app-product-item [productItemDetails]="productItemDetails" [productItem]="item" (onActionData)="manageProduct($event)"></app-product-item>
+                                    </div>
+                                </div>        
+                            }
+                        </div>
+                    </div>
+                <!-- </perfect-scrollbar> -->
+            </div>
+        </div>
+    </div>
+</div>
+

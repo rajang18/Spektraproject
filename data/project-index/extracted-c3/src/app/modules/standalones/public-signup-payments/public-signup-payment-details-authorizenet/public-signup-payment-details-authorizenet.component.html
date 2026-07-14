@@ -1,0 +1,268 @@
+<div class="container-fluid customer-container margin-top-80">
+    <div class="row">
+        <div class="col col-12  col-lg-9 pt-5">
+            <div class="card product-description-card m-auto ">
+                <div class="col-md-12">
+                    <div class="card card-border card-stretch">
+                        <div class="card-header">
+                            <h4 class="font-dark font-weight-bold mb-0">
+                                <span><span translate="TRANSLATE.PUBLIC_SIGNUP_PAYMENT_HEADER_TEXT"></span></span>
+                            </h4>
+                        </div>
+                        <div class="card-body form">
+                            @if(pageMode==='ACH'){
+                            <form name="paymentForm" [formGroup]="paymentFormACH">
+                                <div class="form-body">
+                                    <div class="col-md-12">
+                                        <div class="form-group mb-3">
+                                            <label class="required fw-semibold fs-6 mb-2">
+                                                {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_ALIAS_NAME' | translate}}
+                                            </label>
+                                            <div>
+                                                <input type="text" class="form-control form-control-sm"
+                                                    formControlName="PaymentProfileAlias" />
+                                            </div>
+                                            @if(paymentFormACH.get('PaymentProfileAlias')?.errors?.required &&
+                                            paymentFormACH.get('PaymentProfileAlias')?.touched){
+                                            <span class="text-danger">
+                                                {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' |
+                                                translate}}</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group mb-3">
+                                            <label class="required fw-semibold fs-6 mb-2">
+                                                {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_ACCOUNT_NUMBER' | translate}}
+                                            </label>
+                                            <div>
+                                                <input type="text" class="form-control form-control-sm"
+                                                    formControlName="AccountNumber" maxlength="17" />
+                                            </div>
+                                            @if(paymentFormACH.get('AccountNumber')?.errors?.required &&
+                                            paymentFormACH.get('AccountNumber')?.touched){
+                                            <span class="text-danger">
+                                                {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' |
+                                                translate}}</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group mb-3">
+                                            <label class="required fw-semibold fs-6 mb-2">
+                                                {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_NAME_ON_ACCOUNT' | translate}}
+                                            </label>
+                                            <div>
+                                                <input type="text" class="form-control form-control-sm"
+                                                    formControlName="NameOnCard" maxlength="22" />
+                                            </div>
+                                            @if(paymentFormACH.get('NameOnCard')?.errors?.required &&
+                                            paymentFormACH.get('NameOnCard')?.touched){
+                                            <span class="text-danger">
+                                                {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' |
+                                                translate}}</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group mb-3">
+                                            <label class="required fw-semibold fs-6 mb-2">
+                                                {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_ROUTING_NUMBER' | translate}}
+                                            </label>
+                                            <div>
+                                                <input type="text" class="form-control form-control-sm"
+                                                    formControlName="RoutingNumber" maxlength="9" />
+                                            </div>
+
+                                            @if(paymentFormACH.get('RoutingNumber')?.errors?.required &&
+                                            paymentFormACH.get('RoutingNumber')?.touched){
+                                            <span class="text-danger">
+                                                {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' |
+                                                translate}}</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group mb-3">
+                                            <label class="required fw-semibold fs-6 mb-2">
+                                                {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_ACCOUNT_TYPE' | translate}}
+                                            </label>
+                                            <div>
+                                                <div class="d-flex gap-2">
+                                                    <div class="form-check form-check-custom  form-check-sm gap-1">
+                                                        <input type="radio" class="form-check-input"
+                                                            formControlName="AccountType" value="savings">
+                                                        <label class="form-check-label" for="flexRadioDefault">
+                                                            {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_SAVING' |
+                                                            translate}}
+                                                        </label>
+
+                                                    </div>
+                                                    <div class="form-check form-check-custom  form-check-sm gap-1">
+                                                        <input type="radio" class="form-check-input"
+                                                            formControlName="AccountType" value="checking">
+                                                        <label class="form-check-label" for="flexRadioDefault">
+                                                            {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_CHECKING' |
+                                                            translate}}
+                                                        </label>
+
+                                                    </div>
+                                                </div>
+                                                @if(paymentFormACH.get('AccountType')?.errors?.required &&
+                                                paymentFormACH.get('AccountType')?.touched){
+                                                <span class="text-danger">
+                                                    {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' |
+                                                    translate}}</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="clearfix margin-top-20"></div>
+                                <div class="text-danger" id="stripe-errors" role="alert"></div>
+                                <div class="form-actions d-flex justify-content-end gap-2">
+                                    <!-- @if(permissions.HasSaveCustomerPaymentProfile === 'Allowed'){
+                <button class="btn btn-sm btn-light btn-active-light-primary btn-sm me-2"
+                    type="button" (click)="onDiscard(paymentFormACH)" appBusyLoader>{{'TRANSLATE.PAYMENT_TEMPLATE_BUTTON_TEXT_CANCEL' | translate}}</button>
+                <button class="btn btn-primary btn-sm me-2"
+                    (click)="submit(paymentFormACH)" appBusyLoader>{{'TRANSLATE.PAYMENT_TEMPLATE_BUTTON_TEXT_SUBMIT' |
+                    translate}}</button>
+            }
+            -->
+                                </div>
+                            </form>
+                            }
+                            @if(pageMode == 'CC'){
+                            <div class="form-body pt-10">
+                                @if(!!billingProviderJSEndPointUrl && !!hostedPageToken){
+                                <div class="portlet light bordered">
+                                    <div class="portlet-body pt-10">
+                                        <form method="POST" #demoCheckoutForm target="payframe"
+                                            [action]="billingProviderJSEndPointUrl" frameborder="0" height="850px"
+                                            id="DemoCheckoutForm" name="DemoCheckoutForm">
+                                            <input type="hidden" name="token" [value]="hostedPageToken" />
+                                        </form>
+                                        <iframe #authorize id="payframe" name="payframe" width="100%"
+                                            height="550px;"></iframe>
+                                        <div class="col-md-12">
+                                            <div class="text-end">
+                                                @if(!isProcessing){
+                                                <button
+                                                    *ngIf="(isEnablePublicSignupAssistance && isCartHasMicrosoftProduct)"
+                                                    class="btn btn-md btn-light-primary me-2"
+                                                    (click)="skipPaymentAndContinue()" appBusyLoader>
+                                                    {{'TRANSLATE.PUBLIC_SIGNUP_STRIPE_SKIP_AND_CONTINUE_BTN_TXT' |
+                                                    translate}}
+                                                </button>
+                                                }
+                                                @else{
+                                                <button
+                                                    *ngIf="(isEnablePublicSignupAssistance && isCartHasMicrosoftProduct)"
+                                                    type="button" class="btn btn-secondary  me-2">
+                                                    <div><i class="fa fa-spinner fa-spin"></i><span
+                                                            translate="TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT"></span>
+                                                    </div>
+                                                </button>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                }
+
+                                @else {
+                                <div class="portlet light bordered">
+                                    <span>{{'TRANSLATE.PAYMENT_TEMPLATE_WAIT_MESSAGE' | translate}}</span>
+                                </div>
+                                }
+
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class=" col col-12 col-lg-3 pt-5">
+            <div class="card product-description-card m-auto" style="height:100%">
+                <!-- <div class="card-header shop-item-title flex-nowrap">
+                    <div class="card-title">
+                        <div class="d-flex flex-column ">
+                            <a href="#" class="card-title font-weight-bolder text-dark-75 font-size-h2 m-0 pt-3 pb-3">
+                                <span class="pl-9" translate="TRANSLATE.CUSTOMER_CART_PORTLET_TITLE_TEXT_PRICE_DETAILS"></span>
+                            </a>
+                        </div>
+                    </div>
+                </div> -->
+                <div class="d-flex justify-content-between mx-5 mt-7">
+                    <span class="text-dark fw-bold h2">{{'TRANSLATE.CUSTOMER_CART_PORTLET_TITLE_TEXT_PRICE_DETAILS'
+                        |translate}}</span>
+                    <span>
+                        <a class="fw-bold cursor-pointer" (click)="checkOutCart()"><span
+                                translate="TRANSLATE.PUBLIC_SIGNUP_EDIT_TEXT"></span></a>&nbsp;
+                    </span>
+                </div>
+                <div class="d-flex justify-content-between mx-5">
+                    <span class="text-dark font-weight-bolder" *ngIf="_publicSignupSevice.cartCount > 0">
+                        {{_publicSignupSevice.cartCount}} items
+                    </span>
+                    <a *ngIf="_publicSignupSevice.CustomerPublicSignUpModel != null &&  _publicSignupSevice.CustomerPublicSignUpModel != undefined && _publicSignupSevice.CustomerPublicSignUpModel != ''"
+                        class="fw-bold cursor-pointer"
+                        (click)="redirectToBillingInformation()">{{'TRANSLATE.EDIT_BILLING_INFORMATION_IN_PUBLIC_SIGN_UP'
+                        | translate}}</a>
+                </div>
+                <hr class="solid mt-5">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between pt-3 pb-3" *ngIf="_publicSignupSevice.cartTotal">
+                        <span class="text-dark fw-bold"><span
+                                translate="TRANSLATE.CUSTOMER_CART_PARAGRAPH_TITLE_TEXT_TOTAL_COST"></span></span>
+                        <span>{{_publicSignupSevice.cartTotal | CurrencyFilter : products[0].CurrencySymbol :
+                            products[0].CurrencyDecimalPlaces : products[0].CurrencyThousandSeperator :
+                            products[0].CurrencyDecimalSeperator}}</span>
+                    </div>
+                    <div class="d-flex justify-content-between pt-3 pb-3"
+                        *ngIf="_publicSignupSevice.CustomerPublicSignUpModel != undefined">
+                        <span class="text-dark fw-bold">{{'TRANSLATE.SIGNUP_CART_COUPON_CODE' |
+                            translate}}</span>
+                        <div class="input-group mb-3">
+                            <input type="text" [(ngModel)]="couponCode" (change)="refreshCoupon()"
+                                class="form-control form-control-sm" maxlength="50" name="CouponCode"
+                                placeholder="{{'TRANSLATE.PUBLIC_SINGUP_PLACEHOLDER_VOUCHER_CODE'| translate}}">
+                            <button class="btn btn-sm btn-light-primary" [disabled]="isCouponValidationInProgress"
+                                (click)="validateCoupon()">
+                                {{'TRANSLATE.SIGNUP_CART_COUPON_APPLY' | translate}}
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <button
+                            *ngIf="(validCouponCode !== null && validCouponCode !== '' && validCouponCode !== undefined && isDiscountApplied)"
+                            [disabled]="isCouponValidationInProgress" class="btn btn-sm btn-light-danger pt-3 pb-3"
+                            (click)="removeCouponApplied()">
+                            {{'TRANSLATE.SIGNUP_CART_REMOVE_APPLIED_COUPON' | translate}}
+                        </button>
+                    </div>
+                    <div class="d-flex justify-content-between pt-3 pb-3"
+                        *ngIf="cartDiscount > 0 && cartDiscount !== null && cartDiscount !== undefined">
+                        <span class="text-dark fw-bold">{{'TRANSLATE.CUSTOMER_CART_PARAGRAPH_TITLE_TEXT_TOTAL_DISCOUNT'
+                            |
+                            translate}}</span>
+                        <span>{{cartDiscount | CurrencyFilter : products[0].CurrencySymbol :
+                            products[0].CurrencyDecimalPlaces : products[0].CurrencyThousandSeperator :
+                            products[0].CurrencyDecimalSeperator}}</span>
+                    </div>
+                    <hr class="solid mt-5">
+                    <div class="d-flex justify-content-between pt-3 pb-3"
+                        *ngIf="payableAmount > 0 && payableAmount !== null && payableAmount !== undefined">
+                        <span class="text-dark fw-bold"> <span
+                                translate="TRANSLATE.CUSTOMER_CART_PARAGRAPH_TITLE_TEXT_AMOUNT_PAYABLE"></span>
+                        </span>
+                        <span>{{payableAmount | CurrencyFilter : products[0].CurrencySymbol :
+                            products[0].CurrencyDecimalPlaces : products[0].CurrencyThousandSeperator :
+                            products[0].CurrencyDecimalSeperator}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

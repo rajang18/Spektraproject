@@ -1,0 +1,62 @@
+<!-- <div class="search-row">
+  <div class="d-flex" >
+    <i class="ki-duotone ki-magnifier">
+      <span class="path1"></span>
+      <span class="path2"></span>
+    </i>
+    <input type="text"  data-action="filter" class="header-input-field form-control form-control-sm form-control-solid w-200px ps-10"
+      placeholder="Search...">
+  </div>
+</div> -->
+<table #c3table datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger" 
+  class="order-column table align-middle table-row-dashed dataTable no-footer table-fixed">
+  <thead>
+    @if(customeHeader){
+      <ng-container *ngTemplateOutlet="customeHeader; context: { data: { text: 'Data from Parent' } }"></ng-container>
+    }
+    <tr class="text-start text-gray-800 fw-bold fs-7 text-uppercase gs-0">
+      <ng-container *ngFor="let column of dtOptions.columns">
+        <th>{{ column?.title }}</th>
+      </ng-container>
+    </tr>
+  </thead>
+  <!-- Enable search -->
+  @if(enableSearch) {
+    <tfoot>
+      <tr>
+        <ng-container *ngFor="let column of dtOptions.columns">
+          <th>{{ column?.title }}</th>
+        </ng-container>
+      </tr>
+    </tfoot>
+  } 
+
+  <tr #additionalRow></tr>
+  <tbody  #tableBody class="">
+  </tbody>
+</table>
+  @if(!loadPagination && isTableNoRecord){
+    <div class="position-relative top-70px row fixed-height-card pt-0 mt-0">
+      <app-common-no-record></app-common-no-record>
+      <!-- <div class="col-md-12 d-flex justify-content-center align-items-center flex-column text-center">
+          <h3>
+              <img src='../../../../assets/media/png/no-records-found4.png' width="150" height="150" />
+          </h3>
+          <h4>
+              <span [innerHTML]="('TRANSLATE.MESSAGE_TEXT_NO_RECORDS_FOUND')| translate"></span>
+          </h4>
+      </div> -->
+    </div>
+  }
+<!-- @if(isDataExist){ -->
+  <!-- <div class="pagination-table bg-secondary" *ngIf="loadPagination && !isPaginationHide">
+    <select name="paymentMethod" class="form-control form-control-sm form-select form-select-sm " [(ngModel)]="activePageSize" (ngModelChange)="reloadGrid()">
+      @for (page of pageOptions; track page){
+        <option [value]="page">
+          {{page}}
+        </option>
+      }
+    </select>
+  </div> -->
+<!-- } -->
+

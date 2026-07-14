@@ -1,0 +1,22 @@
+::ng-deep {
+    app-reseller-revenue-cost-summary{
+        table {
+          tr:last-child {
+          .dt-control{
+              visibility: hidden
+            }
+          }
+        }
+        .outline-none{
+          outline: none;
+          border-radius: 0.375rem;
+        }
+        .dropdown-toggle::after {
+          display: none !important;
+      }
+        .custom-dropdown {
+          width: 350px; 
+        }
+    }
+}      
+

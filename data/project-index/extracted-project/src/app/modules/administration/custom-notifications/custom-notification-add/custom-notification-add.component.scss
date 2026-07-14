@@ -1,0 +1,22 @@
+.line-break-all{
+    word-break:break-word !important;
+    word-wrap:break-word !important;
+}
+
+.width-80-percent{
+    width : 80% !important;
+    max-width:80% !important;
+}
+
+::ng-deep{
+    app-custom-notification-add{
+        .hide-no-data{
+            .position-relative.top-70px{
+                display: none;
+            }
+            .dropdown-toggle::after {
+                display: none !important;
+            }
+        }
+    }
+}

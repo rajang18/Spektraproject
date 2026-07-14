@@ -1,0 +1,291 @@
+@if(type == 'form') {
+<form [formGroup]="frmAddNewUser" role="form" class="form" novalidate>
+    <div type="text/ng-template">
+        <div class="modal-header">
+            <h3 class="modal-title"><span translate="TRANSLATE.ADD_NEW_USER_IN_QUOTE" ></span></h3>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <div class="form-body">
+                <div class="form-group row">
+                    <div class="form-group mb-2 col-md-6">
+                        <label class="text-grey-800 fs-6 fw-semibold pb-2">
+                            {{'TRANSLATE.QUOTE_LABEL_TEXT_FIRST_NAME' | translate}}
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div>
+                            <input type="text"  formControlName="FirstName" class="form-control" placeholder="{{'TRANSLATE.QUOTE_PLEASE_ENTER_THE_FIRST_NAME' | translate}}" [maxlength]="50" name="FirstName" [required]="true">
+                        </div>
+                        @if(frmAddNewUser.get('FirstName')?.errors?.required &&
+                        frmAddNewUser.get('FirstName')?.touched){
+                        <span class="text-danger"
+                            translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        
+                        }@if (frmAddNewUser.get('FirstName')?.errors?.maxlength &&
+                        frmAddNewUser.get('FirstName')?.touched) {
+                        <span class="text-danger"><span
+                                translate="TRANSLATE.VALIDATION_MESSAGE_MAX_LENGTH_50"></span></span>
+                        }
+                    </div>
+                    <div class="form-group mb-2 col-md-6">
+                        <label class="text-grey-800 fs-6 fw-semibold pb-2">
+                            {{'TRANSLATE.QUOTE_LABEL_TEXT_LAST_NAME' | translate}}
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div>
+                            <input type="text"  formControlName="LastName" class="form-control" placeholder="{{'TRANSLATE.QUOTE_PLEASE_ENTER_THE_LAST_NAME' | translate}}" [maxlength]="50" name="LastName" [required]="true">
+                        </div>
+                        @if(frmAddNewUser.get('LastName')?.errors?.required &&
+                        frmAddNewUser.get('LastName')?.touched){
+                        <span class="text-danger"
+                            translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        
+                        }@if (frmAddNewUser.get('LastName')?.errors?.maxlength &&
+                        frmAddNewUser.get('LastName')?.touched) {
+                        <span class="text-danger"><span
+                                translate="TRANSLATE.VALIDATION_MESSAGE_MAX_LENGTH_50"></span></span>
+                        }
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="form-group mb-2 col-md-6">
+                        <label class="text-grey-800 fs-6 fw-semibold pb-2">
+                            {{'TRANSLATE.QUOTE_LABEL_TEXT_EMAIL' | translate}}
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div>
+                            <input type="email" formControlName="Email"  class="form-control" placeholder="{{'TRANSLATE.QUOTE_PLEASE_ENTER_THE_EMAIL_ADDRESS' | translate}}" name="Email" [required]="true">
+                            <div class="text-danger">
+                            </div>
+                        </div>
+                        @if(frmAddNewUser.get('Email')?.errors?.required &&
+                        frmAddNewUser.get('Email')?.touched){
+                        <span class="text-danger"
+                            translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        
+                        }@if (frmAddNewUser.get('Email')?.errors?.email &&
+                        frmAddNewUser.get('Email')?.touched) {
+                        <span class="text-danger"><span
+                                translate="TRANSLATE.VALIDATION_MESSAGE_PLEASE_ENTER_A_VALID_EMAIL"></span></span>
+                        }
+                    </div>
+                    <div class="form-group mb-2 col-md-6">
+                        <label class="text-grey-800 fs-6 fw-semibold pb-2">
+                            {{'TRANSLATE.QUOTE_LABEL_TEXT_PHONE_NUMBER' | translate}}
+                        </label>
+                        <div>
+                            <input type="text" formControlName="PhoneNumber"  class="form-control" placeholder="{{'TRANSLATE.QUOTE_PLEASE_ENTER_THE_PHONE_NUMBER' | translate}}" name="PhoneNumber">                            
+                        </div>
+                        @if(frmAddNewUser.get('PhoneNumber')?.errors?.required &&
+                        frmAddNewUser.get('PhoneNumber')?.touched){
+                        <span class="text-danger"
+                            translate="TRANSLATE.VALIDATION_MESSAGE_ENTER_VALID_PHONE_NUMBER"></span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-sm btn-light btn-active-light-primary" (click)="cancel()"><span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span></button>
+            <button class="btn btn-primary btn-sm" type="submit" (click)="submitForm()">
+                {{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}
+            </button>
+        </div>
+    </div>
+</form>
+}
+@if(type == 'list') {
+    <div>
+        <div type="text/ng-template">
+            <div class="modal-header">
+                <h3 class="modal-title "><span translate="TRANSLATE.ADD_CUSTOMER_IN_QUOTE" ></span></h3>
+            </div>
+            <div class="modal-body pl-0" id="modal-body">
+                <div class="form-body ml-8">
+                    <div class="col-md-12" style="overflow: scroll;">
+                        @for(row of userList; track $index){
+                            <div class="d-flex flex-wrap align-items-center mb-3"
+                                style=" padding: 2rem 2.25rem">
+                                <div
+                                    class="symbol symbol-primary flex-shrink-0">
+                                    <input type="checkbox"
+                                        class="text-primary form-check-input me-2"
+                                        [attr.checked]="row.IsChecked" [(ngModel)]="row.IsChecked">
+                                </div>
+                                <div class="me-4">
+                                    <div>
+                                        <!--begin::Logo-->
+                                        <a>
+                                            <img src='../../../../assets/media/img/Logo Shapes 19.png'
+                                                class="theme-light-show"
+                                                style="max-width: 50px; max-height: 50px;"
+                                                alt="">
+                                        </a>
+                                    </div>
+                                </div>
+                                <div
+                                    class="d-flex flex-column flex-grow-1 my-lg-0 my-2">
+                                    <span class="fs-lg fs-sm"
+                                        style="word-wrap: break-word; max-width: 355px;">
+                                        {{row.EmailId}}
+                                    </span>
+                                    <span class="font-size-lg font-size-sm">
+                                        {{row.PhoneNumber}}
+                                    </span>
+                                    <span class="font-size-lg font-size-sm">
+                                        {{'TRANSLATE.'+row.UserRole | translate}}
+                                    </span>
+                                </div>
+                            </div>
+                            }
+                        <!-- <perfect-scrollbar class="scroller-custom" wheel-propagation="true" swipe-propagation="true" on-scroll="onScroll(scrollTop, scrollHeight)" always-visible="true" style="height: 300px !important; width: 440px !important" *ngIf="cc.UserList && cc.UserList.length > 0">
+                            <div class="p-4" id="past-dues-card-png">
+                                <div class="d-flex flex-wrap align-items-center mb-10" ng-repeat="column in cc.UserList">
+                                    <div class="symbol symbol-primary flex-shrink-0 pr-2">
+                                        <input type="checkbox" class="text-primary w-20px h-20px" [(ngModel)]="column.IsChecked" (click)="checkAllIsCheck(column)" [disabled]="column.isDisabled">
+                                    </div>
+                                    <div class="symbol symbol-primary flex-shrink-0 ml-2 mr-2">
+                                        <div class="bg-warning rounded-circle p-5"></div>
+                                    </div>
+                                    <div class="d-flex flex-column flex-grow-1 pr-1 col-md-7">
+                                        <span tooltip-placement="right" class="font-size-lg font-weight-bold text-primary">
+                                            {{column.FullName}}
+                                        </span>
+                                        <span tooltip-placement="right" class="font-size-lg font-size-sm" style="word-wrap: break-word; max-width: 210px;">
+                                            {{column.EmailId}}
+                                        </span>
+                                        <span tooltip-placement="right" class="font-size-lg font-size-sm">
+                                            {{column.PhoneNumber}}
+                                        </span>
+                                    </div>
+                                    <div class="col-md-2 text-left symbol symbol-primary flex-shrink-0 mr-2">
+                                        <span class="font-size-lg font-size-sm">
+                                            {{'TRANSLATE.'+column.UserRole | translate}}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </perfect-scrollbar>
+                        <span *ngIf="cc.UserList == null || cc.UserList.length == 0" translate="TRANSLATE.MESSAGE_NO_RECORDS_FOUND" /> -->
+                    </div>
+                    @if(userList.length < 1 ){ 
+                        <div class="d-flex align-items-center justify-content-center"
+                            style="height: 100%;">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <app-common-no-record></app-common-no-record>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm btn-light btn-active-light-primary" (click)="cancelInList()"><span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span></button>
+                <button class="btn btn-sm  btn-primary " type="submit" (click)="submitInList()"><span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@if(type === 'address') {
+<div>
+    <div class="modal-header">
+        <h4 class="modal-title fw-bold"> {{'TRANSLATE.QUOTE_DETAILS_ADD_ADDRESS_TEXT' | translate}}</h4>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="frmAddAddress">
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <label class="fw-semibold">{{'TRANSLATE.QUOTE_DETAILS_ADDRESS_LINE1' | translate}}<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control form-control-sm"
+                        formControlName="Line1"
+                         placeholder="{{ 'TRANSLATE.QUOTE_DETAILS_PLEASE_ENTER_THE_ADDRESS1' | translate }}">
+                    @if(frmAddAddress.get('Line1')?.errors?.['required'] && frmAddAddress.get('Line1')?.touched){
+                          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                    }
+                    @if(frmAddAddress.get('Line1')?.errors?.['maxlength'] && frmAddAddress.get('Line1')?.touched){
+                        <span class="text-danger">{{'TRANSLATE.QUOTE_DETAILS_MAXIMUM_VALIDATION_MESSAGE' | translate}}</span>
+                    }
+                </div>
+                <div class="col-md-4">
+                    <label class="fw-semibold">{{'TRANSLATE.QUOTE_DETAILS_ADDRESS_LINE2' | translate}}</label>
+                    <input type="text" class="form-control form-control-sm"
+                        formControlName="Line2"
+                        placeholder="{{ 'TRANSLATE.QUOTE_DETAILS_PLEASE_ENTER_THE_ADDRESS2' | translate }}">
+                    @if(frmAddAddress.get('Line2')?.errors?.['maxlength'] && frmAddAddress.get('Line2')?.touched){
+                        <span class="text-danger">{{'TRANSLATE.QUOTE_DETAILS_MAXIMUM_VALIDATION_MESSAGE' | translate}}</span>
+                    }
+                </div>
+                <div class="col-md-4">
+                    <label class="fw-semibold">{{'TRANSLATE.QUOTE_DETAILS_CITY' | translate}} <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control form-control-sm"
+                        formControlName="City"
+                        placeholder="{{ 'TRANSLATE.QUOTE_DETAILS_PLEASE_ENTER_THE_CITY' | translate }}">
+                    @if(frmAddAddress.get('City')?.errors?.['required'] && frmAddAddress.get('City')?.touched){
+                          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                    }
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <label class="fw-semibold">{{'TRANSLATE.QUOTE_DETAILS_COUNTRY' | translate}} <span class="text-danger">*</span></label>
+                    <ng-select formControlName="Country"
+                        placeholder="{{ 'TRANSLATE.QUOTE_DETAILS_PLEASE_ENTER_THE_COUNTRY' | translate }}"
+                        [searchFn]="searchFn"
+                        [items]="countriesData"
+                        bindLabel="Name"
+                        bindValue="Code"
+                        [clearable]="true"
+                        (change)="getStatesByCountryCode()">
+                    </ng-select>
+                    @if(frmAddAddress.get('Country')?.errors?.['required'] && frmAddAddress.get('Country')?.touched){
+                          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                    }
+                </div>
+
+                <div class="col-md-4">
+                    <label class="fw-semibold">
+                       {{'TRANSLATE.QUOTE_DETAILS_STATE' | translate}}
+                        @if(statesData?.[0]?.IsStateProvinceMandatory){
+                            <span class="text-danger">*</span>
+                        }
+                    </label>
+
+                    @if(!frmAddAddress.get('Country')?.value || !isStateDataAvailable){
+                        <input type="text" class="form-control form-control-sm"
+                            formControlName="State"
+                            placeholder="{{ 'TRANSLATE.QUOTE_DETAILS_PLEASE_ENTER_THE_STATE' | translate }}">
+                    }
+                    @else if(isStateDataAvailable){
+                        <ng-select formControlName="State">
+                            <ng-option value="">{{ 'TRANSLATE.QUOTE_DETAILS_PLEASE_SELECT_THE_STATE' | translate }}</ng-option>
+                            @for(state of statesData; track $index){
+                                <ng-option [value]="state.StateCode">{{state?.Name}}</ng-option>
+                            }
+                        </ng-select>
+                    }
+
+                    @if(frmAddAddress.get('State')?.errors?.['required'] && frmAddAddress.get('State')?.touched && statesData?.[0]?.IsStateProvinceMandatory){
+                          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                    }
+                </div>
+
+                <div class="col-md-4">
+                    <label class="fw-semibold">{{'TRANSLATE.QUOTE_DETAILS_ZIP' | translate}} <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control form-control-sm"
+                        formControlName="Zip"
+                        placeholder="{{ 'TRANSLATE.QUOTE_DETAILS_PLEASE_ENTER_THE_ZIP_CODE' | translate }}">
+                    @if(frmAddAddress.get('Zip')?.errors?.['required'] && frmAddAddress.get('Zip')?.touched){
+                          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                    }
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" (click)="cancel()">{{'TRANSLATE.QUOTE_DETAILS_ADRESS_CANCEL_BUTTON' | translate}}</button>
+        <button class="btn btn-primary btn-sm" (click)="submitAddress()">{{'TRANSLATE.QUOTE_DETAILS_ADDRESS_SUBMIT_BUTTON' | translate}}</button>
+    </div>
+</div>
+}

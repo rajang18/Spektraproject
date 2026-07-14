@@ -1,0 +1,277 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+      <button type="button" class="btn btn-sm btn-lg btn-md btn-xs fw-semibold btn-light-primary text-nowrap" (click)="backToList()">
+        <i class="ki-outline ki-to-left fs-2"></i>  <span translate="TRANSLATE.NOTIFICATION_BUTTON_TEXT_BACK_TO_LIST"></span>
+      </button>
+    </div>
+</ng-template>
+<div class="add-customer-container">
+  <div class="card custom-card">
+      <div class="card-body">
+          <form [formGroup]="bannerForm">
+              <div class="form-group row mt-7">
+                  <div class="form-group row my-2">
+                    <label class="col-md-2 col-form-label text-center">
+                        <span class="d-flex justify-content-start h-100 w-100 align-items-center">
+                            <span translate="TRANSLATE.LABEL_PORTAL_PAGE"></span>
+                            <span class="text-danger">*</span>
+                            <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.PARTNER_ADMINISTRATION_PAGE_PORTAL_TOOLTIP' | translate}}">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                        </span> 
+                    </label>
+                  <div class="col-md-5 mt-2 my-2">
+                    <select [disabled]="this.isEditMode" (change)="getUsersByEffectiveEntity()"
+                    formControlName="portalId" class="form-control form-control-sm form-select form-select-sm"> 
+                    <option value=""  *ngIf="!this.isEditMode"> {{'TRANSLATE.PORTAL_PAGE_DROPDOWN_SELECT_PORTAL_PAGE_TEXT' | translate}}</option>
+                    @for(portal of this.portalpage; track $index){
+                    <option [value]="portal.ID">{{portal.Description}}</option>
+                    }    
+                   </select>
+                   @if(bannerForm.get('portalId')?.errors?.required &&
+                          bannerForm.get('portalId')?.touched){
+                          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                      }
+                  </div>
+                  </div>
+                  <div class="form-group row my-2">
+                    <label class="col-md-2 col-form-label text-center">
+                        <span class="d-flex justify-content-start h-100 w-100 align-items-center">
+                            <span translate="TRANSLATE.LABEL_NOTIFICATION_TYPE"></span>
+                            <span class="text-danger">*</span>
+                            <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.SELECT_MESSAGE_TYPE' | translate}}">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                        </span> 
+                    </label>
+                  <div class="col-md-5 mt-2 my-2">
+                    <select [disabled]="this.isEditMode"  (change)="onchange()"
+                    formControlName="notificationtypeId" class="form-control form-control-sm form-select form-select-sm"> 
+                    <option value="" *ngIf="!this.isEditMode">
+                      {{'TRANSLATE.MESSAGE_TYPE_DROPDOWN_SELECT_MESSAGE_TYPE_TEXT' | translate}}
+                  </option>
+                    @for(notification of this.messageNotificationType; track $index){
+                    <option [value]="notification.ID">{{notification.Name}}</option>
+                    }    
+                   </select>
+                   @if(bannerForm.get('notificationtypeId')?.errors?.required &&
+                          bannerForm.get('notificationtypeId')?.touched){
+                          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                      }
+                  </div>
+                  </div>
+
+                  <div class="form-group row my-2">
+                    <label class=" col-md-2 col-form-label text-center">
+                        <span class="d-flex justify-content-start h-100 w-100 align-items-center">
+                          <span translate="TRANSLATE.LABEL_BANNER_TEXT"></span>
+                          <span class="text-danger">*</span>
+                          <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.PARTNER_ADMINISTRATION_MESSAGE_TOOLTIP' | translate}}">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                        </i>
+                        </span>    
+                    </label>
+                  <div class="col-md-9 my-2">
+                      <div [ngxSummernote]="config"  formControlName="message"></div>
+                      @if(bannerForm.get('message')?.errors?.required &&
+                          bannerForm.get('message')?.touched){
+                          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                      }
+                  </div>
+                  </div>
+                  <!-- notificatio banner start -->
+                  <div class="form-group row my-2" >
+                    @if(selectedMessagetype != null){
+                        <div class="col-md-12" [ngSwitch]="this.selectedMessagetype">
+                            <div *ngSwitchCase="'Info'">
+                                <div class="form-group row my-2">
+                                    <div class="col-md-12">
+                                        <div class="alert alert-primary alert-dismissible fade show d-flex justify-content-between pe-8" role="alert">
+                                            <div class="white" [innerHTML]="this.bannerForm.value.message">
+                                            </div>
+                                            <div>
+                                                <button type="button" class="close btn btn-icon" data-bs-dismiss="alert" aria-label="Close">
+                                                    <i class="ki-duotone ki-cross fs-2 text-primary">
+                                                        <span class="path1"></span>
+                                                        <span class="path2"></span>
+                                                    </i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngSwitchCase="'Warning'">
+                                <div class="form-group row my-2">
+                                    <div class="col-md-12">
+                                        <div class="alert alert-warning alert-dismissible fade show d-flex justify-content-between pe-8" role="alert">
+                                            <div class="white" [innerHTML]="this.bannerForm.value.message">
+                                            </div>
+                                            <div style="text-align: right;">
+                                                <a type="button" class="close btn btn-icon" data-bs-dismiss="alert" aria-label="Close">
+                                                    <i class="ki-duotone ki-cross fs-2 text-warning">
+                                                        <span class="path1"></span>
+                                                        <span class="path2"></span>
+                                                    </i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </div>
+                            </div>
+                            <div *ngSwitchCase="'All good'">
+                                <div class="form-group row my-2">
+                                    <div class="col-md-12">
+                                        <div class="alert alert-success alert-dismissible fade show d-flex justify-content-between pe-8" role="alert">
+                                            <div  class="white" [innerHTML]="this.bannerForm.value.message">  
+                                            </div>
+                                            <div style="text-align: right;">
+                                                <a type="button" class="close btn btn-icon" data-bs-dismiss="alert" aria-label="Close">
+                                                    <i class="ki-duotone ki-cross fs-2 text-success">
+                                                        <span class="path1"></span>
+                                                        <span class="path2"></span>
+                                                    </i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </div>
+                            </div>
+                            <div *ngSwitchCase="'Attention'">
+                                <div class="form-group row my-2">
+                                    <div class="col-md-12">
+                                        <div class="alert alert-danger alert-dismissible fade show d-flex justify-content-between pe-8" role="alert">
+                                            <div  class="white" [innerHTML]="this.bannerForm.value.message">
+                                            </div>
+                                            <div style="text-align: right;">
+                                                <a type="button" class="close btn btn-icon" data-bs-dismiss="alert" aria-label="Close">
+                                                    <i class="ki-duotone ki-cross fs- text-danger">
+                                                        <span class="path1"></span>
+                                                        <span class="path2"></span>
+                                                    </i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </div>
+                            </div>
+                        </div>
+                    }
+                  
+                </div>
+                  <!-- notification banner end -->
+                  <div class="form-group row my-2 pe-0">
+                    <label class=" col-md-2 col-form-label text-center">
+                        <span class="d-flex justify-content-start h-100 w-100 align-items-center">  
+                          <span translate="TRANSLATE.LABEL_EFFECTIVE_FROM"></span>
+                          <span class="text-danger">*</span>
+                          <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.PARTNER_ADMINISTRATION_EFFECTIVE_DATE_FROM_TOOLTIP' | translate}}">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                        </i>
+                        </span>    
+                    </label>
+                    <div class="col-md-5 mt-2 my-2 pe-0">
+                      <div class="input-group my-2">
+                        <input class="form-control form-control-sm"
+                        (dateSelect)="updateStartDate($event)"  placement="top-right"
+                        
+                        formControlName="startDate" ngbDatepicker #sd="ngbDatepicker"
+                        [readOnly]="true"
+                        [minDate]="{year: currentDate.year, month: currentDate.month, day: currentDate.day}"
+                        [maxDate]="{year: currentDate.year, month: currentDate.month, day: currentDate.day +1}"
+                         />
+                        
+                          <button  (click)="sd.toggle()" [disabled]="this.isEditMode"
+                                  type="button" class="btn btn-sm btn-light-primary me-6">
+                                  <i class="ki-outline ki-calendar fs-3 pe-0">
+                                    </i>
+                            </button>
+                        
+                      </div>
+                      @if(bannerForm.get('startDate')?.errors?.required &&
+                          bannerForm.get('startDate')?.touched){
+                          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                      }
+                    </div>
+                  </div>
+                     <label class=" col-md-2 col-form-label text-center">
+                        <span class="d-flex justify-content-start h-100 w-100 align-items-center"> 
+                          <span translate="TRANSLATE.LABEL_EFFECTIVE_TO"></span>
+                          <span class="text-danger">*</span>
+                          <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.PARTNER_ADMINISTRATION_EFFECTIVE_DATE_TO_TOOLTIP' | translate}}">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                        </i>
+                        </span>
+                    </label>
+                    <div class="col-md-5 mt-2 my-2">
+                      <div class="input-group">
+                        <input class="form-control form-control-sm"
+                        formControlName="endDate"
+                       ngbDatepicker #ed="ngbDatepicker"  placement="top-right"
+                       [readOnly]="true"
+                       [minDate]="{year: startDateValidateDate?.year, month: startDateValidateDate?.month, day: startDateValidateDate?.day + 1}"
+                       (dateSelect)="updateEndDate($event)" />
+                        
+                          <button (click)="ed.toggle()"
+                                  type="button"class="btn btn-light-primary btn-sm me-5">
+                                  <i class="ki-outline ki-calendar fs-3 pe-0">
+                                    </i>
+                            </button>
+                        
+                      </div>
+                      @if(bannerForm.get('endDate')?.errors?.required &&
+                          bannerForm.get('endDate')?.touched){
+                          <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                      }
+                    </div>
+                  </div>
+                  <div class="form-group row my-2">
+                    <label *ngIf="getUsersByEffectiveEntityTypeData && getUsersByEffectiveEntityTypeData.length>0"
+                    class="col-md-2 col-form-label">
+                        <span class="d-flex justify-content-start align-items-center">
+                        <span translate="TRANSLATE.LABEL_EFFECTIVE_ENTITY"></span>
+                        <span class="text-danger">*</span>
+                    </span>
+                    </label>
+                    <div class="col-md-5 mt-2 my-2">
+                        <div class="row">
+                          <div class="col-md-4" *ngFor="let k of getUsersByEffectiveEntityTypeData">
+                            <div class="checkbox-single">
+                                
+                                <label class="form-check form-check-inline  me-5">
+                                    <input type="checkbox"  [checked]="k.Selected" (change)="selectAll(k.EntityName)" formControlName="selectedEntity" class="form-check-input ng-valid ng-touched ng-dirty">{{k.EntityName}}
+                                </label>
+                            </div>
+                            <a class="text-primary" (click)="GetFilterEntity(k.EntityName)" *ngIf="k.EntityName != this.entityName"><span translate="{{'TRANSLATE.PLACEHOLDER_SPECIFIC_IDIVIDUALS'}}" [translateParams]="{ EntityName: k.EntityName }"> </span></a>
+                            <ul *ngIf="k.EntityName != this.entityName">
+                                @for (a of this.getActiveCustomersData; track $index) {
+                                    @if (a.EntityName === k.EntityName && a.Selected === true) {
+                                <li>
+                                    {{a.Name}}
+                                </li>
+                            }
+                            }
+                            </ul>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+          </form>
+      </div>
+      <div class="card-footer d-flex justify-content-end py-24 me-27 gap-3 pe-15" >
+          <button type="button" class="btn btn-sm btn-primary" [appPermission]="'side_bar_banner_manage'" (click)="submitWebNotification()" appBusyLoader>
+              {{ 'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate }}
+          </button>
+      </div>
+  </div>
+</div>

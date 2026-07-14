@@ -1,0 +1,45 @@
+.centered {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.manage-screen-cards {
+    position: relative;
+    height: calc(108vh - (var(--bs-app-footer-height) + var(--bs-app-header-height) + var(--bs-app-toolbar-height) + 100px));
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 10px;
+    margin:10px 0px;
+}
+::ng-deep{
+    .scroll.max-height-300{
+        max-height: 300px;
+    }
+    .form-check-input {
+        position: absolute;
+        margin-top: 0.3rem;
+        margin-left: -1.25rem;
+    }
+}
+
+.removeSpacing > *{
+    margin-bottom: 0px !important;
+}
+.fixed-height-one {
+    height: 300px; /* Fixed height for Tab 1 */
+    overflow-y: auto; /* Scroll if content exceeds height */
+}
+::ng-deep {
+    app-cart {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}  
+
+.scroll-height{
+    min-height:0px;
+    max-height:450px
+}

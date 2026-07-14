@@ -1,0 +1,52 @@
+<div class="card card-border"
+    style="margin-bottom: 0px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px;padding-right: 10px;">
+    <div class="card-body p-3">
+        <div class="row">
+            <div class="col-md-10">
+                <div class="row">
+                    <div class="col-md-6">
+                        <span class="ms-1">
+                            <a [ngClass]="{'disable-anchor-tag': product.LoadingContractDetails}"
+                                ngbTooltip="{{'TRANSLATE.ADD_PLAN_PRODUCT_CONTRACT_TEMPLATE_TOOLTIP_VIEW_DETAILS'|translate}}"
+                                placement="right" (click)="callOnAction(product, 'getContractDetails')" style="cursor: pointer;">
+                                <i class="ki-duotone ki-book-open">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <span class="path3"></span>
+                                    <span class="path4"></span>
+                                </i>
+                            </a>
+                        </span>
+                        <strong class="ms-1">{{product.Name}}</strong>
+                        <br />
+                        <span class="label fw-bold label-inline text-white badge ms-md-2" [ngClass]="{
+                            'bg-warning': product.BillingCycleName?.toLowerCase() === 'monthly',
+                            'bg-success': product.BillingCycleName?.toLowerCase() === 'annual',
+                            'bg-dark': product.BillingCycleName?.toLowerCase() === 'triennial',
+                            'bg-info': product.BillingCycleName?.toLowerCase() === 'onetime'
+                            }"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}">
+                            {{'TRANSLATE.'+product.BillingCycleDescriptionKey | translate}} </span>
+                    </div>
+                    <div class="col-md-6">
+                        @for(slab of product.Slabs; track slab.id) {
+                        <strong><span translate="TRANSLATE.LABLE_TEXT_MINVALUE"></span> {{slab.MinValue}},<span
+                                translate="TRANSLATE.LABLE_TEXT_MAXVALUE"></span> {{slab.MaxValue}},<span
+                                translate="TRANSLATE.LABLE_TEXT_SALEPRICE"></span> {{slab.SalePrice}}<span
+                                *ngIf="slab.BillingTypeName === 'Percentage'">%</span><br /></strong>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 text-right text-end">
+                <div class="actions" *ngIf="product.Settings.IsAddon == 'false'" [appPermission]="'SAVE_PLAN'" [hidden]="!showAddButton">
+                    <div class="btn-group">
+                        <a (click)="callOnAction(product, 'addtoplan');" class="btn btn-primary btn-sm" [hidden]="!showAddButton">
+                            {{'TRANSLATE.BUTTON_TEXT_ADD' | translate}}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

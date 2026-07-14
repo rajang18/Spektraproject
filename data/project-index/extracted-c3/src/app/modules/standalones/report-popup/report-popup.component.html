@@ -1,0 +1,147 @@
+<div class="modal-dialog modal-dialog-centered modal-lg m-0" >
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title">
+                <span>{{('TRANSLATE.'+reportConfig.title)|translate}}</span>
+            </h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModalPopup()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+            </div>
+        </div>
+        <div class="modal-body pb-0" id="modal-body">
+            <div>
+                <div class="row">
+                    @if (reportConfig.IsColumnsAvailable) {
+                        <div [ngClass]="{'col-md-12':(!reportConfig.IsSubHeaderAvailable),'col-md-6  border-end':(reportConfig.IsSubHeaderAvailable)}">
+                            <div class="form-check mb-4 me-12">
+                                <input class="form-check-input me-4" type="checkbox" [(ngModel)]="SelectAllColumn" (ngModelChange)="selectAllColumnFunction()" (change)="checkboxValueChanged()">
+                                <label class=""> <span class="fw-bold" translate="TRANSLATE.REPORT_POPUP_SELECT_ALL_CHECKBOX"></span></label>
+                            </div>
+                            <div class="custom-height" infiniteScroll [infiniteScrollDistance]="0.3"
+                            [infiniteScrollThrottle]="50" [scrollWindow]="false">
+                                @for (column of reportConfig.Columns; track column; let index = $index) {
+                                    <div class="mt-3 mb-6">
+                                        @if (column.IsMandatory) {
+                                            <div class="form-check">
+                                                <input class="form-check-input me-4" type="checkbox" [(ngModel)]="column.IsChecked" [value]="true" checked ng-init="column.IsChecked = true" [disabled]="true" (change)="checkboxValueChanged()">
+                                                <label class="text-muted">{{('TRANSLATE.' + (column.ColumnNameKey?.trim())) | translate}}</label>
+                                            </div>
+                                        }
+    
+                                        @if (!column.IsMandatory) {
+                                            <div class="form-check d-flex align-items-start">
+                                                <input class="form-check-input me-4"  type="checkbox" [(ngModel)]="column.IsChecked" (ngModelChange)="optionToggled()" (change)="checkboxValueChanged()">
+                                                <label class="">{{('TRANSLATE.' + (column.ColumnNameKey?.trim())) | translate}}</label>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                    @if (reportConfig.IsSubHeaderAvailable) {
+                        <div [ngClass]="{'col-md-12':(!reportConfig.IsColumnsAvailable),'col-md-6':(reportConfig.IsColumnsAvailable)}">
+                            <span class="navi-text"><strong>{{'TRANSLATE.REPORT_FILE_TYPES_SUB_HEADER' | translate}}</strong></span>
+                            <div class="row mt-5">
+                                <div class="col-2 me-2">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" id="fileTypeCSV" type="radio" value="csv" name="fileType" [(ngModel)]="fileType">
+                                        <label class="form-check-label" for="fileTypeCSV">
+                                            <span class="navi-text text-gray-900">{{'TRANSLATE.REPORT_FILE_TYPES_CSV_FORMAT' | translate}}</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-2 me-4">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" id="fileTypeJSON" type="radio" value="json" name="fileType" [(ngModel)]="fileType">
+                                        <label class="form-check-label" for="fileTypeJSON">
+                                            <span class="navi-text text-gray-900">{{'TRANSLATE.REPORT_FILE_TYPES_JSON_FORMAT' | translate}}</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" id="fileTypeXML" type="radio" value="xml" name="fileType" [(ngModel)]="fileType">
+                                        <label class="form-check-label" for="fileTypeXML">
+                                            <span class="navi-text text-gray-900">{{'TRANSLATE.REPORT_FILE_TYPES_XML_FORMAT' | translate}}</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <form class="form" name="FileDownloadPopUp" [formGroup]="formGroup">
+                                <div class="row mt-5">
+                                    <div class="col-12">
+                                        <span class="navi-text"><strong>{{'TRANSLATE.REPORT_POPUP_ACTIONS_TEXT' | translate}}</strong></span>
+                                        <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" aria-hidden="true" ngbTooltip="{{reportConfig.actionTooltipText | translate}}">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                            <span class="path3"></span></i>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-6">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" checked id="Download" type="radio" value="download" name="method" formControlName="method" (click)="toggletextArea(false)">
+                                            <label class="form-check-label" for="Download">
+                                                <span class="navi-text text-gray-900">{{'TRANSLATE.REPORT_POPUP_DOWNLOAD_BUTTON_TEXT' | translate}}</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" id="Download" type="radio" value="email" name="method" formControlName="method" (click)="toggletextArea(true)">
+                                            <label class="form-check-label" for="Download">
+                                                <span class="navi-text text-gray-900">{{'TRANSLATE.REPORT_POPUP_SEND_EMAIL_BUTTON_TEXT' | translate}}</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    @if(ShowTextArea){
+                                        <div class="col-12 ">
+                                            <div class="row  bs-callout notice bg-light-primary rounded border-primary border border-dashed">
+                                                <div class="col-md-12">
+                                                    <p>
+                                                        <span class="fw-bold" translate="TRANSLATE.REPORT_POPUP_EMAIL_TEXT"></span>
+                                                        <br />
+                                                        <span *ngIf="reportConfig.EmailInstructionText"
+                                                            translate="{{reportConfig.EmailInstructionText}}">
+                                                        </span>
+                                                
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <textarea  class="form-control mb-2" name="fileTypeDownload" [(ngModel)]="email" formControlName="email" placeholder="{{'TRANSLATE.ACCOUNT_MANAGERS_TABLE_HEADER_EMAIL_ADDRESS' | translate}}" required></textarea>
+                                            @if ((formSubmitted || formGroup.controls.email.touched) && formGroup.controls.email.errors?.required) {
+                                            <span class="text-danger">{{'TRANSLATE.REPORT_FILE_INVALID_EMAILS_REQUIRED' | translate}}</span>
+                                            }
+                                            @if((formSubmitted || formGroup.controls.email.touched)&& formGroup.controls.email.errors?.pattern){
+                                            <span class="text-danger">{{'TRANSLATE.REPORT_FILE_INVALID_EMAILS_ERROR' | translate}}</span>
+                                            }
+                                        </div>
+                                    }
+                                    
+                                </div>
+                            </form>
+                        </div> 
+                    }
+                    
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button
+            *ngIf="viewFavouriteBtn"
+            type="button" class="btn btn-sm"
+            [ngClass]="{' btn-primary': showFavoriteButton, ' btn-secondary': !showFavoriteButton}"
+            [disabled]="!showFavoriteButton"
+            (click)="saveOrUpdatefavourateColumn()"
+        >
+            {{'TRANSLATE.INVOICE_LINEITEMS_REPORT_FILE_TYPES_POPUP_FAVOURATES_BUTTON_TEXT' | translate}}
+        </button>            <button class="btn btn-sm btn-light btn-active-light-primary" (click)="closeModalPopup()">
+                <span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span>
+            </button>
+            <button type="button" *ngIf="!reportConfig.isSubmitButton"  class="btn btn-sm btn-primary" data-dismiss="modal" (click)=" onSubmit()">{{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}</button>
+            <button type="button" *ngIf="reportConfig.isSubmitButton" class="btn btn-primary btn-sm" data-dismiss="modal" (click)=" onSubmit()">{{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}</button>
+            
+        </div>
+    </div>
+</div>

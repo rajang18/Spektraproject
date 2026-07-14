@@ -1,0 +1,23 @@
+.label.label-light-danger {
+    color: #F64E60;
+    background-color: #FFE2E5;
+}
+
+.label.label-success {
+    color: #ffffff;
+    background-color: #1BC5BD;
+}
+::ng-deep {
+    table.dataTable > thead th[aria-label="Actions"].dt-ordering-desc::after {
+        display: none !important;
+    }
+    app-partner-offers-listing {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+        table.dataTable>thead .dt-ordering-asc:after {
+            display: none !important;
+        }
+    }
+  }
+

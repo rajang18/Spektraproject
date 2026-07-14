@@ -1,0 +1,17 @@
+<div class="payment-child position-relative left-120px w-400px">
+    <!-- <td></td> -->
+    <!-- <td colspan="7"> -->
+        <table class="table table-striped table-bordered">
+            <tr>
+                <th><span class="fw-bold" translate="TRANSLATE.INVOICE_LIST_TABLE_HEADER_INVOICE_NUMBER"></span></th>
+                <th class="text-end"><span class="fw-bold" translate="TRANSLATE.INVOICE_LIST_TABLE_HEADER_TRANSACTION_AMOUNT"></span></th>
+            </tr>
+            @for (invoice of paymentsData; track $index) {
+            <tr ng-repeat="invoice in row.InvoiceDetails.Data">
+                <td>{{invoice.InvoiceNumber}}</td>
+                <td class="text-end">{{invoice.PaidAmount | CurrencyFilter : currencyData.CurrencySymbol : currencyData.CurrencyDecimalPlaces : currencyData.CurrencyThousandSeperator : currencyData.CurrencyDecimalSeperator}}</td>
+            </tr>
+            }
+        </table>
+    <!-- </td> -->
+</div>

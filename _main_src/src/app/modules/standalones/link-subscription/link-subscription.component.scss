@@ -1,0 +1,7 @@
+.custom-height {
+    position: relative;
+    height: calc(93vh - (var(--bs-app-footer-height) + var(--bs-app-header-height) + var(--bs-app-toolbar-height) + 100px));
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  

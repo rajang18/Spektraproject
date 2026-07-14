@@ -1,0 +1,223 @@
+<ng-template #name let-row="adtData" let-emitter="captureEvents">
+    <div>
+        <span *ngIf="!row.IsSubscription">
+        {{'TRANSLATE.CUSTOMER_MANAGE_PRODUCT_USER_TABLE_DATA_TEXT_RESOURCE_GROUP'| translate}}/</span>
+        <span   *ngIf="row.IsSubscription">
+        {{'TRANSLATE.CUSTOMER_MANAGE_PRODUCT_USER_TABLE_DATA_TEXT_RESOURCE_SUBSCRIPTION'| translate}}/</span>
+        {{row.Name}}
+    </div>
+</ng-template>
+<ng-template #actions let-row="adtData" let-emitter="captureEvents">
+    <div class="d-flex justify-content-center">
+        <!-- Add your action buttons or other elements here -->
+        <button [disabled]="isAssignedInSubscriptionlevel"
+            *ngIf="!row.IsSelected && permissions.HasAssignAccess === 'Allowed'" 
+            class="btn btn-light-primary tooltips"
+            (click)="saveUsageSubscriptionUserDetail(row)">
+            <small translate="TRANSLATE.BUTTON_ACTIVATE"></small>
+        </button>
+        <button [disabled]="isAssignedInSubscriptionlevel && !row.IsSubscription"
+            *ngIf="row.IsSelected && permissions.HasRevokeAccess === 'Allowed'" 
+            class="btn btn-light-danger tooltips"
+            (click)="deleteUsageSubscriptionUserDetail(null,row.IsSubscription?null:row.Name)">
+                <small  translate="TRANSLATE.BUTTON_REVOKE"></small>
+        </button>
+    </div>
+</ng-template>
+
+
+<div class="d-flex flex-column-fluid">
+    <div class="container">
+        <div class="card card-custom">
+            <div *ngIf="pageMode === ''">
+                <h5 class="bold text-uppercase"><span translate="TRANSLATE.AZURE_LOADING"></span></h5>
+            </div>
+            <div class="card-body" *ngIf="pageMode === 'UserAssignmentList'">
+                <div class="form">
+                    <div class="form-group row">
+                        <div class="col-md-12 text-end">
+                            <a class="btn btn-light-primary btn-sm"
+                                *ngIf="permissions.HasAddUsersFromSubscription === 'Allowed'"
+                                (click)="getUsageSubscriptionuUserDetailsForManage()">
+                                <i class="fa fa-plus"></i><span
+                                    translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_BUTTON_TEXT_ADD_USER_TO_SUBSCRIPTION"></span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="form-group row mt-4">
+                        <table class="table table-striped table-bordered table-checkable order-column" id="sample_3">
+                            <thead>
+                                <th class="col-md-3 text-start">
+                                    {{'TRANSLATE.USER_ROLE_LIST_LABEL_SCOPE'| translate}}
+                                </th>
+                                <th class="col-md-3 text-start">
+                                    {{'TRANSLATE.USER_ROLE_LIST_LABEL_USER_NAME'| translate}}
+                                </th>
+                                <th class="col-md-3 text-start">
+                                    {{'TRANSLATE.USER_ROLE_LIST_LABEL_ROLE_NAME'| translate}}
+                                </th>
+                                <th class="col-md-3 text-center">
+                                    {{'TRANSLATE.BUTTON_TEXT_ACTIONS'| translate}}
+                                </th>
+                            </thead>
+                            <tbody>
+                                @for(row of customRoleAssignments; track $index){
+                                <tr>
+                                    <td class="col-md-3 text-start">
+                                        <span
+                                            *ngIf="!row.IsSubscription">{{'CUSTOMER_MANAGE_PRODUCT_USER_TABLE_DATA_TEXT_RESOURCE_SUBSCRIPTION'
+                                            | translate}}/</span><span
+                                            *ngIf="row.IsSubscription">{{'CUSTOMER_MANAGE_PRODUCT_USER_TABLE_DATA_TEXT_RESOURCE_SUBSCRIPTION'
+                                            | translate}}/</span>
+                                        {{row.ScopeName}}
+                                    </td>
+                                    <td class="col-md-3 text-start">
+                                        <table style="width:100%">
+                                            @for(role of row.ScopeLevelRolesAssignments | orderBy: 'LocalStoreSubscriptionName'; track $index){
+                                            <tr>
+                                                <td style="padding:20px 0px 20px !important">
+                                                    {{role.UserName}}
+                                                </td>
+                                            </tr>
+                                            }
+                                        </table>
+                                    </td>
+                                    <td class="col-md-3 text-start">
+                                        <table style="width:100%">
+                                            @for(role of row.ScopeLevelRolesAssignments | orderBy: 'LocalStoreSubscriptionName'; track $index){
+                                            <tr>
+                                                <td style="padding:20px 0px 20px !important">
+                                                    {{role.Roles.Name}}
+                                                </td>
+                                            </tr>
+                                            }
+                                        </table>
+                                    </td>
+                                    <td class="col-md-3 text-center">
+                                        <table style="width:100%">
+                                            @for(role of row.ScopeLevelRolesAssignments | orderBy: 'LocalStoreSubscriptionName'; track $index){
+                                            <tr>
+                                                <td class="text-center" style="padding:20px 0px 20px !important">
+                                                    <a class="tooltips text-center"
+                                                        *ngIf="permissions.HasRevokeAccess === 'Allowed'"
+                                                        (click)="deleteUsageSubscriptionUserDetail(role,row.IsSubscription?null:row.ScopeName)"
+                                                        title="{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_BUTTON_TOOLTIP_DELETE_USER'|translate}}"><i
+                                                            class="fa fa-remove red"></i></a>
+                                                </td>
+                                            </tr>
+                                            }
+                                        </table>
+                                    </td>
+                                </tr>
+                                }
+                                <tr *ngIf="customRoleAssignments != null && customRoleAssignments.length == 0">
+                                    <td colspan="100%">
+                                        <div class="col-md-12" style="text-align: center;">
+                                            <app-common-no-record></app-common-no-record>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr *ngIf="isGridDataLoading === true">
+                                    <td colspan="4">
+                                        <h3><strong>{{gridLoadingDataMessage}}</strong></h3>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body" *ngIf="pageMode === 'ManageUserAssignment'">
+                <div class="row text-end">
+                    <div class="">
+                        <a class="btn btn-light-primary btn-sm" href="javascript:;" (click)="backToRoleAssignment()">
+                            <i class="fas fa-step-backward"></i> <span
+                                translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_BUTTON_TEXT_BACK_TO_SUBSCRIPTION_USERS"></span>
+                        </a>
+                    </div>
+                </div>
+                <form [formGroup]="azureSubscriptionsUsersDetailsRegisterForm">
+                    <div class="form-body form-group mt-10">
+                        <!-- Email-->
+                        <div class="form-group row"
+                            [ngClass]="{'has-error':buttonClicked && azureSubscriptionsUsersDetailsRegisterForm.get('user_Email')?.errors?.required}">
+                            <label class="required fw-semibold col-md-3 control-label pb-2">
+                                <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_EMAIL"></span>
+                            </label>
+                            <div class="col-md-9">
+                                <input class="fw-normal form-control form-control-sm" type="text"
+                                    formControlName="user_Email" />
+                                @if(azureSubscriptionsUsersDetailsRegisterForm.get('user_Email')?.errors?.required &&
+                                buttonClicked){
+                                <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                                }
+                                @if(azureSubscriptionsUsersDetailsRegisterForm.get('user_Email')?.errors?.email &&
+                                buttonClicked){
+                                <span
+                                    class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_PLEASE_ENTER_A_VALID_EMAIL'|translate}}</span>
+                                }
+                            </div>
+                        </div>
+                        <!-- azure role -->
+                        <div class="form-group row mt-2"
+                            [ngClass]="{'has-error':buttonClicked && azureSubscriptionsUsersDetailsRegisterForm.get('user_Role')?.errors?.required}">
+                            <label class="required fw-semibold col-md-3 control-label pb-2">
+                                <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_LABEL_TEXT_ROLE"></span>
+                            </label>
+                            <div class="col-md-9">
+                                <select class=" fw-normal form-select form-select-sm" [required]="true"
+                                    formControlName="user_Role" (change)="getScopeForUserAssignment()">
+                                    @for(role of azureRoles; track $index){
+                                    <option [value]="role.AzureRoleId" [translate]="'TRANSLATE.'+role.RoleNameKey">
+                                    </option>
+                                    }
+                                </select>
+                                @if(azureSubscriptionsUsersDetailsRegisterForm.get('user_Role')?.errors?.required &&
+                                buttonClicked){
+                                <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="form-group row mt-2" *ngIf="showRGGrid">
+                            <div class="col-md-12">
+                                <h5 class="bold text-uppercase" translate="TRANSLATE.ROLE_ASSIGNMENT_SCOPE_TITLE"></h5>
+                            </div>
+                         
+                            <!-- Check if datatableConfig is defined and then render the table -->
+                            <ng-container *ngIf="datatableConfig">
+                                <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+                                </app-c3-table>
+                            </ng-container>
+                            <!-- <table ng-table="vm.roleAssignmentScopesDataSource" show-filter="true" class="table table-bordered table-striped" template-pagination="custom/pager">
+                                <tbody>
+                                    <tr ng-repeat="row in $data">
+                                        <td class="" data-title="'CUSTOM_POLICY_LABEL_SCOPE'|translate" filter="{Name : 'text'}">
+                                            <span *ngIf="!row.IsSubscription">{{'CUSTOMER_MANAGE_PRODUCT_USER_TABLE_DATA_TEXT_RESOURCE_GROUP" | translate}}/</span><span *ngIf="row.IsSubscription">{{'CUSTOMER_MANAGE_PRODUCT_USER_TABLE_DATA_TEXT_RESOURCE_SUBSCRIPTION" | translate}}/</span>
+                                            {{row.Name}}
+                                        </td> 
+                                        <td [disabled]="(vm.isAssignedInSubscriptionlevel && !vm.IsSubscription)" data-title="'BUTTON_TEXT_ACTIONS'|translate" class="text-center" header-class="'text-center'">
+    
+                                            <button [disabled]="vm.isAssignedInSubscriptionlevel" *ngIf="!row.IsSelected && vm.Permissions.HasAssignAccess === 'Allowed'" class="btn btn-outline-primary tooltips" (click)="vm.SaveUsageSubscriptionUserDetail(row)" busy busy-when-url="api/UsageSubscriptions/" busy-add-classes="disabled" not-busy-remove-classes="disabled"><busy-message><i class="fa fa-refresh fa-spin"></i><small>{{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}</small></busy-message><small translate="BUTTON_ACTIVATE"></small></button>
+                                            <button [disabled]="vm.isAssignedInSubscriptionlevel && !row.IsSubscription" *ngIf="row.IsSelected && vm.Permissions.HasRevokeAccess === 'Allowed'" class="btn btn-outline-danger tooltips" (click)="vm.DeleteUsageSubscriptionUserDetail(null,row.IsSubscription?null:row.Name)" busy busy-when-url="api/UsageSubscriptions/" busy-add-classes="disabled" not-busy-remove-classes="disabled"><busy-message><i class="fa fa-refresh fa-spin"></i><small>{{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}</small></busy-message><small translate="BUTTON_REVOKE"></small></button>
+    
+                                        </td>
+                                    </tr>
+                                    <tr ng-show="$data.length === 0 && isGridDataLoading === false">
+                                        <td colspan="10"><span translate="MESSAGE_NO_RECORDS_FOUND" ></span></td>
+                                    </tr>
+                                    <tr ng-show="isGridDataLoading === true">
+                                        <td colspan="10"><h3><strong>{{gridLoadingDataMessage}}</strong></h3>
+                                        <td>
+                                    </tr>
+                                </tbody>
+                            </table> -->
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

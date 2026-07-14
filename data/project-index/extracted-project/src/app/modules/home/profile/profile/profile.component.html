@@ -1,0 +1,42 @@
+<div class="d-flex flex-column-fluid">
+    <!--begin::Container-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2 col-lg-3" *ngIf="entityName != 'Partner'">
+                <div class="card">
+                    <div class="card-body flex-row-auto">
+                        <ul class="nav nav-pills flex-column">
+                            @for (t of tabs; track $index) {
+                                    <li class="nav-item">
+                                        <a class="nav-link mb-2 text-gray-800 fw-semibold"
+                                           routerLink="{{t.Route}}"
+                                           routerLinkActive="active">
+                                            {{ t.Heading }}
+                                        </a>
+                                    </li>
+                                
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-10 col-lg-9" *ngIf="entityName != 'Partner'">
+                <div class="tab-content">
+                    <div class="card card-custom h-100">
+                        <div class="card-body">
+                            <router-outlet></router-outlet>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content" *ngIf="entityName === 'Partner'">
+                <div class="card card-custom h-100">
+                    <div class="card-body">
+                        <router-outlet></router-outlet>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

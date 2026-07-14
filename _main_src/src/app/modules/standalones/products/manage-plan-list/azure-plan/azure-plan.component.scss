@@ -1,0 +1,11 @@
+.toggle-wrapper {
+    visibility: hidden;
+  }
+  
+  .toggle-wrapper i {
+    visibility: visible;
+    cursor: pointer;
+  }
+  .custom-col {
+    width: calc(100% / 12 * 1.3); 
+  }

@@ -1,0 +1,387 @@
+<div class="card">
+    <div class="card-body overflow-auto" *ngIf="dataLoaded">
+        <!-- <span>{{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_INFO' | translate}}</span> -->
+        <div class="container mb-4">
+            <div class="row gx-3 gy-5">
+                <!-- Card 1 -->
+                <div class="col-12 col-md-6 col-lg-4 col-xl-4 col-xxl-3">
+                    <div class="card shadow-sm cust-bg-1">
+                        <div class="card-body">
+                            <h3 class="card-title text-nowrap mb-0 pb-4">
+                                {{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_FILTER_CARD_LABLE_EXPIRING_WITHIN_30_DAYS'
+                                | translate}}</h3>
+                            <div class="horizontal-separator"></div>
+                            <div class="card-columns">
+                                <div class="card-cell">
+                                    <div class="card-cell-header">
+                                        <div class="card-cell-title">
+                                            {{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_FILTER_CARD_TITLE_TOTAL_GDAPS'
+                                            | translate}}
+                                        </div>
+                                    </div>
+                                    <div class="card-cell-content">
+                                        {{granularRelationshipsExpiringWithIn30DaysData.length}}
+                                    </div>
+                                </div>
+                                <div class="vertical-separator"></div>
+                                <div class="card-cell cell-padding-lt">
+                                    <div class="card-cell-header">
+                                        <div class="card-cell-title">
+                                            {{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_FILTER_CARD_TITLE_PERCENT' |
+                                            translate}}
+                                        </div>
+                                    </div>
+                                    <div class="card-cell-content">
+                                        {{calculateInPercentage(granularRelationshipsExpiringWithIn30DaysData.length,
+                                        granularRelationshipsActiveData.length)}}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Repeat cards -->
+                <div class="col-12 col-md-6 col-lg-4 col-xl-4 col-xxl-3">
+                    <div class="card shadow-sm cust-bg-2">
+                        <div class="card-body">
+                            <h3 class="text-nowrap mb-0 pb-4">
+                                {{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_FILTER_CARD_LABLE_EXPIRING_WITHIN_7_DAYS' |
+                                translate}}</h3>
+                            <div class="horizontal-separator-dark"></div>
+                            <div class="card-columns">
+                                <div class="card-cell">
+                                    <div class="card-cell-header">
+                                        <div class="card-cell-title-dark">
+                                            {{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_FILTER_CARD_TITLE_TOTAL_GDAPS'
+                                            | translate}}
+                                        </div>
+                                    </div>
+                                    <div class="card-cell-content-dark">
+                                        {{granularRelationshipsExpiringWithIn7DaysData.length}}
+                                    </div>
+                                </div>
+                                <div class="vertical-separator-dark"></div>
+                                <div class="card-cell cell-padding-lt">
+                                    <div class="card-cell-header">
+                                        <div class="card-cell-title-dark">
+                                            {{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_FILTER_CARD_TITLE_PERCENT' |
+                                            translate}}
+                                        </div>
+                                    </div>
+                                    <div class="card-cell-content-dark">
+                                        {{calculateInPercentage(granularRelationshipsExpiringWithIn7DaysData.length,
+                                        granularRelationshipsActiveData.length)}}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4 col-xl-4 col-xxl-3">
+                    <div class="card shadow-sm cust-bg-3">
+                        <div class="card-body ">
+                            <h3 class="card-title mb-0 pb-4">
+                                {{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_FILTER_CARD_LABLE_EXPIRING_WITHIN_1_DAYS' |
+                                translate}}</h3>
+                            <div class="horizontal-separator"></div>
+                            <div class="card-columns">
+                                <div class="card-cell">
+                                    <div class="card-cell-header">
+                                        <div class="card-cell-title">
+                                            {{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_FILTER_CARD_TITLE_TOTAL_GDAPS'
+                                            | translate}}
+                                        </div>
+                                    </div>
+                                    <div class="card-cell-content">
+                                        {{granularRelationshipsExpiringWithIn1DayData.length}}
+                                    </div>
+                                </div>
+                                <div class="vertical-separator"></div>
+                                <div class="card-cell cell-padding-lt">
+                                    <div class="card-cell-header">
+                                        <div class="card-cell-title">
+                                            {{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_FILTER_CARD_TITLE_PERCENT' |
+                                            translate}}
+                                        </div>
+                                    </div>
+                                    <div class="card-cell-content">
+                                        {{calculateInPercentage(granularRelationshipsExpiringWithIn1DayData.length,
+                                        granularRelationshipsActiveData.length)}}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4 col-xl-4 col-xxl-3">
+                    <div class="card shadow-sm cust-bg-4">
+                        <div class="card-body">
+                            <h3 class="card-title text-nowrap mb-0 pb-4">
+                                {{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_FILTER_CARD_LABLE_EXPIRING_AFTER_30_DAYS' |
+                                translate}}</h3>
+                            <div class="horizontal-separator"></div>
+                            <div class="card-columns">
+                                <div class="card-cell">
+                                    <div class="card-cell-header">
+                                        <div class="card-cell-title">
+                                            {{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_FILTER_CARD_TITLE_TOTAL_GDAPS'
+                                            | translate}}
+                                        </div>
+                                    </div>
+                                    <div class="card-cell-content">
+                                        {{granularRelationshipsExpiringAfter30DaysData.length}}
+                                    </div>
+                                </div>
+                                <div class="vertical-separator"></div>
+                                <div class="card-cell cell-padding-lt">
+                                    <div class="card-cell-header">
+                                        <div class="card-cell-title">
+                                            {{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_FILTER_CARD_TITLE_PERCENT' |
+                                            translate}}
+                                        </div>
+                                    </div>
+                                    <div class="card-cell-content">
+                                        {{calculateInPercentage(granularRelationshipsExpiringAfter30DaysData.length,
+                                        granularRelationshipsActiveData.length)}}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4 col-xl-4 col-xxl-3">
+                    <div class="card shadow-sm cust-bg-5">
+                        <div class="card-body">
+                            <h3 class="card-title mb-0 pb-4">
+                                {{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_FILTER_CARD_LABLE_EXPIRED' | translate}}
+                            </h3>
+                            <div class="horizontal-separator"></div>
+                            <div class="card-columns">
+                                <div class="card-cell">
+                                    <div class="card-cell-header">
+                                        <div class="card-cell-title">
+                                            {{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_FILTER_CARD_TITLE_TOTAL_GDAPS'
+                                            | translate}}
+                                        </div>
+                                    </div>
+                                    <div class="card-cell-content">
+                                        {{granularRelationshipsExpiredData.length}}
+                                    </div>
+                                </div>
+                                <div class="vertical-separator"></div>
+                                <div class="card-cell cell-padding-lt">
+                                    <div class="card-cell-header">
+                                        <div class="card-cell-title">
+                                            {{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_FILTER_CARD_TITLE_PERCENT' |
+                                            translate}}
+                                        </div>
+                                    </div>
+                                    <div class="card-cell-content">
+                                        {{calculateInPercentage(granularRelationshipsExpiredData.length,
+                                        granularRelationshipsActiveAndExpiredData.length)}}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4 col-xl-4 col-xxl-3">
+                    <div class="card shadow-sm cust-bg-6">
+                        <div class="card-body">
+                            <h3 class="card-title mb-0 pb-4">
+                                {{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_FILTER_CARD_LABLE_AUTO_EXTEND_DISABLED' |
+                                translate}}</h3>
+                            <div class="horizontal-separator"></div>
+                            <div class="card-columns">
+                                <div class="card-cell">
+                                    <div class="card-cell-header">
+                                        <div class="card-cell-title">
+                                            {{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_FILTER_CARD_TITLE_TOTAL_GDAPS'
+                                            | translate}}
+                                        </div>
+                                    </div>
+                                    <div class="card-cell-content">
+                                        {{granularRelationshipsAutoExtendDisabledData.length}}
+                                    </div>
+                                </div>
+                                <div class="vertical-separator"></div>
+                                <div class="card-cell cell-padding-lt">
+                                    <div class="card-cell-header">
+                                        <div class="card-cell-title">
+                                            {{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_FILTER_CARD_TITLE_PERCENT' |
+                                            translate}}
+                                        </div>
+                                    </div>
+                                    <div class="card-cell-content">
+                                        {{calculateInPercentage(granularRelationshipsAutoExtendDisabledData.length,
+                                        granularRelationshipsActiveData.length)}}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4 col-xl-4 col-xxl-3">
+                    <div class="card shadow-sm cust-bg-7">
+                        <div class="card-body">
+                            <h3 class="card-title mb-0 pb-4">
+                                {{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_FILTER_CARD_LABLE_AUTO_EXTEND_ENABLED' |
+                                translate}}</h3>
+                            <div class="horizontal-separator"></div>
+                            <div class="card-columns">
+                                <div class="card-cell">
+                                    <div class="card-cell-header">
+                                        <div class="card-cell-title">
+                                            {{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_FILTER_CARD_TITLE_TOTAL_GDAPS'
+                                            | translate}}
+                                        </div>
+                                    </div>
+                                    <div class="card-cell-content">
+                                        {{granularRelationshipsAutoExtendEnabledData.length}}
+                                    </div>
+                                </div>
+                                <div class="vertical-separator"></div>
+                                <div class="card-cell cell-padding-lt">
+                                    <div class="card-cell-header">
+                                        <div class="card-cell-title">
+                                            {{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_FILTER_CARD_TITLE_PERCENT' |
+                                            translate}}
+                                        </div>
+                                    </div>
+                                    <div class="card-cell-content">
+                                        {{calculateInPercentage(granularRelationshipsAutoExtendEnabledData.length,
+                                        granularRelationshipsActiveData.length)}}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ng-template #autoExtendDuration let-data="adtData">
+            <div>
+                <span
+                    *ngIf="data.status == 'active' && checkAutoExtend(data.autoExtendDuration)">{{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_LABLE_AUTO_EXTEND_DURATION_TRUE_VALUE'
+                    | translate}}</span>
+                <span
+                    *ngIf="data.status == 'active' && !checkAutoExtend(data.autoExtendDuration) && !hasGlobalAdministratorRoleDefinitionId(data)">{{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_LABLE_AUTO_EXTEND_DURATION_FALSE_VALUE'
+                    | translate}}</span>
+                <span class="d-flex align-items-center"
+                    *ngIf="data.status == 'expired' || (!checkAutoExtend(data.autoExtendDuration) && hasGlobalAdministratorRoleDefinitionId(data))">{{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_LABLE_AUTO_EXTEND_DURATION_NA_VALUE'
+                    | translate}} <i *ngIf="hasGlobalAdministratorRoleDefinitionIdOnly(data)"
+                        class="ki-outline ki-information-2 fs-4 ms-2"
+                        ngbTooltip="{{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_LABLE_AUTO_EXTEND_DURATION_INFO' | translate}}"
+                        placement="right"></i></span>
+            </div>
+        </ng-template>
+        <ng-template #status let-data="adtData">
+            <div>
+                <span class="label font-weight-bold label-inline badge statusActive"
+                    *ngIf="data.status == 'active'">{{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_LABLE_STATUS_VALUE_ACTIVE'
+                    | translate}}</span>
+                <span class="label font-weight-bold label-inline badge statusExpired"
+                    *ngIf="data.status == 'expired'">{{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_LABLE_STATUS_VALUE_EXPIRED'
+                    | translate}}</span>
+            </div>
+        </ng-template>
+        <div class="col-md-12 d-flex justify-content-between my-1 flex-nowrap pt-2">
+            <div class="d-flex align-items-center position-relative my-1">
+                <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5"><span class="custom-path1"></span><span
+                        class="custom-path2"></span></i> <input type="text" [(ngModel)]="searchKeyword"
+                    (input)="onSearch()" class="header-input-field form-control form-control-solid w-250px ps-12"
+                    placeholder="{{'TRANSLATE.CUSTOMER_SEARCH_SEARCH_OPTION'| translate}} {{'TRANSLATE.CUSTOMER_SEARCH_CUSTOMER_name'| translate}}">
+            </div>
+            <div class="d-flex align-items-center">
+                <div [ngClass]="{'cursor-not-allowed': isAPICalling}">
+                    <button #buttonRef1 class="btn btn-sm fw-semibold btn-light-primary text-nowrap"
+                        (click)="downloadReport()"
+                        ngbTooltip="{{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_BUTTON_DOWNLOAD' | translate}}"
+                        [disabled]="isAPICalling">
+                        <i *ngIf="!isAPICalling" class="ki-outline ki-exit-down fs-2"></i>
+                        <span *ngIf="isAPICalling" class="spinner-border spinner-border-sm" role="status"
+                            aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div *ngIf="permissions.HasEnableAutoExtendExpiringGranularRelationship == 'Allowed'"
+                    [ngClass]="{'cursor-not-allowed': selectedDataForAutoExtendEnableOrDisable.length == 0 || isAPICalling}">
+                    <button #buttonRef2 class="btn btn-sm fw-semibold btn-light-primary text-nowrap ms-2"
+                        [disabled]="selectedDataForAutoExtendEnableOrDisable.length == 0 || isAPICalling"
+                        (click)="enableOrDisableAutoExtendDuration(true)">
+                        <span
+                            *ngIf="!isAPICalling">{{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_BUTTON_ENABLE_AUTO_EXTEND'
+                            | translate}}</span>
+                        <span *ngIf="isAPICalling" class="spinner-border spinner-border-sm me-1" role="status"
+                            aria-hidden="true"></span>
+                        <span *ngIf="isAPICalling">{{'TRANSLATE.MESSAGE_TEXT_PLEASE_WAIT' | translate}}</span>
+                    </button>
+                </div>
+                <div *ngIf="permissions.HasDisableAutoExtendExpiringGranularRelationship == 'Allowed'"
+                    [ngClass]="{'cursor-not-allowed': selectedDataForAutoExtendEnableOrDisable.length == 0 || isAPICalling}">
+                    <button #buttonRef3 class="btn btn-sm fw-semibold btn-light-primary text-nowrap ms-2"
+                        [disabled]="selectedDataForAutoExtendEnableOrDisable.length == 0 || isAPICalling"
+                        (click)="enableOrDisableAutoExtendDuration(false)">
+                        <span
+                            *ngIf="!isAPICalling">{{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_BUTTON_DISABLE_AUTO_EXTEND'
+                            | translate}}</span>
+                        <span *ngIf="isAPICalling" class="spinner-border spinner-border-sm me-1" role="status"
+                            aria-hidden="true"></span>
+                        <span *ngIf="isAPICalling">{{'TRANSLATE.MESSAGE_TEXT_PLEASE_WAIT' | translate}}</span>
+                    </button>
+                </div>
+                <div *ngIf="permissions.HasRemoveGloabalAdministratorRoleExpiringGranularRelationship == 'Allowed'"
+                    [ngClass]="{'cursor-not-allowed': selectedDataForRemovalOfGlobalAdministratorRole.length == 0 || isAPICalling}">
+                    <button #buttonRef4 class="btn btn-sm fw-semibold btn-light-primary text-nowrap ms-2"
+                        [disabled]="selectedDataForRemovalOfGlobalAdministratorRole.length == 0 || isAPICalling"
+                        (click)="removeGlobalAdministrationRole()">
+                        <span
+                            *ngIf="!isAPICalling">{{'TRANSLATE.EXPIRING_GRANULAR_RELATIONSHIPS_BUTTON_REMOVE_GLOBAL_ADMINISTRATOR_ROLE'
+                            | translate}}</span>
+                        <span *ngIf="isAPICalling" class="spinner-border spinner-border-sm me-1" role="status"
+                            aria-hidden="true"></span>
+                        <span *ngIf="isAPICalling">{{'TRANSLATE.MESSAGE_TEXT_PLEASE_WAIT' | translate}}</span>
+                    </button>
+                </div>
+                <div ngbDropdown placement="bottom-right" [autoClose]="false || 'outside'" #dropdown="ngbDropdown"
+                    (click)="openDropdown()">
+                    <a class="btn btn-sm text-nowrap fw-semibold btn-secondary ms-2"
+                        ngbTooltip="{{'TRANSLATE.BTN_TEXT_SHOW_FILTERS' | translate}}" type="button"
+                        id="dropDownMenuButton" ngbDropdownToggle>
+                        <i class="ki-outline ki-filter fs-2">
+                        </i>&nbsp;<span translate="TRANSLATE.BTN_TEXT_FILTER"></span>
+                    </a>
+                    <div class="dropdown-menu w-auto" ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                        <div class="dropdown-header fs-5 text-gray-900 fw-bold">
+                            {{ 'TRANSLATE.CUSTOMER_PRODUCTS_STATUS_FILTER_OPTIONS' | translate }}
+                        </div>
+                        <div class="separator border-gray-200"></div>
+                        @for(option of filters; track $index) {
+                        <li ngbDropdownItem>
+                            <div class="form-check form-check-solid">
+                                <input type="radio" class="form-check-input" name="filter" [value]="option.Value"
+                                    [(ngModel)]="tempFilterType">
+                                <label class="form-check-label">
+                                    <span class="ps-2 fs-6 text-gray-800">{{option.Name}}</span>
+                                </label>
+                            </div>
+                        </li>
+                        }
+                        <div class="dropdown-item d-flex justify-content-end py-1">
+                            <button class="btn btn-primary btn-sm me-3" (click)="applyFilter();dropdown.close()">
+                                {{ 'TRANSLATE.CUSTOMER_PRODUCTS_SET_OPERATING_ENTITIES_FILTER_BUTTON_TEXT_APPLY' |
+                                translate }}
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <ng-container *ngIf="datatableConfig">
+            <app-c3-table [datatableConfig]="datatableConfig"
+                [selection]="permissions.HasEnableAutoExtendExpiringGranularRelationship == 'Allowed' || permissions.HasDisableAutoExtendExpiringGranularRelationship == 'Allowed' || permissions.HasRemoveGloabalAdministratorRoleExpiringGranularRelationship == 'Allowed'"
+                [hideSelectAllLabel]="true" (onSelection)="handleSelection($event)">
+            </app-c3-table>
+        </ng-container>
+    </div>
+</div>

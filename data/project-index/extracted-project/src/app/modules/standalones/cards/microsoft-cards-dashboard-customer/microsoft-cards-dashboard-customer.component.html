@@ -1,0 +1,62 @@
+<div class="card card-custom  card-stretch bgi-no-repeat bgi-size-cover bgi-position-y-top bgi-position-x-center" [ngClass]="bgColor" style="cursor: pointer;">
+  <div class="card-body p0" style="height:150px;">
+    <div class="d-flex align-items-center justify-content-between flex-grow-1">
+
+      @if(cardType === cardsTypes.office365){
+        <i class="ki-outline ki-microsoft fs-3x"></i>
+                           
+      }
+      @else if(cardType === cardsTypes.office365Reports){
+        <i class="ki-outline ki-chart-line-up fs-3x"></i>
+    
+      }
+      @else{
+        <i class="ki-outline ki-cloud fs-3x"></i>
+        
+      }
+
+      <div class="d-flex flex-column text-right">
+
+        <span class=" text-white fs-4">
+          @if(cardType === cardsTypes.office365){
+          <span translate="TRANSLATE.DASHBOARD_TAIL_1_TEXT_OFFICE_365"></span>
+          }
+          @else if(cardType === cardsTypes.office365Reports){
+          <span translate="TRANSLATE.DASHBOARD_TAIL_1_TEXT_OFFICE365_USAGE_REPORTS"></span>
+          }
+          @else{
+          <span translate="TRANSLATE.DASHBOARD_TAIL_1_TEXT_AZURE_PORTAL_TITLE"></span>
+          }
+        </span>
+      </div>
+
+    </div>
+    @if(cardType === cardsTypes.office365){
+    <div>
+      <a [href]="office365Url" target="_blank" class="btn btn-link btn-link-white font-weight-bold text-white">
+        <span translate="TRANSLATE.DASHBOARD_TAIL_1_TEXT_OFFICE365_USAGE_REPORTS_BUTTON"></span>
+        <i class="ki-outline ki-black-right fs-3"></i>
+                            
+      </a>
+    </div>
+    }
+    @else if(cardType === cardsTypes.office365Reports){
+    <div>
+      <a [href]="office365ReportsUrl" target="_blank" class="btn btn-link btn-link-white font-weight-bold text-white">
+        <span translate="TRANSLATE.DASHBOARD_TAIL_1_TEXT_AZURE_PORTAL_TITLE_BUTTON"></span>
+        <i class="ki-outline ki-black-right fs-3"></i>
+      </a>
+    </div>
+    }
+    @else{
+    <div>
+      <a [href]="azurePortalUrl" target="_blank" class="btn btn-link btn-link-white font-weight-bold text-white">
+        <span translate="TRANSLATE.DASHBOARD_TAIL_1_TEXT_AZURE_PORTAL_TITLE_BUTTON"></span>
+        <i class="ki-outline ki-black-right fs-3"></i>
+      </a>
+    </div>
+    }
+
+
+  </div>
+</div>

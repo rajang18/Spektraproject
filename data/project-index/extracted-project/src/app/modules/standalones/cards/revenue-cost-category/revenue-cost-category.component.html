@@ -1,0 +1,167 @@
+<div class="card card-custom card-stretch gutter-b">
+    @if(chartUtilities.isloadingstart){
+    <ng-container #content>
+
+        <div class="loader-indicater btn btn-sm btn-light-primary">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+
+            <span> {{'TRANSLATE.MESSAGE_TEXT_PLEASE_WAIT' | translate}}</span>
+        </div>
+    </ng-container>
+    }
+    <div id="site_statistics_category">
+        <div class="card-header pt-5 pb-5" [ngClass]="chartUtilities.isloadingstart ? 'opacity-8' : ''">
+            <h3 class="col-md-12 card-title align-items-start flex-column pt-4 m-0">
+                <div class="d-flex">
+                    <span class="card-label fw-semibold "><span class="d-flex w-auto gap-1"
+                            translate="TRANSLATE.PARTNER_DASHBOARD_REVENUE_VS_COST_BY_CATEGORY_TILE_HEADER">
+                        </span>
+                    </span>
+                    <span translate="TRANSLATE.PARTNER_DASHBOARD_REVENUE_VS_COST_BY_CATEGORY"
+                        class="text-gray-500 fw-semibold fs-6 w-auto d-flex gap-1 pt-1"></span>
+                </div>
+
+            </h3>
+            <div class="col-md-12 pt-4 m-0">
+                <div class="row d-flex">
+                    <div class="col-md-6 pe-12 z-index-10">
+                        <label class="fw-semibold d-block fs-6"
+                            translate="TRANSLATE.REVENUE_VERSUS_COST_BY_CATEGORY_CUSTOMERS_FILTER_LABEL_TEXT">
+                        </label>
+                        <ng-select class="font-weight-bold" placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_REVENUE_VERSUS_COST_BY_CATEGORY_CUSTOMERS_FILTER' | translate}}"
+                            [(ngModel)]="selectedCustomerOrReseller" (change)="onCustomerChange()">
+                            @for(customer of customersData; track $index) {
+                                <ng-option [value]="customer">{{customer?.Name}}</ng-option>
+                            }
+                        </ng-select>
+                    </div>
+                    <div class="col-md-6 d-flex justify-content-between align-items-center ps-6">
+                        <div>
+                            <label class="fw-semibold d-block fs-6"
+                                translate="TRANSLATE.REVENUE_VERSUS_COST_BY_CATEGORY_CATEGORIES_FILTER_LABEL_TEXT"></label>
+                            <div class='menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base w-175px text-wrap'
+                                data-kt-menu='true'>
+                                @for(category of categories; track $index)
+                                {
+                                <div class='menu-item my-0' (click)="selectedcategory(category.CategoryName)">
+                                    <a class="menu-link px-3 py-2 d-flex align-items-center gap-3 text-wrap">
+                                         {{"TRANSLATE." + category.Description | translate}}
+                                    </a>
+                                </div>
+                                }
+                            </div>
+                            <div ngbDropdown class="d-flex align-items-center" placement="bottom-right">
+                                <button class="btn btn-icon btn-light-primary btn-active-primary btn-dropdown btn-sm"
+                                    style="padding: 10px; width: auto;" id="dropdownBasic1" ngbDropdownToggle>
+                                    {{ (selectedCategory === 'Non-Categorized' ? 'TRANSLATE.CATEGORY_DESC_NON_CATEGORIZED' : 'TRANSLATE.' + selectedCategory) | translate }}
+                                </button>
+                                <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+                                    class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base w-175px text-wrap">
+                                    @for(category of categories; track $index)
+                                    {
+                                    <div class='menu-item my-0' ngbDropdownItem
+                                        (click)="selectedcategory(category.Description)">
+                                        <a class="menu-link px-3 py-2 d-flex align-items-center gap-3 text-wrap">
+                                            {{category.Description === 'Non-Categorized' ? ('TRANSLATE.CATEGORY_DESC_NON_CATEGORIZED' | translate) : ('TRANSLATE.' + category.Description | translate) }}                                        </a>
+                                    </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <!-- JJ: Commenting the below code. Reference bug #75551 -->
+            <!-- @if(selectedCategory == 'CATEGORY_DESC_CUSTOM' || selectedCategory == 'CATEGORY_DESC_DISTRIBUTOR_OFFERS'){
+                    <label class="fw-semibold d-block fs-6"
+                        translate="TRANSLATE.REVENUE_VERSUS_COST_BY_CATEGORY_SUBCATEGORY_FILTER_LABEL_TEXT"></label>
+                    <div ngbDropdown class="d-flex align-items-center" placement="bottom-right">
+                        <button class="btn btn-icon btn-light-primary btn-active-primary btn-dropdown btn-sm"
+                            style=" padding: 10px; width: auto;" id="dropdownBasic1" ngbDropdownToggle>
+                            {{selectedSubCategory}}
+                        </button>
+                        <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+                            class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base w-175px text-wrap">
+                            @for(subCategory of subCategories; track $index)
+                            {
+                            <div class='menu-item my-0' ngbDropdownItem (click)="SubCategoryName(subCategory.Name)">
+                                <a class="menu-link px-3 py-2 d-flex align-items-center gap-3 text-wrap">
+                                    {{subCategory.Description}}
+                                </a>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                } -->
+ 
+</div>
+                        <div>
+                            <label class="fw-semibold d-block fs-6"
+                                translate="TRANSLATE.REVENUE_VERSUS_COST_BY_CATEGORY_DURATION_FILTER_LABEL_TEXT"></label>
+                            <div ngbDropdown class="d-flex align-items-center" placement="bottom-right">
+                                <button class="btn btn-icon btn-light-primary btn-active-primary btn-dropdown btn-sm"
+                                    style=" padding: 10px; width: auto;" id="dropdownBasic1" ngbDropdownToggle>
+                                    {{'TRANSLATE.'+selectedBillingPeriod | translate}}
+                                </button>
+                                <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+                                    class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base w-175px text-wrap">
+                                    @for(billingPeriod of billingPeriods; track $index)
+                                    {
+                                    <div class='menu-item my-0' ngbDropdownItem (click)="selectedBilling(billingPeriod)">
+                                        <a class="menu-link px-3 py-2 d-flex align-items-center gap-3 text-wrap">
+                                            {{'TRANSLATE.'+billingPeriod | translate}}
+                                        </a>
+                                    </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div ngbDropdown #dropdown="ngbDropdown" class="d-flex align-items-end" style="height: 50px;" placement="bottom-right">
+                            <button
+                                class="btn btn-sm btn-icon btn-color-primary btn-active-light-primary remove-caret d-flex flex-column"
+                                style="padding: 10px; width: auto;" id="dropdownToggle" ngbDropdownToggle>
+                                <app-keenicon name="category" class="fs-2" style="display: contents;"><span
+                                        class="fs-2 ki-category ki-duotone"><span class="path1"></span><span
+                                            class="path2"></span><span class="path3"></span><span
+                                            class="path4"></span><!----></span><!----><!----></app-keenicon> </button>
+                            <div ngbDropdownMenu aria-labelledby="dropdownToggle"
+                                class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base w-175px text-wrap">
+                                <div class='menu-item my-0' ngbDropdownItem>
+                                    <div class="apexcharts-menu-item" (click)="generatePNG(dropdown)"><span
+                                            translate="TRANSLATE.DASHBOARD_CARD_ACTIONS_OPTION_TEXT_DOWNLOAD_PNG"></span>
+                                    </div>
+                                </div>
+                                <div class='menu-item my-0' ngbDropdownItem>
+                                    <div class="apexcharts-menu-item" (click)="generateSVG(dropdown)"><span
+                                            translate="TRANSLATE.DASHBOARD_CARD_ACTIONS_OPTION_TEXT_DOWNLOAD_SVG"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0" style="height:auto" [routerLink]="['/partner/business/revenue']">
+            @if(!!isLoading){
+            <app-loader></app-loader>
+            }
+            @else if (!!revenueVsCostData && revenueVsCostData.Data && revenueVsCostData.Data.length>0){
+            <div class="chart min-h-auto w-100 ps-4 pe-6">
+                <apx-chart [series]="chartOptions?.series" [chart]="chartOptions?.chart" [xaxis]="chartOptions?.xaxis"
+                    [tooltip]="chartOptions?.tooltip" [yaxis]="chartOptions?.yaxis" [stroke]="chartOptions?.stroke"
+                    [dataLabels]="chartOptions?.dataLabels" [grid]="chartOptions?.grid">
+                </apx-chart>
+            </div>
+            }
+            @else if(!revenueVsCostData && !isLoading){
+            <div class="d-flex align-items-center justify-content-center" style="height: 100%;">
+                <div class="row">
+                    <div class="col-md-12">
+                        <app-common-no-record></app-common-no-record>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>

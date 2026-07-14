@@ -1,0 +1,231 @@
+<form [formGroup]="paymentFormACH" role="form" novalidate class="horizontal-form" *ngIf="data==='ACH'">
+    <div class="form-body ml-5 row pb-8">
+        <div class="col-md-6 mt-5">
+            <div class="form-group">
+                <label class="control-label mb-2">
+                    {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_ALIAS_NAME' | translate}}
+                    <span class="text-danger"> *</span>
+                </label>
+                <div>
+                    <input type="text" class="form-control form-control-sm" formControlName="PaymentProfileAlias" name="paymentProfileAlias" ng-required="true" />
+                </div>
+
+                @if(paymentFormACH.get('PaymentProfileAlias')?.errors?.required &&
+                paymentFormACH.get('PaymentProfileAlias')?.touched){
+                    <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+ 
+                }
+            </div>
+        </div>
+        <div class="col-md-6 mt-5">
+            <div class="form-group">
+                <label class="control-label mb-2">
+                    {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_ACCOUNT_NUMBER' | translate }}
+                    <span class="text-danger"> *</span>
+                </label>
+                <div>
+                    <input type="text" class="form-control form-control-sm" formControlName="AccountNumber" name="accountNumber" ng-required="true" />
+                </div>
+                @if(paymentFormACH.get('AccountNumber')?.errors?.required &&
+                paymentFormACH.get('AccountNumber')?.touched){
+                    <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+ 
+                }
+            </div>
+        </div>
+        <div class="col-md-6 mt-5">
+            <div class="form-group">
+                <label class="control-label mb-2">
+                    {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_NAME_ON_ACCOUNT' | translate}}
+                    <span class="text-danger"> *</span>
+                </label>
+                <div>
+                    <input type="text" class="form-control form-control-sm" formControlName="NameOnCard"  ng-required="true" />
+                </div>
+                @if(paymentFormACH.get('NameOnCard')?.errors?.required &&
+                paymentFormACH.get('NameOnCard')?.touched){
+                    <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+ 
+                }
+            </div>
+        </div>
+        <div class="col-md-6 mt-5">
+            <div class="form-group">
+                <label class="control-label mb-2">
+                    {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_ROUTING_NUMBER' | translate}}
+                    <span class="text-danger"> *</span>
+                </label>
+                <div>
+                    <input type="text" class="form-control form-control-sm" formControlName="RoutingNumber" name="routingNumber" ng-required="true" />
+                </div>
+                @if(paymentFormACH.get('RoutingNumber')?.errors?.required &&
+                paymentFormACH.get('RoutingNumber')?.touched){
+                    <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+ 
+                }
+            </div>
+        </div>
+        <div class="col-md-6 mt-5">
+            <div class="form-group">
+                <label class="control-label mb-2">
+                    {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_ACCOUNT_TYPE' | translate}}
+                    <span class="text-danger"> *</span>
+                </label>
+                <div>
+                    <select class="form-select form-select-sm" formControlName="AccountType" name="bankAccountType" ng-required="true">
+                        @for(option of bankAccountTypes; track $index){
+                            <option [value]="option">
+                                {{option}}
+                            </option>
+                            }
+                    </select>
+                </div>
+                @if(paymentFormACH.get('AccountType')?.errors?.required &&
+                paymentFormACH.get('AccountType')?.touched){
+                    <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+ 
+                }
+            </div>
+        </div>
+        <div class="col-md-6 mt-5 d-flex align-items-center">
+            <div class="form-group">
+                <label class="control-label mb-4">
+                    {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_BUSINESS_ACCOUNT' | translate}}
+                    <span class="text-danger"> *</span>
+                </label>
+                <div>
+                    <div>
+                        <label class="radio radio-outline radio-outline-2x control-label mb-5" (click)="newPaymentAccount.IsBusinessAccountString = '1'">
+                            <input type="radio" class="form-check-input" value="1" formControlName="IsBusinessAccountString" ng-model="cc.NewPaymentAccount.IsBusinessAccountString">
+                            {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_BUSINESS_ACCOUNT_YES' | translate}}
+                        </label>
+
+                        <label class="radio radio-outline radio-outline-2x control-label mb-5 ms-5" (click)="newPaymentAccount.IsBusinessAccountString = '0'">
+                            <input type="radio" class="form-check-input" value="0" formControlName="IsBusinessAccountString" ng-model="cc.NewPaymentAccount.IsBusinessAccountString">
+                            {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_BUSINESS_ACCOUNT_NO' | translate}}
+                        </label>
+
+                    </div>
+                </div>
+                @if(paymentFormACH.get('IsBusinessAccountString')?.errors?.required &&
+                paymentFormACH.get('IsBusinessAccountString')?.touched){
+                    <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+ 
+                }
+            </div>
+        </div>
+    </div>
+    <div class="form-actions w-100 d-flex justify-content-end  pt-8">
+        <button class="btn btn-sm btn-secondary me-2" (click)="cancel(paymentFormACH)" type="button" appBusyLoader>{{'TRANSLATE.PAYMENT_TEMPLATE_BUTTON_TEXT_CANCEL' | translate}}</button>
+        <button class="btn btn-sm btn-primary" *ngIf="permissions.HasSaveCustomerPaymentProfile === 'Allowed'" (click)="Submit(paymentFormACH)" appBusyLoader>{{'TRANSLATE.PAYMENT_TEMPLATE_BUTTON_TEXT_SUBMIT' | translate}}</button>
+        
+    </div>
+</form>
+<form [formGroup]="paymentFormCC" role="form" novalidate class="horizontal-form" *ngIf="data==='CC'">
+    <div class="form-body row mt-5">
+        <div class="col-md-6 mb-2">
+            <div class="form-group">
+                <label class="control-label mb-2">
+                    {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_ALIAS_NAME' | translate}}
+                    <span class="text-danger"> *</span>
+                </label>
+                <div>
+                    <input type="text" class="form-control form-control-sm" formControlName="PaymentProfileAlias" ng-model="cc.NewPaymentAccount.PaymentProfileAlias" name="paymentProfileAlias" ng-required="true" />
+                </div>
+                @if(paymentFormCC.get('PaymentProfileAlias')?.errors?.required &&
+                paymentFormCC.get('PaymentProfileAlias')?.touched){
+                    <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+ 
+                }
+            </div>
+        </div>
+        <div class="col-md-6 mb-2">
+            <div class="form-group">
+                <label class="control-label mb-2">
+                    {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_NAME_ON_CARD' | translate }}
+                    <span class="text-danger"> *</span>
+                </label>
+                <div ng-class="{'has-error' : (cc.paymentForm.$submitted || cc.paymentForm.nameOnCard.$dirty) &amp;&amp; cc.paymentForm.nameOnCard.$error.required}">
+                    <input type="text" class="form-control form-control-sm" formControlName="NameOnCard" name="nameOnCard" ng-required="true" data-value-missing="This field is required!" />
+                </div>
+                @if(paymentFormCC.get('NameOnCard')?.errors?.required &&
+                paymentFormCC.get('NameOnCard')?.touched){
+                    <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+ 
+                }
+            </div>
+        </div>
+        <div class="col-md-6 mb-2">
+            <div class="form-group">
+                <label class="control-label mb-2">
+                    {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_CARD_NUMBER' | translate }} 
+                    <span class="text-danger"> *</span>
+                </label>
+                 <div class="input-icon right mb-2">
+                    <!-- <i *ngIf="this.cardType==='American Express'" class="form-control-feedback fa fa-cc-amex font-dark"></i>
+                    <i *ngIf="this.cardType==='Discover'"  class="form-control-feedback fa fa-cc-discover font-dark"></i>
+                    <i *ngIf="this.cardType==='Mastercard'"  class="fa fa-cc-mastercard"></i>
+                    <i *ngIf="this.cardType==='Diners Club'" class="form-control-feedback fa fa-cc-mastercard font-dark"></i> 
+                    <i *ngIf="this.cardType==='Visa'"  class="ki-duotone ki-credit-cartfont-dark"></i>
+                    <i *ngIf="this.cardType===''" class="form-control form-control-feedback fa fa-credit-card font-dark"></i>  -->
+                    <input type="text" class="form-control form-control-sm" formControlName="CreditCardNumber" name="accountNumber" ng-required="true" cc-number cc-eager-type />
+                </div>  
+                @if(paymentFormCC.get('CreditCardNumber')?.errors?.required &&
+                paymentFormCC.get('CreditCardNumber')?.touched){
+                    <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+ 
+                }
+            </div>
+        </div>
+        <div class="row col-md-6 mb-2 pb-4 pe-0">
+            <div class="form-group col-md-4">
+                <label class="control-label mb-2">
+                    {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_EXPIRE_MONTH' | translate}}
+                    <span class="text-danger"> *</span>
+                </label>
+                <div >
+                    <input type="text" class="form-control form-control-sm" formControlName="Month" name="expiremonth" ng-required="true" placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_MONTH_INPUT_FIELD' | translate}}" />
+                </div>
+                @if(paymentFormCC.get('Month')?.errors?.required &&
+                paymentFormCC.get('Month')?.touched){
+                    <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+ 
+                }
+            </div>
+            <div class="form-group col-md-4">
+                <label class="control-label mb-2">
+                    {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_EXPIRE_YEAR' | translate}}
+                    <span class="text-danger"> *</span>
+                </label>
+                <div >
+                    <input type="text" class="form-control form-control-sm" formControlName="Year" name="expireyear" ng-required="true" placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_YEAR_INPUT_FIELD' | translate}}" />
+                </div>
+                @if(paymentFormCC.get('Year')?.errors?.required &&
+                paymentFormCC.get('Year')?.touched){
+                    <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+ 
+                }
+            </div>
+            <div class="form-group col-md-4 pe-0">
+                <label class="control-label mb-2">
+                    {{'TRANSLATE.PAYMENT_TEMPLATE_LABEL_TEXT_CVV' | translate}}
+                    <span class="text-danger"> *</span>
+                </label>
+                <div>
+                    <input type="text" class="form-control form-control-sm" formControlName="CVV" name="cvv" ng-required="true" placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_CVV_INPUT_FIELD' | translate}}" />
+                </div>
+                @if(paymentFormCC.get('CVV')?.errors?.required &&
+                paymentFormCC.get('CVV')?.touched){
+                    <span class="text-danger"> {{'TRANSLATE.PAYMENT_TEMPLATE_ERROR_TEXT_REQUIRED_FIELD' | translate}}</span>
+ 
+                }
+            </div>
+        </div>
+    </div>
+    <!-- <hr /> -->
+    <div class="form-actions float-end w-100 d-flex justify-content-end pt-6 pt-8 ">
+        <button class="btn btn-sm btn-secondary me-2" (click)="cancel(paymentFormCC)" type="button" appBusyLoader>{{'TRANSLATE.PAYMENT_TEMPLATE_BUTTON_TEXT_CANCEL' | translate}}</button>
+        <button class="btn btn-sm btn-primary" *ngIf="permissions.HasSaveCustomerPaymentProfile === 'Allowed'" (click)="Submit(paymentFormCC)" appBusyLoader>{{'TRANSLATE.PAYMENT_TEMPLATE_BUTTON_TEXT_SUBMIT' | translate}}</button>
+    </div>
+</form>
+

@@ -1,0 +1,47 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h2 id="modal-title">
+            <span translate="TRANSLATE.METERED_BILLING_TEXT_MODAL_HEADER"></span>
+        </h2>
+        <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModalPopup()" data-bs-dismiss="modal">
+            <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+          </div>
+    </div>
+</div>
+<div class="modal-body">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_DISPLAY_NAME"></span>
+                </th>
+                <th class="text-right">
+                    <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_MINVALUE"></span>
+                </th>
+                <th class="text-right">
+                    <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_MAXVALUE"></span>
+                </th>
+                <th class="text-right">
+                    <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_SELLING_PRICE_MODAL"></span>
+                </th>
+                <th>
+                    <span translate="TRANSLATE.PRICING_SLABS_TABLE_HEADER_TYPE"></span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @for(row of slabData; track $index){
+            <tr>
+                <td>{{row.DisplayName}}</td>
+                <td class="text-end">{{row.MinValue}}</td>
+                <td class="text-end">{{row.MaxValue}}</td>
+                <td class="text-end">{{row.SalePrice}}</td>
+                <td> {{'TRANSLATE.'+row.BillingTypeDescription | translate}} </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-sm btn-primary me-2" (click)="closeModalPopup()">{{'TRANSLATE.BUTTON_CLOSE' | translate}}</button>
+</div>

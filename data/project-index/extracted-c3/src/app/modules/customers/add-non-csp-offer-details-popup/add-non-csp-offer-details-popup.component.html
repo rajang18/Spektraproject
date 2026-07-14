@@ -1,0 +1,76 @@
+<div class="modal-dialog m-0 modal-dialog m-0-centered w-100">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>{{'TRANSLATE.NON_CSP_OFFER_DETAILS_CAPTION_TEXT' | translate}}</h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModalPopup()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+            </div>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <form [formGroup]="nonCSPOfferDetailsRegisterForm">
+                <div class="form-group ps-4 pe-4">
+                    <div>
+                        <label class="required fs-6"
+                            translate="TRANSLATE.NON_CSP_OFFER_DETAILS_SUBSCRIPTION_ID"></label>
+                    </div>
+                    <div>
+                        <input type="text" class="form-control"
+                            formControlName="SubscriptionId">
+                        @if(nonCSPOfferDetailsRegisterForm.get('SubscriptionId')?.errors?.required &&
+                        (nonCSPOfferDetailsRegisterForm.get('SubscriptionId')?.touched || buttonClicked)){
+                        <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                        }
+                        @if(nonCSPOfferDetailsRegisterForm.get('SubscriptionId')?.errors?.maxlength&&
+                        (nonCSPOfferDetailsRegisterForm.get('SubscriptionId')?.touched || buttonClicked)){
+                        <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_MAX_LENGTH_50'|translate}}</span>
+                        }
+                    </div>
+                    <div class="mt-6">
+                        <label class="required fs-6"
+                            translate="TRANSLATE.NON_CSP_OFFER_DETAILS_SUBSCRIPTION_NAME"></label>
+                    </div>
+                    <div>
+                        <input type="text" class="form-control"
+                            formControlName="SubscriptionName">
+                        @if(nonCSPOfferDetailsRegisterForm.get('SubscriptionName')?.errors?.required &&
+                        (nonCSPOfferDetailsRegisterForm.get('SubscriptionName')?.touched || buttonClicked)){
+                        <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                        }
+                    </div>
+                    <div class="mt-6">
+                        <label class="required fs-6"
+                            translate="TRANSLATE.NON_CSP_OFFER_DETAILS_SERVICE_PRINCIPAL_ID"></label>
+                    </div>
+                    <div>
+                        <input type="text" class="form-control"
+                            formControlName="ServicePrincipalId">
+                        @if(nonCSPOfferDetailsRegisterForm.get('ServicePrincipalId')?.errors?.required &&
+                        (nonCSPOfferDetailsRegisterForm.get('ServicePrincipalId')?.touched || buttonClicked)){
+                        <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                        }
+                        @if(nonCSPOfferDetailsRegisterForm.get('ServicePrincipalId')?.errors?.maxlength &&
+                        (nonCSPOfferDetailsRegisterForm.get('ServicePrincipalId')?.touched || buttonClicked)){
+                        <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_MAX_LENGTH_50'|translate}}</span>
+                        }
+                    </div>
+                    <div class="mt-6">
+                        <label class="required fs-6"
+                            translate="TRANSLATE.NON_CSP_OFFER_DETAILS_SERVICE_PRINCIPAL_KEY"></label>
+                    </div>
+                    <div>
+                        <input type="text" class="form-control"
+                            formControlName="ServicePrincipalKey">
+                        @if(nonCSPOfferDetailsRegisterForm.get('ServicePrincipalKey')?.errors?.required &&
+                        (nonCSPOfferDetailsRegisterForm.get('ServicePrincipalKey')?.touched || buttonClicked)){
+                        <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                        }
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="addtoCart(product)" tabindex="-1">{{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}</button>
+            <button class="btn btn-secondary" (click)="closeModalPopup()" tabindex="-1">{{'TRANSLATE.BUTTON_TEXT_CANCEL' | translate}}</button>
+        </div>
+    </div>
+</div>

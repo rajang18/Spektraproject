@@ -1,0 +1,54 @@
+.input-group-text {
+    border-top-left-radius: 0.625rem;
+    border-bottom-left-radius: 0.625rem;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+
+}
+
+.scrollable-div {
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+::ng-deep {
+    app-add-coupon {
+        .product-wrapper {
+            position: relative;
+            height: 400px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            // padding: 0 10px;
+            // margin:10px 0px;
+        }
+
+        .plus-icon {
+            display: none;
+        }
+
+        .collapsed {
+            .minus-icon {
+                display: none;
+            }
+
+            .plus-icon {
+                display: inherit;
+            }
+        }
+
+        .position-relative-top-5 {
+            position: relative;
+            top: 5px;
+        }
+    }
+}
+
+.italic-text {
+    font-style: italic;
+}
+
+.form-check-input:disabled {
+    cursor: not-allowed !important;
+    pointer-events: all !important;
+}

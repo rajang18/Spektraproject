@@ -1,0 +1,55 @@
+<div class="card card-custom">
+  <!-- begin::Header -->
+  <div class="card-header card-header-stretch overflow-auto">
+    <ul class="nav nav-stretch nav-line-tabs fw-bold border-transparent flex-nowrap" role="tablist">
+      <li class="nav-item">
+        <a
+          routerLink="productreports"
+          routerLinkActive="text-primary active"
+          class="nav-link cursor-pointer"
+          role="tab"
+          [appPermission]="'VIEW_PURCHASED_PRODUCTS_REPORT'"
+        >
+        {{'TRANSLATE.CUSTOMER_REPORT_WITH_PURCHASED_PRODUCTS_TITLE' | translate}}       
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          routerLink="licensechangereport"
+          routerLinkActive="text-primary active"
+          class="nav-link cursor-pointer"
+          role="tab"
+          [appPermission]="'VIEW_LICENSE_CHANGE'"
+        >
+        {{'TRANSLATE.MENU_LICENSE_CHANGE' | translate}}       
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          routerLink="licensesummaryreport"
+          routerLinkActive="text-primary active"
+          class="nav-link cursor-pointer"
+          role="tab"
+          [appPermission]="'DOWNLOAD_LICENSE_SUMMARY_REPORT'"
+        >
+        {{'TRANSLATE.MENU_LICENSE_SUMMARY_REPORT' | translate}}       
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          [appPermission]="'GET_SUBSCRIPTION_HISTORY'"
+          routerLink="subscriptionhistory"
+          routerLinkActive="text-primary active"
+          class="nav-link cursor-pointer"
+          role="tab"
+        >
+        {{'TRANSLATE.SUBSCRIPTION_HISTORY_PORTLET_HEADER_SUBSCRIPTION_HISTORY' | translate}}       
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="card-body">
+    <router-outlet></router-outlet>
+  </div>
+</div>

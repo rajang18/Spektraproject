@@ -1,0 +1,48 @@
+.symbol>img {
+    width: 100px;
+    height: 100px;
+}
+
+.symbol-label {
+    width: 100px;
+    height: 100px;
+}
+
+.description-color {
+    color: #78829D;
+}
+
+.notice-border {
+    border-left: 5px solid #eee;
+    border-color: #d0e3f0;
+}
+
+.table td {
+    color: #252f4a;
+}
+::ng-deep {
+    app-nce-est-basic-details {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+        .product-has-scheduled-renewal{
+            width: 36px;
+            height: 47px;
+            position: absolute;
+            top: 0px;
+            left: 90%;
+            padding-top: 15px;
+            padding-left: 11px;
+            background-color: #AC3934 !important;
+        }
+    }
+}
+        
+.removeparamargin ::ng-deep p{
+    margin-bottom: 0px;
+}
+
+.max-width-content{
+    width: max-content;
+    display: block;
+}

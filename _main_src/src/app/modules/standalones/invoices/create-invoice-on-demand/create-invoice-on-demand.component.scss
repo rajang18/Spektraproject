@@ -1,0 +1,99 @@
+.bs-callout {
+    margin: 20px 0;
+    padding: 15px 30px 15px 15px;
+    border-left: 5px solid #eee;
+  }
+  .bs-callout h4 {
+    margin-top: 0;
+  }
+  .bs-callout p:last-child {
+    margin-bottom: 0;
+  }
+  .bs-callout code,
+  .bs-callout .highlight {
+    background-color: #fff;
+  }
+  
+  /* Themes for different contexts */
+  .bs-callout-danger {
+    background-color: #fcf2f2;
+    border-color: #dFb5b4;
+  }
+  .bs-callout-warning {
+    background-color: #fefbed;
+    border-color: #f1e7bc;
+  }
+  .bs-callout-info {
+    background-color: #f0f7fd;
+    border-color: #d0e3f0;
+  }
+
+  .well {
+    border: 0;
+    padding: 20px;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+    box-shadow: none !important;
+    min-height: 20px;   
+    margin-bottom: 20px;
+    background-color: var(--bs-app-bg-color);  
+    border-radius: 4px;   
+}
+
+.header-alignment-normal {
+    text-align: left !important;
+}
+
+.header-price-alignment {
+    text-align: right !important;
+}
+
+.header-icon-alignment {
+    text-align: center !important;
+}
+
+.header-action-alignment {
+    text-align: center !important;
+}
+
+.body-alignment-normal {
+    text-align: left !important;
+}
+
+.body-price-alignment {
+    text-align: right !important;
+}
+
+.body-icon-alignment {
+    text-align: center !important;
+}
+
+.body-action-alignment {
+    text-align: center !important;
+}
+
+input:disabled,
+input[disabled]{
+cursor:not-allowed !important;
+}
+
+select:disabled,
+select[disabled]
+{
+cursor:not-allowed !important;
+}
+textarea:disabled,
+textarea[disabled]
+{
+cursor:not-allowed !important;
+}
+::ng-deep {
+  app-create-invoice-on-demand {
+      .dropdown-toggle::after {
+          display: none !important;
+      }
+  }
+}
+.custom-col {
+  width: calc(100% / 12 * 1.5); /* This is 1.5 columns */
+}

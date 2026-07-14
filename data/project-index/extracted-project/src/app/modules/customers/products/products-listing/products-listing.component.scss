@@ -1,0 +1,35 @@
+
+.btn-group-toggle{
+    padding-left: 20px;
+}
+.symbol-label{
+    height: 30px;
+    width:  30px;
+}
+
+.product-wrapper {
+    position: relative;
+    height: calc(100vh - (var(--bs-app-footer-height) + var(--bs-app-header-height) + var(--bs-app-toolbar-height) + 55px));
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 10px;
+    margin:10px 0px;
+  }
+  
+  .content {
+    height: 100%;
+    overflow: auto;
+  }
+
+  .strike-through {
+    text-decoration: line-through !important;
+  }
+
+  .Customscheduleicon {
+    background-color: #AC3934 !important;
+    border-radius: 50%;
+    color: white;
+    border-spacing: 0px !important;
+    border-width: initial;
+    box-shadow: none !important;
+}

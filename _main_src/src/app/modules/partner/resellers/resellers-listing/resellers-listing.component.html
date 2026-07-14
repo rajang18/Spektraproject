@@ -1,0 +1,255 @@
+<!-- <ng-template #actionHeader>
+  <a class="fw-bold ">
+    <div ngbDropdown class="d-flex align-items-center" placement="bottom-right">
+      <button class="btn btn-sm btn-primary" id="dropdownMenuButton" tittle="Customer Settings" ngbDropdownToggle>
+        <i class="ki-outline ki-duotone ki-user fs-2 pb-2">
+          <span class="path1"></span>
+          <span class="path2"></span>
+        </i>&nbsp;{{'TRANSLATE.RESELLER_BUTTON_TEXT_NEW_RESELLER' | translate}}
+      </button>
+      <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+        class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base w-250px">
+        <div class='menu-item my-0' ngbDropdownItem>
+          <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" [routerLink]="['/partner/resellers/addreseller']">
+            <span class="ml-2 ng-scope" translate="TRANSLATE.RESELLER_BUTTON_TEXT_NEW_RESELLER_NEW"></span>
+          </a>
+        </div>
+        <div class='menu-item my-0' ngbDropdownItem>
+          <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" [routerLink]="['/partner/resellers/bulkonboardreseller']">
+            <span class="ml-2 ng-scope" translate="TRANSLATE.RESELLER_BUTTON_TEXT_ONBOARD_MULTIPLE_RESELLERS"></span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </a>
+</ng-template> -->
+
+<div class="card">
+  <div class="card-body pt-0 overflow-auto">
+
+    <div class="row">
+      <div class="col-12 d-flex justify-content-between my-4">
+        <div class="d-flex align-items-center position-relative my-1">
+          <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5"><span class="custom-path1"></span><span
+              class="custom-path2"></span></i> <input type="text" data-field="Name" data-action="filter"
+            class="header-input-field form-control form-control-solid w-300px ps-12"
+            placeholder="{{'TRANSLATE.CUSTOMER_SEARCH_SEARCH_OPTION'| translate}} {{'TRANSLATE.CUSTOMER_SEARCH_CUSTOMER_name'| translate}}">
+          <!--begin::Card title-->
+        </div>
+          
+        <div class="d-flex align-items-center">  
+          <button *ngIf="permissions?.HasDownloadAccess === 'Allowed' && hasSupportForResellersWithMPNID === 'Yes'" class="btn btn-sm btn-primary fw-bold d-flex align-items-center me-2" (click)="downloadPORReport()"
+            appBusyLoader>
+              <i class="ki-outline ki-exit-down fs-2 me-1"></i>
+            {{ 'TRANSLATE.RESELLER_BUTTON_TO_DOWNLOAD' | translate }}
+          </button>
+          <!-- Add Reseller Dropdown -->
+          <div ngbDropdown class="d-flex align-items-center " placement="bottom-right">
+            <button class="btn btn-sm btn-primary fw-bold d-flex align-items-center" id="dropdownMenuButton"
+              [appPermission]="'BTN_SAVE_RESELLER'" ngbDropdownToggle appBusyLoader>
+              <i class="ki-outline ki-user fs-2 me-2"></i>
+              {{ 'TRANSLATE.RESELLER_BUTTON_TEXT_NEW_RESELLER' | translate }}
+            </button>
+
+            <div ngbDropdownMenu aria-labelledby="dropdownMenuButton"
+              class="dropdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base w-250px">
+              <div class="menu-item my-0" ngbDropdownItem [appPermission]="'BTN_SAVE_RESELLER'">
+                <a class="menu-link px-3 py-2 d-flex align-items-center gap-2"
+                  [routerLink]="['/partner/resellers/addreseller']">
+                  <span class="ml-2 ng-scope text-wrap"
+                    translate="TRANSLATE.RESELLER_BUTTON_TEXT_NEW_RESELLER_NEW"></span>
+                </a>
+              </div>
+              <div class="menu-item my-0" *ngIf="hasSupportForResellersWithMPNID == 'Yes'" ngbDropdownItem
+                [appPermission]="'BTN_SUBMIT_BULKONBOARD_RESELLERS'">
+                <a class="menu-link px-3 py-2 d-flex align-items-center gap-2"
+                  [routerLink]="['/partner/resellers/bulkonboardreseller']">
+                  <span class="ml-2 ng-scope text-wrap"
+                    translate="TRANSLATE.RESELLER_BUTTON_TEXT_ONBOARD_MULTIPLE_RESELLERS"></span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Enable name field -->
+    <ng-template #nameTemplate let-data="adtData" let-row="userData">
+     <ng-container *ngIf="permissions?.HasChangeNameAccess === 'Allowed'; else showName">
+  <app-edit-column
+    [data]="data"
+    [field]="row?.field"
+    (enableEdit)="enableEditField($event)"
+    (reloadTable)="reloadTable()">
+  </app-edit-column>
+   </ng-container>
+
+<ng-template #showName>
+  {{ data.Name }}
+</ng-template>
+
+    </ng-template>
+    <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+      <div class="d-flex justify-content-end align-items-center">
+        <div class="d-flex align-items-end" (click)="openImpersonationModal(data)">
+          <div [appPermission]="'RESELLER_IMPERSONATION'"
+            ngbTooltip="{{'TRANSLATE.RESELLER_SUBSCRIPTIONS_TABLE_TD_BUTTON_TOOLTIP_TEXT_QUICK_IMPERSONATION' | translate}}"
+            class="btn btn-sm btn-icon btn-active-light-primary btn-lg me-1 w-auto" [ngClass]="toolbarButtonHeightClass"
+            placement="top">
+            <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg me-md-2 h-20px w-20px">
+              <i class="ki-outline ki-profile-user text-primary">
+                <!-- <span class="path1"></span>
+                  <span class="path2"></span>
+                  <span class="path3"></span>
+                  <span class="path4"></span> -->
+              </i>
+            </span>
+          </div>
+        </div>
+        <div class="d-flex align-items-end" (click)="redirectToResellerConfiguration(data)">
+          <div [appPermission]="'BTN_VIEW_RESELLER_CONFIGURATION'"
+            ngbTooltip="{{'TRANSLATE.RESELLER_TABLE_BUTTON_TEXT__RESELLER_CONFIGURATION' | translate}}"
+            class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto" [ngClass]="toolbarButtonHeightClass"
+            placement="top">
+            <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg me-md-2 h-20px w-20px">
+              <i class="ki-outline ki-gear text-primary">
+                <!-- <span class="path1"></span>
+                  <span class="path2"></span>
+                  <span class="path3"></span>
+                  <span class="path4"></span> -->
+              </i>
+            </span>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-end" *ngIf="data?.HasSupportsResellersWithMPNID === 'Yes'"
+          [appPermission]="'BTN_VIEW_SERVICE_PROVIDER_RESELLERS'" (click)="redirectToLinkReseller(data)">
+          <div ngbTooltip="{{'TRANSLATE.RESELLER_TABLE_BUTTON_TEXT_MANAGE_LINK_RESELLER' | translate}}"
+            class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto" [ngClass]="toolbarButtonHeightClass"
+            placement="top">
+            <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg me-md-2 h-20px w-20px">
+              <i class="ki-outline ki-fasten text-primary">
+                <!-- <span class="path1"></span>
+                  <span class="path2"></span> -->
+              </i>
+            </span>
+          </div>
+        </div>
+        <!--Manage plan action button-->
+        <div class="d-flex align-items-end" (click)="managePlans(data)">
+          <div [appPermission]="'BTN_VIEW_RESELLER_PLANS'"
+            ngbTooltip="{{'TRANSLATE.RESELLERS_TABLE_TD_BUTTON_TOOLTIP_TEXT_MANAGE_PLANS' | translate}}"
+            class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto" [ngClass]="toolbarButtonHeightClass"
+            placement="top">
+            <span _ngcontent-ng-c3689051686="" class="svg-icon svg-icon-primary svg-icon-sm h-20px w-20px"><i
+                _ngcontent-ng-c3689051686="" class="ki-outline ki-burger-menu-2 text-primary"></i></span>
+          </div>
+        </div>
+        <!--Customer settings action buttons with more options-->
+        <div ngbDropdown class="d-flex align-items-center" placement="left" container="body">
+          <button class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto" [ngClass]="toolbarButtonHeightClass"
+            id="dropdownBasic1" (mouseenter)="tooltip.open()" (mouseleave)="tooltip.close()"
+            ngbTooltip="{{'TRANSLATE.RESELLER_TABLE_TD_BUTTON_TOOLTIP_TEXT_RESELLER_SETTINGS' | translate}}"
+            #tooltip="ngbTooltip" placement="top" ngbDropdownToggle>
+            <span class="svg-icon svg-icon-primary  svg-icon-sm  h-20px w-20px">
+              <i class="ki-outline ki-dots-vertical text-primary"></i>
+            </span>
+          </button>
+          <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+            class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base w-250px">
+            <div class='menu-item my-0' ngbDropdownItem [appPermission]="'GETACCOUNTMANAGERDETAILSOFCUSTOMER'">
+              <a class="menu-link px-3 py-2 d-flex align-item-center gap-2 text-wrap"
+                (click)="getAccountManagerDetailsOfReseller(data)">
+                <span class="svg-icon m-0 profile-info">
+                  <i class="ki-outline ki-user fs-5">
+                    <!-- <span class="path1"></span>
+                          <span class="path2"></span>
+                          <span class="path3"></span> -->
+                  </i>
+                </span>
+                <span class="ml-2 ng-scope text-wrap"
+                  translate="TRANSLATE.RESELLERS_TABLE_TD_BUTTON_TOOLTIP_TEXT_ACCOUNT_MANAGER_DETAILS"></span>
+              </a>
+            </div>
+            <div class='menu-item my-0' ngbDropdownItem>
+              <a class="menu-link px-3 py-2 d-flex align-item-center gap-2 text-wrap"
+                (click)="PartnerAddressPopUp(data)">
+                <span class="svg-icon m-0 profile-info">
+                  <i class="ki-outline ki-check-circle  fs-5"></i>
+                </span>
+                <span class="ml-2 ng-scope text-wrap"
+                  translate="TRANSLATE.CUSTOMER_TABLE_PARTNER_BILL_FROM_ADDRESS_BUTTON_TEXT"></span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <!--Customer settings action buttons with more options-->
+        <!-- <div class="d-flex align-items-end" (click) ="getAccountManagerDetailsOfReseller(data)">
+            <div  [appPermission]="'SAVEORUPDATEACCOUNTMANAGER'" ngbTooltip="{{'TRANSLATE.' | translate}}" class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto"
+              [ngClass]="toolbarButtonHeightClass" placement="top">
+              <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg me-md-2 h-20px w-20px">
+                <i class="ki-outline ki-user text-primary">
+                </i>
+              </span>
+            </div>
+          </div> -->
+      </div>
+    </ng-template>
+
+    <!-- Check if datatableConfig is defined and then render the table -->
+    <ng-container *ngIf="datatableConfig">
+      <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+      </app-c3-table>
+    </ng-container>
+  </div>
+</div>
+<ng-template #accountmanager>
+  <div>
+    <div class="modal-content">
+      <div class="modal-header ng-scope">
+        <h3 class="modal-title text-primary" id="modal-title">
+          <span class="ng-scope">{{('TRANSLATE.PARTNER_CUSTOMER_ACCOUNT_MANAGER_DETAILS')|translate}}</span>
+        </h3>
+        <span type="button" role="button" data-dismiss="modal" aria-label="Close" (click)="closeModalPopup()">
+        </span>
+      </div>
+      <div class="modal-body" id="modal-body">
+        <div class="row">
+          <div class="col-md-12" style="padding-left: 30px">
+            @if(accountManagerModalContent.Name !== null && accountManagerModalContent.Name !== undefined &&
+            accountManagerModalContent.Name !== ''){
+            <div class="row static-info">
+              <div class="col-md-4 mb-2 name"> {{'TRANSLATE.PARTNER_CUSTOMER_ACCOUNT_MANAGER_NAME' | translate}} </div>
+              <div class="col-md-8 fw-bold value">
+                {{accountManagerModalContent.Name}}
+              </div>
+            </div>}
+            @if(accountManagerModalContent.Email !== null && accountManagerModalContent.Email !== undefined &&
+            accountManagerModalContent.Email !== ''){
+            <div class="row static-info">
+              <div class="col-md-4 mb-2 name">{{'TRANSLATE.PARTNER_CUSTOMER_ACCOUNT_MANAGER_EMAIL' | translate}} </div>
+              <div class="col-md-8 fw-bold value"> {{accountManagerModalContent.Email}} </div>
+            </div>}
+            @if(accountManagerModalContent.PhoneNumber !== null && accountManagerModalContent.PhoneNumber !== undefined
+            && accountManagerModalContent.PhoneNumber !== ''){
+            <div class="row static-info">
+              <div class="col-md-4 mb-2 name">{{'TRANSLATE.PARTNER_CUSTOMER_ACCOUNT_MANAGER_PHONE_NUMBER' | translate}}
+              </div>
+              <div class="col-md-8 fw-bold value"> {{accountManagerModalContent.PhoneNumber}} </div>
+            </div>}
+            @if(accountManagerModalContent.CustomerName !== null && accountManagerModalContent.CustomerName !==
+            undefined && accountManagerModalContent.CustomerName !== ''){
+            <div class="row static-info">
+              <div class="col-md-4 mb-2 name">{{'TRANSLATE.PARTNER_ACCOUNT_MANAGER_CUSTOMER_NAME' | translate}} </div>
+              <div class="col-md-8 fw-bold value"> {{accountManagerModalContent.CustomerName}} </div>
+            </div>}
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer ng-scope">
+        <button class="btn btn-light-success btn-active-primary" (click)="closeModalPopup()"><span
+            translate="TRANSLATE.PARTNER_CUSTOMER_ACCOUNT_MANAGER_DETAILS_POPUP_BUTTON"></span></button>
+      </div>
+    </div>
+  </div>
+</ng-template>

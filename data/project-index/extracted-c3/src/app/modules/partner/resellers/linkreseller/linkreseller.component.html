@@ -1,0 +1,89 @@
+<ng-template #actionHeader>
+  <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+    <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="backToResellers()">
+      <i class="ki-outline ki-to-left fs-2"></i> <span translate="TRANSLATE.BUTTON_TEXT_BACK_TO_RESELLERS"></span>
+    </button>
+    <button type="button" class="btn btn-sm fw-bold  btn-light-primary" (click)="changePageMode('list')" *ngIf="pageMode === 'addLink'">
+      <i class="ki-outline ki-to-left fs-2"></i> <span translate="TRANSLATE.RESELLER_BUTTON_TEXT_BACK_TO_LIST_OF_PROVIDER_RESELLERS"></span>
+    </button>
+   
+  </div>
+</ng-template>
+
+<div class="container" (click)="handleActionClick($event)">
+
+  <div *ngIf="pageMode === 'list'">
+    <div class="card">
+      <div class="card-body pt-0 overflow-auto">
+        <div class="row my-2">
+          <div class="col-12 ">
+            <button type="button" class="btn btn-sm fw-bold btn-primary float-end" (click)="changePageMode('addLink')" *ngIf="pageMode === 'list'" [appPermission]="'BTN_LINK_RESELLER'" >
+              <i class="fa fa-plus"></i> <span translate="TRANSLATE.RESELLER_BUTTON_TEXT_LINK_NEW_PROVIDER"></span>
+            </button>
+          </div>
+        </div>
+        @if(!isLoading){
+          <ng-container *ngIf="!!datatableConfig">
+            <app-c3-table  [datatableConfig]="datatableConfig" ></app-c3-table>
+          </ng-container>
+        }
+      </div>
+    </div>
+  </div>
+
+  
+  <div *ngIf="pageMode === 'addLink'">
+   <div class="card">
+      <div class="card-body">
+        <form #form="ngForm" (ngSubmit)="linkReseller(form)">
+          <div class="form-group row">
+            <div class="col-md-3 text-start col-form-label">
+              <label for="provider" class=" required fw-semibold fs-6 mb-2">
+                {{ 'TRANSLATE.LINK_RESELLER_FORM_LABEL_PROVIDER' | translate }}
+              </label>
+              <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_PROVIDER_TOOLTIP' | translate}}">
+                <span  class="path1"></span>
+                <span class="path2"></span>
+                <span class="path3"></span>
+              </i>
+            </div>
+            <div class="col-md-9">
+              <select id="provider" [(ngModel)]="newLink.provider" name="provider" class="form-control" required>
+                <option *ngFor="let provider of remainingProvidersToLink" [value]="provider">{{ provider }}</option>
+              </select>
+              <div *ngIf="form.submitted && !newLink.provider" class="text-danger">
+                <span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row mt-5">
+            <div class="col-md-3 text-start col-form-label">
+              <label for="providerBusinessId" class="required fw-semibold fs-6 mb-2">
+                  {{ 'TRANSLATE.LINK_RESELLER_FORM_LABEL_RESELLER_ID_IN_PROVIDER' | translate }}
+              </label>
+              <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"  aria-hidden="true" ngbTooltip="{{'TRANSLATE.RESELLER_ONBOARDING_LABEL_TEXT_ADD_MPN_ID_TOOLTIP' | translate}}">
+                <span  class="path1"></span>
+                <span class="path2"></span>
+                <span class="path3"></span>
+              </i>
+            </div>
+            <div class="col-md-9">
+              <input id="providerBusinessId" [(ngModel)]="newLink.providerBusinessId" name="providerBusinessId" class="form-control" required>
+              <div *ngIf="form.submitted && !newLink.providerBusinessId" class="text-danger">
+                <span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+              </div>
+            </div>
+          </div>
+          <hr/>
+          <div class="d-flex justify-content-end mt-3">
+            <button type="button" class="btn btn-light btn-active-light-primary btn-sm float-right"  (click)="backToLinkResellerList()"> <span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span>
+            </button>
+            &nbsp;&nbsp;
+            <button type="submit" class="btn btn-primary btn-sm float-right mr-2" appBusyLoader> <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+            </button>
+          </div>
+        </form>
+      </div>
+   </div>
+  </div>
+</div>

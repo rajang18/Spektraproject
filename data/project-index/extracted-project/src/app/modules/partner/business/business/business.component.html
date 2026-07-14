@@ -1,0 +1,44 @@
+<div class="card card-custom">
+    <!-- begin::Header -->
+    <div class="card-header card-header-stretch overflow-auto">
+      <ul class="nav nav-stretch nav-line-tabs fw-bold border-transparent flex-nowrap" role="tablist">
+        <li class="nav-item">
+          <a routerLink="revenue" routerLinkActive="active" class="nav-link cursor-pointer" role="tab"
+          routerLinkActive="text-primary active" [routerLinkActiveOptions]="{ exact: true }" (click)="setActiveTab('revenueCostsummary');clearSelectBillingPeriods();"
+          >
+            {{'TRANSLATE.SIDEBAR_TITLE_MENUS_RESELLER_REVENUE_AND_COST_SUMMARY' | translate}}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="transaction" routerLinkActive="active" class="nav-link cursor-pointer" role="tab"
+          routerLinkActive="text-primary active" [routerLinkActiveOptions]="{ exact: true }" (click)="setActiveTab('invoices');clearSelectBillingPeriods();">
+            {{'TRANSLATE.REVENUE_AND_COST_SUMMARY_TAB_HEADING_INVOICE_TRANSACTIONS' | translate}}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="payments" routerLinkActive="active" class="nav-link cursor-pointer" role="tab"
+          routerLinkActive="text-primary active" [routerLinkActiveOptions]="{ exact: true }" (click)="setActiveTab('Payments');clearSelectBillingPeriods();">
+            {{'TRANSLATE.REVENUE_AND_COST_SUMMARY_TAB_HEADING_PAYMENTS' | translate}}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="subscriptionhistory" routerLinkActive="active" class="nav-link cursor-pointer" role="tab"
+          routerLinkActive="text-primary active" [routerLinkActiveOptions]="{ exact: true }" (click)="setActiveTab('subscriptionHistory');clearSelectBillingPeriods();">
+            {{'TRANSLATE.REVENUE_AND_COST_SUMMARY_TAB_HEADING_SUBSCRIPTION_HISTORY' | translate}}
+          </a>
+        </li>
+        @if(this.entityName == 'Partner' && isDistributor && this.hasResellerRevenuPermissions === 'Allowed'){
+          <li class="nav-item" >
+            <a routerLink="resellerRevenueCostSummaryComponent" routerLinkActive="active" class="nav-link cursor-pointer" role="tab"
+            routerLinkActive="text-primary active" [routerLinkActiveOptions]="{ exact: true }" (click)="setActiveTab('resellerRevenueCostSummary');clearSelectBillingPeriods();">
+              {{'TRANSLATE.RESELLER_BREADCRUMB_BUTTON_TEXT_REVENUE_AND_COST_SUMMARY' | translate}}
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
+  
+    <div class="card-body">
+      <router-outlet></router-outlet>
+    </div>
+  </div>

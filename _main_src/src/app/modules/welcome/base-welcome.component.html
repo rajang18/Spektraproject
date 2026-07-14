@@ -1,0 +1,122 @@
+<!-- header -->
+<ng-container *ngIf="!isPageRedirect">
+    <div class=" " *ngIf="!userInfo && !isLoading">
+        <section [ngClass]="{'position-relative': !isWelcomePage, 'fixed-top':isWelcomePage}">
+            <nav class="navbar" [ngClass]="{'bg-white': !isWelcomePage}">
+                <div class="container-fluid">
+                    <a class="navbar-brand">
+                        <img *ngIf="userSettingsData?.WelcomeLogoPath" class="welcome-logo ps-10"
+                            [src]="userSettingsData?.WelcomeLogoPath">
+                    </a>
+                    <form class="d-flex pe-15" *ngIf="isWelcomePage">
+                        <div class="btn hover-anim">
+                            <a class="contact-us" (click)="goToContactUs()"
+                                [ngStyle]="{'color': userSettingsData?.WelcomePageButtonStyle ? userSettingsData?.WelcomePageButtonStyle : 'white'}">
+                                <!-- Contact us -->
+                                <span [ngClass]="{ 'text-white':isWelcomePage, 'text-dark': !isWelcomePage }"
+                                    translate="TRANSLATE.WELCOMELAYOUT_BEGIN_NAVIGATION_4_CONTACT"></span>
+                            </a>
+                            <div class="anim mt-1"></div>
+                        </div>
+                        <!-- <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false"
+                    aria-label="Toggle navigation" 
+                    [ngClass]="{'btn-primary': loginButtonBackgroundColor == null || loginButtonBackgroundColor == undefined ||  loginButtonBackgroundColor == '' }"
+                    [ngStyle]="{'color': userSettingsData?.WelcomePageButtonStyle ? userSettingsData?.WelcomePageButtonStyle : 'white', backgroundColor:loginButtonBackgroundColor}" 
+                    (click)="loginRedirect()">
+                    <span translate="TRANSLATE.WELCOMELAYOUT_BEGIN_NAVIGATION_1_LOGIN"></span>
+                </button> -->
+                        <div class="dropdown" [ngClass]="{'show': showDropdown}" #dropdownContainer>
+                            <button class="btn btn-primary"  type="button" aria-expanded="false"
+                               [ngClass]="{'btn-primary': loginButtonBackgroundColor == null || loginButtonBackgroundColor == undefined ||  loginButtonBackgroundColor == '' }"
+                                [ngStyle]="{'color': userSettingsData?.WelcomePageButtonStyle ? userSettingsData?.WelcomePageButtonStyle : 'white', backgroundColor:loginButtonBackgroundColor}" 
+                                 (click)="isSocialLoginEnabled ? toggleDropdown() : loginRedirect()">
+                                <span translate="TRANSLATE.WELCOMELAYOUT_BEGIN_NAVIGATION_1_LOGIN"></span>
+                            </button>
+
+                            <ul class="dropdown-menu" [ngClass]="{'show': showDropdown}"  *ngIf="isSocialLoginEnabled">
+                                <li>
+                                    <!-- <a class="dropdown-item" href="#" (click)="loginRedirect()"> -->
+                                    <a class="dropdown-item" href="#" (click)="authExternalProvider('Microsoft', $event)">
+                                        <img src="assets/microsoft-icon.svg" alt="Microsoft" width="20" class="me-2">
+                                        {{ 'LOGIN_WITH_MICROSOFT' | translate }}
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#" (click)="authExternalProvider('Google', $event)">
+                                        <img src="assets/google-icon.svg" alt="Google" width="20" class="me-2">
+                                       {{ 'LOGIN_WITH_GOOGLE' | translate }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </form>
+                </div>
+            </nav>
+        </section>
+    </div>
+
+    <div class="" *ngIf="userInfo && !isLoading">
+        <section class="position-relative navigation">
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-white">
+                <div class="container-fluid">
+                    <img type="image" [src]="userSettingsData?.WelcomeLogoPath"
+                        class="navbar-brand welcome-logo ps-10" />
+                    <div class="navbar-toggler" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                        <a [ngStyle]="{'color': userSettingsData?.WelcomePageButtonStyle ? userSettingsData?.WelcomePageButtonStyle : 'white'}"
+                            class="btn btn-primary text-uppercase border-0 welcome-page-btn-padding"
+                            (click)="login()"><span
+                                translate="TRANSLATE.WELCOMELAYOUT_BEGIN_NAVIGATION_1_LOGIN"></span></a>
+                    </div>
+                    <div class="collapse navbar-collapse  pe-10" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto"></ul>
+                        <span
+                            [ngStyle]="{'color': userSettingsData?.WelcomePageButtonStyle ? userSettingsData?.WelcomePageButtonStyle : 'white'}"
+                            class="text-warning font-weight-bold me-4">
+                            <span translate="TRANSLATE.WELCOMELAYOUT_BEGIN_NAVIGATION_2_WELCOME"></span>
+                            {{userInfo.name}}
+                        </span>
+                        <form class="form-inline my-2 my-lg-0">
+                            <a [ngStyle]="{'color': userSettingsData?.WelcomePageButtonStyle ? userSettingsData?.WelcomePageButtonStyle : 'white'}"
+                                ng-show="InvitePlanDetailID==null" class="text-warning font-weight-bold me-4"
+                                data-target="#" (click)="login()">
+                                <span translate="TRANSLATE.WELCOMELAYOUT_BEGIN_NAVIGATION_5_DASHBOARD"></span> </a>
+                            <a [ngStyle]="{'color': userSettingsData?.WelcomePageButtonStyle ? userSettingsData?.WelcomePageButtonStyle : 'white'}"
+                                class="text-warning font-weight-bold" data-target="#" (click)="logout()"> <span
+                                    translate="TRANSLATE.WELCOMELAYOUT_BEGIN_NAVIGATION_3_LOGOUT"></span> </a> &nbsp;
+                        </form>
+                    </div>
+                </div>
+            </nav>
+        </section>
+    </div>
+
+    <!-- content starts -->
+    <div>
+        <router-outlet></router-outlet>
+    </div>
+    <!-- content ends -->
+
+    <!-- footer -->
+    <footer class="fixed-bottom pb-4 bg-white" *ngIf="ShowFooterAcrossAllPages == 'true'">
+        <div class="d-flex justify-content-between">
+            <div class="text-md-start text-sm-center ps-10">
+                <span class="me-1">{{currentDateStr}}&copy;</span>
+                <a [href]="userSettingsData?.CompanyUrl" target="_blank"
+                    class="text-primary-00">{{userSettingsData?.ContactCompanyName}}</a>
+                <span class="me-1">{{'TRANSLATE.FOOTER_TEXT_1_ALL_RIGHTS_RESERVED' | translate}}</span>
+            </div>
+            <!--end::Copyright-->
+            <div class="text-md-end text-sm-center me-12">
+                <span class="me-1">{{'TRANSLATE.FOOTER_TEXT_1_POWERED_BY' | translate}}</span>
+                <a [href]="userSettingsData?.PoweredByCompanyURL" target="_blank"
+                    class="text-primary-00">{{userSettingsData?.PoweredByCompanyName}}</a>
+            </div>
+        </div>
+    </footer>
+
+</ng-container>

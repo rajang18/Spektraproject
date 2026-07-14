@@ -1,0 +1,31 @@
+<div class="modal-dialog m-0 modal-dialog m-0-centered w-100">
+    <div class="modal-content">
+        <div class="modal-header ng-scope">
+            <h2 id="modal-title">
+                <span
+                    class="ng-scope">{{'TRANSLATE.USER_MANAGEMENT_EXPORT_USER_ASSIGNMENT_REPORT_BUTTON'|translate}}
+                </span>
+            </h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModalPopup()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+            </div>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <div>
+                <div class="col-md-9">
+                    <form  class="col-md-9">
+                        <div id="kt_docs_jstree_checkable"></div>
+                    </form>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-sm btn-light btn-active-light-primary" (click)="closeModalPopup()"><span
+                    translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span>
+            </button>
+            <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal" (click)="onSubmit()">{{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}
+            </button>
+        </div>
+    </div>
+</div>

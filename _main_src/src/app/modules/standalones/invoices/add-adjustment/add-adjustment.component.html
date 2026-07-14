@@ -1,0 +1,154 @@
+<ng-template #actionHeader>
+    <a class="btn btn-primary btn-sm fw-bold" role="button" (click)="backToInvoiceLineItems()">
+        <i class="ki-outline ki-to-left fs-2"></i> {{ 'TRANSLATE.INVOICE_INVOICE_BUTTON_BACK_TO_INVOICES' | translate }}
+    </a>
+</ng-template>
+
+
+<div class="d-flex flex-column-fluid">
+    <div class="container-fluid">
+        <div class="card card-custom">
+            <div class="card-body">
+                <form [formGroup]="frmAddAdjustments" role="form" class="form form-horizontal" id="kt_form_1" novalidate>
+                    <!--Adjustment Detail-->
+                    <div class="form-group row mt-2" ng-class="{'has-error':frmaddAdjustments.$submitted &amp;&amp; frmaddAdjustments.addAdjustment_InvoiceLineDetail.$error.required}">
+                        <label class="col-form-label text-lg-start text-sm-start col-lg-2 col-sm-12">
+                            <span translate="TRANSLATE.CUSTOMER_INVOICELINEDETAILS_ADJUSTMENTDETAIL_FROM_TEXTBOX_ADJESTMENT_DETAILS"></span><span class="text-danger">*</span>
+                        </label>
+                        <div class="col-md-10">
+                            <input type="text" ng-model="vm.addAdjustment.AdjustmentDetails" formControlName="adjustmentDetails" class="form-control form-control-sm" name="addAdjustment_InvoiceLineDetail" required />
+                            @if (frmAddAdjustments.get('adjustmentDetails')?.errors?.required  && frmAddAdjustments.get('adjustmentDetails').touched ){
+                                <span><span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                            }
+                            
+                        </div>
+                    </div>
+
+                    <!--Adjustment Amount-->
+                    <div class="form-group row mt-4" ng-class="{'has-error': frmaddAdjustments.$submitted &amp;&amp; frmaddAdjustments.addAdjustment_AdjustmentAmount.$error.required}">
+                        <label class="col-form-label col-md-2 text-lg-start text-sm-start">
+                            <span translate="TRANSLATE.CUSTOMER_INVOICELINEDETAILS_ADJUSTMENTAMOUNT_FORM_TEXBOX_NUMBER_ADJESTMENT_AMOUNT"></span> <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-md-10">
+                            <div class="input-group input-group-sm">
+                                <input type="number" min="0.01" step="0.01" ng-model="vm.addAdjustment.AdjustmentAmount" formControlName="adjustmentAmount" class="form-control form-control-sm text-end" name="addAdjustment_AdjustmentAmount" required />
+                                <div class="input-group-addon input-group-with-select">
+                                    <div data-toggle="buttons form-check">
+                                        <label id="creditlabel" class="btn btn-light-primary btn-xs btn-circle btnIsCreditTypeCreditBack " [ngClass]="{'btn-primary': addAdjustment.IsCredit, 'btn-light-primary': !addAdjustment.IsCredit}" (click)="updateAdjustmentCreditType('Credit')">
+                                            <input type="radio" id="credit" class="toggle form-check-input me-1" value="Credit" formControlName="isCredit" ng-model="vm.addAdjustment.IsCredit" (change)="updateAdjustmentCreditType('Credit')"> <span translate="TRANSLATE.CUSTOMER_INVOICELINEDETAILS_ADJUSTMENTAMOUNT_FORM_RADIOBUTTON_1_CREDIT"></span>
+                                        </label>&nbsp;
+                                        <label id="additionamountlabel" class="btn btn-light-primary btn-xs btn-circle btnIsCreditTypeAdditionalAmount" [ngClass]="{'btn-primary': !addAdjustment.IsCredit, 'btn-light-primary': addAdjustment.IsCredit}" (click)="updateAdjustmentCreditType('AdditionAmount')">
+                                            <input type="radio" id="additionamount" class="toggle form-check-input me-1" value="AdditionAmount" formControlName="isCredit" ng-model="vm.addAdjustment.IsCredit" (change)="updateAdjustmentCreditType('AdditionAmount')"> <span translate="TRANSLATE.CUSTOMER_INVOICELINEDETAILS_ADJUSTMENTAMOUNT_FORM_RADIOBUTTON_2_ADDITIONAL_CHARGES"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (frmAddAdjustments.get('adjustmentAmount')?.errors?.required  && frmAddAdjustments.get('adjustmentAmount').touched ){
+                                <span><span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                            }
+                           
+                        </div>
+                    </div>
+                    <div class="form-group row mt-4">
+                        <label class="col-form-label col-md-2 text-lg-start text-sm-start ">
+                            <span translate="TRANSLATE.CUSTOMER_INVOICELINEDETAILS_ADJUSTMENTDETAIL_FROM_TEXTBOX_TEXT_SUBSCRIPTION_NAME"></span>
+                        </label>
+                        <div class="col-md-10">
+                            <div *ngIf="addAdjustment.ID === '0'">
+                                <ng-select ng-model="vm.addAdjustment.SubscriptionId" formControlName="subscriptionId" name="addAdjustment_AdjustmentCSPSubscriptionId" (change)="checkIfTaxable()">
+                                    @for (option of currentCustomerAllSubscriptions; track option) {
+                                        <ng-option  [value]="option.ID">{{option.Name}}</ng-option>
+                                    }
+                                    
+                                </ng-select>
+                            </div>
+                            <div *ngIf="addAdjustment.ID > 0">
+                                <input type="text" ng-model="vm.addAdjustment.SubscriptionName" formControlName="subscriptionName"  class="form-control form-control-sm" name="addAdjustment_InvoiceLineDetail" [readonly]="true" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row mt-4" *ngIf="frmAddAdjustments.get('subscriptionId')?.value === undefined || frmAddAdjustments.get('subscriptionId')?.value  === null" ng-class="{'has-error': frmaddAdjustments.$submitted &amp;&amp; frmaddAdjustments.addAdjustment_AdjustmentCSPProviderId.$error.required}">
+                        <label class="col-form-label col-md-2 text-lg-start text-sm-start ">
+                            <span translate="TRANSLATE.CUSTOMER_INVOICELINEDETAILS_ADJUSTMENTDETAIL_FROM_TEXTBOX_TEXT_PROVIDER_NAME"></span>  <span class="text-danger">*</span>
+                        </label>
+                        
+                        <div class="col-md-10">
+                            <div *ngIf="addAdjustment.ID === '0'">
+                                <ng-select   ng-model="vm.addAdjustment.ProviderId" formControlName="providerId"  name="addAdjustment_AdjustmentCSPProviderId" required>
+                                    @for (option of providers; track option) {
+                                        <ng-option  [value]="option.ID">{{option.Name}}</ng-option>
+                                    }
+                                   
+                                </ng-select>
+                            </div>
+                            <div *ngIf="addAdjustment.ID > 0">
+                                <input type="text" ng-model="vm.addAdjustment.ProviderName" formControlName="providerName"  class="form-control form-control-sm" name="addAdjustment_AdjustmentCSPProviderName" [readonly]="true" />
+                            </div>
+                            @if (frmAddAdjustments.get('providerId')?.errors?.required  && frmAddAdjustments.get('providerId').touched ){
+                                <span><span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                            }
+                           
+                        </div>
+                    </div>
+
+                    <div class="form-group row mt-4">
+                        <label class="col-md-2 col-form-label text-lg-start text-sm-start">
+                            <span translate="TRANSLATE.INVOICE_ADD_ADJUSTMENT_START_DATE"></span><span class="text-danger"> *</span>
+                        </label>
+                        <div class="col-md-10">
+                            <div ng-controller="DatepickerUIController">
+                                <div class="input-group input-group-sm">
+                                    <input autocomplete="off" [readonly]="true" class="form-control form-control-sm  mb-lg-0" name="startDate" formControlName="startDate" ngbDatepicker
+                                        #sd="ngbDatepicker" />
+                                    <button class="btn btn-secondary btn-sm" (click)="sd.toggle()" type="button"> <i class="ki-outline ki-calendar fs-3 pe-0"></i></button>
+                                </div>
+                            </div>
+                            @if (frmAddAdjustments.get('startDate')?.errors?.required  && frmAddAdjustments.get('startDate').touched ){
+                                <span><span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                            }
+                           
+                        </div>
+                    </div>
+
+                    <div class="form-group row mt-4">
+                        <label class="col-md-2 col-form-label text-lg-start text-sm-start">
+                            <span translate="TRANSLATE.INVOICE_ADD_ADJUSTMENT_END_DATE"></span><span class="text-danger"> *</span>
+                        </label>
+                        <div class="col-md-10">
+                            <div>
+                                <div class="input-group input-group-sm">
+                                    <input autocomplete="off" [readonly]="true" class="form-control form-control-sm  mb-lg-0" name="startDate" formControlName="endDate" ngbDatepicker
+                                       #ed="ngbDatepicker" />
+                                       <button class="btn btn-light-primary btn-sm" (click)="ed.toggle()" type="button"><i class="ki-outline ki-calendar fs-3 pe-0"></i></button>
+                                </div>
+                            </div>
+                            @if (frmAddAdjustments.get('startDate')?.errors?.required  && frmAddAdjustments.get('startDate').touched ){
+                                <span><span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                            }
+                           
+                        </div>
+                    </div>
+
+                     <div class="form-group row mt-4">
+                         <div class="col-md-2 col-form-label text-lg-start text-sm-start">
+                             <span translate="TRANSLATE.CUSTOMER_ADD_ADJUSTMENT_IS_TAXABLE"></span>
+                         </div>
+                         <div class="form-check col-md-10 mt-4">
+                                 &nbsp;
+                                 <input type="checkbox" class="form-check-input" formControlName="isTaxable" ng-model="vm.addAdjustment.IsTaxable" name="addAdjustment_IsTaxable" />
+                         </div>
+                     </div>
+                    <div class="form-group row mt-4 float-end">
+                        <div class="con-md-12 control-label">
+                            <a class="btn btn-sm btn-primary" (click)="saveAdjustment()">
+                                {{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

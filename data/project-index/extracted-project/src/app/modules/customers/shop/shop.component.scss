@@ -1,0 +1,98 @@
+.container {
+    position: relative;
+    height: 400px;
+    width: 100%;
+    border: 1px solid #ccc;
+  }
+  
+  .content {
+    height: 100%;
+    overflow: auto;
+  }
+
+  .card{
+    // width:230px;
+    // height:470px;
+    // overflow: auto;
+    .card-body{
+        display: flex;
+        flex-direction: column;
+        gap:20px ;
+        .checkbox-list{
+         display: flex;
+         flex-direction: column;
+         gap: 5px
+     }
+     }
+}
+
+
+
+.product-wrapper {
+  position: relative;
+  height: calc(100vh - (var(--bs-app-footer-height) + var(--bs-app-header-height) + var(--bs-app-toolbar-height) + 50px));
+  overflow-y: auto;
+  overflow-x: hidden;
+  // padding: 0 10px;
+  // margin:10px 0px;
+}
+
+.content {
+  height: 100%;
+  overflow: auto;
+}
+
+.card {
+  // width:230px;
+  // height:470px;
+  overflow: auto;
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    .checkbox-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+  }
+}
+.filters-card {
+height: calc(100vh - (var(--bs-app-footer-height) + var(--bs-app-header-height) + var(--bs-app-toolbar-height) + 90px ));
+// overflow-y: auto;
+// overflow-x: hidden;
+overflow: auto;
+padding-top: 0;
+padding-bottom: 0;
+margin:20px 0;
+}
+.shop-filter-adjust {
+  max-width: 250px !important;
+}
+ 
+.img-align{
+  margin-top: 50px;
+}
+
+::ng-deep .placeholder-glow {
+  // background-color: white !important; /* Initial color */
+  animation: shimmer 1.5s infinite; /* Blinking effect */
+  border-radius: 0.25rem; /* Optional for rounded corners */
+}
+
+@keyframes shimmer {
+  0% {
+      background-color: white !important; /* Start color */
+  }
+  50% {
+      background-color: whitesmoke !important; /* Mid color */
+  }
+  100% {
+      background-color: lightgray !important; /* End color */
+  }
+}
+
+/* Target the placeholder directly to override defaults */
+::ng-deep .placeholder {
+  background-color: gray !important; /* Ensure no default background */
+}

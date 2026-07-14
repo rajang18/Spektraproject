@@ -1,0 +1,554 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-1 gap-lg-1">
+        <div class="actions col-md-12 text-lg-end text-sm-left" *ngIf="EntityName != 'Customer'">
+            <a data-toggle="tooltip" ngbTooltip="{{'TRANSLATE.SUBSCRIPTION_HISTORY_REPORT_DOWNLOAD_BUTTON_TOOLTIP' | translate}}" class="btn btn-light-primary btn-sm btn-lg btn-md btn-xs mb-5 ms-md-2"
+                (click)="downloadReport()">
+                <i class="ki-outline ki-exit-down fs-2 ps-1"></i>
+            </a>
+            <a class="btn btn-secondary btn-sm btn-lg btn-md btn-xs mb-5 ms-md-2" ngbTooltip="{{'TRANSLATE.BTN_TEXT_SHOW_FILTERS'|translate}}" (click)="filtersExpanded = !filtersExpanded">
+                <i class="ki-outline ki-filter fs-2"></i>&nbsp;<span translate="TRANSLATE.BTN_TEXT_FILTER"></span>
+            </a> 
+            @if(this.activeServiceDetail){
+            <a class="btn btn-light-primary btn-sm btn-lg btn-md btn-xs mb-5 ms-md-2" *ngIf="((this.permissions.InitiateUploadToAutotask.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED
+            && this.activeServiceDetail.Name.toLowerCase() === cloudHubConstants.PSA_NAME_AUTOTASK)
+            || (this.permissions.InitiateUploadToConnectwise.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED
+            && this.activeServiceDetail.Name.toLowerCase() === cloudHubConstants.PSA_NAME_CONNECTWISE))
+            && this.permissions.GetProductMappings.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED"  (click)="goToProductMapping()"> 
+                <i class="fas fa-sync-alt"></i>
+                {{'TRANSLATE.BTN_TEXT_MAPPING_OF_PRODUCTS' | translate}}
+            </a>
+            <a *ngIf="this.permissions.GetCustomersListToPickForExternalService.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED
+            && this.permissions.InitiateUploadToAutotask.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED
+            " class="btn btn-light-primary btn-sm btn-lg btn-md btn-xs mb-5 ms-md-2" [ngClass]="{'disabled': isRefreshInprocess==true}" (click)="moveToSelectCustomersToValidate()">
+                <i class="fa fa-cogs" ></i>{{'TRANSLATE.'+activeServiceDetail.key | translate}}
+            </a>
+            }
+        </div>
+    </div>
+</ng-template>
+
+
+
+<div class="actions col-md-12 text-lg-end text-sm-left pt-6" *ngIf="EntityName == 'Customer'">
+    <a data-toggle="tooltip" ngbTooltip="{{'TRANSLATE.SUBSCRIPTION_HISTORY_REPORT_DOWNLOAD_BUTTON_TOOLTIP' | translate}}" class="btn btn-light-primary btn-sm btn-lg btn-md btn-xs mb-5 ms-md-2"
+        (click)="downloadReport()">
+        <i class="ki-outline ki-exit-down fs-2 ps-1"></i>
+    </a>
+    <a class="btn btn-secondary btn-sm btn-lg btn-md btn-xs mb-5 ms-md-2" ngbTooltip="{{'TRANSLATE.BTN_TEXT_SHOW_FILTERS'|translate}}" (click)="filtersExpanded = !filtersExpanded">
+        <i class="ki-outline ki-filter fs-2"></i>&nbsp;<span translate="TRANSLATE.BTN_TEXT_FILTER"></span>
+    </a>
+
+</div>
+
+
+<div class="row">
+    <div class="col-md-12" *ngIf="EntityName != 'Customer'">
+        <div *ngIf="filtersExpanded">
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-body">
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label class="fw-semibold">
+                                    {{'TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_BILLING_PERIOD'|translate}}
+                                </label>
+                                <ng-select [(ngModel)]="Search.BillingPeriod" name="filter_BillingPeriod" placeholder="{{'TRANSLATE.BILLING_PERIOD_SEARCH_DEFAULT_OPTION' |translate}}">
+                                    @for (option of BillingPeriods | orderBy: '-BillingStartDate'; track $index) {
+                                    <ng-option [value]="option.BillingPeriodId">
+                                        <div>{{option.BillingStartDate | c3Date}} - {{option.BillingEndDate | c3Date}}
+                                            ({{option.BillingId}})</div>
+                                    </ng-option>
+                                    }
+                                </ng-select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="fw-semibold">
+                                    {{'TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_CUSTOMERS'|translate}}
+                                </label>
+                                <ng-select [multiple]="true" [(ngModel)]="Search.Customers" name="filter_Customer" placeholder="{{'TRANSLATE.CUSTOMER_SEARCH_DEFAULT_OPTION' |translate}}">
+                                    @for (option of customersDropdown; track $index) {
+                                    <ng-option [value]="option.C3Id">
+                                        <div>{{option.Name}}</div>
+                                    </ng-option>
+                                    }
+                                </ng-select>
+                            </div>
+                        </div>
+                        <div class="form-group row mt-4">
+                            <div class="col-md-6">
+                                <label class="fw-semibold">
+                                    {{'TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_KEYWORD'|translate}}
+                                </label>
+                                <input type="text" class="form-control form-control-sm" placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_INPUT_FIELD_TO_SEARCH_A_SUBSCRIPTION' | translate}}"
+                                    [(ngModel)]="Search.SearchKeyword">
+                            </div>
+                            <div class="col-md-3 form-group">
+                                <div ng-controller="DatepickerUIController">
+                                    <div class="input-group  mt-6">
+                                        <input [(ngModel)]="Search.EffectiveFrom" placeholder="{{'TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_START_DATE' | translate}}"
+                                        [readOnly]="true"   class="form-control form-control-sm mb-3 mb-lg-0 ms-auto custom" name="filter_EffectiveFrom" [maxDate]="maxDate" ngbDatepicker #ad="ngbDatepicker" />
+                                        <button class="btn btn-light-primary btn-sm" (click)="ad.toggle()" type="button"><i class="ki-outline ki-calendar fs-3 pe-0"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group ">
+                                <div ng-controller="DatepickerUIController">
+                                    <div class="input-group mt-6">
+                                        <input [(ngModel)]="Search.EffectiveTo" placeholder="{{'TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_END_DATE' | translate}}"
+                                        [readOnly]="true"  class="form-control form-control-sm mb-3 mb-lg-0 ms-auto custom" name="filter_EffectiveTo" [maxDate]="maxDate" ngbDatepicker #sd="ngbDatepicker" />
+                                        <button class="btn btn-light-primary btn-sm" (click)="sd.toggle()" type="button"><i class="ki-outline ki-calendar fs-3 pe-0"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4 mt-5">
+                                <div class="portlet light pb0 pl0">
+                                    <label class="fw-semibold">
+                                        {{'TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_TEXT_PROVIDERS'|translate}}
+                                    </label>
+                                    <div class="portlet-body p0">
+                                        @for (provider of Providers; track $index) {
+                                        <div class="checkbox-list mt-2 form-check">
+                                            <label class="checkbox checkbox-outline checkbox-outline-2x control-label">
+                                                <input class="form-check-input" type="checkbox" value="{{provider.Name}}" (click)="toggleProviderSelection(provider)"
+                                                    [checked]="isProviderSelected(provider)" [disabled]="false">
+                                                <span></span> {{'TRANSLATE.'+ provider.Description | translate}}
+                                            </label>
+                                            <label class="checkbox" style="display: none"></label>
+                                        </div>}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-5" *ngIf="BillingCycles?.length > 0">
+                                <div class="portlet light pb0 pl0">
+                                    <label class="fw-semibold">
+                                        {{'TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_TEXT_BILLING_CYCLES'|translate}}
+                                    </label>
+
+                                    <div class="portlet-body p0">
+                                        @for (billingCycle of BillingCycles; track $index) {
+                                        <div class="checkbox-list mt-2 form-check">
+                                            <label class="checkbox checkbox-outline checkbox-outline-2x control-label">
+                                                <input type="checkbox" class="form-check-input" value="{{billingCycle.Name}}" (click)="toggleBillingCycleSelection(billingCycle)"
+                                                    [checked]="BillingCycleSelection?.indexOf(billingCycle) > -1" [disabled]="false">
+                                                <span></span> {{'TRANSLATE.' + billingCycle.Description | translate}}
+                                            </label>
+                                            <label class="checkbox" style="display: none"></label>
+                                        </div>}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-5" *ngIf="ConsumptionTypes?.length > 0">
+                                <div class="portlet light pb0 pl0">
+                                    <label class="fw-semibold">
+                                        {{'TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_TEXT_CONSUMPTION_TYPES'|translate}}
+                                    </label>
+
+                                    <div class="portlet-body p0">
+                                        @for (consumptionType of ConsumptionTypes; track $index) {
+                                        <div class="checkbox-list mt-2 form-check">
+                                            <label class="checkbox checkbox-outline checkbox-outline-2x control-label">
+                                                <input type="checkbox" class="form-check-input" value="{{consumptionType.Name}}" (click)="toggleConsumptionTypeSelection(consumptionType)"
+                                                    [checked]="ConsumptionTypeSelection?.indexOf(consumptionType) > -1" [disabled]="false">
+                                                <span></span>{{'TRANSLATE.' + consumptionType.Description | translate}}
+                                            </label>
+                                            <label class="checkbox" style="display: none"></label>
+                                        </div>}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4 mt-5" *ngIf="filteredCategories?.length > 0">
+                                <div class="portlet light pb0 pl0">
+                                    <label class="fw-semibold">
+                                        {{'TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_TEXT_CATEGORY'|translate}}
+                                    </label>
+
+                                    <div class="portlet-body p0">
+                                        @for (category of filteredCategories; track $index) {
+                                        <div class="checkbox-list mt-2 form-check">
+                                            <label class="checkbox checkbox-outline checkbox-outline-2x control-label">
+                                                <input type="checkbox" class="form-check-input" value="{{category.Description}}" (click)="toggleCategorySelection(category)"
+                                                    [checked]="isCategorySelected(category)" ng-disabled="false">
+                                                <span></span>{{(category.Name.toLowerCase() === 'onlineservicesnce' === true ?
+                                                'TRANSLATE.CATEGORY_FILTER_DESC_NCE' :'TRANSLATE.' +
+                                                category.CategoryDescriptionKey) | translate}}
+                                            </label>
+                                            <label class="checkbox" style="display: none"></label>
+                                        </div>}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-5" *ngIf="filteredProviderCategories?.length > 0">
+                                <div class="portlet light pb0 pl0">
+                                    <label class="fw-semibold">
+                                        {{'TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_TEXT_SERVICE_TYPES'|translate}}
+                                    </label>
+                                    <div class="portlet-body p0">
+                                        @for (providerCategory of filteredProviderCategories; track $index) {
+                                        <div class="checkbox-list mt-2 form-check">
+                                            <label class="checkbox checkbox-outline checkbox-outline-2x control-label">
+                                                <input type="checkbox" class="form-check-input" value="{{providerCategory.ProviderCategoryName}}"
+                                                    (click)="toggleProviderCategorySelection(providerCategory)" [checked]="isproviderCategorySelected(providerCategory)"
+                                                    ng-disabled="false">
+                                                <span></span>{{providerCategory.ProviderCategoryName}}
+                                            </label>
+                                            <label class="checkbox" style="display: none"></label>
+                                        </div>}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- manage subcategories -->
+                            <div class="col-md-4 mt-5" *ngIf="subCategories?.length > 0 && isCustomSelected" [appPermission]="'GET_SUBCATEGORIES_FILTER'">
+                                <div class="portlet light pb0 pl0">
+                                    <label class="fw-semibold">
+                                        {{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_SUBCATEGORY'|translate}}
+                                    </label>
+                                    <div class="portlet-body p0">
+                                        @for (subCategory of subCategories; track $index) {
+                                        <div class="checkbox-list mt-2 form-check">
+                                            <label class="checkbox checkbox-outline checkbox-outline-2x control-label">
+                                                <input type="checkbox" class="form-check-input" value="{{subCategory.CategoryName}}"
+                                                    (click)="toggleProviderSubCategorySelection(subCategory)" [checked]="isSubCategorySelected(subCategory)"
+                                                    ng-disabled="false">
+                                                <span></span>{{subCategory.Name}}
+                                            </label>
+                                            <label class="checkbox" style="display: none"></label>
+                                        </div>}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer py-3">
+                    <div class="form-actions text-end">
+                        <button class="btn btn-sm btn-light-primary me-2" (click)="filter()">
+                            {{'TRANSLATE.SUBSCRIPTION_HISTORY_SEARCH_OPTION' | translate}}
+                        </button>
+                        <button class="btn btn-sm btn-light-primary me-2" (click)="resetFilters()">{{'TRANSLATE.SUBSCRIPTION_HISTORY_SEARCH_RESET_OPTION' |
+                            translate}}</button>
+                        <button class="btn btn-sm btn-light-primary me-2" (click)="filtersExpanded = false;">{{'TRANSLATE.SUBSCRIPTION_HISTORY_SEARCH_CLOSE_OPTION' |
+                            translate}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12" *ngIf="EntityName == 'Customer'">
+        <div *ngIf="filtersExpanded">
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-body">
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label class="fw-semibold">
+                                    {{'TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_BILLING_PERIOD'|translate}}
+                                </label>
+                                <ng-select [(ngModel)]="Search.BillingPeriod" name="filter_BillingPeriod" placeholder="{{'TRANSLATE.BILLING_PERIOD_SEARCH_DEFAULT_OPTION' |translate}}">
+                                    @for (option of BillingPeriods; track $index) {
+                                    <ng-option [value]="option">
+                                        <div>{{option.BillingStartDate | c3Date}} - {{option.BillingEndDate | c3Date}}
+                                            ({{option.BillingId}})</div>
+                                    </ng-option>
+                                    }
+                                </ng-select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="fw-semibold">
+                                    {{'TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_KEYWORD'|translate}}
+                                </label>
+                                <input type="text" class="form-control form-control-sm" placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_INPUT_FIELD_TO_SEARCH_A_SUBSCRIPTION' | translate}}"
+                                    [(ngModel)]="Search.SearchKeyword">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-3 form-group">
+                                <div ng-controller="DatepickerUIController">
+                                    <div class="input-group  mt-6">
+                                        <input [(ngModel)]="Search.EffectiveFrom" placeholder="{{'TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_START_DATE' | translate}}"
+                                        [readOnly]="true"   class="form-control form-control-sm mb-3 mb-lg-0 ms-auto custom" name="filter_EffectiveFrom" ngbDatepicker #ad="ngbDatepicker" />
+                                        <button class="btn btn-light-primary  px-4 fs-2 ki-outline ki-calendar" (click)="ad.toggle()" type="button"></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 form-group ">
+                                <div ng-controller="DatepickerUIController">
+                                    <div class="input-group mt-6">
+                                        <input [(ngModel)]="Search.EffectiveTo" placeholder="{{'TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_END_DATE' | translate}}"
+                                        [readOnly]="true"    class="form-control form-control-sm mb-3 mb-lg-0 ms-auto custom" name="filter_EffectiveTo" ngbDatepicker #sd="ngbDatepicker" />
+                                        <button class="btn btn-light-primary  px-4 fs-2 ki-outline ki-calendar" (click)="sd.toggle()" type="button"></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4 mt-5">
+                                <div class="portlet light pb0 pl0">
+                                    <label class="fw-semibold">
+                                        {{'TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_TEXT_PROVIDERS'|translate}}
+                                    </label>
+                                    <div class="portlet-body p0">
+                                        @for (provider of Providers; track $index) {
+                                        <div class="checkbox-list mt-2 form-check">
+                                            <label class="checkbox checkbox-outline checkbox-outline-2x control-label">
+                                                <input class="form-check-input" type="checkbox" value="{{provider.Name}}" (click)="toggleProviderSelection(provider)"
+                                                    [checked]="ProviderSelection?.indexOf(provider) > -1" [disabled]="false">
+                                                <span></span> {{'TRANSLATE.'+ provider.Description | translate}}
+                                            </label>
+                                            <label class="checkbox" style="display: none"></label>
+                                        </div>}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-5" *ngIf="BillingCycles?.length > 0">
+                                <div class="portlet light pb0 pl0">
+                                    <label class="fw-semibold">
+                                        {{'TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_TEXT_BILLING_CYCLES'|translate}}
+                                    </label>
+
+                                    <div class="portlet-body p0">
+                                        @for (billingCycle of BillingCycles; track $index) {
+                                        <div class="checkbox-list mt-2 form-check">
+                                            <label class="checkbox checkbox-outline checkbox-outline-2x control-label">
+                                                <input type="checkbox" class="form-check-input" value="{{billingCycle.Name}}" (click)="toggleBillingCycleSelection(billingCycle)"
+                                                    [checked]="BillingCycleSelection?.indexOf(billingCycle) > -1" [disabled]="false">
+                                                <span></span> {{'TRANSLATE.' + billingCycle.Description | translate}}
+                                            </label>
+                                            <label class="checkbox" style="display: none"></label>
+                                        </div>}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-5" *ngIf="ConsumptionTypes?.length > 0">
+                                <div class="portlet light pb0 pl0">
+                                    <label class="fw-semibold">
+                                        {{'TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_TEXT_CONSUMPTION_TYPES'|translate}}
+                                    </label>
+
+                                    <div class="portlet-body p0">
+                                        @for (consumptionType of ConsumptionTypes; track $index) {
+                                        <div class="checkbox-list mt-2 form-check">
+                                            <label class="checkbox checkbox-outline checkbox-outline-2x control-label">
+                                                <input type="checkbox" class="form-check-input" value="{{consumptionType.Name}}" (click)="toggleConsumptionTypeSelection(consumptionType)"
+                                                    [checked]="ConsumptionTypeSelection?.indexOf(consumptionType) > -1" [disabled]="false">
+                                                <span></span>{{'TRANSLATE.' + consumptionType.Description | translate}}
+                                            </label>
+                                            <label class="checkbox" style="display: none"></label>
+                                        </div>}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4 mt-5" *ngIf="filteredCategories?.length > 0">
+                                <div class="portlet light pb0 pl0">
+                                    <label class="fw-bold">
+                                        {{'TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_TEXT_CATEGORY'|translate}}
+                                    </label>
+
+                                    <div class="portlet-body p0">
+                                        @for (category of filteredCategories; track $index) {
+                                        <div class="checkbox-list mt-2 form-check">
+                                            <label class="checkbox checkbox-outline checkbox-outline-2x control-label">
+                                                <input type="checkbox" class="form-check-input" value="{{category.Description}}" (click)="toggleCategorySelection(category)"
+                                                    [checked]="CategorySelection?.indexOf(category) > -1" ng-disabled="false">
+                                                <span></span>{{(category.Name.toLowerCase() === 'onlineservicesnce' === true ?
+                                                'TRANSLATE.CATEGORY_FILTER_DESC_NCE' :'TRANSLATE.' +
+                                                category.CategoryDescriptionKey) | translate}}
+                                            </label>
+                                            <label class="checkbox" style="display: none"></label>
+                                        </div>}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-5" *ngIf="filteredProviderCategories?.length > 0">
+                                <div class="portlet light pb0 pl0">
+                                    <label class="fw-semibold">
+                                        {{'TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_TEXT_SERVICE_TYPES'|translate}}
+                                    </label>
+                                    <div class="portlet-body p0">
+                                        @for (providerCategory of filteredProviderCategories; track $index) {
+                                        <div class="checkbox-list mt-2 form-check">
+                                            <label class="checkbox checkbox-outline checkbox-outline-2x control-label">
+                                                <input type="checkbox" class="form-check-input" value="{{providerCategory.ProviderCategoryName}}"
+                                                    (click)="toggleProviderCategorySelection(providerCategory)" [checked]="ProviderCategorySelection?.indexOf(providerCategory) > -1"
+                                                    ng-disabled="false">
+                                                <span></span>{{providerCategory.ProviderCategoryName}}
+                                            </label>
+                                            <label class="checkbox" style="display: none"></label>
+                                        </div>}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- manage subcategories -->
+                            <div class="col-md-4 mt-5" *ngIf="subCategories?.length > 0 && isCustomSelected" [appPermission]="'GET_SUBCATEGORIES_FILTER'">
+                                <div class="portlet light pb0 pl0">
+                                    <label class="fw-semibold">
+                                        {{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_SUBCATEGORY'|translate}}
+                                    </label>
+                                    <div class="portlet-body p0">
+                                        @for (subCategory of subCategories; track $index) {
+                                        <div class="checkbox-list mt-2 form-check">
+                                            <label class="checkbox checkbox-outline checkbox-outline-2x control-label">
+                                                <input type="checkbox" class="form-check-input" value="{{subCategory.CategoryName}}"
+                                                    (click)="toggleProviderSubCategorySelection(subCategory)" [checked]="isSubCategorySelected(subCategory)"
+                                                    ng-disabled="false">
+                                                <span></span>{{subCategory.Name}}
+                                            </label>
+                                            <label class="checkbox" style="display: none"></label>
+                                        </div>}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer py-3">
+                    <div class="form-actions text-end">
+                        <button class="btn btn-sm btn-light-primary me-2" (click)="filter()">
+                            {{'TRANSLATE.SUBSCRIPTION_HISTORY_SEARCH_OPTION' | translate}}
+                        </button>
+                        <button class="btn btn-sm btn-light-primary me-2" (click)="resetFilters()">{{'TRANSLATE.SUBSCRIPTION_HISTORY_SEARCH_RESET_OPTION' |
+                            translate}}</button>
+                        <button class="btn btn-sm btn-light-primary me-2" (click)="filtersExpanded = false;">{{'TRANSLATE.SUBSCRIPTION_HISTORY_SEARCH_CLOSE_OPTION' |
+                            translate}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #price let-row="adtData">
+    <div>
+        {{row.NewPrice | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces :
+        row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator }}
+    </div>
+</ng-template>
+
+
+<ng-template #newPrice let-row="adtData">
+    <div>
+        <!-- {{ row.CurrencySymbol }}{{ row.NewPrice }} -->
+        {{row.NewPrice | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator}}
+        <span *ngIf="row.OldPrice && row.OldPrice != row.NewPrice">
+            <br /><sub class="text-muted mt-1 fw-semibold fs-8">{{'FROM' | translate}} {{row.OldPrice | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator}}</sub>
+        </span>
+    </div>
+</ng-template>
+
+
+<div class="">
+    <div class="">
+        <div>
+            <ng-template #subscriptionpills let-row="adtData">
+                <div>
+                    {{row.FriendlyName}}<span *ngIf="row.IsAddOn"><sup class="text-warning">{{'TRANSLATE.SUBSCRIPTION_HISTORY_TABLE_HEADER_TEXT_OFFER_ADD_ON'|translate}}</sup></span>
+                    <sup *ngIf="row.ProductForTrial != null && row.ProductForTrial != undefined && row.ProductForTrial != ''" class="text-warning shop-nce-addon fw-bold ps-1"><span
+                            translate="TRANSLATE.PLAN_MANAGE_TRAIL_OFFER_SYMBOL_TRAIL_OFFER"></span></sup>
+                    <br />
+                    @if(row.CategoryName.toLowerCase() ==
+                    cloudHubConstants.CATEGORY_ONLINE_SERVICES_NEW_COMMERCE_EXPERIENCE && row.ValidityType == 'Month(s)'
+                    && row.ProductForTrial == null){
+                    <span class="label label-dark font-weight-bold label-inline text-white badge bg-warning me-md-2 " aria-hidden="true"
+                        ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">{{row.Validity}}
+                        {{(row.Validity == 1? (row.ValidityType === 'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                        'TRANSLATE.TERM_DURATION_DESC_YEAR') : 'TRANSLATE.TERM_DURATION_DESC_YEAR(S))') | translate }}
+                    </span>
+                    }
+                    @if((row.ValidityType === 'Year(s)' || row.ValidityType === 'Year') && row.ProductForTrial == null){
+                    <span class="label label-dark font-weight-bold label-inline text-white badge bg-warning me-md-2 " aria-hidden="true"
+                        [ngClass]="{'labelcolor':row.BillingCycleName == 'Monthly','TermLabelColor': row.BillingCycleName == 'Annual'}"
+                        ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">{{row.Validity}}
+                        {{(row.Validity == 1? (row.ValidityType === 'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                        'TRANSLATE.TERM_DURATION_DESC_YEAR') : 'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                    </span>
+                    }
+                    @if(row.ProductForTrial != null){
+                    <span class="label label-sm label-inline label-warning badge bg-warning text-white" tooltip-placement="top" ngbTooltip="{{'TRANSLATE.PARTNER_OFFER_TRIAL_PERIOD_DAYS_TOOLTIP' | translate}}">{{row.Validity}}
+                        {{ 'TRANSLATE.'+row.ValidityType | translate}}</span>
+                    }
+                    @if(row.CategoryName != 'SoftwareSubscriptions' && row.CategoryName && row.CategoryName &&
+                    row.CategoryName.toLowerCase() !=
+                    cloudHubConstants.CATEGORY_ONLINE_SERVICES_NEW_COMMERCE_EXPERIENCE){
+                    <span class="label label-light-info font-weight-bold label-inline badge me-md-2 " ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CATEGORY' | translate}}">
+                        {{row.CategoryDescription | translate}} </span>
+                    }
+                    @if(row.CategoryName && row.CategoryName.toLowerCase() ==
+                    cloudHubConstants.CATEGORY_ONLINE_SERVICES_NEW_COMMERCE_EXPERIENCE){
+                    <span class="label label-light-info font-weight-bold label-inline badge me-md-2 "
+                        ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CATEGORY' | translate}}">{{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE'
+                        | translate}}</span>
+                    }
+                    @if(row.CategoryName && row.CategoryName.toLowerCase() ==
+                    cloudHubConstants.CATEGORY_SOFTWARE_SUBSCRIPTIONS){
+                    <span class="label label-light-info font-weight-bold badge  label-inline  badge text-nowrap me-md-2"
+                        ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CATEGORY' | translate}}">{{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE_SOFTWARE_SUBSCRIPTIONS'
+                        | translate}}</span>
+                    }
+                    @if(row.Subcategory) {
+                    <span [appPermission]="'GET_SUBCATEGORIES_PILLS'">
+                        <span class="badge badge-danger font-weight-bold label-inline ms-md-1"
+                            ngbTooltip="{{'TRANSLATE.PARTNER_CUSTOM_CATEGORY_FOR_SUBCATEGORY_TOOLTIP_PILL' | translate}}">
+                            {{ row.Subcategory }}
+                        </span>
+                    </span>
+                    }
+                    @if(row.BillingCycle){
+                    <span class="label font-weight-bold label-inline text-white badge bg-dark me-md-2 " [ngClass]="{
+                        'bg-warning': row.BillingCycleName?.toLowerCase() === 'monthly',
+                        'bg-success': row.BillingCycleName?.toLowerCase() === 'annual',
+                        'bg-dark': row.BillingCycleName?.toLowerCase() === 'triennial',
+                        'bg-info': row.BillingCycleName?.toLowerCase() === 'onetime'
+                        }" aria-hidden="true"
+                        ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_BUNDLE_LABEL_TEXT_BILLING_CYCLE' | translate}}">
+                        {{'TRANSLATE.' + row.BillingCycleDescription | translate}} </span>
+                    }
+                    @if(row.MarketCode){
+                    <span class="label label-info badge  label-inline me-md-2" ngbTooltip="{{row.MarketRegion}}">{{row.MarketCode}}</span>
+                    }
+                    @if(row.IsEST){
+                                <span class="badge EST-Pill-styling text-white ms-md-2" ngbTooltip="{{'TRANSLATE.CATEGORY_PILL_EST_TOOLTIP' | translate }}" >{{ 'TRANSLATE.CATEGORY_PILL_NAME_EST' | translate}}</span>
+                        }
+                    <span style="font-size:x-small;text-align:left" *ngIf="(row.EntityName.toLowerCase() === cloudHubConstants.ENTITY_SITE || row.EntityName.toLowerCase() === cloudHubConstants.ENTITY_SITEDEPARTMENT)
+                      && hasSiteEnabled.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED">
+                        <span>{{ 'TRANSLATE.INVOICES_LBL_OWNED_BY' | translate: { ownedBy: row.NameOfEntity } }}</span>
+                    </span>
+ 
+                </div>
+            </ng-template>
+
+            <ng-template #actionCol let-row="adtData">
+                <div>
+                    <span>
+                        {{row.CreatedDate | c3Date: true}}
+                    </span>
+                </div>
+            </ng-template>
+
+            <ng-template #quantity let-row="adtData">
+                <div class="text-end font-md" header-class="'header-price-alignment  col-md-1'">
+                    <strong>{{row.NewQuantity}}</strong>  
+                    <span *ngIf="row.OldQuantity !== row.NewQuantity"><br />
+                        <sub>{{'TRANSLATE.FROM' | translate}} {{row.OldQuantity}}</sub>
+                    </span>
+                </div>
+            </ng-template>
+
+            <ng-template #status let-row="adtData">
+                <div class="font-md body-alignment-normal col-md-1 text-nowrap" header-class="'header-alignment-normal col-md-1'">
+                    <span class="badge badge-light-success d-flex flex-column w-fit-content">{{'TRANSLATE.'+row.NewStatusDescription | translate}}<span *ngIf="row.NewStatusName !== row.OldStatusName"><sub>{{'TRANSLATE.FROM' | translate}} {{'TRANSLATE.'+row.OldStatusDescription | translate}}</sub></span></span>
+                </div>
+            </ng-template>
+
+            <!-- Check if datatableConfig is defined and then render the table -->
+            <ng-container *ngIf="!!datatableConfig">
+                <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" [searchFilter]="false">
+                </app-c3-table>
+            </ng-container>
+        </div>
+    </div>
+</div>

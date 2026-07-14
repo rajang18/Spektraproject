@@ -1,0 +1,136 @@
+<!-- Popover template -->
+<ng-template #trialOfferParentDetailsTemplate>
+    <div>
+    <div *ngIf="trialOfferParentProductDetails != null">
+      <table>
+        <tr class="font-size-sm">
+          <td class="font-weight-bold"><span>{{ 'TRANSLATE.TRIAL_OFFER_PARENT_PRODUCT_NAME' | translate }}</span></td>
+          <td>&nbsp;:&nbsp;</td>
+          <td><strong>{{ trialOfferParentProductDetails.ProductName }}</strong></td>
+        </tr>
+        <tr class="font-size-sm">
+          <td class="font-weight-bold"><span>{{ 'TRANSLATE.TRIAL_OFFER_PARENT_PROVIDER_NAME' | translate }}</span></td>
+          <td>&nbsp;:&nbsp;</td>
+          <td><strong>{{ 'TRANSLATE.'+trialOfferParentProductDetails.ProviderDescriptionKey | translate }}</strong></td>
+        </tr>
+        <tr class="font-size-sm">
+          <td class="font-weight-bold"><span>{{ 'TRANSLATE.TRIAL_OFFER_PARENT_CATEGORY_NAME' | translate }}</span></td>
+          <td>&nbsp;:&nbsp;</td>
+          <td><strong>{{ 'TRANSLATE.'+trialOfferParentProductDetails.CategoryDescriptionKey | translate }}</strong></td>
+        </tr>
+        <tr class="font-size-sm">
+          <td class="font-weight-bold"><span>{{ 'TRANSLATE.TRIAL_OFFER_PARENT_CONSUMPTION_TYPE' | translate }}</span></td>
+          <td>&nbsp;:&nbsp;</td>
+          <td><strong>{{ 'TRANSLATE.'+trialOfferParentProductDetails.ConsumptionTypeDescriptionKey | translate }}</strong></td>
+        </tr>
+        <tr class="font-size-sm">
+          <td class="font-weight-bold"><span>{{ 'TRANSLATE.TRIAL_OFFER_PARENT_TERM_DURATION' | translate }}</span></td>
+          <td>&nbsp;:&nbsp;</td>
+          <td>
+            <strong>
+              {{ trialOfferParentProductDetails.Validity }}
+              &nbsp;
+              {{ (trialOfferParentProductDetails.Validity == 1 ? 
+                 (product.ValidityType === 'Month(s)' ? 'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') : 'TRANSLATE.TERM_DURATION_DESC_YEAR(S)' )| translate }}
+            </strong>
+          </td>
+        </tr>
+        <tr class="font-size-sm">
+          <td class="font-weight-bold"><span>{{ 'TRANSLATE.TRIAL_OFFER_PARENT_BILLING_CYCLE_NAME' | translate }}</span></td>
+          <td>&nbsp;:&nbsp;</td>
+          <td><strong>{{ 'TRANSLATE.'+trialOfferParentProductDetails.BillingCycleDescription | translate }}</strong></td>
+        </tr>
+        <tr class="font-size-sm">
+          <td class="font-weight-bold"><span>{{ 'TRANSLATE.TRIAL_OFFER_PARENT_BILLING_TYPE' | translate }}</span></td>
+          <td>&nbsp;:&nbsp;</td>
+          <td><strong>{{ trialOfferParentProductDetails.BillingTypeDescription | translate }}</strong></td>
+        </tr>
+        <tr class="font-size-sm">
+          <td class="font-weight-bold"><span>{{ 'TRANSLATE.TRIAL_OFFER_PARENT_SALE_TYPE' | translate }}</span></td>
+          <td>&nbsp;:&nbsp;</td>
+          <td><strong>{{'TRANSLATE.'+trialOfferParentProductDetails.SaleTypeDescription | translate }}</strong></td>
+        </tr>
+        <tr class="font-size-sm">
+          <td class="font-weight-bold"><span>{{ 'TRANSLATE.TRIAL_OFFER_PARENT_PROVIDERSELLINGPRICE' | translate }}</span></td>
+          <td>&nbsp;:&nbsp;</td>
+          <td><strong>{{trialOfferParentProductDetails.ProviderSellingPrice | CurrencyFilter }}</strong></td>
+        </tr>
+        <tr class="font-size-sm">
+          <td class="font-weight-bold"><span>{{ 'TRANSLATE.TRIAL_OFFER_PARENT_IS_AUTO_RENEWABLE' | translate }}</span></td>
+          <td>&nbsp;:&nbsp;</td>
+          <td><strong>{{ 'TRANSLATE.'+trialOfferParentProductDetails.IsAutoRenewal ? 'Yes' : 'No' }}</strong></td>
+        </tr>
+      </table>
+    </div>
+    <div *ngIf="trialOfferParentProductDetails == null">
+      <span class="font-weight-bold font-size-h5">{{ 'TRANSLATE.LOADING_MESSAGE' | translate }}</span>
+    </div>
+    </div>
+  </ng-template>
+  
+  <div class="card card-border gutter-b" style="margin-bottom: 0px; padding-top: 10px; padding-bottom: 10px; padding-left: 10px; padding-right: 10px;">
+    <div class="card-body p-3">
+      <div class="row">
+        <div class="col-md-10">
+          <div class="row">
+            <div class="col-md-6">
+              <strong class="ms-1">{{ product.Name }}</strong>
+              <sup class="text-warning fw-bold ms-2"><span>{{ 'TRANSLATE.PLAN_MANAGE_TRAIL_OFFER_SYMBOL_TRAIL_OFFER' | translate }}</span></sup>
+              <br />
+              <span>
+                <span class="label label-light-primary font-weight-bold badge " *ngIf="product.ProviderSettings && product.ProviderSettings.ProviderCategory"> 
+                  {{ product.ProviderSettings.ProviderCategory | translate }} 
+                </span>
+                <span class="label label-dark font-weight-bold label-inline text-white badge bg-warning " aria-hidden="true" [ngbTooltip]="'TRANSLATE.PARTNER_OFFER_TRIAL_PERIOD_DAYS_TOOLTIP' | translate" tooltip-append-to-body="true">
+                  {{ product.NoOfDaysForFreeCancelation }} {{ 'TRANSLATE.TRIAL_PERIOD_DAYS_TEXT' | translate }}
+                </span>
+                <i class="ki-duotone ki-information-2 trial-offer-parent-icon fs-3 Customscheduleiconposition"
+                  container="body"
+                  aria-hidden="true"
+                  [ngbPopover]="trialOfferParentDetailsTemplate"
+                  triggers="mouseenter:mouseleave"
+                  popoverClass="popover-max-width"
+                  
+                  popoverTitle="{{'TRANSLATE.POPOVER_TITLE_TRIAL_OFFER_PARENT_DETAILS' | translate}}"
+                  popoverAppendToBody="true"
+                  *ngIf="this.Permissions"
+                  (mouseover)="getTrialOfferParentOfferDetails(product)">
+                  <span class="path1"></span>
+                  <span class="path2"></span>
+                  <span class="path3"></span>
+                </i>
+              </span>
+            </div>
+            <div class="col-md-3 col-6 col-sm-6 text-lg-end text-end text-sm-left mt-2 mt-sm-2 mt-lg-0 mt-xl-0">
+              <span>{{ 'TRANSLATE.LABLE_TEXT_COST_TO_PARTNER' | translate }}</span>
+              <br />
+              <strong>{{ product.PriceforPartner | CurrencyFilter : product.CurrencySymbol :
+                            product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                            product.CurrencyDecimalSeperator}}</strong>
+            </div>
+            <div class="col-md-3 col-6 col-sm-6 text-end mt-2 mt-sm-2 mt-lg-0 mt-xl-0">
+              <span>{{ 'TRANSLATE.LABEL_TEXT_RETAIL_PRICE' | translate }}</span>
+              <br />
+              <strong>{{ product.ProviderSellingPrice | CurrencyFilter : product.CurrencySymbol :
+                            product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                            product.CurrencyDecimalSeperator }}</strong>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2 mt-2  text-end" *ngIf="product.Settings.IsAddon == 'false' && !product.HasAddons" [appPermission]="'SAVE_PLAN'" [hidden]="!showAddButton">
+          <a class="btn btn-sm btn-primary" (click)="callOnAction(product, 'AddTrailToPlan');" [hidden]="!showAddButton">
+            {{ 'TRANSLATE.BUTTON_TEXT_ADD' | translate }}
+          </a>
+        </div>
+        <div class="col-md-2 mt-2  text-end" *ngIf="product.Settings.IsAddon == 'false' && product.HasAddons && !product.IsResellerPlanView" [appPermission]="'SAVE_PLAN'" [hidden]="!showAddButton">
+          <div class="actions" *ngIf="product.Settings.IsAddon == 'false'">
+            <div class="btn-group" *ngIf="product.CategoryName === 'Custom'">
+              <a (click)="callOnAction(product, 'AddTrailToPlan');" class="btn  btn-sm btn-primary" href="javascript:void(0)" [hidden]="!showAddButton">
+                {{ 'TRANSLATE.BUTTON_TEXT_ADD' | translate }}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

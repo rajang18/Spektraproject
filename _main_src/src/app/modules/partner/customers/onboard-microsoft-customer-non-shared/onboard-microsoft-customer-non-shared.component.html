@@ -1,0 +1,277 @@
+
+@if (((onboardCustomerModel != undefined && onboardCustomerModel.PlanIds > 0  && onboardCustomerModel.CustomerCurrencyCode !== null) || customerC3Id !== null) && !loadingSubscriptions) {
+
+    <div class="table-responsive mt-5">
+        @if(subscriptionsList?.length>0){
+            <div>
+                <table class="table table-striped table-bordered table-hover table-checkable">
+                    <thead>
+                        <tr>
+                            <th class="text-start fw-semibold fs-7 text-uppercase gs-0 col-md-5"><span translate="TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_PROVIDER_PRODUCT_NAME"></span></th>
+                            <th class="text-start fw-semibold fs-7 text-uppercase gs-0 col-md-4"><span translate="TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_MATCHING_PRODUCTS"></span></th>
+                            <th class="text-center fw-semibold fs-7 text-uppercase gs-0 col-md-3"><span translate="TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_ACTION"></span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (row of subscriptionsList; track $index) {
+                            <tr>
+                                <td style="width:20%;">
+                                    @if (row.ProviderSubscriptionBillingQualifiedOfferId.length > 40) {
+                                        <span>
+                                            <!-- ng-repeat="i in getTimes(row.ProviderSubscriptionBillingQualifiedOfferId.length / 36) track by $index" -->
+                                            <span>
+                                                &nbsp;&nbsp;
+                                            </span>
+                                        </span>
+                                    }
+                                    <span class="fw-semibold">{{row.ProviderSubscriptionFriendlyName}}</span>
+                                     @if ((row.ProviderSubscriptionBillingQualifiedOfferId.length > 40 || (row.CategoryName === 'OnlineServicesNCE' && row.IsAddon === true))) {
+                                        <span>
+                                            <sup class="text-warning fw-bold ms-1">
+                                                <span translate="TRANSLATE.PLAN_MANAGE_ADD_FORM_TABLE_1_HEADER_TEXT_OFFER_ADD_ON" ></span>
+                                            </sup>
+                                        </span>
+                                     }
+                                    
+                                     @if (row.Status === 'deleted') {
+                                        <sup class="text-danger fw-bold ms-1"><span translate="TRANSLATE.CUSTOMER_ONBOARDING_LBL_DELETED"></span></sup>
+                                     }
+                                    @if (row.Status === 'suspended') {
+                                        <sup class="text-danger fw-bold ms-1"><span translate="TRANSLATE.CUSTOMER_ONBOARDING_LBL_SUSPENDED"></span> </sup>
+                                    }
+    
+                                    @if (row.Status === 'expired') {
+                                        <sup class="text-danger fw-bold ms-1"><span translate="TRANSLATE.CUSTOMER_ONBOARDING_LBL_EXPIRED"></span></sup>
+                                    }
+                                    
+                                    @if (row.Status === 'disabled') {
+                                        <sup class="text-danger fw-bold ms-1"><span translate="TRANSLATE.CUSTOMER_ONBOARDING_LBL_DISABLED"></span></sup>
+                                    }
+                                    
+                                    <div class="font-size-sm font-weight-light">
+            
+                                        <div class="mb-1">
+                                            <span class="">
+                                                {{row.ProviderSubscriptionId}}
+                                            </span>
+                                        </div>
+                                        @if ((row.ValidityType !== undefined && row.ValidityType !== null && row.ValidityType !== '' && (row.CategoryName === 'OnlineServicesNCE' || row.CategoryName === 'SoftwareSubscriptions'))) {
+                                            <div class="mb-1">
+                                                <span class="" translate="TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE_VALIDITY_TERM"></span>
+    
+                                                @if (row.ValidityType === 'Month(s)') {
+                                                    <span class="label label-warning font-weight-bold label-inline text-white badge bg-warning" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}"> 
+                                                        {{row.Validity}} {{(row.Validity === 1? (row.ValidityType === 'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') : 'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                                                     </span>
+                                                }
+                                                
+                                                @if (row.ValidityType === 'Year(s)' || row.ValidityType === 'Year') {
+                                                    <span class="label label-warning font-weight-bold label-inline text-white badge bg-warning" [ngClass]="{'labelcolor':row.BillingCycleName === 'Monthly','TermLabelColor': row.BillingCycleName === 'Annual'}" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}"> 
+                                                        {{row.Validity}} {{(row.Validity === 1? (row.ValidityType === 'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') : 'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }} 
+                                                    </span>
+                                                }
+                                                
+                                            </div>
+                                        }
+                                        
+                                        <span class="label label-inline mb-1 label-auto-height badge text-white"
+                                        [ngClass]="{
+                                            'bg-warning': row.BillingCycleName?.toLowerCase() === 'monthly',
+                                            'bg-success': row.BillingCycleName?.toLowerCase() === 'annual',
+                                            'bg-dark': row.BillingCycleName?.toLowerCase() === 'triennial',
+                                            'bg-info': row.BillingCycleName?.toLowerCase() === 'onetime'
+                                        }"
+                                        >{{"TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_BILLING_CYCLE" | translate}}
+                                            {{'TRANSLATE.'+row.BillingCycleDescription | translate}}
+                                        </span>
+    
+                                        @if ((row.CategoryName !== undefined && row.CategoryName !== null && row.CategoryName !== '' && (row.CategoryName === 'OnlineServicesNCE' || row.CategoryName === 'SoftwareSubscriptions'))) {
+                                            <div>
+                                                @if (row.CategoryName === 'OnlineServicesNCE') {
+                                                    <span class="label label-light-info label-pill label-lg label-inline badge" translate="TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE"></span>
+                                                }
+                                                
+                                                @if (row.CategoryName === 'SoftwareSubscriptions') {
+                                                    <span class="label label-light-info badge bg-primary-info" translate="TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE_SOFTWARE_SUBSCRIPTIONS"></span>
+                                                }
+                                                @if (row.MarketCode) {
+                                                    <span  class="badge bg-info text-white">
+                                                        {{row.MarketCode}}
+                                                    </span>
+                                                }
+                                                
+                                            </div>
+                                        }
+                                        @if ((row.CategoryName !== undefined && row.CategoryName !== null && row.CategoryName !== '' && row.CategoryName === 'PerpetualSoftware')) {
+                                            <div>
+                                                <span class="label label-light-info label-inline label-auto-height badge btn-bg-light-info" translate="TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE_PERPETUAL_SOFTWARE"></span>
+                                            </div>
+                                        }
+                                        
+                                        @if ((row.PromotionId !== undefined && row.PromotionId !== null && row.PromotionId !== '') && (entityName === 'Partner' || (entityName === 'Reseller' && row.IsPromotionAvailableForCustomer))) {
+                                            <div>
+                                                <span (click)="getProviderPromotionsDetails(row)" class="mb-0 mr-2 font-weight-normal  separator-primary text-primary cursor-pointer" ngbTooltip="{{'TRANSLATE.NCE_PROMOTIONS_AVAILABLE_TEXT' | translate}}">
+                                                    <i class="ki-outline ki-discount text-primary"></i>
+                                                </span>
+                                            </div>
+                                        }
+                                        
+                                    </div>
+                                </td>
+                                <td>
+                                    <ng-select name="PlanProductName" [(ngModel)]="row.MappedC3PlanProduct" [readonly]="row.IgnoredProduct || !row.MappingC3PlanProducts" [items]="row?.MappingC3PlanProducts"
+                                        placeholder="{{'TRANSLATE.DROPDOWN_PLACEHOLDER_SELECT' | translate}}" ng-click="vm.SelectPlanProductId(row,$select.selected)"  (change)="selectPlanProductId(row,row.MappedC3PlanProduct)" appendTo="body">
+                                    @if (row.MappedC3PlanProduct !== null && row.MappedC3PlanProduct!== '') {
+                                        <ng-template ng-label-tmp let-planProducts="item">
+                                            <span>{{ planProducts.PlanOfferQualifiedOfferName}}</span>
+                                        </ng-template>
+                                    }
+                                        
+                                        <ng-template ng-option-tmp let-planProducts="item" let-search="searchTerm">
+                                        <div>
+                                            @if(planProducts.LinkedProductId){
+                                                <span><i class="icon-link"></i></span>
+                                            }
+                                            <div>{{planProducts?.PlanOfferQualifiedOfferName}}</div>
+                                            @if(!planProducts.IsCustom){
+                                                <div><small> {{'TRANSLATE.MATCHING_PRODUCT_PLAN_TEXT' | translate}} <span ng-bind-html="planProducts.PlanName">{{planProducts.PlanName}}</span> </small></div>
+                                            }
+                                            @if((planProducts.CategoryName !== undefined && planProducts.CategoryName !== null && planProducts.CategoryName !== '' && (planProducts.CategoryName === 'OnlineServicesNCE' || planProducts.CategoryName === 'SoftwareSubscriptions' || planProducts.CategoryName === 'PerpetualSoftware'))){
+    
+                                                <div><small>
+                                                    <span translate="TRANSLATE.LABEL_TEXT_CATEGORY">
+                                                    </span>&nbsp;&colon;&nbsp;
+                                                    @if(planProducts.CategoryName === 'OnlineServicesNCE'){
+                                                        <span>
+                                                            {{ row.LocalIsEST
+                                                            ? ('TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE_EST' | translate)
+                                                            : ('TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE' | translate)
+                                                            }}
+                                                        </span>
+                                                    }
+                                                    @if(planProducts.CategoryName === 'SoftwareSubscriptions'){
+                                                        <span translate="TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE_SOFTWARE_SUBSCRIPTIONS"></span>
+                                                    }
+                                                    @if(planProducts.CategoryName === 'PerpetualSoftware'){
+                                                        <span translate="TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE_PERPETUAL_SOFTWARE"></span>
+                                                    }
+                                                    
+                                                   </small></div>
+                                            }
+                                            
+                                            
+                                                <div>
+                                                    @if((planProducts.ValidityType !== undefined && planProducts.ValidityType !== null && planProducts.ValidityType !== '' && (planProducts.CategoryName === 'OnlineServicesNCE' || planProducts.CategoryName === 'SoftwareSubscriptions'))){
+                                                    <small>
+                                                        <span translate="TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE_TERM"></span>
+                                                        &nbsp;&colon;&nbsp;
+                                                        <span>{{planProducts.Validity}} {{(planProducts.Validity === 1? (planProducts.ValidityType === 'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') : 'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                                                        </span>
+                                                    </small>
+                                                }
+                                                </div>
+                                            
+                                            
+                                            <div>
+                                                @if((planProducts.BillingCycleDescription !== undefined && planProducts.BillingCycleDescription !== null && planProducts.BillingCycleDescription !== '')){
+                                                    <small>
+                                                        <span translate="TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_BILLING_CYCLE"></span>
+                                                        <span>{{'TRANSLATE.'+planProducts.BillingCycleDescription | translate}}</span>
+                                                    </small>
+                                                }
+                                            </div>
+                                            <div>
+                                                @if(planProducts.BillingTypeName === 'Price' && planProducts.CompositeProductId === null){
+                                                    <small> 
+                                                        {{'TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_PRICE' | translate}}: <span [innerHTML]="planProducts.CurrencySymbol"></span>
+                                                        <span [innerHTML]="planProducts.FinalSalePrice"></span>
+                                                     </small>
+                                                }
+                                            </div>
+                                            
+                                            <div>
+                                                @if(planProducts.BillingTypeName === 'Markup' && planProducts.CompositeProductId === null){
+                                                    <small> 
+                                                        {{'TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_MARKUP' | translate}}: <span [innerHTML]="planProducts.FinalSalePrice"></span>% 
+                                                    </small>
+                                                }
+                                                
+                                            </div>
+    
+                                            <div>
+                                                @if(planProducts.BillingTypeName === 'Percentage' && planProducts.CompositeProductId === null){
+                                                    <small> 
+                                                        {{'TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_PERCENTAGE' | translate}}: <span [innerHTML]="planProducts.FinalSalePrice"></span>% 
+                                                    </small>
+                                                }
+                                                
+                                            </div>
+                                            <div>
+                                                @if(planProducts.BillingTypeName === 'MSCostPercentage' && planProducts.CompositeProductId === null){
+                                                    <small> 
+                                                        {{'TRANSLATE.CUSTOMER_ONBOARDING_TABLE_HEADER_TEXT_MS_COST_PERCENTAGE' | translate}}: <span [innerHTML]="planProducts.FinalSalePrice"></span>% 
+                                                    </small>
+                                                }
+                                                
+                                            </div>
+                                            <div>
+                                                @if(planProducts.MarketCode){
+                                                    <small><span>{{planProducts.MarketCode}}-{{planProducts.MarketRegion}}</span></small>
+                                                }
+                                            </div>
+                                            <!--<div ng-if="userContext.entityName == 'Reseller' && planProducts.IsPromotionAvailableForCustomer"><small> <b>{{'NCE_PROMOTIONS_AVAILABLE_TEXT' | translate}}</b> </small></div>-->
+                                        </div>
+                                        </ng-template>
+                                    </ng-select>
+                                </td>
+                                <td class="text-center">
+                                    @if (!row.IgnoredProduct && row.MappedC3PlanProductId != null && row.MappedC3PlanProductId != '' && row.CanShowSkipAndIncludeAction) {
+                                        <a class="btn btn-sm btn-light-danger red tooltips me-2" (click)="skipProviderSubscription(row)">
+                                            {{'TRANSLATE.BTN_TEXT_SKIP' | translate}}
+                                        </a>
+                                    }
+    
+                                    @if (row.IgnoredProduct && row.MappedC3PlanProductId !=null && row.MappedC3PlanProductId != '' && row.CanShowSkipAndIncludeAction) {
+                                        <a class="btn btn-sm btn-light-primary tooltips me-2" (click)="takeOnProviderSubscription(row)">
+                                            {{'TRANSLATE.BTN_TEXT_TAKE_ON' | translate}}
+                                        </a>
+                                    }
+                                    
+                                    @if (!row.IgnoredProduct && row.MappedC3PlanProductId != null && row.MappedC3PlanProductId != '' && (row.PromotionId !== undefined && row.PromotionId !== null && row.PromotionId !== '') && (row.IsApplyPromotionSelected === undefined || !row.IsApplyPromotionSelected) && (entityName === 'Partner' || (entityName === 'Reseller' && row.IsPromotionAvailableForCustomer))) {
+                                        <a class="btn btn-sm btn-light-success green tooltips me-2" (click)="row.IsApplyPromotionSelected = true">
+                                            {{'TRANSLATE.BTN_TEXT_MAP_PROMOTIONAL_OFFER' | translate}}
+                                        </a>
+                                    }
+                                    
+                                    @if (!row.IgnoredProduct && row.MappedC3PlanProductId != null && row.MappedC3PlanProductId != '' && (row.PromotionId !== undefined && row.PromotionId !== null && row.PromotionId !== '') && row.IsApplyPromotionSelected && (entityName === 'Partner' || (entityName === 'Reseller' && row.IsPromotionAvailableForCustomer))) {
+                                        <a class="btn btn-sm btn-light-danger red tooltips me-2"  (click)="row.IsApplyPromotionSelected = false">
+                                            {{'TRANSLATE.BTN_TEXT_REMOVE_MAP_PROMOTIONAL_OFFER' | translate}}
+                                        </a>
+                                    }
+                                    
+                                </td>
+                            </tr>
+                        }
+                        
+                    </tbody>
+                </table>
+            </div>
+        }
+        @if ((subscriptionsList !== [] && subscriptionsList !== null && subscriptionsList !== undefined && subscriptionsList?.length === 0) && (pageVisibleList.indexOf('CustomerDetails') === -1)) {
+            <div class="col-md-12">
+                <strong> <span class="text-success ng-binding" translate="TRANSLATE.CUSTOMER_ONBOARDING_TABLE_TD_MESSAGE_NO_SUBSCRIPTIONS_FOUND"></span> </strong>
+            </div>
+        }
+        
+    </div>
+}
+
+@if ((onboardCustomerModel != undefined && (onboardCustomerModel.PlanIds !== null || customerC3Id !== null)) && (pageVisibleList != undefined && pageVisibleList.indexOf('CustomerDetails') === -1) && (pageVisibleList.indexOf('PlanDetails') >= 0) && !loadingSubscriptions) {
+    <div class="form-actions float-end">
+        <button class="btn btn-sm btn-light-primary btn-xs mr-2 mt-2" (click)="collectCustomerDetails()">
+            <!-- <busy-message><i class="fa fa-spinner fa-spin"></i><span translate="TRANSLATE.MESSAGE_TEXT_PLEASE_WAIT"></span></busy-message> -->
+            {{'TRANSLATE.CUSTOMER_ONBOARDING_BUTTON_TEXT_COLLECT_CUSTOMER_DETAILS' | translate}}
+        </button>
+    </div>
+}
+

@@ -1,0 +1,18 @@
+.modal {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Adjusting the size of the Bootstrap modal */
+  .modal-dialog {
+    max-width: 600px;
+  }
+
+  ::ng-deep {
+    app-resellers-listing {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}

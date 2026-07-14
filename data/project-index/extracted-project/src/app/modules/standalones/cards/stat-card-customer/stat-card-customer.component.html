@@ -1,0 +1,45 @@
+@if(cardType !== cardsTypes.users){
+<div class="card card-custom card-stretch bgi-no-repeat bgi-size-cover bgi-position-y-top bgi-position-x-center" [ngClass]="bgColor" (click)="openCardRelatedPage()"
+    style="cursor: pointer;">
+    <div class="card-body p0" style="height:150px;">
+        <div class="d-flex align-items-center justify-content-between flex-grow-1">
+            @if(cardType === cardsTypes.sites){
+                <i class="ki-outline ki-abstract-27 fs-4x"></i>
+            }
+            @else if(cardType === cardsTypes.departments){
+                <i class="ki-outline ki-category fs-3x"></i>
+            }
+            @else if(cardType === cardsTypes.users){
+            <span class="svg-icon svg-icon-4x svg-icon-white">
+                <i class="ki-outline ki-profile-user" style="font-size: 40px;">
+                </i>
+            </span>
+
+            }
+            <div class="d-flex flex-column text-right">
+                @if(cardType === cardsTypes.sites){
+                <span class="fw-bolder text-white fs-2 text-end ">{{ siteCount?.Data.Count}}</span>
+                }
+                @else if(cardType === cardsTypes.departments){
+                <span class="fw-bolder text-white fs-2 text-end ">{{ deptCount?.Data.Count}}</span>
+                }
+                @else if(cardType === cardsTypes.users){
+                <span class="fw-bolder text-white fs-2 text-end ">{{ userCount?.Data.Count}}</span>
+                }
+                <span class=" text-white fs-4">
+                    @if(cardType === cardsTypes.sites){
+                    <span translate="TRANSLATE.DASHBOARD_SITES_COUNT_TEXT_SITES"></span>
+                    }
+                    @else if(cardType === cardsTypes.departments){
+                    <span translate="TRANSLATE.DASHBOARD_DEPARTMENTS_COUNT_TEXT_DEPARTMENTS"></span>
+                    }
+                    @else if(cardType === cardsTypes.users){
+                    <span translate="TRANSLATE.DASHBOARD_TAIL_1_TEXT_USERS"></span>
+                    }
+                </span>
+            </div>
+        </div>
+
+    </div>
+</div>
+}

@@ -1,0 +1,197 @@
+<ng-template #actionHeader>
+  <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+    <button type="button" class="btn btn-sm fw-semibold btn-light-primary" (click)="backToManageSubcategories()">
+      <i class="ki-outline ki-to-left fs-2"></i> <span
+        translate="TRANSLATE.SUBCATEGORY_CAPTION_BUTTON_TEXT_BACK_TO_MANAGE_SUBCATEGORIES"></span>
+    </button>
+  </div>
+</ng-template>
+
+<div class="card card-custom" *ngIf="renderWithCard">
+  <!-- begin::Header -->
+  <div class="card-header card-header-stretch overflow-auto" *ngIf="hideNav()">
+    <ul class="nav nav-stretch nav-line-tabs fw-semibold border-transparent flex-nowrap" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link cursor-pointer text-primary active">
+          {{"TRANSLATE.CUSTOM_OFFERS_BREADCRUMB_BUTTON_TEXT_MANAGE_SUBCATEGORIES" | translate}}
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="card-body">
+    <div class="add-customer-container">
+      <form [formGroup]="subCategoryRegisterForm">
+        <div class="form-group row">
+          <div class="form-group row mt-5">
+            <!-- Provider Dropdown -->
+            <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+              <label class="required fw-semibold fs-6" translate="TRANSLATE.MANAGE_SUBCATEGORY_PROVIDER"></label>
+            </div>
+            <div class="col-5">
+              <select class="form-select form-select-sm fw-bold" formControlName="provider">
+                <option *ngFor="let provider of providers" [value]="provider.ID">
+                  {{provider?.Description | translate}}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group row mt-5">
+            <!-- Category Dropdown -->
+            <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+              <label class="required fw-semibold fs-6" translate="TRANSLATE.MANAGE_SUBCATEGORY_CATEGORY"></label>
+            </div>
+            <div class="col-5">
+              <select class="form-select  form-select-sm fw-bold" formControlName="CategoryIds"
+                (change)="categoryChange()">
+                @for(option of (categories | ignoreFromList :'Name':['customtrial']); track $index){
+                <option [value]="option.ID">
+                  {{option.CategoryDescriptionKey | translate}}
+                </option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group row mt-5">
+            <!-- Subcategory -->
+            <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+              <label class="required fw-semibold fs-6" translate="TRANSLATE.MANAGE_SUBCATEGORY_NAME"></label>
+            </div>
+            <div class="col-5">
+              @if (!isEditing) {
+              <input type="text" class="form-control form-control-sm fw-bold" formControlName="SubCategoryName">
+              } @else {
+              <select class="form-select form-select-sm fw-bold" formControlName="SubCategoryName">
+                <option *ngFor="let s of subcategoryOptions" [value]="s.Name">{{s.Name }}</option>
+              </select>
+              }
+              @if(formSubmit && subCategoryRegisterForm.get('SubCategoryName')?.hasError('required')){
+              <p class="text-danger" translate="TRANSLATE.REQUIRED_FIELD_TEXT"></p>
+              }
+
+              @if((formSubmit || subCategoryRegisterForm.get('SubCategoryName')?.dirty)
+              && subCategoryRegisterForm.get('SubCategoryName')?.hasError('maxlength')){
+              <p class="text-danger" translate="TRANSLATE.SUBCATEGORY_NAME_MAXLENGTH"></p>
+              }
+              @if(formSubmit && duplicateName && subCategoryRegisterForm.value.SubCategoryName){
+              <p class="text-danger" translate="TRANSLATE.SUBCATEGORY_NAME_ALREADY_EXIST"></p>
+              }
+            </div>
+          </div>
+
+          <div class="form-group row mt-5">
+            <!-- Description -->
+            <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+              <label class="fw-semibold fs-6" translate="TRANSLATE.MANAGE_SUBCATEGORY_DESCRIPTION"></label>
+            </div>
+            <div class="col-5">
+              <textarea rows="3" class="form-control form-control-sm fw-bold" formControlName="Description" 
+              placeholder="{{ 'PLACEHOLDER_ENTER_TEXT' | translate }}"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Buttons -->
+        <div class="col-md-12 text-end" *ngIf="IsActive || !subcategorybyId" [appPermission]="'MANAGE_SUBCATEGORIES_LIST'">
+          <button type="button" class="btn btn-sm btn-light btn-active-light-primary me-2"
+            [routerLink]="['/partner/distributoroffers']">
+            <span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span>
+          </button>
+          <button type="button" class="btn btn-sm btn-primary me-2" (click)="saveSubCategory()"
+            [disabled]="!IsActive && subcategorybyId">
+            {{ isEditing ? ('TRANSLATE.BUTTON_TEXT_UPDATE' | translate) : ('TRANSLATE.BUTTON_TEXT_SUBMIT' | translate)
+            }}
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<div class="add-customer-container" *ngIf="!renderWithCard">
+  <form [formGroup]="subCategoryRegisterForm">
+    <div class="form-group row">
+      <div class="form-group row mt-5">
+        <!-- Provider Dropdown -->
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="required fw-semibold fs-6" translate="TRANSLATE.MANAGE_SUBCATEGORY_PROVIDER"></label>
+        </div>
+        <div class="col-5">
+          <select class="form-select form-select-sm fw-bold" formControlName="provider">
+            <option *ngFor="let provider of providers" [value]="provider.ID">
+              {{provider?.Description | translate}}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group row mt-5">
+        <!-- Category Dropdown -->
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="required fw-semibold fs-6" translate="TRANSLATE.MANAGE_SUBCATEGORY_CATEGORY"></label>
+        </div>
+        <div class="col-5">
+          <select class="form-select  form-select-sm fw-bold" formControlName="CategoryIds" (change)="categoryChange()">
+            @for(option of (categories | ignoreFromList :'Name':['customtrial']); track $index){
+            <option [value]="option.ID">
+              {{option.CategoryDescriptionKey | translate}}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group row mt-5">
+        <!-- Subcategory -->
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="required fw-semibold fs-6" translate="TRANSLATE.MANAGE_SUBCATEGORY_NAME"></label>
+        </div>
+        <div class="col-5">
+          @if (!isEditing) {
+          <input type="text" class="form-control form-control-sm fw-bold" formControlName="SubCategoryName" required />
+          } @else {
+          <select class="form-select form-select-sm fw-bold" formControlName="SubCategoryName">
+            <option *ngFor="let s of subcategoryOptions" [value]="s.Name">{{ s.Name }}</option>
+          </select>
+          }
+          @if(formSubmit && subCategoryRegisterForm.get('SubCategoryName')?.hasError('required')){
+          <p class="text-danger" translate="TRANSLATE.REQUIRED_FIELD_TEXT"></p>
+          }
+
+          @if((formSubmit || subCategoryRegisterForm.get('SubCategoryName')?.dirty)
+          && subCategoryRegisterForm.get('SubCategoryName')?.hasError('maxlength')){
+          <p class="text-danger" translate="TRANSLATE.SUBCATEGORY_NAME_MAXLENGTH"></p>
+          }
+          @if(formSubmit && duplicateName && subCategoryRegisterForm.value.SubCategoryName){
+          <p class="text-danger" translate="TRANSLATE.SUBCATEGORY_NAME_ALREADY_EXIST"></p>
+          }
+        </div>
+      </div>
+
+      <div class="form-group row mt-5">
+        <!-- Description -->
+        <div class="col-md-2 text-left text-sm-left text-md-right text-lg-right text-start">
+          <label class="fw-semibold fs-6" translate="TRANSLATE.MANAGE_SUBCATEGORY_DESCRIPTION"></label>
+        </div>
+        <div class="col-5">
+          <textarea rows="3" class="form-control form-control-sm fw-bold" formControlName="Description"
+            placeholder="{{ 'PLACEHOLDER_ENTER_TEXT' | translate }}"></textarea>
+        </div>
+      </div>
+    </div>
+  </form>
+  <!-- Form Buttons -->
+  <div class="col-md-12 text-end" *ngIf="IsActive || !subcategorybyId" [appPermission]="'MANAGE_SUBCATEGORIES_LIST'">
+    <button type="button" class="btn btn-sm btn-light btn-active-light-primary me-2"
+      [routerLink]="['/partner/customoffer/manage-subcategories']">
+      <span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span>
+    </button>
+    <button class="btn btn-sm btn-primary me-2" (click)="saveSubCategory()" [disabled]="!IsActive && subcategorybyId">
+      {{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}
+    </button>
+  </div>
+
+</div>

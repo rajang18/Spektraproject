@@ -1,0 +1,296 @@
+<div class="card card-custom gutter-b card-stretch card-border">
+    <div class="card-body">
+        <div class="d-flex align-items-center">
+            @if (product.ImageUrl) {
+            <div class="flex-shrink-0 me-4 symbol symbol-65 mr-4">
+                <img [src]="product.ImageUrl">
+            </div>
+            }
+            @if (!product.ImageUrl) {
+            <div class="flex-shrink-0 me-4 symbol symbol-dark symbol-65 mr-4">
+                <span class="symbol-label font-size-h1 bg-dark text-white">
+                    {{product.Name | formatforinitials}}
+                </span>
+            </div>
+            }
+            <div class="d-flex flex-column mr-auto">
+                <div>
+                    <!--START::To update-->
+                    @if(!product.IsEdit){
+                    <span class="h5 font-weight-boldest" ngbTooltip="{{product.Name}}" tooltip-append-to-body="true" tooltip-class="text-capitalize" tooltip-placement="bottom">{{product.Name | limitLength:50}}</span>
+                    }
+                    @if(product.IsEdit != true && product.Name !=null && product.Name.length > 50){
+                    <span class="card-title text-hover-primary font-weight-bolder font-size-h5 text-dark mb-1">...</span>
+                    }
+                    @if(product.IsEdit != true){
+                    <a class="btn btn-icon" (click)="product.IsEdit = true">
+                        <i class="ki-outline ki-pencil text-primary" aria-hidden="true" data-toggle="tooltip" data-placement="top" ngbTooltip="{{'TRANSLATE.TOOLTIP_TEXT_EDIT_NAME'|translate}}"></i>
+                    </a>
+                    }
+                    @if(product.IsEdit){
+                    <div class="row" ng-if="product.IsEdit === true">
+                        <div class="col-md-9">
+                            <input type="text" [(ngModel)]="product.UpdatedProductName" class="form-control form-control-sm">
+                        </div>
+
+                        <div class="btn-group col-md-2 p-0">
+                            <a class="btn btn-icon" (click)="callUpdateProductNameInCart(product.UpdatedProductName);" [hidden]="product.IsEdit === false">
+                                <i class="ki-outline ki-check fs-1 text-success"></i>
+                            </a>
+                            <a class="btn btn-icon" (click)="product.IsEdit = false;product.UpdatedProductName=product.Name;" [hidden]="product.IsEdit === false">
+                                <i class="ki-outline ki-cross fs-1 text-danger"></i>
+                            </a>
+                        </div>
+                    </div>
+                    }
+                    <!--END :: To update-->
+                </div>
+                @if(product.LinkedSubscription){
+                <span class="text-muted font-weight-bold">
+                    <a  class="text-muted text-hover-primary font-weight-bold mr-5 mb-lg-0 mb-2">
+                        <i class="ki-duotone ki-paper-clip text-warning fs-2"></i>&nbsp;{{product.LinkedSubscription.Name}}
+                        @if(product.LinkedSubscription.ProviderSettings && product.LinkedSubscription.ProviderSettings.EnforceAttestation == 'TRUE'){
+                        <span class="font-weight-normal separator-primary text-primary cursor-pointer"><span><i class="ki-outline ki-verify text-primary mt-1"></i></span></span>
+                        }
+                    </a>
+                </span>
+                }
+                <span>
+                    @if(product.ValidityType!=null && product.ValidityType == 'Month(s)'){
+                    <span class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-0" aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}"> {{product.Validity}} {{(product.Validity == 1 ? (product.ValidityType === 'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') : ('TRANSLATE.TERM_DURATION_DESC_YEAR(S)')) | translate }} </span>
+                    }
+                    @if(product.ValidityType === 'Year(s)' || product.ValidityType === 'Year'){
+                    <span class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2" aria-hidden="true" [ngClass]="{'labelcolor':product.BillingCycleName == 'Monthly','TermLabelColor': product.BillingCycleName == 'Annual'}" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">{{product.Validity}} {{(product.Validity == 1 ? (product.ValidityType === 'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') : ('TRANSLATE.TERM_DURATION_DESC_YEAR(S)')) | translate }} </span>
+                    }
+                    @if(product.BillingCycleName && product.BillingCycleName !== ''){
+                    <span class="label fw-bold label-inline text-white badge ms-md-2" [ngClass]="{
+                        'bg-warning': product.BillingCycleName?.toLowerCase() === 'monthly',
+                        'bg-success': product.BillingCycleName?.toLowerCase() === 'annual',
+                        'bg-dark': product.BillingCycleName?.toLowerCase() === 'triennial',
+                        'bg-info': product.BillingCycleName?.toLowerCase() === 'onetime'
+                        }" aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}">{{'TRANSLATE.'+product.BillingCycleDescription | translate}}</span>
+                    }
+                    @if(product.ProviderSettings && product.ProviderSettings.ProviderCategory){
+                    <span class="label label-light-warning font-weight-bold label-inline text-warning badge bg-light-warning ms-md-2">{{product.ProviderSettings.ProviderCategory | translate}}</span>
+                    }
+                    @if(product.BillingTypeName && product.BillingTypeName !== ''){
+                    <span class="label label-light-danger font-weight-bold label-inline text-danger badge bg-light-danger ms-md-2 width-text-wrapper" ngbTooltip="{{'TRANSLATE.BILLING_TYPE_TOOLTIP' | translate}}">{{'TRANSLATE.'+product.BillingTypeDescription | translate}}</span>
+                    }
+                    <span *ngIf="product.SubCategoryName" [appPermission]="'GET_SUBCATEGORIES_PILLS'">
+                        <span
+                            class="badge badge-danger font-weight-bold label-inline ms-md-1"
+                            ngbTooltip="{{'TRANSLATE.PARTNER_CUSTOM_CATEGORY_FOR_SUBCATEGORY_TOOLTIP_PILL' | translate}}">
+                            {{ product.SubCategoryName }}
+                        </span>
+                    </span>
+                </span>
+            </div>
+            <div class="card-toolbar mb-auto">
+                <a #buttonRef class="btn btn-circle btn-sm btn-icon btn-light-primary me-2" [appPermission]="'menu_customer_comments'" ngbTooltip="{{'TRANSLATE.CART_CARD_COMMENT_ACTION' | translate}}" (click)="callManageProduct()" >
+                    <i class="ki-outline ki-messages"></i>
+                    </a>
+                <button class="btn btn-circle btn-sm btn-icon btn-light-danger me-2" [appPermission]="'DELETE_CART_ITEM'" ngbTooltip="{{'TRANSLATE.DELETE_PRODUCT_BUTTON_TOOLTIP_TEXT' | translate}}" (click)="callDeleteProductFromCart()" >
+                    <i class="ki-outline ki-trash"></i>
+                </button>
+            </div>
+        </div>
+        <div class="d-flex">
+            <div class="flex-grow-1">
+                <div class="d-flex align-items-center justify-content-between flex-wrap mt-2">
+                    <div class="flex-grow-1 font-weight-bold text-dark-50 py-2 py-lg-2 mr-5">
+                        <p class="mb-0 width-text-wrapper">
+                            {{product.Description}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex flex-wrap mt-5">
+            <div class="d-flex flex-wrap pb-5">
+                @if(product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE){
+                    <div class="mr-12 d-flex flex-column">
+                        <span class="d-block fw-bold"><span translate="TRANSLATE.CART_PAGE_TITLE_PRICE"></span></span>
+                        <div class="d-flex">
+                            <span class="font-weight-bolder h5 pt-2">
+                                <span class="font-weight-bolder text-info me-5">
+                                    {{product.DisplayFinalSalePrice | CurrencyFilter : product.CurrencySymbol :
+                                    product.CurrencyDecimalPlaces : product.CurrencyThousandSeparator : product.CurrencyDecimalSeparator}}
+                                    @if(product.Discount != null && product.Discount > 0){
+                                    <span class="font-weight-bolder text-danger">
+                                        <br />
+                                        <small>
+                                            <del>{{product.DisplayOriginalSalePrice| CurrencyFilter : product.CurrencySymbol :
+                                                product.CurrencyDecimalPlaces : product.CurrencyThousandSeparator :
+                                                product.CurrencyDecimalSeparator}}</del>
+                                            <span
+                                                [innerHTML]="('TRANSLATE.CART_PAGE_DISCOUNT_INFORMATION')| translate :{ discount: product.Discount}"></span>
+                                        </small>
+                                    </span>
+                                    }
+                                </span>
+                            </span>
+                        </div>
+                        @if(product.LinkedSubscription){
+                            <div class="d-flex">
+                                <span class="text-muted font-weight-bold" tooltip-append-to-body="true">
+                                    <a class="text-muted text-hover-primary font-weight-bold mb-2 cursor-pointer" ngbTooltip="{{'TRANSLATE.NCE_LINKED_PRODUCT_ESTIMATE_SALE_PRICE_TEXT' | translate}}">
+                                        <i class="ki-duotone ki-paper-clip text-warning small"></i>&nbsp;
+                                        <span class="font-weight-bolder h5 pt-2">
+                                            <span class="font-weight-bolder text-info">
+                                                {{product.LinkedSubscription.DisplayFinalSalePrice | CurrencyFilter :
+                                                product.LinkedSubscription.CurrencySymbol : product.LinkedSubscription.CurrencyDecimalPlaces
+                                                : product.LinkedSubscription.CurrencyThousandSeparator :
+                                                product.LinkedSubscription.CurrencyDecimalSeparator}}
+                                                @if(product.LinkedSubscription.Discount != null && product.LinkedSubscription.Discount > 0){
+                                                <span
+                                                    ng-if="product.LinkedSubscription.Discount != null && product.LinkedSubscription.Discount > 0"
+                                                    class="font-weight-bold text-danger">
+                                                    <br />
+                                                    <small>
+                                                        <del>{{product.LinkedSubscription.DisplayOriginalSalePrice| CurrencyFilter :
+                                                            product.LinkedSubscription.CurrencySymbol :
+                                                            product.LinkedSubscription.CurrencyDecimalPlaces :
+                                                            product.LinkedSubscription.CurrencyThousandSeparator :
+                                                            product.LinkedSubscription.CurrencyDecimalSeparator}}</del>
+                                                        <span
+                                                            [innerHTML]="('TRANSLATE.CART_PAGE_DISCOUNT_INFORMATION')| translate :{ discount: product.LinkedSubscription.Discount}"></span>
+                                                    </small>
+                                                </span>
+                                                }
+                                            </span>
+                                        </span>
+                                    </a>
+                                </span>
+                                @if(product.LinkedSubscription.IsPromotionAvailableForCustomer && product.LinkedSubscription.ShowPromotionLink){
+                                    &nbsp;
+                                    <span [appPermission]="'ARE_NCE_PROMOTIONS_ENABLED'" [ngClass]="{'mt-6':product.LinkedSubscription.Discount}">
+                                        <span (click)="showLinkedProductPromotionDetail(product.LinkedSubscription)" 
+                                        class="mb-0 font-normal separator-primary text-primary cursor-pointer">
+                                        <span tooltip-append-to-body="true" >
+                                            <i class="ki-outline ki-discount text-primary"></i></span>
+                                        </span>
+                                        <span (click)="checkNceLinkedProductPromotionEligibility(product.LinkedSubscription)" class="mb-0 me-4 font-normal  separator-primary text-primary cursor-pointer">
+                                                {{'TRANSLATE.NCE_PROMOTIONS_CHECK_ELIGIBILITY' | translate }}
+                                        </span>
+                                    </span>
+                                }
+                                <!-- @if(product.LinkedSubscription.IsPromotionAvailableForCustomer && product.LinkedSubscription.ShowPromotionLink){
+                                    <span [appPermission]="'ARE_NCE_PROMOTIONS_ENABLED'">
+                                        
+                                    </span>
+                                } -->
+                            </div>
+                            }
+                    </div>
+                }
+                <div class="ms-18 d-flex flex-column cw-25">
+                    <div class="row" style="margin-left:0px;">
+                        <div>
+                            <span class="d-block fw-bold"><span translate="TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_LABEL_QUANTITY"></span></span>
+                            <div class="input-group pt-2" style="width: 70%;">
+                                <div class="input-group-prepend">
+                                    <button class="input-group-text line-height-0 py-0 h-100" [disabled]="!isSaveCartAllowed || product.Quantity == 1" (click)="product.Quantity = product.Quantity === 1 ? 1 : product.Quantity - 1;callUpdateCartItemQuantity()" appBusyLoader [isIconOnly]="true">
+                                        <i class="fa-solid fa-minus icon-xs"></i>
+                                    </button>
+                                </div>
+                                <input class="form-control form-control-sm text-center " type="text" pattern="\d*"  [(ngModel)]="product.Quantity" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_ONLINE_SERVICES_LABEL_QUANTITY' | translate}}: {{product.Quantity}}" />
+                                <div class="input-group-append">
+                                    <button class="input-group-text line-height-0 py-0 h-100" [disabled]="!isSaveCartAllowed" (click)="product.Quantity = (1 + (+product.Quantity ));callUpdateCartItemQuantity()" appBusyLoader [isIconOnly]="true">
+                                        <i class="fa-solid fa-plus icon-xs"></i>
+                                    </button>
+                                </div>
+                                @if(HasSaveCart === 'Allowed' && !isShowApply && product.Quantity && product.Quantity != product.OriginalQuantity){
+                                <div class="col-md-12" (click)="callUpdateCartItemQuantity()" [hidden]="isShowApply">
+                                    <a class="badge badge-pill badge-primary mt-2">{{'TRANSLATE.CART_PAGE_BUTTON_TEXT_UPDATE_QUANTITY' | translate}}</a>
+                                </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex flex-wrap">
+                <div class="me-4 d-flex flex-column row" style="margin-left:0px">
+                    <div class="ps-0">
+                        @if(HasSubscriptionEndDateAlignment === 'Allowed' && product.ShowSubscriptionEndDateAlignmentChanges && product.CategoryName !== 'LicenseSupported'){
+                            <div class="d-flex flex-wrap"  [ngClass]="((product.ServiceProviderCustomers !== [] && product.ServiceProviderCustomers.length > 0)|| product.ServiceProviderCustomers.length > 0)|| selectSubscriptionEndDateAlignment?.Description != 'CUSTOMER_CART_COTERMINOSITY_DROPDOWN_DEFAULT' ? 'd-flex flex-wrap mt-3' :''">
+                                <div class=" d-flex flex-column mr-12 pb-5">
+                                    <span class="d-block fw-bold"><span translate="TRANSLATE.CART_PLACEHOLDER_SELECT_CUSTOM_END_DATE_TYPE"></span></span>
+                                    <div class="align-items-center pt-2">
+                                        <select #mySelect [(ngModel)]="selectSubscriptionEndDateAlignmentName" class="form-select form-select-solid form-select-lg fw-bold" [ngClass]="isDisbaleCustomEndDateSelection ? 'input-disable' : 'cursor-pointer'" [disabled]="isDisbaleCustomEndDateSelection" >
+                                            @for (row of customEndDateTypes; track $index) {
+                                                <option [value]="row.Name">{{row.Name}}</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                @if(selectSubscriptionEndDateAlignment && selectSubscriptionEndDateAlignment?.Description !== 'CUSTOMER_CART_COTERMINOSITY_DROPDOWN_DEFAULT'){
+                                    <div class="d-flex flex-column ms-10">
+                                        <span class="d-block fw-bold">
+                                            <span for="example-date-input"  >{{'TRANSLATE.CART_PLACEHOLDER_SELECT_CUSTOM_END_DATE' | translate}}</span>
+                                        </span>
+                                        <div class="pt-2">
+                                            <input class="form-control form-control" type="text" [disabled]="true" value="{{product.CustomEndDate=='Invalid date' ? '' : convertToDateFormat(product.CustomEndDate) }}" id="example-date-input" >
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if(HasTextBoxPONumberInHistory === 'Allowed'){
+            <div class="col-md-6 pl-4 mt-3">
+                <div class="d-flex" [ngClass]="{'mt-1': product.PONumber == null && isEdit === false}">
+                    <span class="d-block font-weight-bolder fw-bold mt-4">{{'TRANSLATE.PONUMBER_TITLE' |translate}}</span>
+                    @if(product.PONumber == null && isEdit === false){
+                        <span class="btn btn-icon" ng-if="product.PONumber == null && isEdit === false">
+                            <i class="fa fa-plus text-primary cursor-pointer" (click)="isEdit = true" ngbTooltip="{{'TRANSLATE.ADD_PONUMBER'|translate}}"></i>
+                        </span>
+                    }
+                </div>
+                <div>
+                    @if(isEdit != true){
+                        <span class="font-size-h5 h5"  ngbTooltip="{{product.PONumber}}" tooltip-placement="bottom">{{product.PONumber}}</span>
+                    }
+                    @if(isEdit != true && product.PONumber != null){
+                        <a class="btn btn-icon ms-4" ng-show="isEdit != true && product.PONumber != NULL">
+                            <i class="ki-outline ki-pencil text-primary px-3" (click)="isEdit = true" aria-hidden="true" data-toggle="tooltip" data-placement="top" ngbTooltip="{{'EDIT_PONUMBER'|translate}}"></i>
+                            <i class="ki-outline ki-trash text-danger" (click)="deletePONumber();" aria-hidden="true" data-toggle="tooltip" data-placement="top" ngbTooltip="{{'DELETE_PONUMBER'|translate}}"></i>
+                        </a>
+                    }
+                    @if(isEdit === true){
+                        <div class="row ">
+                            <div class="col-md-6 pl-0">
+                                <input type="text" [(ngModel)]="product.UpdatedPONumber" class="form-control form-control-sm">
+                            </div>
+                            <div class="btn-group col-md-2 p-0">
+                                <a class="btn btn-icon" (click)="updatePONumber(product);">
+                                    <i class="ki-outline ki-check fs-1 text-success"></i>
+                                </a>
+                                <a class="btn btn-icon" (click)="isEdit = false;product.UpdatedPONumber=product.PONumber;">
+                                    <i class="ki-outline ki-cross fs-1 text-danger"></i>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        @if(product.NumberOfLicensesCustomerCanPurchase!=0 && product.NumberOfLicensesCustomerCanPurchase < (product.CurrentLicenseCount+product.Quantity)){
+            <div class="d-flex flex-wrap mt-5">
+                <div class="row">
+                    <div class="col-md-12 page-title warning-approval">
+                        <small>
+                            <span>
+                                <i class="fa fa-exclamation-triangle text-warning"></i>
+                                <span class="font-gold text-warning" [innerHTML]="('TRANSLATE.CUSTOMER_CART_SEAT_LIMIT_MESSAGE')| translate :{ SeatLimit: product.NumberOfLicensesCustomerCanPurchase}"></span>
+                            </span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,168 @@
+@if(products.length == 0){
+<div class="d-flex justify-content-center align-items-center" style="height: calc(100vh - 126px);">
+    <div class="text-center">
+        <div class="text-center">
+            <img src='../../../../assets/svg-icons/Cart illustartion.svg' width="250" height="240" appBusyLoader />
+        </div>
+        <div class="mb-0 fs-1 text-dark mb-4 text-center">
+            <span [innerHTML]="('TRANSLATE.PUBLIC_SIGNUP_CART_PAGE_TEXT_INFO_NO_PRODUCTS1')| translate"></span>
+            <br>
+            <span #goBackToShopText style="font-weight: normal;"></span>
+        </div>
+    </div>
+</div>
+<!-- <div class="jumbotron">
+    
+</div> -->
+}
+@if(products.length > 0){
+<div class="container-fluid customer-container">
+    <div class="row top-space">
+        <div class="col col-12 col-lg-9 pt-3 pe-0 overflow-auto" style="height: calc(100vh - 150px);">
+            @for (item of products; track trackByIndex){ 
+            <div class="col-md-12" appLazyLoad (lazyLoad)="onLazyLoad(item)">
+                <div class="p-2">
+                    <app-product-item [productItemDetails]="productItemDetails" [productItem]="item"
+                        [permissions]="permissions" (onActionData)="onAddplanAction($event)"></app-product-item>
+                </div>
+            </div>
+            }
+        </div>
+        <div class="col col-12 col-lg-3 pt-4 ps-2 pe-0">
+            <div class="card product-description-card m-auto " style="height: calc(100vh - 170px);">
+                <div class="card-header shop-item-title flex-nowrap">
+                    <div class="card-title">
+                        <div class="text fs-2">
+                            {{'TRANSLATE.CUSTOMER_CART_PORTLET_TITLE_TEXT_PRICE_DETAILS' | translate}}
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex align-right"
+                    *ngIf="_publicSignUpService.CustomerPublicSignUpModel != null &&  _publicSignUpService.CustomerPublicSignUpModel != undefined && _publicSignUpService.CustomerPublicSignUpModel != ''">
+                    <!--ng-if="$rootScope.CustomerPublicSignUpModel"-->
+                    <div class="d-flex flex-column flex-grow-1 text-end me-4">
+                        <a class="text-primary cursor-pointer"
+                            (click)="redirectToBillingInformation()">{{'TRANSLATE.EDIT_BILLING_INFORMATION_IN_PUBLIC_SIGN_UP'
+                            | translate}}</a>
+                    </div>
+                </div>
+                <hr class="divider m-0">
+                <div class="card-body d-flex flex-column flex-grow-1">
+                    <div class="d-flex justify-content-between pt-3 pb-3" *ngIf="_publicSignUpService.cartTotal">
+                        <span class="text-dark fw-bold">
+                            {{'TRANSLATE.CUSTOMER_CART_PARAGRAPH_TITLE_TEXT_TOTAL_COST' | translate}}</span>
+                        <span>{{_publicSignUpService.cartTotal | CurrencyFilter : products[0].CurrencySymbol :
+                            products[0].CurrencyDecimalPlaces : products[0].CurrencyThousandSeperator :
+                            products[0].CurrencyDecimalSeperator}}</span>
+                    </div>
+                    <div class="d-flex justify-content-between pt-3 pb-3"
+                        *ngIf="((_publicSignUpService.CustomerPublicSignUpModel != undefined) && (_publicSignUpService.backFromCreateCustomerForm === false)) || _publicSignUpService.billingInformationFormSubmitted">
+                        <span class="text-dark fw-bold">{{'TRANSLATE.SIGNUP_CART_COUPON_CODE' | translate}}</span>
+                        <div class="input-group mb-3">
+                            <input type="text" [(ngModel)]="couponCode" (change)="refreshCoupon()"
+                                class="form-control form-contol-sm" maxlength="50" name="CouponCode"
+                                placeholder="{{'TRANSLATE.PUBLIC_SINGUP_PLACEHOLDER_VOUCHER_CODE'| translate}}">
+                            <button class="btn btn-sm btn-light-primary" [disabled]="isCouponValidationInProgress"
+                                (click)="validateCoupon()">
+                                {{'TRANSLATE.SIGNUP_CART_COUPON_APPLY' | translate}}
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <button
+                            *ngIf="(validCouponCode !== null && validCouponCode !== '' && validCouponCode !== undefined && isDiscountApplied)"
+                            [disabled]="isCouponValidationInProgress" class="btn btn-sm btn-light-danger pt-3 pb-3"
+                            (click)="removeCouponApplied()">
+                            {{'TRANSLATE.SIGNUP_CART_REMOVE_APPLIED_COUPON' | translate}}
+                        </button>
+                    </div>
+                    <div class="d-flex justify-content-between pt-3 pb-3"
+                        *ngIf="cartDiscount > 0 && cartDiscount !== null && cartDiscount !== undefined">
+                        <span class="text-dark fw-bold">
+                            {{'TRANSLATE.CUSTOMER_CART_PARAGRAPH_TITLE_TEXT_TOTAL_DISCOUNT' | translate}}</span>
+                        <span>{{cartDiscount | CurrencyFilter : products[0].CurrencySymbol :
+                            products[0].CurrencyDecimalPlaces : products[0].CurrencyThousandSeperator :
+                            products[0].CurrencyDecimalSeperator}}</span>
+                    </div>
+                    <hr class="divider m-0">
+                    <div class="d-flex justify-content-between pt-3 pb-3"
+                        *ngIf="payableAmount > 0 && payableAmount !== null && payableAmount !== undefined">
+                        <span class="text-dark fw-bold">
+                            {{'TRANSLATE.CUSTOMER_CART_PARAGRAPH_TITLE_TEXT_AMOUNT_PAYABLE' | translate}}</span>
+                        <span>{{payableAmount | CurrencyFilter : products[0].CurrencySymbol :
+                            products[0].CurrencyDecimalPlaces : products[0].CurrencyThousandSeperator :
+                            products[0].CurrencyDecimalSeperator}}</span>
+                    </div>
+                    <hr class="divider m-0">
+
+                    <div class="terms-and-conditions d-flex flex-column gap-4 mt-8 mb-5">
+                        <form [formGroup]="formCart">
+                            @if(nonNCEProductInCart != [] && nonNCEProductInCart != undefined &&
+                            nonNCEProductInCart.length!=0){
+                            <div class="input-group-with-checkbox mt-4"
+                                *ngIf="defaultTermsAndConditionURL != '' && nonNCEProductInCart[0].EnableDefaultTermsAndCondition == true">
+                                <label class="form-check form-check-inline me-5">
+                                    <input type="checkbox" class="form-check-input"
+                                        formControlName="DefaultTermsAndConditionText">
+                                    <span class="text-gray-500 read-term" [innerHTML]="defaultTermsAndConditionText"></span>
+                                    <a href="javascript:void(0)" style="font-weight:600"
+                                        (click)="openDefaultProductsTermsAndConditionsUrl()">
+                                        {{'TRANSLATE.PUBLIC_SIGNUP_CART_DEFAULT_TERMS_AND_CONDITIONS_ACCEPT_TEXT' |
+                                        translate}}</a><br>
+                                    @if(formCart.get('DefaultTermsAndConditionText')?.errors?.required && submitButtonClicked){
+                                    <span
+                                        class="text-danger">{{'TRANSLATE.CUSTOMER_ORDER_CART_TERMS_AND_CONDITION_IS_NOT_ENABLED_TEXT'|translate}}
+                                    </span>
+                                    }
+                                </label>
+                            </div>
+                            }
+                            @if(NCEProductInCart != [] && NCEProductInCart != undefined && NCEProductInCart.length !=0){
+                            <div class="input-group-with-checkbox mt-4"
+                                *ngIf="NCEProductInCart[0].CategoryName == 'OnlineServicesNCE' && NCETermsAndConditionURL != '' && enableNCETermsAndCondition">
+                                <label class="form-check form-check-inline  me-5">
+                                    <input type="checkbox" class="form-check-input"
+                                        formControlName="NCETermsAndConditionURLText" value="">
+                                    <span class="text-gray-500" [innerHTML]="NCETermsAndConditionURLText"></span>&nbsp;
+                                    <a href="javascript:void(0)" style="font-weight:600"
+                                        (click)="openNCEProductsTermsAndConditionsUrl()">{{'TRANSLATE.PUBLIC_SIGNUP_CART_NCE_TERMS_AND_CONDITIONS_ACCEPT_TEXT'
+                                        | translate}}</a><br>
+                                    @if(formCart.get('NCETermsAndConditionURLText')?.errors?.required &&
+                                    submitButtonClicked){
+                                    <span
+                                        class="text-danger">{{'TRANSLATE.CUSTOMER_ORDER_CART_NCE_TERMS_AND_CONDITION_IS_NOT_ENABLED_TEXT'|translate}}</span>
+                                    }
+                                </label>
+
+                            </div>
+                            }
+                            @if(products != [] && products != undefined){
+                            <div class="input-group-with-checkbox mt-4"
+                                *ngIf="(products[0]?.EnablePublicSignupAssistance && (products[0]?.ProviderId === 1 || products[0]?.LinkedSubscription?.ProviderId === 1) && (_publicSignUpService?.CustomerPublicSignUpModel === null|| _publicSignUpService?.CustomerPublicSignUpModel === undefined)) || (_publicSignUpService.backFromCreateCustomerForm && (_publicSignUpService.billingInformationFormSubmitted === false) && ((products[0]?.EnablePublicSignupAssistance && (products[0]?.ProviderId === 1 || products[0]?.LinkedSubscription?.ProviderId === 1))))">
+                                <label class="form-check form-check-inline  me-5">
+                                    <input type="checkbox" class="form-check-input" name="AlreadyHavingMSTenantiu"
+                                        formControlName="isExistingMsTenant" (change)="isExistingMsTenantChange()">
+                                    <span
+                                        class="text-gray-500">{{'TRANSLATE.PUBLIC_SIGNUP_SIGNUP_EXISTING_TENANT_CHECKBOX'
+                                        | translate}}</span>
+                                </label>
+                            </div>
+                            }
+                        </form>
+                    </div>
+                    <div class="product-purchase-buttons mt-auto mb-3">
+                        <button type="button" class="btn btn-sm btn-success w-100 mt-5"
+                            [disabled]="isCouponValidationInProgress" (click)="checkoutCart()"
+                            [translate]="(_publicSignUpService.billingInformationFormSubmitted === false)?'TRANSLATE.PUBLIC_SIGNUP_SIGNUP_AND_BUY':'TRANSLATE.PUBLIC_SIGNUP_PLACE_ORDER'">
+                        </button>
+                        <button type="button" class="btn btn-sm btn-primary fw-semibold w-100 mt-3"
+                            (click)="gotoCart()">
+                            {{'TRANSLATE.BACK_TO_PUBLIC_SIGNUP_SHOP' | translate}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}

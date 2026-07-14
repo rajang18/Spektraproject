@@ -1,0 +1,31 @@
+::ng-deep .bg-warning{
+    background: #FFA800 !important;
+  }
+  ::ng-deep .bg-success{
+    background: #1BC5BD !important;
+  }
+  
+  ::ng-deep .bg-dark{
+    background: #212121 !important;
+  }
+  
+  ::ng-deep .bg-primary{
+    background: #3699FF !important;
+  }
+  
+  ::ng-deep .bg-light-info{
+    background: #EEE5FF !important;
+    color:#8950FC;
+  }
+  
+  ::ng-deep .bg-info{
+    background: #8950FC !important;
+  }
+  
+  ::ng-deep .bg-danger{
+    background: #DF2B03 !important;
+  }
+
+  .badge{
+    margin: 2px;
+  }

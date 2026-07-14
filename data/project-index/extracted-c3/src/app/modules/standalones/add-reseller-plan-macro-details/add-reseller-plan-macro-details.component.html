@@ -1,0 +1,221 @@
+<form #frmMacroChange="ngForm" (ngSubmit)="onSubmit(frmMacroChange)">
+    <div class="modal-header">
+        <h5 class="modal-title text-primary" id="modal-title">
+            <span>{{'TRANSLATE.SET_NEW_MACRO' | translate}}</span>
+            <span class="text-primary">{{planProductName}}</span>
+        </h5>
+    </div>
+    <div class="modal-body" id="modal-body">
+        <div class="form-body">
+            <div class="row form-group">
+                <label class="col-form-label col-md-3 col-lg-3 text-left required">
+                    <span>{{'TRANSLATE.PARTNER_PLAN_DETAILS_LABEL_TEXT_MACRO_MACRO_TYPE' | translate}}</span>
+                </label>
+                <div class="col-md-8 col-lg-8">
+                    <select class="form-control form-select form-select-solid form-select-lg fw-bold" [(ngModel)]="macroTypeId" name="macroType" required
+                    (change)="updateMacroType()">
+                        <option [value]="''" disabled>{{'TRANSLATE.SELECT_RESELLER_AZURE_MACRO' | translate}}</option>
+                        @for (macro of macros; track $index) {
+                        <option [value]="macro.ID" *ngIf="(consumptionType === 'usage' && macro.Description !== 'Apply X% Margin on Partner Price' &&  macro.Description !== 'Apply X% ERP on List Price') || consumptionType === 'quantity'">
+                            {{macro.Description | translate}}</option>
+                        }
+                    </select>
+                    @if (macroType?.Description === 'Copy Partner Price') {
+                    <div class="row ms-sm-5 mt-1">
+                        <div class="col-md-12 pl-0 macro-det">
+                            <span>
+                                <span><i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <span class="path3"></span>
+                                </i> </span>
+                                <b class="ps-1"><span translate="TRANSLATE.MACRO_COPY_PARTNERT_PRICE"></span></b> <span
+                                    translate="TRANSLATE.MACRO_DET_COPY_PARTNERT_PRICE_CALCULATION_DESC"></span><br />
+                            </span>
+                            <b><span translate="TRANSLATE.MACRO_DET_EXAMPLE"></span></b><span
+                                translate="TRANSLATE.MACRO_DET_PARTNER_PRICE"></span> = 10, <span
+                                translate="TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE"></span> = 15 <br />
+                            <b><span translate="TRANSLATE.MACRO_DET_SALE_PRICE"></span></b> 10
+                        </div>
+                    </div>
+                    }
+                    @if (macroType?.Description === 'Copy Provider Selling Price') {
+                    <div class="row ml-sm-5 mt-1">
+                        <div class="col-md-12 pl-0 macro-det">
+                            <span>
+                                <span><i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <span class="path3"></span>
+                                </i> </span>
+                                <b class="ps-1"><span translate="TRANSLATE.MACRO_COPY_PROVIDER_SELLING_PRICE"></span>:
+                                </b><span
+                                    translate="TRANSLATE.MACRO_DET_COPY_PROVIDER_SELLING_PRICE_CALCULATION_DESC"></span><br />
+                            </span>
+
+                            <b><span translate="TRANSLATE.MACRO_DET_EXAMPLE"></span></b> <span
+                                translate="TRANSLATE.MACRO_DET_PARTNER_PRICE"></span> = 10, <span
+                                translate="TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE"></span> = 15 <br />
+                            <b><span translate="TRANSLATE.MACRO_DET_SALE_PRICE"></span></b> 15
+                        </div>
+                    </div>
+                    }
+                    <span class="text-danger"
+                        *ngIf="frmMacroChange.submitted && frmMacroChange.controls.macroType.errors?.required">{{'TRANSLATE.REQUIRED_FIELD_TEXT'
+                        | translate}}
+                    </span>
+                </div>
+            </div>
+            <div class="row form-group mt-7" *ngIf="macroType?.NeedsPercent && macroType?.Description != 'Apply X% Margin on Partner Price' && macroType?.Description != 'Apply X% ERP on List Price'">
+                <label class="col-form-label col-md-3 col-lg-3 text-left required">
+                    <span>{{'TRANSLATE.PARTNE_PLAN_DETAILS_LABEL_TEXT_MACRO_VALUE' | translate}}</span>
+                </label>
+                <div class="col-md-8 col-lg-8">
+                    <input name="macroValue" type="number" step="1" class="form-control" placeholder=" "
+                        [(ngModel)]="macroValue" required>
+                        <span class="text-danger"
+                            *ngIf="frmMacroChange.submitted && frmMacroChange.controls.macroValue.errors?.required">{{'TRANSLATE.REQUIRED_FIELD_TEXT' | translate}}
+                        </span>
+                    <div class="row ml-sm-5 mt-1">
+                        @if(macroType?.Description === 'Apply X% on Partner Price'){
+                        <div class="col-md-12 pl-0 macro-det">
+                            <span>
+                                <span><i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <span class="path3"></span>
+                                </i> </span>
+                                <b class="ps-1"><span
+                                        translate="TRANSLATE.MACRO_APPLY_X_PERCENT_ON_PARTNER_PRICE"></span>: </b><span
+                                    translate="TRANSLATE.MACRO_DET_APPLY_X_PERCENT_ON_PARTNER_PRICE_CALCULATION_DESC"></span><br />
+                            </span>
+                            <b><span translate="TRANSLATE.MACRO_DET_EXAMPLE"></span></b><span
+                                translate="TRANSLATE.MACRO_DET_PARTNER_PRICE"></span> = 10,
+                            {{'TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE' | translate}} = 15, <span
+                                translate="TRANSLATE.MACRO_DET_PERCENTAGE"></span> = 20<br />
+                            <b><span translate="TRANSLATE.MACRO_DET_SALE_PRICE"></span></b> 10+(10* (20/100)) = 12
+                        </div>
+                        }
+                        @if(macroType?.Description === 'Apply X% on Markup'){
+                        <div class="row ml-sm-4 mt-1">
+                            <div class="col-md-12 pl-0 macro-det">
+                                <span>
+                                    <span><i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                        <span class="path3"></span>
+                                    </i> </span>
+                                    <b class="ps-1"><span translate="TRANSLATE.MACRO_APPLY_X_PERCENT_ON_MARKUP"></span>:
+                                    </b> {{'TRANSLATE.MACRO_DET_APPLY_X_PERCENT_ON_MARKUP_CALCULATION_DESC' |
+                                    translate}} <br />
+                                </span>
+                                <b>{{'TRANSLATE.MACRO_DET_EXAMPLE' | translate}}</b>
+                                {{'TRANSLATE.MACRO_DET_PARTNER_PRICE' | translate}} = 10,
+                                {{'TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE' | translate}} = 15,
+                                {{'TRANSLATE.MACRO_DET_PERCENTAGE' | translate}} = 20<br />
+                                <b>{{'TRANSLATE.MACRO_DET_SALE_PRICE' | translate}}</b> 10+((15-10)*(20/100)) = 11
+                            </div>
+                        </div>
+                        }
+                        @if(macroType?.Description === 'Apply X% on Provider Selling Price'){
+                        <div class="row ml-sm-4 mt-1">
+                            <div class="col ml-1 pl-0 macro-det">
+                                <span>
+                                    <span><i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                        <span class="path3"></span>
+                                    </i> </span>
+                                    <b class="ps-1">{{'TRANSLATE.MACRO_APPLY_X_PERCENT_ON_PROVIDER_SELLING_PRICE' |
+                                        translate}}: </b>
+                                    {{'TRANSLATE.MACRO_DET_APPLY_X_PERCENT_ON_PROVIDER_SELLING_PRICE_CALCULATION_DESC' |
+                                    translate}} <br />
+                                </span>
+                                <b>{{'TRANSLATE.MACRO_DET_EXAMPLE' | translate}}</b>
+                                {{'TRANSLATE.MACRO_DET_PARTNER_PRICE' | translate}} = 10,
+                                {{'TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE' | translate}} = 15,
+                                {{'TRANSLATE.MACRO_DET_PERCENTAGE' | translate}} = -20<br />
+                                <b>{{'TRANSLATE.MACRO_DET_SALE_PRICE' | translate}}</b> 15+(15*(-20/100)) = 12
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </div>
+            
+            </div>
+            <div class="row form-group mt-7" *ngIf="macroType && ['Apply X% Margin on Partner Price', 'Apply X% ERP on List Price'].includes(macroType?.Description)">
+                <label class="col-form-label col-md-3 col-lg-3 text-left required">
+                    <span>{{'TRANSLATE.PARTNE_PLAN_DETAILS_LABEL_TEXT_MARGIN_VALUE' | translate}}</span>
+                </label>
+                <div class="col-md-8 col-lg-8">
+                    <input name="macroValue" type="number" step="1" class="form-control" placeholder=" "
+                        [(ngModel)]="macroValue" required>
+                        <span class="text-danger"
+                            *ngIf="frmMacroChange.submitted && frmMacroChange.controls.macroValue.errors?.required">{{'TRANSLATE.REQUIRED_FIELD_TEXT' | translate}}
+                        </span>
+                    <div class="row ml-sm-5 mt-1">
+                        @if(macroType?.Description === 'Apply X% Margin on Partner Price'){
+                        <div class="col-md-12 pl-0 macro-det">
+                            <span>
+                                <span><i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <span class="path3"></span>
+                                </i> </span>
+                                <b class="ps-1"><span translate="TRANSLATE.MACRO_APPLY_X_MARGIN_ON_PARTNER_PRICE"></span>: </b>
+                                <span translate="TRANSLATE.MACRO_DET_APPLY_X_MARGIN_ON_PARTNER_PRICE_CALCULATION_DESC"></span><br />
+                            </span>
+                            <b><span translate="TRANSLATE.MACRO_DET_EXAMPLE"></span></b>
+                            <span translate="TRANSLATE.MACRO_DET_PARTNER_PRICE"></span> = 10,
+                            {{'TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE' | translate}} = 15,
+                             <span translate="TRANSLATE.MACRO_DET_APPLY_X_MARGIN_ON_PARTNER_PRICE_PERCENTAGE"></span> = 20<br /><b>
+                             <span translate="TRANSLATE.MACRO_DET_SALE_PRICE"></span></b> 10 / (1 - (20 / 100)) = 12.5
+                        </div>
+                        }
+                    </div>
+                     <div class="row ml-sm-5 mt-1">
+                        @if(macroType?.Description === 'Apply X% ERP on List Price'){
+                        <div class="col-md-12 pl-0 macro-det">
+                            <span>
+                                <span><i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <span class="path3"></span>
+                                </i> </span>
+                                <b class="ps-1"><span translate="TRANSLATE.MACRO_APPLY_X_PERCENT_ERP_ON_LIST_PRICE"></span>: </b>
+                                <span translate="TRANSLATE.MACRO_DET_APPLY_X_ERP_ON_LIST_PRICE_CALCULATION_DESC"></span><br />
+                            </span>
+                            <b><span translate="TRANSLATE.MACRO_DET_EXAMPLE"></span></b>
+                            <span translate="TRANSLATE.MACRO_ERP_ON_LIST_PRICE_COST_TO_PARTNER"></span> = 96,
+                            {{'TRANSLATE.MACRO_ERP_ON_LIST_PRICE_ERP_PRICE' | translate}} = 100,
+                             <span translate="TRANSLATE.MACRO_DET_APPLY_X_ERP_ON_LIST_PRICE_PERCENTAGE"></span> = 3<br /><b>
+                             <span translate="TRANSLATE.MACRO_DET_SALE_PRICE"></span></b> ((3 * 100)/100) + 96 = 99<br/>
+                              <span translate="TRANSLATE.MACRO_DET_APPLY_X_ERP_ON_LIST_PRICE_EXPLANATION"></span><br/>
+                            <b><span translate="TRANSLATE.MACRO_DET_APPLY_X_ERP_ON_LIST_PRICE_MARGIN_FORMULA"></span></b><br/>
+                            <span translate="TRANSLATE.MACRO_DET_APPLY_X_ERP_ON_LIST_PRICE"></span><br/>
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="m-heading-1 border-green m-bordered mt-5">
+                <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+                    <span>
+                        <i class="ki-duotone ki-information-2 fs-5 ms-1">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                        </i>
+                        {{'TRANSLATE.MANAGE_PLAN_MACRO_CHANGE_HELP_TEXT' | translate}}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-sm btn-secondary" type="button"
+            (click)="closeModalPopup()">{{'TRANSLATE.BUTTON_TEXT_CANCEL' | translate}}
+        </button>
+        <button class="btn btn-sm btn-primary" type="submit">{{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}</button>
+    </div>
+</form>

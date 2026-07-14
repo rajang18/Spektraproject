@@ -1,0 +1,160 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-1 gap-lg-1">
+      <a class="btn btn-sm btn-lg btn-md btn-xs text-nowrap fw-bold btn-secondary" ngbTooltip="{{'TRANSLATE.BTN_TEXT_SHOW_FILTERS' | translate}}" (click)="displayFilter()"> 
+        <i class="ki-outline ki-filter fs-2"></i>&nbsp;<span translate="TRANSLATE.BTN_TEXT_FILTER"></span>
+      </a>
+    </div>
+</ng-template>
+
+
+<div class="card">
+    <div class="card-body overflow-auto">
+
+        @if (shouldShowFilter) {
+            <div>
+            <form [formGroup]="filterform">
+            <div class="card mt-5">
+                <div class="card-body">
+                <div class="form-group row"> 
+                    <div class="col-6 col-sm-6 col-md-4 col-lg-4">
+                        <label>
+                            {{'TRANSLATE.COST_SUMMARY_REPORT_FORM_LABEL_CUSTOMERS' | translate}}
+                        </label>
+                        <ng-select placeholder="{{'TRANSLATE.COST_SUMMARY_REPORT_FORM_PLACEHOLDER_SELECT_CUSTOMER'|translate}}"
+                            formControlName="customer" 
+                            (change)="getPlans()"> 
+                            @for(c of customers; track $index){
+                            <ng-option [value]="c.Name">{{c.Name}}</ng-option>
+                            }    
+                       </ng-select>
+                    </div>
+                    <div class="col-6 col-sm-6 col-md-4 col-lg-4"
+                    *ngIf="entityName.toLowerCase().trim() != 'reseller'">
+                        <label>
+                            {{'TRANSLATE.COST_SUMMARY_REPORT_FORM_LABEL_RESELLERS' | translate}}
+                        </label>
+                        <ng-select placeholder="{{'TRANSLATE.COST_SUMMARY_REPORT_FORM_PLACEHOLDER_SELECT_RESELLERS'|translate}}"
+                            formControlName="reseller" > 
+                            @for(r of resellers; track $index){
+                            <ng-option [value]="r.id">{{r.Name}}</ng-option>
+                            }    
+                       </ng-select>
+                    </div>
+                    
+                    <div class="col-6 col-sm-6 col-md-4  col-lg-4">
+                        <label>
+                            {{'TRANSLATE.COST_SUMMARY_REPORT_FORM_LABEL_PLANS' | translate}}
+                        </label>
+                        <ng-select placeholder="{{'TRANSLATE.COST_SUMMARY_REPORT_FORM_PLACEHOLDER_SELECT_PLAN'|translate}}"
+                            formControlName="plan"  > 
+                            @for(p of plans; track $index){
+                            <ng-option [value]="p.id">{{p.Name}}</ng-option>
+                            }    
+                       </ng-select>
+                    </div>
+                </div>
+                
+                </div>
+                <div class="card-footer py-3">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12 col-xs-12 col-12 col-lg-12 text-lg-end pe-1">
+                        <button class="btn btn-light-primary btn-sm  me-md-2 me-lg-2 me-sm-2 me-xl-2 me-xxl-2"
+                            (click)="searchPartnerOffers()">
+                            {{'TRANSLATE.COST_SUMMARY_REPORT_BUTTON_TEXT_SEARCH_OPTION' | translate}}
+                        </button>
+                        <button class="btn btn-light-primary btn-sm  me-md-2 me-lg-2 me-sm-2 me-xl-2 me-xxl-2"
+                            (click)="resetSearchCriteria()">{{'TRANSLATE.COST_SUMMARY_REPORT_BUTTON_TEXT_RESET_OPTION' | translate}}</button>
+                        <button class="btn btn-light-primary btn-sm me-md-2 me-lg-2 me-sm-2 me-xl-2 me-xxl-2"
+                        (click)="shouldShowFilter = false;">{{'TRANSLATE.CUSTOMER_SEARCH_CLOSE_OPTION' | translate}}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </form>
+            </div>
+        }
+
+        
+
+        @if (!!datatableConfig) {
+            <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+            </app-c3-table>
+        }
+    </div>
+</div>
+
+ <ng-template #nttDetails let-each="adtData">
+    <div>
+        <div style="text-align:left; font-size: 18px" class="col-12 font-weight-bold caption-subject text-primary uppercase">
+            {{each.EntityName}}
+        </div>
+        <hr/>
+        <table class="table" style="table-layout: auto; width: 100%;">
+            @for (plan of each.PlanCostSummary; track $index) {
+                <tbody *ngIf="plan.Products && plan.Products.length > 0">
+                    <tr>
+                        <td colspan="1" style="text-align: left; font-size:15px"><span class="fw-semibold">{{'TRANSLATE.COST_SUMMARY_REPORT_TABLE_HEADER_PLAN_NAME' | translate}}</span></td>
+                        <td colspan="6" style="text-align: left; font-size: 15px" class="ps-10"><span class="fw-semibold">{{'TRANSLATE.COST_SUMMARY_REPORT_TABLE_HEADER_CURRENCY_CODE' | translate}}</span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="1" class="font-weight-bold pt-2 pb-2" style="text-align:left;">
+                            {{plan.EntityPlan}}
+                        </td>
+                        <td colspan="6" style="text-align:left;" class="ps-10">
+                            {{plan.CurrencyCode}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left; font-size: 15px"><span class="fw-semibold">{{'TRANSLATE.COST_SUMMARY_REPORT_TABLE_HEADER_PRODUCT_NAME' | translate}}</span></td>
+                        <td style="text-align:right;">{{'TRANSLATE.COST_SUMMARY_REPORT_TABLE_HEADER_PROVIDER_PRICE' | translate}}</td>
+                        <td style="text-align:right;">{{'TRANSLATE.COST_SUMMARY_REPORT_TABLE_HEADER_SALE_PRICE' | translate}}</td>
+                        <td style="text-align:right;" class="pe-4">{{'TRANSLATE.COST_SUMMARY_REPORT_TABLE_HEADER_QUANTITY' | translate}}</td>
+                        <td style="text-align:right;">{{'TRANSLATE.COST_SUMMARY_REPORT_TABLE_HEADER_TOTAL_COST_TO_PARTNER' | translate}}</td>
+                        <td style="text-align:right;">{{'TRANSLATE.COST_SUMMARY_REPORT_TABLE_HEADER_TOTAL_COST_TO_CUSTOMER' | translate}}</td>
+                    </tr>
+                    @for(product of plan.Products; track $index){
+                        <tr>
+                            <td class="col-md-7" style="text-align: left;" [ngStyle]="{'padding-left': '{{product.HierarchyLevel * 10}}px'}">
+                                <p>
+                                    <span class="fw-semibold"> {{product.PlanProductName}}</span>
+                                    <br />  
+                                    <span class="label label-success font-weight-bold label-inline text-white badge bg-success ms-md-0">{{'TRANSLATE.'+product.ProviderDescription | translate}}</span>&nbsp;
+                                    <span class="label label-light-info font-weight-bold label-inline  badge badge-light-info ms-md-0">{{'TRANSLATE.'+product.CategoryDescription | translate}}</span>&nbsp;
+                                    <span class="label font-weight-bold  label-pill label-inline text-white badge ms-md-0"
+                                    [ngClass]="{
+                                        'bg-warning': product.BillingCycle?.toLowerCase() === 'monthly',
+                                        'bg-success': product.BillingCycle?.toLowerCase() === 'annual',
+                                        'bg-dark': product.BillingCycle?.toLowerCase() === 'triennial',
+                                        'bg-info': product.BillingCycle?.toLowerCase() === 'onetime'
+                                                                    }">{{('TRANSLATE.' + product.BillingCycleDescription) | translate}}</span>
+                                    <span *ngIf="product.IsEST" class="badge EST-Pill-styling text-white ms-md-0" ngbTooltip="{{'TRANSLATE.CATEGORY_PILL_EST_TOOLTIP' | translate }}" >{{ 'TRANSLATE.CATEGORY_PILL_NAME_EST' | translate}}</span>                                
+                                </p>
+                                <p class="margin-top-10 fw-semibold" *ngIf="product.PlanParentProductId > 0" style="font-size:12px !important">
+                                    {{product.ParentName}}
+                                    <sup class="text-warning"><span translate="TRANSLATE.COST_SUMMARY_REPORT_TABLE_SUBSCRIPT_ADD_ON"></span></sup>
+                                </p>
+                                <p class="margin-top-10 fw-semibold" *ngIf="product.PlanProductCompositeProductID > 0" style="font-size:12px !important">
+                                    {{product.BundleName}}
+                                    <sup class="text-warning"><span translate="TRANSLATE.COST_SUMMARY_REPORT_TABLE_SUBSCRIPT_BUNDLE"></span></sup>
+                                </p>
+                                <p class="margin-top-10 fw-semibold" *ngIf="product.LinkedProductID > 0" style="font-size:12px !important">
+                                    {{product.LinkedSubscriptionName}}
+                                    <sup class="text-warning"><span translate="TRANSLATE.COST_SUMMARY_REPORT_TABLE_SUBSCRIPT_LINKED_PRODUCT"></span></sup>
+                                </p>
+                            </td>
+                            <td class="col-md-1" style="text-align:right;">{{product.ProviderPrice | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator : product.CurrencyDecimalSeperator}}</td>
+                            <td class="col-md-1" style="text-align:right;">{{product.SalePrice | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator : product.CurrencyDecimalSeperator}}</td>
+                            <td class="col-md-1 pe-4" style="text-align:right;">{{product.CSPQuantity}}</td>
+                            <td class="col-md-1" style="text-align:right;">{{product.ProviderPrice * product.CSPQuantity | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator : product.CurrencyDecimalSeperator}}</td>
+                            <td class="col-md-1" style="text-align:right;">{{product.SalePrice * product.CSPQuantity | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator : product.CurrencyDecimalSeperator}}</td>
+                        </tr>
+                    }
+                    
+                </tbody>
+            }
+        </table>
+        
+        
+    </div>
+    
+ </ng-template>

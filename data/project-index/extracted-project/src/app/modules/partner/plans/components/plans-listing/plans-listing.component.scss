@@ -1,0 +1,16 @@
+.header-actions{
+    padding-left: 10px;
+}
+.btn-action{
+    margin: 5px;
+}
+::ng-deep {
+    app-plans-listing {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+        .close-btn:hover{
+
+        }
+    }
+  }

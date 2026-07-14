@@ -1,0 +1,65 @@
+.select-filter-container {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.select2-dropdown .select2-dropdown--below {
+    font-family: 'keenicons-duotone' !important;
+    color: rgb(34, 41, 237);
+    border-color: rgb(220, 221, 222);
+}
+
+.select2-search .select2-search--dropdown {
+    font-family: 'keenicons-duotone' !important;
+    color: rgb(34, 41, 237);
+    border-color: rgb(220, 221, 222);
+}
+
+.custom-select .select2-label {
+    color: white;
+    border: none;
+    outline: white;
+
+}
+
+::ng-deep {
+    app-revenue-cost-category {
+        .opacity-8 {
+            opacity: 0.8;
+        }
+
+        .loader-indicater {
+            position: absolute;
+            margin: auto;
+            top: 50%;
+            left: 41%;
+        }
+
+        .z-index-10 {
+            z-index: 10 !important;
+        }
+
+        .select2-container--default .select2-selection--single {
+            position: relative;
+            padding-right: 30px;
+        }
+
+        .select2-container--default .select2-selection--single::after {
+            content: "\f107";
+            font-family: 'FontAwesome' !important;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: var(--select2-arrow-color, #888);
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow:before {
+            content: "";
+            display: none;
+        }
+
+    }
+}

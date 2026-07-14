@@ -1,0 +1,55 @@
+.TermLabelColor {
+    background-color: #3D9C49 !important;  
+}
+
+.label-bg-success{
+  background-color: #1BC5BD !important; 
+}
+.label-bg-info{
+  color: #8950FC;
+  background-color: #EEE5FF;
+}
+.label-bg-primary{
+  color: #3699FF;
+  background-color: #E1F0FF;
+}
+.label-bg-warning{
+  color: #FFA800;
+  background-color: #FFF4DE;
+}
+
+
+.labelcolor {
+    background-color: #DF2B03 !important;
+}
+
+
+.bs-callout {
+    margin: 20px 0;
+    padding: 15px 30px 15px 15px;
+    border-left: 5px solid #eee;
+  }
+  .bs-callout h4 {
+    margin-top: 0;
+  }
+  .bs-callout p:last-child {
+    margin-bottom: 0;
+  }
+  .bs-callout code,
+  .bs-callout .highlight {
+    background-color: #fff;
+  }
+  
+  /* Themes for different contexts */
+  .bs-callout-danger {
+    background-color: #fcf2f2;
+    border-color: #dFb5b4;
+  }
+  .bs-callout-warning {
+    background-color: #fefbed;
+    border-color: #f1e7bc;
+  }
+  .bs-callout-info {
+    background-color: #f0f7fd;
+    border-color: #d0e3f0;
+  }

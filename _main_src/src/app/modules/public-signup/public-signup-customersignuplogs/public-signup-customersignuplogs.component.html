@@ -1,0 +1,253 @@
+<div class="container-fluid customer-container d-flex" style="height:100vh">
+  <div class="card product-description-card m-auto" style="width:1130px" *ngIf="!allSuccess">
+    <div class="card-header shop-item-title flex-nowrap">
+      <div class="card-title">
+        <div class="card-title">
+          <div class="d-flex flex-column">
+            <span class="text-dark fw-semibold mb-5">
+              <h2>{{'TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_STATUS_PORTLET_HEADER' | translate}}</h2>
+            </span>
+            <span class="fs-6 text-gray-500 ms-1"> {{'TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_STATUS_PORTLET_HEADER_MESSSAGE' |
+              translate}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr class="divider m-0">
+    <div class="card-body">
+      <div class="row d-flex  gap-5 gap-lg-0">
+        <div class="col-lg-3">
+          <!--begin::Stepper-->
+          <div class="
+                        stepper stepper-pills stepper-column
+                        d-flex
+                        flex-column flex-xl-row flex-row-fluid
+                      " id="kt_create_account_stepper">
+            <!--begin::Aside-->
+            <div class="stepper-nav">
+
+              <div class="stepper-item" [ngClass]="{
+                                current: currentStep$.value === 1,
+                                completed: currentStep$.value > 1,
+                                'text-success': currentStep$.value > 1
+                              }">
+                <!--begin::Wrapper-->
+                <div class="stepper-wrapper">
+                  <!--begin::Icon-->
+                  <div class="stepper-icon w-40px h-40px" [ngClass]="{
+                    'bg-success' : stepOneSuccess }">
+                    <i class="stepper-check fas fa-check" [ngClass]="{
+                      'text-white':stepOneSuccess,
+                      'text-primary':!stepOneSuccess,
+                    }"></i>
+                    <span class="stepper-number">1</span>
+                  </div>
+                  <!--end::Icon-->
+                  <!--begin::Label-->
+                  <div class="stepper-label">
+                    <span class="stepper-title " [ngClass]="{
+                                    'text-primary': currentStep$.value === 1,
+                                    'text-success':stepOneSuccess
+                                  }">
+                      Order Accepted
+                    </span>
+                  </div>
+                  <!--end::Label-->
+                </div>
+                <!--end::Wrapper-->
+
+                <!--begin::Line-->
+                <div class="stepper-line h-40px"></div>
+                <!--end::Line-->
+              </div>
+              <div class="stepper-item" [ngClass]="{
+                              current: currentStep$.value === 2,
+                              completed: currentStep$.value > 2,
+                            }">
+                <!--begin::Wrapper-->
+                <div class="stepper-wrapper">
+                  <!--begin::Icon-->
+                  <div class="stepper-icon w-40px h-40px" [ngClass]="{
+                    'bg-danger': stepOneFailed,
+                    'bg-var': !stepOneFailed,
+                    'bg-success' : stepTwoSuccess 
+                     }">
+                    <i *ngIf="!stepOneFailed" class="stepper-check fas fa-check" [ngClass]="{
+                      'text-white':stepTwoSuccess,
+                    }"></i>
+                    <span class="stepper-number" [ngClass]="{
+                      'text-white': stepTwoSuccess || stepOneFailed,
+                    }">2</span>
+                  </div>
+                  <!--end::Icon-->
+
+                  <!--begin::Label-->
+                  <div class="stepper-label">
+                    <span class="stepper-title fs-3" [ngClass]="{
+                                  'text-primary': currentStep$.value === 2 || !stepOneFailed,
+                                  'text-success': stepTwoSuccess,
+                                  'text-danger': stepOneFailed
+                                }">
+                      Creating Account
+                    </span>
+                  </div>
+                  <!--end::Label-->
+                </div>
+                <!--end::Wrapper-->
+
+                <!--begin::Line-->
+                <div class="stepper-line h-40px"></div>
+                <!--end::Line-->
+              </div>
+              <div class="stepper-item" [ngClass]="{
+                            current: currentStep$.value === 3,
+                            completed: currentStep$.value > 3
+                          }">
+                <!--begin::Wrapper-->
+                <div class="stepper-wrapper">
+                  <!--begin::Icon-->
+                  <div class="stepper-icon w-40px h-40px" [ngClass]="{
+                    'bg-danger': stepOneFailed || stepTwoFailed || stepThreeFailed,
+                    'bg-success' : stepThreeSuccess 
+                    }">
+                    <i *ngIf="!stepOneFailed" class="stepper-check fas fa-check"></i>
+                    <span class="stepper-number" [ngClass]="{
+                      'text-white':stepOneFailed || stepTwoFailed || stepThreeFailed || stepThreeSuccess,
+                    }">3</span>
+                  </div>
+                  <!--end::Icon-->
+
+                  <!--begin::Label-->
+                  <div class="stepper-label">
+                    <span class="stepper-title fs-3" [ngClass]="{
+                                'text-primary': currentStep$.value === 3 || !stepOneFailed || !stepTwoFailed,
+                                'text-success' : stepThreeSuccess,
+                                'text-danger': stepOneFailed || stepTwoFailed || stepThreeFailed
+                              }">
+                      Account Created
+                    </span>
+                  </div>
+                  <!--end::Label-->
+                </div>
+                <!--end::Wrapper-->
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-9 d-flex justify-content-center align-items-center">
+          <div class="alert d-flex gap-2   border border-dashed" [ngClass]="{
+            'alert-danger bg-light-danger border-danger': stepOneFailed || stepTwoFailed || stepThreeFailed,
+            'alert-primary bg-light-primary border-primary': !stepOneFailed && !stepTwoFailed && !stepThreeFailed}"
+            role="alert">
+            @if( stepOneFailed || stepTwoFailed || stepThreeFailed){
+            <i class="ki-outline ki-cross text-danger fs-3tx">
+              <!-- <span class="path2"></span>
+                <span class="path3"></span> -->
+            </i>
+            <span>
+              <span class="text-dark">{{'TRANSLATE.PUBLIC_SIGNUP_FAILED_WARNING'| translate}}</span>
+              <span ng-click="vm.copyToClipBoard()" class="text-dark  fw-semibold">{{signUpBatchId}}</span>
+              <span class="text-dark"> {{'TRANSLATE.PUBLIC_SIGNUP_FAILED_WARNING1' | translate }}</span>
+            </span>
+            }
+            @else {
+            <i class="ki-outline ki-notification text-primary fs-2tx">
+              <span class="path2"></span>
+              <span class="path3"></span>
+            </i>
+            <span class="text-dark fw-semibold">{{'TRANSLATE.CUSTOMER_PUBLIC_SIGNUP_STATUS_PORTLET_ALERT_MESSSAGE' |
+              translate}}</span>
+            }
+          </div>
+        </div>
+        @if(stepOneFailed || stepTwoFailed || stepThreeFailed){
+        <div>
+          <a class="btn font-weight-bolder btn-light-primary float-end" [href]="publicSignupSupport" target="_blank">
+            <span translate="TRANSLATE.PUBLIC_SIGNUP_CONTACT_SUPPORT"></span>
+          </a>
+        </div>
+        }
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="card-body" *ngIf="allSuccess">
+    <div class="row">
+      <div class="container-fluid customer-container d-flex" style="height:100vh">
+        <div class="card product-description-card m-auto" style="width:fit-content">
+          <div class="card-body py-11 align-items-center gap-6">
+            <div class="d-flex flex-column gap-4 align-items-center">
+              <i class="ki-outline ki-check-circle" style="font-size:60px ; color: rgb(8, 200, 8);"></i>
+              <span class="fw-semibold">{{'TRANSLATE.PUBLIC_SIGNUP_SUCCESS_MESSAGE'
+                |translate}}&nbsp;{{customerSignUpStatus.Email}}</span>
+            </div>
+            <div *ngIf="onAttestationPending">
+              <div class="form-group">
+                <div
+                  class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+                  <div class="row m-heading-1 border-green m-bordered">
+                    <div class="d-flex flex-column p-2">
+                      <h6 class="fw-bold"
+                        [innerHTML]="'TRANSLATE.PROVIDER_CUSTOMER_ATTESTATION_AND_AGREEMENT_CREATION_PUBLIC_SIGNUP_INSTRUCTIONS_HEADING' | translate">
+                      </h6>
+                      <div class="d-flex ps-3 align-items-center gap-2 fw-semibold text-primary text-start">
+                        <a class="fw-semibold text-primary" [href]="attestationConsentUrl" target="_blank"
+                          rel="noopener noreferrer" [innerHTML]="'TRANSLATE.CLICK_HERE'| translate"></a>
+                        <span class="fw-semibold text-primary"
+                          [innerHTML]="'TRANSLATE.PUBLIC_SIGNUP_LOGS_MICROSOFT_CUSTOMER_ATTESTATION_MCA_CONSENT_MESSAGE_1'| translate"></span>
+                      </div>
+
+                      <ul class="text-start w-100">
+                        <li class="fw-semibold text-primary"
+                          [innerHTML]="'TRANSLATE.PUBLIC_SIGNUP_LOGS_MICROSOFT_CUSTOMER_ATTESTATION_MCA_CONSENT_MESSAGE_2'| translate">
+                        </li>
+                      </ul>
+                      <span class="fw-semibold text-primary text-center"
+                        [innerHTML]="'TRANSLATE.PUBLIC_SIGNUP_LOGS_MICROSOFT_CUSTOMER_ATTESTATION_MCA_CONSENT_MESSAGE_3'| translate"></span>
+                      <ul>
+                        <li class="fw-semibold text-primary"
+                          [innerHTML]="'TRANSLATE.PUBLIC_SIGNUP_LOGS_MICROSOFT_CUSTOMER_ATTESTATION_MCA_CONSENT_MESSAGE_4'| translate">
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 text-center mt-2" *ngIf="onWarn">
+                <h5>
+                  <span class=" text-danger"
+                    translate="TRANSLATE.ERROR_DESC_MESSAGE_ASSIGN_MS_SECURITY_GROUPS_TO_GDAP_REQUEST_FAILED_FOR_CUSTOMER_PUBLIC_SIGNUP"></span>
+                </h5>
+              </div>
+              <div class="d-flex justify-content-center gap-3 mt-3">
+                <button type="button" class="btn btn-sm btn-primary d-flex justify-content-center align-items-center"
+                  (click)="ResumePublicSignup()">
+                  <span translate="TRANSLATE.PUBLIC_SIGNUP_RESUME"></span>
+                </button>
+                <button class="btn btn-sm btn-primary" (click)="goToWelocmePage()" style="width: fit-content;">
+                  <span translate="TRANSLATE.PUBLIC_SIGNUP_GOTO_HOME"></span>
+                </button>
+              </div>
+            </div>
+            <div *ngIf="!onAttestationPending">
+              <div class="col-12 text-center mt-2" *ngIf="onWarn">
+                <h5>
+                  <span class=" text-danger"
+                    translate="TRANSLATE.ERROR_DESC_MESSAGE_ASSIGN_MS_SECURITY_GROUPS_TO_GDAP_REQUEST_FAILED_FOR_CUSTOMER_PUBLIC_SIGNUP"></span>
+                </h5>
+              </div>
+              <div class="row justify-content-center mt-4">
+                <button class="btn btn-sm btn-primary" (click)="goToWelocmePage()" style="width: fit-content;">
+                  <span translate="TRANSLATE.PUBLIC_SIGNUP_GOTO_HOME"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

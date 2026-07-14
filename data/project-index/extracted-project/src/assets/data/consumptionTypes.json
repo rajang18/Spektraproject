@@ -1,0 +1,24 @@
+﻿[
+  {
+    "ID": 1,
+    "Name": "Quantity",
+    "Description": "CONSUMPTION_TYPES_DESC_QUANTITY"
+  },
+
+  {
+    "ID": 2,
+    "Name": "Usage",
+    "Description": "CONSUMPTION_TYPES_DESC_USAGE"
+  },
+
+  {
+    "ID": 3,
+    "Name": "Service",
+    "Description": "CONSUMPTION_TYPES_DESC_SERVICE"
+  },
+  {
+    "ID": 5,
+    "Name": "Contract",
+    "Description": "CONSUMPTION_TYPES_DESC_CONTRACT"
+  }
+]

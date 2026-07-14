@@ -1,0 +1,248 @@
+<ng-template #actionHeader>
+  <div class="header-actions d-flex align-items-center gap-1 gap-lg-1">
+  <a class="btn btn-sm btn-lg btn-md btn-xs text-nowrap fw-bold btn-secondary"
+    ngbTooltip="{{'TRANSLATE.BTN_TEXT_SHOW_FILTERS' | translate}}" (click)="displayFilter()">
+    <i class="ki-outline ki-filter fs-2">
+      <!-- <span class="path1"></span>
+      <span class="path2"></span> -->
+    </i>&nbsp;<span translate="TRANSLATE.BTN_TEXT_FILTER"></span>
+  </a>
+</div>
+
+</ng-template>
+
+<div class="card p-10">
+  <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+    <div class="d-flex">
+      <a [ngbTooltip]="'TRANSLATE.'+'CUSTOMER_ORDERS_BUTTON_TEXT_VIEW_DETAILS' | translate" class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto w-30px h-30px w-md-40px h-md-40px" (click)="viewOrderDetails(data.ID)">
+        <span class="svg-icon svg-icon-primary svg-icon-sm h-20px w-20px"><i class="ki-outline ki-eye text-primary">
+          </i></span>
+    </a>
+    </div>
+  </ng-template>
+
+  <ng-template #cartAction let-data="adtData" let-emitter="captureEvents">
+    <div class="d-flex text-nowrap">
+      <span>
+        <span>
+          {{ 'TRANSLATE.'+ data.CartAction | translate }}
+        </span>
+      </span>
+      
+    </div>
+  </ng-template>
+  <ng-template #siteName let-data="adtData" let-emitter="captureEvents">
+    <div class="d-flex">
+      <span> 
+        <span *ngIf="hasSiteEnabled">
+          {{data.SiteName}}
+        </span>
+      </span>
+      
+    </div>
+  </ng-template>
+  <ng-template #departmentName let-data="adtData" let-emitter="captureEvents">
+    <div class="d-flex">
+      <span>
+        <span *ngIf="hasSiteEnabled">
+          {{data.DepartmentName}}
+        </span>
+      </span>
+      
+    </div>
+  </ng-template>
+
+  <!--begin::Filter orders -->
+  @if (shouldShowFilter) {
+  <form class="form" role="form">
+    <div class="card card-custom">
+      <div class="card-body">
+        <div class="form-group row">
+          <div class="col-lg-4">
+            <label>
+              {{'TRANSLATE.CUSTOMER_ORDERS_TABLE_TITLE_ORDER_ID'|translate}}
+            </label>
+            <input type="text" name="OrderNumber" [(ngModel)]="OrderNumber" class="form-control form-control-sm"
+              placeholder="{{'TRANSLATE.CUSTOMER_ORDERS_TABLE_TITLE_ORDER_ID' | translate}}">
+          </div>
+          <div class="col-lg-4">
+              <label>
+                {{'TRANSLATE.CUSTOMER_ORDERS_TABLE_TITLE_ORDER_MIN_DATE'|translate}}
+              </label>
+              <div class="input-group">
+                <input class="form-control form-control-sm mb-lg-0" placeholder="{{'TRANSLATE.CUSTOMER_ORDERS_TABLE_TITLE_ORDER_MIN_DATE'|translate}}" name="Orderedfrom"
+                   [(ngModel)]="Orderedfrom"
+                   [readOnly]="true"
+                  ngbDatepicker #sd="ngbDatepicker" [footerTemplate]="footerTemplateSD" [maxDate]="today">
+                <button class="btn btn-light-primary btn-sm" (click)="sd.toggle()" type="button"> <i
+                    class="ki-outline ki-calendar"></i></button>
+              </div>
+              <!-- <div class="input-group date">
+                <input type="text" placeholder="{{'TRANSLATE.CUSTOMER_ORDERS_TABLE_TITLE_ORDER_MIN_DATE'|translate}}"
+                  uib-datepicker-popup="{{dateFormat}}" is-open="opened" close-text="Close" class="form-control" readonly
+                  ng-model="vm.SearchCriteria.Orderedfrom" ng-model-options="{timezone: 'utc'}" ng-init="" name="min_date"
+                  ng-change="" />
+                <div class="input-group-append">
+                  <span class="input-group-text" ng-click="open($event)" ng-disabled="vm.addCoupon.IsCouponAssigned">
+                    <i class="fa fa-calendar"></i>
+                  </span>
+                </div>
+              </div> -->
+          </div>
+          <div class="col-lg-4">
+              <label>
+                {{'TRANSLATE.CUSTOMER_ORDERS_TABLE_TITLE_ORDER_MAX_DATE'|translate}}
+              </label>
+              <div class="input-group">
+                <input class="form-control form-control-sm mb-lg-0" placeholder="{{'TRANSLATE.CUSTOMER_ORDERS_TABLE_TITLE_ORDER_MAX_DATE'|translate}}" name="OrderedTo"
+                   [(ngModel)]="OrderedTo" name="maxDate" ngbDatepicker 
+                   [readOnly]="true"
+                   #ed="ngbDatepicker" [footerTemplate]="footerTemplateED" [minDate]="Orderedfrom" [maxDate]="today">
+                <button class="btn btn-light-primary btn-sm" (click)="ed.toggle()" type="button"> <i
+                    class="ki-outline ki-calendar"></i></button>
+              </div>
+              <!-- <div class="input-group date">
+                <input type="text" placeholder="{{'CUSTOMER_ORDERS_TABLE_TITLE_ORDER_MAX_DATE'|translate}}"
+                  uib-datepicker-popup="{{dateFormat}}" is-open="opened" close-text="Close" class="form-control" readonly
+                  ng-model="vm.SearchCriteria.OrderedTo" ng-model-options="{timezone: 'utc'}" ng-init="" name="max_date"
+                  ng-change="" />
+                <div class="input-group-append">
+                  <span class="input-group-text" ng-click="open($event)" ng-disabled="vm.addCoupon.IsCouponAssigned">
+                    <i class="fa fa-calendar"></i>
+                  </span>
+                </div>
+              </div> -->
+          </div>
+        </div>
+        <div class="form-group row mt-3">
+          <div class="col-lg-4">
+            <label>
+              {{'TRANSLATE.CUSTOMER_ORDERS_TABLE_TITLE_CART_ACTION'|translate}}
+            </label>
+            <select  name="CartAction" class="form-select form-select-sm" [(ngModel)]="CartAction">
+              <option value="">
+                {{'TRANSLATE.CUSTOMER_SEARCH_DEFAULT_OPTION'|translate}}
+              </option>
+              <option value="NEW_PURCHASE">
+                {{'TRANSLATE.CUSTOMER_ORDERS_ACTION_NAME_NEW_PURCHASE'|translate}}
+              </option>
+              <option value="QUANTITY_UPDATE">
+                {{'TRANSLATE.CUSTOMER_ORDERS_ACTION_NAME_QUANTITY_UPDATE'|translate}}
+              </option>
+              <option value="STATUS_CHANGE">
+                {{'TRANSLATE.CUSTOMER_ORDERS_ACTION_NAME_STATUS_UPDATE'|translate}}
+              </option>
+            </select>
+          </div>
+          <div class="col-lg-4">
+            <label>
+              {{'TRANSLATE.CUSTOMER_ORDERS_TABLE_TITLE_STATUS'|translate}}
+            </label>
+            <select class="form-select form-select-sm" name="OrderStatus" [(ngModel)]="OrderStatus">
+              <option [value]="''" translate="TRANSLATE.CUSTOMER_SEARCH_DEFAULT_OPTION"></option>
+              @for (row of orderStatus; track $index) {
+              <option [value]="row.ID">{{'TRANSLATE.'+row.OrderDescriptionKey | translate}}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="card-footer mt-3">
+          <div class="row">
+            <div class="col-sm-12 col-md-12 col-xs-12 col-12 col-lg-12 text-lg-end">
+              <button class="btn btn-light-primary btn-sm  me-md-2 me-lg-2 me-sm-2 me-xl-2 me-xxl-2"
+                (click)="SearchOrders()">
+                {{'TRANSLATE.CUSTOMER_SEARCH_SEARCH_OPTION' | translate}}
+              </button>
+              <button class="btn btn-light-primary btn-sm  me-md-2 me-lg-2 me-sm-2 me-xl-2 me-xxl-2"
+                (click)="resetSearchCriteria()">{{'TRANSLATE.CUSTOMER_SEARCH_RESET_OPTION' | translate}}</button>
+              <button class="btn btn-light-primary btn-sm me-md-2 me-lg-2 me-sm-2 me-xl-2 me-xxl-2"
+                (click)="shouldShowFilter = false;">{{'TRANSLATE.CUSTOMER_SEARCH_CLOSE_OPTION' | translate}}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <ng-template #footerTemplateSD>
+    <hr class="my-0" />
+    <button class="btn btn-secondary btn-sm m-2 float-start" (click)="clearStartDate(sd)">{{'TRANSLATE.CALENDAR_CLEAR_BUTTON' | translate}}</button>
+    <button class="btn btn-secondary btn-sm m-2 float-end" (click)="sd.close()">{{'TRANSLATE.CALENDAR_CLOSE_BUTTON' | translate}}</button>
+  </ng-template>
+  <ng-template #footerTemplateED>
+    <hr class="my-0" />
+    <button class="btn btn-secondary btn-sm m-2 float-start" (click)="clearEndDate(ed)">{{'TRANSLATE.CALENDAR_CLEAR_BUTTON' | translate}}</button>
+    <button class="btn btn-secondary btn-sm m-2 float-end" (click)="ed.close()">{{'TRANSLATE.CALENDAR_CLOSE_BUTTON' | translate}}</button>
+  </ng-template>
+  }
+  <!--End::Filter Orders-->
+  
+
+  <ng-template #status let-data="adtData" let-emitter="captureEvents">
+    <span>
+      <span class="badge badge-light-primary d-flex ps-4 pe-4" *ngIf="data.OrderStatus === 'Ordered'">
+        <!-- <span class="row"> -->
+          <span class="spinner-border spinner-border-sm mt-1 me-1" role="status" aria-hidden="true"></span>
+          {{ 'TRANSLATE.ORDER_STATUS_ORDERED' | translate }}
+        <!-- </span> -->
+      </span>
+
+      <span class="badge badge-light-success" *ngIf="data.OrderStatus === 'Success'">
+        {{ 'TRANSLATE.ORDER_LIST_STATUS_SUCCESS' | translate }}
+      </span>
+
+      <span class="badge badge-light-danger" *ngIf="data.OrderStatus === 'Failed'" >
+        {{ 'TRANSLATE.ORDER_STATUS_FAILED' | translate }}
+      </span>
+
+      <span class="badge badge-light-warning" *ngIf="data.OrderStatus === 'Onhold'" >
+        {{ 'TRANSLATE.ORDER_STATUS_APPROVAL_REQUIRED' | translate }}
+      </span>
+
+      <span class="badge badge-light-warning" *ngIf="data.OrderStatus === 'Rejected'">
+        {{ 'TRANSLATE.ORDER_STATUS_DESC_REJECTED' | translate }}
+      </span>
+
+      <!-- <span class="badge badge-success" *ngIf="data.OrderStatus === 'Accepted'">
+        {{ 'TRANSLATE.ORDER_STATUS_DESC_ACCEPTED' | translate }}
+      </span> -->
+
+      <span class="badge badge-light-warning" *ngIf="data.OrderStatus === 'Scheduled'">
+        {{ 'TRANSLATE.ORDER_STATUS_DESC_SCHEDULED' | translate }}
+      </span>
+
+      <span class="badge badge-light-warning" *ngIf="data.OrderStatus === 'PartiallyFulfilled'">
+        {{ 'TRANSLATE.ORDER_STATUS_DESC_PARTIALLYFULFILLED' | translate }}
+      </span>
+
+      <span class="badge badge-light-warning"
+        *ngIf="data.OrderStatus != 'Scheduled' && data.OrderStatus != 'Failed' && data.OrderStatus != 'Success' && data.OrderStatus != 'Ordered' && data.OrderStatus != 'Onhold' && data.OrderStatus != 'Rejected' && data.OrderStatus != 'PartiallyFulfilled'">
+        {{ 'TRANSLATE.ORDER_STATUS_DESC_IGNORE' | translate }}
+    </span>
+
+    <span *ngIf="data.OrderStatus === 'Rejected' && data.ApproveOrRejectRemark"><i class="ki-duotone  ki-information-2 mt-1 fs-5" aria-hidden="true"  ngbTooltip="{{data.ApproveOrRejectRemark}}"  >
+      <span class="path1"></span>
+      <span class="path2"></span>
+      <span class="path3"></span></i></span>
+
+      <a *ngIf="data.OrderStatus === 'in progress'"
+      ngbTooltip='TRANSLATE.partner_plans_button_tooltip_clone_plan_in_progress' | translate>
+        <i class="fas fa-spinner"></i>
+      </a>
+
+    </span>
+
+  </ng-template>
+  <ng-template #orderId let-data="adtData" let-emitter="captureEvents">
+    <span class="fw-semibold">
+        {{data.OrderNumber}} 
+        <a class="badge badge-light-primary badge-lg" style="cursor:pointer" (click)="stopImpersonation()" ngbTooltip="{{data.QuoteName}}" *ngIf="data.QuoteName != null">{{data.QuoteName | limitLength : 75}}</a>
+    </span>
+  </ng-template>
+
+  <!-- Check if datatableConfig is defined and then render the table -->
+  <ng-container *ngIf="datatableConfig" >
+    <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" [searchFilter]="false" [defaultPageObj]="defaultPageObj">
+    </app-c3-table>
+  </ng-container>
+</div>

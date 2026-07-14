@@ -1,0 +1,47 @@
+<ng-template #actionHeader>
+  <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+    <ng-select [(ngModel)]="selectedBillingPeriods" (change)="Reload()" class="w-300px">
+      <ng-option [value]="0">
+        {{'TRANSLATE.CUSTOMER_OPTION_ALL_PERIODS' | translate}}
+      </ng-option>
+      @for(option of billingPeriods; track $index){
+      <ng-option [value]="option.BillingPeriodId">
+        {{option.BillingStartDate | c3Date}}-{{option.BillingEndDate | c3Date}} ({{option.BillingId}})
+      </ng-option>
+      }
+    </ng-select>
+    <button type="button"
+      class="btn btn-primary btn-sm btn-xs btn-md btn-lg mr-10 text-nowrap ng-binding ng-scope ng-isolate-scope"
+      (click)="exportUsageReport()">
+      <i class="ki-outline ki-exit-down fs-2"></i>&nbsp;{{'TRANSLATE.USAGE_REPORT_CAPTION_TEXT_DOWNLOAD_USAGE_REPORT' |
+      translate}}
+    </button>
+  </div>
+</ng-template>
+
+<div class="card">
+  <ng-template #costToPartnerPreTax let-data="adtData" let-emitter="captureEvents">
+    <div>
+      {{data.CostToPartnerPreTax |CurrencyFilter : data?.CurrencySymbol : data?.CurrencyDecimalPlaces :
+      data?.CurrencyThousandSeperator : data?.CurrencyDecimalSeperator}}
+    </div>
+  </ng-template>
+  <ng-template #costToPartnerPostTax let-data="adtData" let-emitter="captureEvents">
+    <div>
+      {{data.CostToPartnerPostTax |CurrencyFilter : data?.CurrencySymbol : data?.CurrencyDecimalPlaces :
+      data?.CurrencyThousandSeperator : data?.CurrencyDecimalSeperator}}
+    </div>
+  </ng-template>
+  <ng-template #billToCustomer let-data="adtData" let-emitter="captureEvents">
+    <div>
+      {{data.BillToCustomer |CurrencyFilter : data?.CurrencySymbol : data?.CurrencyDecimalPlaces :
+      data?.CurrencyThousandSeperator : data?.CurrencyDecimalSeperator}}
+    </div>
+  </ng-template>
+  <div class="card-body pt-0 overflow-auto">
+    @if (!!datatableConfig) {
+    <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+    </app-c3-table>
+    }
+  </div>
+</div>

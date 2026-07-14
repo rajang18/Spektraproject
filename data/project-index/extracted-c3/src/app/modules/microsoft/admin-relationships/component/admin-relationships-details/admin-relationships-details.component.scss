@@ -1,0 +1,20 @@
+.custom-bg {
+    background-color: #ffeef3;
+}
+
+.entrrole-list {
+    height: calc(85vh - (var(--bs-app-footer-height) + var(--bs-app-header-height) + var(--bs-app-toolbar-height) + 76px));
+    overflow: auto;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin: 20px 0;
+}
+
+::ng-deep{
+    app-admin-relationships-details{
+        input[type="checkbox"]:disabled{
+            pointer-events: auto !important;
+            cursor: not-allowed !important;
+        }
+    }
+}

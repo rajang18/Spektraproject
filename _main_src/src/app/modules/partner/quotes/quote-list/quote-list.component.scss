@@ -1,0 +1,45 @@
+.deletedQuote {
+    color: #B50000;
+}
+
+.quoteStatusPublished {
+    background-color: rgba(0, 141, 245, 0.1);
+    color: #008DF5;
+}
+
+.quoteStatusDeleted {
+    background-color: rgba(181, 0, 0, 0.1);
+    color: #b50000;
+}
+
+.quoteStatusDraft {
+    background-color: rgba(255, 165, 0, 0.1);
+    color: orange;
+}
+
+.quoteStatusExpired {
+    background-color: rgba(248, 40, 90, 0.1);
+    color: #F8285A;
+}
+
+.quoteStatusApproved {
+    background-color: rgba(23, 198, 83, 0.1);
+    color: #17C653;
+}
+
+.quoteStatusOrderProcessed {
+    background-color: rgba(70, 130, 180, 0.1);
+    color: #4682B4;
+    white-space: nowrap;
+}
+
+.no-hover:hover {
+    background-color: transparent;
+}
+
+.custom-scroll {
+    max-height: 300px; 
+    overflow-y: auto; 
+    overflow-x: hidden;
+    margin: 10px;
+}

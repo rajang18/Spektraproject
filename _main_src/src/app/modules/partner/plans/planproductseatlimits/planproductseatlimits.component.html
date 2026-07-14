@@ -1,0 +1,320 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-semibold btn-light-primary" (click)="showHelpText = !showHelpText">
+            <span translate="TRANSLATE.CHANGE_PLAN_HELP"></span>&nbsp;
+            <i class="ki-outline ki-question-2 fs-4"></i>
+        </button>
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="backToList()">
+            <i class="ki-outline ki-to-left fs-2"></i> <span translate="TRANSLATE.PLAN_MANAGE_ADD_BUTTON_TEXT_BACK_TO_PLAN"></span>
+        </button>
+    </div>
+</ng-template>
+
+@if (showHelpText) {
+<div class="card mb-4">
+    <div class="card-body ">
+        <div class="m-heading-1 border-green m-bordered">
+            <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+                <div class="col-md-12">
+                    <h6>
+                        <span translate="TRANSLATE.PARTNER_PLAN_PRODUCT_SEAT_LIMITS_INSTRUCTION_HEADING"></span>
+                    </h6>
+                </div>
+                <div class="col-md-12 mt-2">
+                    <ul>
+                        <li>
+                            <spa translate="TRANSLATE.PARTNER_PLAN_PRODUCT_SEAT_LIMITS_INSTRUCTION_STEP_1"></spa>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.PARTNER_PLAN_PRODUCT_SEAT_LIMITS_INSTRUCTION_STEP_02"></span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.PARTNER_PLAN_PRODUCT_SEAT_LIMITS_INSTRUCTION_STEP_2"></span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.PARTNER_PLAN_PRODUCT_SEAT_LIMITS_INSTRUCTION_STEP_3"></span>
+                        </li>
+                        <li>
+                            <span translate="TRANSLATE.PARTNER_PLAN_PRODUCT_SEAT_LIMITS_INSTRUCTION_STEP_4"></span>
+                        </li>
+                        <li>
+                            <span
+                                [innerHTML]="'TRANSLATE.PARTNER_PLAN_PRODUCT_SEAT_LIMITS_INSTRUCTION_STEP_5' | translate"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+
+<div class="card">
+
+
+    <div class="card-body overflow-auto">
+        <!-- Enable name field -->
+
+        <!-- plan name -->
+
+        <ng-template #planname let-data="adtData" let-emitter="captureEvents">
+
+            <div *ngIf="data.CompositeProductId === null">
+                <strong *ngIf="data.PlanOfferBillingQualifiedOfferId.length <= 40">{{data.PlanOfferQualifiedOfferName}}</strong>
+
+                <strong *ngIf="data.PlanOfferBillingQualifiedOfferId.length > 40">
+                    <span [ngStyle]="{'padding-left':data.PlanOfferBillingQualifiedOfferId.length/1.5}">
+                        {{data.PlanOfferQualifiedOfferName}}
+                    </span>
+                </strong>
+                <sup *ngIf="data.IsAddOn" class="text-warning fw-bold ms-1">
+                    <span translate="TRANSLATE.PLAN_MANAGE_ADD_FORM_TABLE_1_HEADER_TEXT_OFFER_ADD_ON"></span>
+                </sup>
+                <!-- rbac @@@  vm.Permissions.AreNcePromotionsEnabled === 'Allowed' && -->
+                <span *ngIf="data.ShowPromotionLink" (click)="checkNcePromotionDetails(data)"
+                    class="mb-0 ms-1 font-weight-normal  separator-primary text-primary cursor-pointer"
+                    ngbTooltip="{{'TRANSLATE.NCE_PROMOTIONS_AVAILABLE_TEXT' | translate}}">
+                    <i class="ki-outline ki-discount text-primary"></i>
+                </span>
+
+                <div *ngIf="data.LinkedProductName !== null">
+                    <span class="d-flex align-items-center" style="padding-left:30px;">
+                        <i class="ki-outline ki-paper-clip fs-3 text-primary"></i>
+                        <span class="font-weight-bold">
+                            {{ data.LinkedProductName }}
+                        </span>
+                        <!-- <sup>
+                            <span class="text-warning" translate="TRANSLATE.CUSTOMER_PRODUCT_SEQUENCE_TABLE_PRODUCT_DESCRIPTION_LINKED_PRODUCT_SUFFIX"></span>
+                        </sup> -->
+                        <span *ngIf="data.LinkedProductShowPromotionLink"
+                            (click)="checkLinkedProductNcePromotionDetails(data)"
+                            class="mb-0 ms-2 font-weight-normal  separator-primary text-primary cursor-pointer"
+                            ngbTooltip="{{'TRANSLATE.NCE_PROMOTIONS_AVAILABLE_TEXT' | translate}}">
+                            <i class="ki-outline ki-discount text-primary"></i>
+                        </span>
+                    </span>
+                    <!-- rbac vm.Permissions.AreNcePromotionsEnabled === 'Allowed' &&  -->
+                </div>
+
+                <br />
+
+                <span
+                    *ngIf="data.ValidityType!=null && data.Category=='OnlineServicesNCE' && data.ValidityType == 'Month(s)'"
+                    class="badge bg-warning font-weight-bold label-inline text-white ms-1"
+                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                    {{data.Validity}} {{(data.Validity == 1? data.ValidityType === 'Month(s)'?
+                    'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR' :
+                    'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                </span>
+
+                <!-- issue being 2 structural directives cannot be used on the same line ! -->
+                @if((data.ValidityType!=null && data.Category=='OnlineServicesNCE') && (data.ValidityType == 'Year(s)'
+                || data.ValidityType == 'Year')){
+                <span
+                    [ngClass]="{'labelcolor':data.BillingCycle == 'Monthly','TermLabelColor': data.BillingCycle == 'Annual'}"
+                    class="badge bg-warning font-weight-bold label-inline text-white ms-1"
+                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                    <!-- when using tenary operator during translate make sure to use a paranthesis wrapping  -->
+                    {{data.Validity}}
+                    {{(data.Validity == 1? data.ValidityType === 'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                    'TRANSLATE.TERM_DURATION_DESC_YEAR' : 'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                </span>
+                }
+
+
+                <span class="badge  font-weight-bold label-inline text-white ms-1" [ngClass]="{
+                                'bg-warning': data.BillingCycle?.toLowerCase() === 'monthly',
+                                'bg-success': data.BillingCycle?.toLowerCase() === 'annual',
+                                'bg-dark': data.BillingCycle?.toLowerCase() === 'triennial',
+                                'bg-info': data.BillingCycle?.toLowerCase() === 'onetime'
+                                }" aria-hidden="true"
+                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}">
+                    {{'TRANSLATE.' + data.BillingCycleDescription | translate}}
+                </span>
+
+                <span class="badge badge-sm badge-inline ng-binding label-bg-success text-white ms-1"
+                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_PROVIDER' | translate}}">
+                    {{'TRANSLATE.' + data.ProviderdescriptionKey | translate}}
+                </span>
+
+                <span class="badge label-bg-info font-weight-bold label-inline ms-1"
+                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}">
+                    {{'TRANSLATE.' + data.CategoryDescriptionKey | translate}}
+                </span>
+
+                <span class="badge badge-sm label-inline label-bg-primary ms-1" *ngIf="data.ProviderCategory"
+                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_SERVICE_TYPE' | translate}}">
+                    {{ data.ProviderCategory | translate }}
+                </span>
+
+
+                <span *ngIf="data.PlanProductMacroName != null"
+                    class="badge label-bg-warning font-weight-bold mt-1 badge-inline ms-1"
+                    ngbTooltip="{{'TRANSLATE.PLAN_MACRO_DETAILS_LABEL_TEXT' | translate}}">
+                    {{'TRANSLATE.'+data.PlanProductMacroDescriptionKey | translate}}
+                    <span *ngIf="data.PlanProductMacroValue != null && data.PlanProductMacroValue != 0">
+                        ({{data.PlanProductMacroValue}})
+                    </span>
+                </span>
+                <span class="badge bg-info label-pill label-sm label-inline text-white ms-1" *ngIf="data.MarketCode"
+                    ngbTooltip="{{data.MarketCountry}}">{{data.MarketCode}}
+                </span>
+            </div>
+        </ng-template>
+
+        <ng-template #saleprice let-data="adtData" let-emitter="captureEvents">
+            <div *ngIf="data.CompositeProductId === null">
+                <!-- import decimal pipe !!!!!!!!  for decimal places of 2 -->
+                {{data.CurrencySymbol}} {{data.SalePrice| number:'1.2-2'}}
+                <div
+                    *ngIf="(data.LinkedProductSalePrice !== undefined && data.LinkedProductSalePrice !== null && data.LinkedProductSalePrice !== '')">
+                    <!-- import decimal pipe -->
+                    <span class="d-flex align-items-center justify-content-end" style="padding-left:30px;"><i
+                            class="ki-outline ki-paper-clip fs-3 text-primary me-1"></i><span class="font-weight-bold"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_LINKED_PRODUCT_PRICE' | translate}}">{{data.CurrencySymbol}}
+                            {{data.LinkedProductSalePrice | number:'1.2-2'}}</span></span>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template #action let-data="adtData" let-emitter="captureEvents" let-row="userData">
+            <div *ngIf="data.CompositeProductId === null">
+                <div *ngIf="(data.SeatLimitId == 0 || data.IsOverridePlanSeat == false) && !data.pageMode">
+                    <button class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto px-4"
+                        (click)="setPlanProductWiseSeatLimit(data)"
+                        ngbTooltip="{{'TRANSLATE.PLAN_LEVEL_SEATLIMIT_EDIT'| translate}}">
+                        <i class="ki-outline ki-pencil text-primary"></i>
+                    </button>
+                </div>
+                <div class="d-flex justify-content-center align-items-center" style="display:inline-flex;"
+                    *ngIf="(data.IsOverridePlanSeat == true || data.pageMode == true)">
+                    <!-- ng model issue during 2 way binding -->
+                    <!-- some problem while binding  -->
+                    <input type="number" min="-1" step="1" class="form-control text-right" style="width: 50%;"
+                        placeholder="{{'TRANSLATE.PLAN_PRODUCTS_SEAT_LIMITS_DETAILS_TABLE_PLACEHOLDER_FOR_NUMBER_OF_SEATS' | translate}}"
+                        [(ngModel)]="data.MaximumSeatsAllowed" (change)="UpdateSeatLimit(data,'update')">
+                    <button class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto px-4 ml-2 ms-2"
+                        (click)="UpdateSeatLimit(data,'revert')"
+                        ngbTooltip="{{'TRANSLATE.PLAN_LEVEL_SEATLIMIT_REVERT' | translate}}">
+                        <i class="ki-outline  ki-arrow-circle-left  text-primary"></i>
+                    </button>
+                </div>
+            </div>
+        </ng-template>
+
+        <!-- checking if modal works with the variable as expected ! -->
+        <!-- <ng-template #promotion let-data="adtData" let-emitter="captureEvents" let-row="userData">
+            {{modalContent | json}}             
+        </ng-template> -->
+
+        <ng-template #promotiontemplate let-data="adtData" let-emitter="captureEvents" let-row="userData">
+            <div class="modal-dialog m-0 modal-dialog m-0-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>{{'TRANSLATE.NCE_PROMOTIONS_POPUP_PROMOTION_DETAILS' | translate}}</h2>
+                        <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="promotionModalRef.close()"
+                            data-bs-dismiss="modal">
+                            <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span
+                                    class="path2"></span></i>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h4 class="font-weight-bold">
+                                        {{modalContent.promotionDetail.Name}}
+                                    </h4>
+                                    <p><b>{{'TRANSLATE.NCE_PROMOTIONS_POPUP_PROVIDER_REF_ID' |
+                                            translate}}</b>{{modalContent.promotionDetail.PromotionalId ||
+                                        modalContent.promotionDetail.PromotionId}}</p>
+                                    <p>{{modalContent.promotionDetail.Description}}</p>
+                                    <table
+                                        class="table table-bordered table-responsive-md table-responsive-lg table-responsive-sm table-responsive-xl table-responsive-xxl">
+                                        <thead>
+                                            <tr>
+                                                <td>
+                                                    <span translate="TRANSLATE.NCE_PROMOTIONS_POPUP_TERM"></span>
+                                                </td>
+                                                <td>
+                                                    <span
+                                                        translate="TRANSLATE.NCE_PROMOTIONS_POPUP_BILLING_FREQUENCY"></span>
+                                                </td>
+                                                <td>
+                                                    <span style="display : flex ; justify-content : right"
+                                                        translate="TRANSLATE.NCE_PROMOTIONS_POPUP_DISCOUNT"></span>
+                                                </td>
+                                                <td>
+                                                    <span translate="TRANSLATE.NCE_PROMOTIONS_POPUP_END_DATE"></span>
+                                                </td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    {{modalContent.promotionDetail.Validity}}
+                                                    {{(modalContent.promotionDetail.Validity == 1?
+                                                    modalContent.promotionDetail.ValidityType === 'Month(s)'?
+                                                    'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                    'TRANSLATE.TERM_DURATION_DESC_YEAR' :
+                                                    'TRANSLATE.TERM_DURATION_DESC_YEARS') | translate }}
+                                                </td>
+                                                <td>
+                                                    {{modalContent.promotionDetail.BillingCycleDescriptionKey |
+                                                    translate}}
+                                                </td>
+                                                <td style="display : flex ; justify-content : right">
+                                                    {{modalContent.promotionDetail.Discount ||
+                                                    row.promotionDetail.PromotionDiscount}}{{(
+                                                    row.promotionDetail.PromotionDiscountType.toLowerCase() ||
+                                                    row.promotionDetail.DiscountType.toLowerCase() )
+                                                    =='percentdiscount'?'%':''}}
+                                                </td>
+                                                <td>
+                                                    <!-- dateTimeFilter -->
+                                                    {{ modalContent.promotionDetail.PromotionEndDate ||
+                                                    modalContent.promotionDetail.EndDate | c3Date }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-12">
+                                    <!-- permissions.AreNcePromotionsEnabled === 'Allowed' && permission -->
+                                    <!-- <span ng-if=" modalContent.IsPromotionAvailableForCustomer && modalContent.ShowPromotionLink" ng-click="cc.checkNcePromotionEligibility(product)" class="mb-0 mr-2 font-weight-normal  separator-primary text-primary cursor-pointer">{{'TRANSLATE.NCE_PROMOTIONS_CHECK_ELIGIBILITY' | translate }}</span> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="promotionModalRef.close()"
+                            translate="NCE_PROMOTIONS_POPUP_CLOSE"></button>
+                    </div>
+                </div>
+            </div>
+
+        </ng-template>
+
+        @if(showtable){
+        <ng-container *ngIf="!!datatableConfig">
+            <div class="row">
+                <div class="col-12">
+                    <h4 class="font-size-h4 my-2"><span
+                            translate="TRANSLATE.PARTNER_PLAN_DETAILS_LABEL_TEXT_PLAN_SEAT_LIMIT"></span>&nbsp;<span
+                            class="font-weight-bold">{{planSeatLimit}}</span></h4>
+                </div>
+            </div>
+
+            <app-c3-table [datatableConfig]="datatableConfig">
+            </app-c3-table>
+
+            <div class="row">
+                <div class="col-12">
+                    <button class="btn btn-primary float-end mt-4" (click)="SubmitProducts()">{{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}</button>
+                </div>
+            </div>
+        </ng-container>
+        }
+    </div>
+</div>

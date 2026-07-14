@@ -1,0 +1,790 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-semibold btn-light-primary" (click)="backToList()">
+            <i class="ki-outline ki-to-left fs-2"></i> <span
+                translate="TRANSLATE.PLAN_MANAGE_ADD_BUTTON_TEXT_BACK_TO_PLAN"></span></button>
+    </div>
+</ng-template>
+
+
+<div>
+    <div class="card">
+        <!-- <div class="card-header ">
+            <span class="fw-semibold fs-3 d-flex align-items-center"
+                translate="TRANSLATE.PARTNE_PLAN_DETAILS_HEADER_TEXT_BASIC_DETAILS"></span>
+        </div> -->
+        <div class="card-body">
+            @if(isDataLoaded) {
+            <form [formGroup]="planDetailsRegisterForm">
+                <div class="form-group row">
+                    <div class="form-group row">
+                        <div
+                            class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNE_PLAN_DETAILS_LABEL_TEXT_NAME"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <input type="text" [ngClass]="{'disabled-select': Permissions.HasSavePlan!='Allowed'}"
+                                class="form-control form-control-sm form-control" formControlName="planName"
+                                autocomplete="off" placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_PLAN_NAME' | translate}}">
+                            @if(planDetailsRegisterForm.get('planName')?.errors?.required &&
+                            isSubmit){
+                            <span class="text-danger">{{'TRANSLATE.REQUIRED_FIELD_TEXT' | translate}}</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNE_PLAN_DETAILS_LABEL_TEXT_DESCRIPTION"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <textarea rows="4" cols="50"
+                                [ngClass]="{'disabled-select': Permissions.HasSavePlan!='Allowed'}"
+                                class="form-control form-control-sm" formControlName="description"
+                                placeholder="{{'TRANSLATE.PLACEHOLDER_ENTER_TEXT' | translate}}">
+                            </textarea>
+                            @if(planDetailsRegisterForm.get('description')?.errors?.required && isSubmit){
+                            <span class="text-danger">{{'TRANSLATE.REQUIRED_FIELD_TEXT' | translate}}</span>
+                            }
+                        </div>
+                    </div>
+                    @if(Permissions.HasPublicSignUp==='Allowed'){
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <span class="fw-semibold fs-6 mb-2" translate="TRANSLATE.PLAN_DETAILS_IS_PUBLIC"></span>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-check form-check-inline me-5">
+                                <input type="checkbox" class="form-check-input mt-3" (change)="setPlanAsPublic()"
+                                    formControlName="isPublic">
+                            </label>
+                        </div>
+                    </div>
+                    }
+
+                    <!-- todo aj: Missing Permission related check -->
+                    @if (planDetails.CurrencyCode && planType !== 'clone') {
+                    @if(planDetails.InternalPlanId !== undefined && planDetails.InternalPlanId !== null && planId !=null
+                    && planDetails.IsPublic === true){
+                    <div class="form-group row mt-7" [appPermission]="'PUBLIC_SIGNUP'">
+                        <div
+                            class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="fw-semibold fs-6 mb-2" translate="TRANSLATE.PLAN_DETAILS_SHARING_URL"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="fw-semibold ps-2 fs-6">
+                                <a href="{{shareableUrl}}" target="_blank">{{shareableUrl}}</a>
+                            </label>
+                        </div>
+                    </div>
+                    }
+                    @if(Permissions.HasDefinePlanDetailsAttributes === 'Allowed'){
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNE_PLAN_DETAILS_LABEL_TEXT_CURRENCY_CODE"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <select class="form-select form-select-sm fw-semibold"
+                                [ngClass]="{'disabled-select': isEditMode}" formControlName="currencyCode"
+                                [(ngModel)]="planDetails.CurrencyCode" (change)="getSupportedMarketsForPlanCreation()">
+                                @for(currency of supportedCurrenciesData; track $index){
+                                <option [value]="currency?.CurrencyCode" [disabled]="isEditMode">
+                                    {{currency?.CurrencyCode}}</option>
+                                }
+                            </select>
+                            @if(planDetailsRegisterForm.get('currencyCode')?.errors?.required &&
+                            isSubmit){
+                            <span class="text-danger">{{'TRANSLATE.REQUIRED_FIELD_TEXT' | translate}}</span>
+                            }
+                        </div>
+                    </div>
+
+                    }
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PLAN_DETAILS_LABEL_SUPPORTED_MARKETS"></label>
+                            <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" aria-hidden="true"
+                                ngbTooltip="{{'TRANSLATE.SUPPORTED_MULTIPLE_MARKET_LABEL_INFO_TOOLTIP' | translate}}">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span></i>
+                        </div>
+                        <div class="col-md-5">
+                            <select2 [data]="supportedMarketDataSet" formControlName="supportMarket"
+                                [ngClass]="{'disabled-select': isEditMode}" [templates]="template" [multiple]="true"
+                                [readonly]="isEditMode">
+                                <ng-template #template let-data="data">
+                                    <span class="nohtmltitle" [ngClass]="{'multiple-select-choice' : !isEditMode}">
+                                        <strong>{{data?.marketCode}}</strong>: {{data?.region}}
+                                    </span>
+                                </ng-template>
+                            </select2>
+                            @if(planDetailsRegisterForm.get('supportMarket')?.errors?.required &&
+                            isSubmit){
+                            <!-- todo: 
+                            <select2 [data]="supportedMarketDataSet" formControlName="supportMarket"
+                                class="form-select form-select-solid" [templates]="template" [multiple]="true"
+                                [readonly]="isEditMode">
+                                <ng-template #template let-data="data">
+                                    <span class="nohtmltitle" [ngClass]="{'multiple-select-choice' : !isEditMode}">
+                                        <strong>{{data?.marketCode}}</strong>: {{data?.region}}
+                                    </span>
+                                </ng-template>
+                            </select2>
+                            @if(planDetailsRegisterForm.get('supportMarket')?.errors?.required &&
+                            isSubmit){
+                             todo: 
+                                   1. some logic include
+                                -->
+                            <span class="text-danger">{{'TRANSLATE.REQUIRED_FIELD_TEXT' | translate}}</span>
+                            }
+                            <span *ngIf="supportedMarketDataSet == null || this.supportedMarketDataSet?.length == 0"
+                                class="text-danger d-block">{{"TRANSLATE.SUPPORTED_MARKET_NOT_FOUND_FOR_THIS_CURRENCY" |
+                                translate}}</span>
+                            <div
+                                *ngIf="errorForSupportedMarkets != null && (planType.toLowerCase() == 'add' || planType.toLowerCase() == 'savewithalloffers')">
+                                <div ngbAccordion>
+                                    <div ngbAccordionItem>
+                                        <div ngbAccordionHeader>
+                                            <button ngbAccordionButton>
+                                                <div class="card-label">
+                                                    <span ng-if="errorForSupportedMarkets"
+                                                        class="text-warning d-block"><span>
+                                                            {{'TRANSLATE.SUPPORTED_MARKETS_NO_CURRENCY_CONVERSION_FOUND'
+                                                            | translate}}</span></span>
+                                                </div>
+                                            </button>
+                                        </div>
+                                        <div ngbAccordionCollapse>
+                                            <div class="card-body">
+                                                <table show-filter="false" class="table table-bordered table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                <span
+                                                                    translate="TRANSLATE.SUPPORTED_MULTIPLE_MARKET_TABLE_HEADER_COUNTRY"></span>
+                                                            </th>
+                                                            <th>
+                                                                <span
+                                                                    translate="TRANSLATE.SUPPORTED_MULTIPLE_MARKET_TABLE_HEADER_COUNTRY_CODE"></span>
+                                                            </th>
+                                                            <th>
+                                                                <span
+                                                                    translate="TRANSLATE.SUPPORTED_MULTIPLE_MARKET_TABLE_HEADER_CURRENCY"></span>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @for (market of errorForSupportedMarkets; track $index) {
+                                                        <tr>
+                                                            <td class="body-alignment-normal font-weight-light">
+                                                                {{market.Region}}</td>
+                                                            <td class="body-alignment-normal font-weight-light">
+                                                                {{market.MarketCode}}</td>
+                                                            <td class="body-alignment-normal font-weight-light">
+                                                                {{market.Currency}}</td>
+                                                        </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                    @if(Permissions.HasDefinePlanDetailsAttributes === 'Allowed'){
+                        <div class="form-group row mt-7">
+                            <div
+                                class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                                <label class="required fw-semibold fs-6 mb-2"
+                                    translate="TRANSLATE.PARTNE_PLAN_DETAILS_LABEL_TEXT_PURCHASE_CURRENCY"></label>
+                            </div>
+                            <div class="col-md-5">
+                                <select class="form-select form-select-sm fw-semibold" (change)="onPurchaseCurrencyChange()" formControlName="purchaseCurrency"
+                                    [ngClass]="{'disabled-select': isEditMode}">
+                                    @for(option of currencyOptions; track $index){
+                                    <option [value]="option.ID" [disabled]="isEditMode"
+                                        [translate]="'TRANSLATE.'+option.Description">
+                                    </option>
+                                    }
+                                </select>
+                                @if(planDetailsRegisterForm.get('purchaseCurrency')?.errors?.required &&
+                                isSubmit){
+                                <span class="text-danger">{{'TRANSLATE.REQUIRED_FIELD_TEXT' | translate}}</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="form-group row mt-7">
+                            <div
+                                class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                                <label class="required fw-semibold fs-6 mb-2"
+                                    translate="TRANSLATE.PARTNE_PLAN_DETAILS_LABEL_TEXT_INVOICE_CURRENCY"></label>
+                            </div>
+                            <div class="col-md-5">
+                                <select class="form-select form-select-sm fw-semibold" (change)="onInvoiceCurrencyChange()" formControlName="invoiceCurrency"
+                                    [ngClass]="{'disabled-select': isEditMode || isPurchaseCurrencySelectedAsCustomerCurrency}">
+                                    @for(option of currencyOptions; track $index){
+                                    <option [value]="option.ID" [disabled]="isEditMode || isPurchaseCurrencySelectedAsCustomerCurrency"
+                                        [translate]="'TRANSLATE.'+option.Description">
+                                    </option>
+                                    }
+                                </select>
+                                @if(planDetailsRegisterForm.get('invoiceCurrency')?.errors?.required &&
+                                isSubmit){
+                                <span class="text-danger">{{'TRANSLATE.REQUIRED_FIELD_TEXT' | translate}}</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="form-group row mt-7">
+                            <div
+                                class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                                <label class="required fw-semibold fs-6 mb-2"
+                                    translate="TRANSLATE.PARTNE_PLAN_DETAILS_LABEL_TEXT_DISPLAY_CURRENCY"></label>
+                            </div>
+                            <div class="col-md-5">
+                                <select class="form-select form-select-sm fw-semibold" formControlName="displayCurrency"
+                                    [ngClass]="{'disabled-select': isEditMode || isPurchaseCurrencySameAsInvoiceCurrency}">
+                                    @for(option of currencyOptions; track $index){
+                                    <option [value]="option.ID" [translate]="'TRANSLATE.'+option.Description">
+                                    </option>
+                                    }
+                                </select>
+                                @if(planDetailsRegisterForm.get('displayCurrency')?.errors?.required &&
+                                isSubmit){
+                                <span class="text-danger">{{'TRANSLATE.REQUIRED_FIELD_TEXT' | translate}}</span>
+                                }
+                            </div>
+                        </div>
+                    
+                    }
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNER_PLAN_DETAILS_LABEL_TEXT_SEAT_LIMIT"></label>
+                            <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" aria-hidden="true"
+                            tooltipClass="description" [ngbTooltip]="tooltipTemplate" style="padding: 0; font-size: 1.2em; margin: 0; border: none; background-color: transparent;">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span></i>
+                        </div>
+                        <div class="col-md-5">
+                            <input type="number" name="seatLimit" class="form-control form-control-sm"
+                                formControlName="seatLimit" min="-1">
+                            @if(planDetailsRegisterForm.get('seatLimit')?.errors?.required &&
+                            isSubmit){
+                            <span class="text-danger">{{'TRANSLATE.REQUIRED_FIELD_TEXT' | translate}}</span>
+                            }
+                            @if(planDetailsRegisterForm.get('seatLimit')?.errors?.min &&
+                            isSubmit){
+                            <span class="text-danger">{{'TRANSLATE.PLAN_LEVEL_SEAT_LIMIT_MINIMUM_VALUE_ERROR' |
+                                translate}}</span>
+                            }
+                        </div>
+                    </div>
+                    @if(Permissions.HasPriceLockConfiguration){
+                    <div class="form-group row mt-7" [appPermission]="''">
+                        <div
+                            class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <span class="fw-semibold fs-6 mb-2"
+                                [innerHTML]="'TRANSLATE.PARTNER_PLAN_DETAILS_SALE_PRICE_BEHIND_LABEL_TEXT' | translate"></span>
+                            <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" aria-hidden="true"
+                                ngbTooltip="{{'TRANSLATE.PARTNER_PLAN_DETAILS_SALE_PRICE_BEHIND_TOOLTIP_TEXT' | translate}}">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span></i>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-check form-check-inline  me-5">
+                                <input type="checkbox" class="form-check-input mt-6" formControlName="CanSalePriceLag">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <span class="fw-semibold fs-6 mb-2"
+                                [innerHTML]="'TRANSLATE.PARTNER_PLAN_DETAILS_SALE_PRICE_EXCEED_LABEL_TEXT' | translate"></span>
+                            <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" aria-hidden="true"
+                                ngbTooltip="{{'TRANSLATE.PARTNER_PLAN_DETAILS_SALE_PRICE_EXCEED_TOOLTIP_TEXT' | translate}}">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span></i>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-check form-check-inline  me-5">
+                                <input type="checkbox" class="form-check-input mt-6" formControlName="CanSalePriceLead">
+                            </label>
+                        </div>
+                    </div>
+                    }
+                    @if(isEditMode || (!isEditMode && (enableMacro || planType == 'clone'))){
+
+                    @if(enableMacro) {
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNE_PLAN_DETAILS_LABEL_TEXT_MACRO"></label>
+
+                        </div>
+                        <div class="col-md-5">
+                            <select class="form-select  form-select-sm fw-semibold" formControlName="macro"
+                                (change)="onMacroChange($event)">
+                                @for(option of macroTypes; track $index){
+                                <option [value]="option.ID" [disabled]="isEditMode">
+                                    {{option.Description}}
+                                </option>
+                                }
+                            </select>
+                            @if (planDetails.MacroDetails === 'Copy Partner Price') {
+                            <div class="row  mt-1 d-flex flex-row info-flex w-100">
+                                <div class="flex-5"> <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <span class="path3"></span>
+                                </i></div>
+                                <div class="col-md-12 pl-0 macro-det flex-90">
+                                    <span>
+                                        <!-- <span> <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i></span> -->
+                                        <b class="ps-1"><span
+                                                translate="TRANSLATE.MACRO_COPY_PARTNERT_PRICE"></span>:
+                                            </b> <span class="ps-1"
+                                            translate="TRANSLATE.MACRO_DET_COPY_PARTNERT_PRICE_CALCULATION_DESC"></span><br />
+                                    </span>
+                                    <b><span translate="TRANSLATE.MACRO_DET_EXAMPLE" class="pe-2"></span></b><span
+                                        translate="TRANSLATE.MACRO_DET_PARTNER_PRICE"></span> = 10, <span
+                                        translate="TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE"></span> = 15 <br />
+                                    <b><span translate="TRANSLATE.MACRO_DET_SALE_PRICE"></span></b> 10
+                                </div>
+                            </div>
+                            }
+                            @if (planDetails.MacroDetails === 'Copy Provider Selling Price') {
+                            <div class="row ml-sm-5 mt-1 d-flex flex-row info-flex w-100">
+                                <div class="flex-5"> <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                                    >
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <span class="path3"></span>
+                                </i></div>
+                                <div class="col-md-12 pl-0 macro-det flex-90">
+                                    <span>
+                                        <!-- <span> <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                                                >
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i></span> -->
+                                        <b class="ps-1"><span
+                                                translate="TRANSLATE.MACRO_COPY_PROVIDER_SELLING_PRICE"></span>:
+                                        </b><span
+                                            translate="TRANSLATE.MACRO_DET_COPY_PROVIDER_SELLING_PRICE_CALCULATION_DESC"></span><br />
+                                    </span>
+
+                                    <b><span translate="TRANSLATE.MACRO_DET_EXAMPLE" class="pe-2"></span></b> <span
+                                        translate="TRANSLATE.MACRO_DET_PARTNER_PRICE"></span> = 10, <span
+                                        translate="TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE"></span> = 15 <br />
+                                    <b><span translate="TRANSLATE.MACRO_DET_SALE_PRICE"></span></b> 15
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    </div>                   
+                    @if(selectedMacro?.NeedsPercent || planType === 'Clone' || planType === 'SaveWithAllOffers'){
+                    <div class="form-group row mt-7" *ngIf="selectedMacro?.Description != 'Apply X% Margin on Partner Price' && selectedMacro?.Description != 'Apply X% ERP on List Price'">
+                        <div
+                            class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNE_PLAN_DETAILS_LABEL_TEXT_MACRO_VALUE"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <input type="number" class="form-control form-control-sm" formControlName="macroValue" placeholder="{{'TRANSLATE.PARTNE_PLAN_DETAILS_LABEL_TEXT_MACRO_VALUE' | translate}}">
+                            <div class="row ml-sm-5 mt-1 d-flex flex-row info-flex w-100">
+                                @if(selectedMacro?.Description === 'Apply X% on Partner Price'){
+                                    <div class="flex-5"> <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                        <span class="path3"></span>
+                                    </i></div>
+                                <div class="col-md-12 pl-0 macro-det flex-90">
+                                    <span>
+                                        <!-- <span> <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                            <span class="path3"></span>
+                                        </i></span> -->
+                                        <b class="ps-1"><span
+                                                translate="TRANSLATE.MACRO_APPLY_X_PERCENT_ON_PARTNER_PRICE"></span>:
+                                        </b><span
+                                            translate="TRANSLATE.MACRO_DET_APPLY_X_PERCENT_ON_PARTNER_PRICE_CALCULATION_DESC"></span><br />
+                                    </span>
+                                    <b><span translate="TRANSLATE.MACRO_DET_EXAMPLE" class="pe-2"></span></b><span
+                                        translate="TRANSLATE.MACRO_DET_PARTNER_PRICE"></span> = 10,
+                                    {{'TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE' | translate}} = 15, <span
+                                        translate="TRANSLATE.MACRO_DET_PERCENTAGE"></span> = 20<br />
+                                    <b><span translate="TRANSLATE.MACRO_DET_SALE_PRICE"></span></b> 10+(10* (20/100)) =
+                                    12
+                                </div>
+                                }
+                                @if(selectedMacro?.Description === 'Apply X% on Markup'){
+                                <div class="row ml-sm-4 mt-1 d-flex flex-row info-flex w-100">
+                                    <div class="flex-5"> <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                        <span class="path3"></span>
+                                    </i></div>
+                                    <div class="col-md-12 pl-0 macro-det flex-90">
+                                        <span>
+                                            <!-- <span> <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i></span> -->
+                                            <b class="ps-1"><span
+                                                    translate="TRANSLATE.MACRO_APPLY_X_PERCENT_ON_MARKUP"></span>: </b>
+                                            {{'TRANSLATE.MACRO_DET_APPLY_X_PERCENT_ON_MARKUP_CALCULATION_DESC' |
+                                            translate}} <br />
+                                        </span>
+                                        <b>{{'TRANSLATE.MACRO_DET_EXAMPLE' | translate}}</b>
+                                        {{'TRANSLATE.MACRO_DET_PARTNER_PRICE' | translate}} = 10,
+                                        {{'TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE' | translate}} = 15,
+                                        {{'TRANSLATE.MACRO_DET_PERCENTAGE' | translate}} = 20<br />
+                                        <b>{{'TRANSLATE.MACRO_DET_SALE_PRICE' | translate}}</b> 10+((15-10)*(20/100)) =
+                                        11
+                                    </div>
+                                </div>
+                                }
+                                @if(selectedMacro?.Description === 'Apply X% on Provider Selling Price'){
+                                <div class="row ml-sm-4 mt-1 d-flex flex-row info-flex w-100">
+                                    <div class="flex-5"> <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                        <span class="path3"></span>
+                                    </i></div>
+                                    <div class="col ml-1 pl-0 macro-det flex-90">
+                                        <span>
+                                            <!-- <span> <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i></span> -->
+                                            <b class="ps-1">{{'TRANSLATE.MACRO_APPLY_X_PERCENT_ON_PROVIDER_SELLING_PRICE'
+                                                | translate}}: </b>
+                                            {{'TRANSLATE.MACRO_DET_APPLY_X_PERCENT_ON_PROVIDER_SELLING_PRICE_CALCULATION_DESC'
+                                            | translate}} <br />
+                                        </span>
+                                        <b>{{'TRANSLATE.MACRO_DET_EXAMPLE' | translate}}</b>
+                                        {{'TRANSLATE.MACRO_DET_PARTNER_PRICE' | translate}} = 10,
+                                        {{'TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE' | translate}} = 15,
+                                        {{'TRANSLATE.MACRO_DET_PERCENTAGE' | translate}} = -20<br />
+                                        <b>{{'TRANSLATE.MACRO_DET_SALE_PRICE' | translate}}</b> 15+(15*(-20/100)) = 12
+                                    </div>
+                                </div>
+                                }
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    }
+
+                    @if(selectedMacro || planType === 'Clone' || planType === 'SaveWithAllOffers'){
+                        <div class="form-group row mt-7"  *ngIf="selectedMacro?.Description === 'Apply X% Margin on Partner Price' || selectedMacro?.Description === 'Apply X% ERP on List Price'">
+                            <div 
+                                class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                                <label class="required fw-semibold fs-6 mb-2" translate="TRANSLATE.PARTNE_PLAN_DETAILS_LABEL_TEXT_MARGIN_VALUE"></label>
+                            </div>
+                            <div class="col-md-5">
+                                <input type="number" class="form-control form-control-sm" formControlName="macroValue"  placeholder="{{'TRANSLATE.PARTNE_PLAN_DETAILS_LABEL_TEXT_MARGIN_VALUE' | translate}}">
+                                <div class="row ml-sm-5 mt-1 d-flex flex-row info-flex w-100">
+                                    @if(selectedMacro?.Description === 'Apply X% Margin on Partner Price'){
+                                        <div class="flex-5"> <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                            <span class="path3"></span>
+                                        </i></div>
+                                    <div class="col-md-12 pl-0 macro-det flex-90">
+                                        <span>
+                                            <b class="ps-1"><span
+                                                    translate="TRANSLATE.MACRO_APPLY_X_MARGIN_ON_PARTNER_PRICE"></span>:
+                                            </b><span
+                                                translate="TRANSLATE.MACRO_DET_APPLY_X_MARGIN_ON_PARTNER_PRICE_CALCULATION_DESC"></span><br />
+                                        </span>
+                                        <b><span translate="TRANSLATE.MACRO_DET_EXAMPLE" class="pe-2"></span></b><span
+                                            translate="TRANSLATE.MACRO_DET_PARTNER_PRICE"></span> = 10,
+                                        {{'TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE' | translate}} = 15, <span
+                                            translate="TRANSLATE.MACRO_DET_APPLY_X_MARGIN_ON_PARTNER_PRICE_PERCENTAGE"></span> = 20<br />
+                                        <b><span translate="TRANSLATE.MACRO_DET_SALE_PRICE"></span></b>  10 / (1 - (20 / 100)) = 12.5
+                                    </div>
+                                    }
+                                </div>
+                                <div class="row ml-sm-5 mt-1 d-flex flex-row info-flex w-100">
+                                    @if(selectedMacro?.Description === 'Apply X% ERP on List Price'){
+                                        <div class="flex-5"> <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                            <span class="path3"></span>
+                                        </i></div>
+                                    <div class="col-md-12 pl-0 macro-det flex-90">
+                                        <span>
+                                            <b class="ps-1"><span
+                                                    translate="TRANSLATE.MACRO_APPLY_X_PERCENT_ERP_ON_LIST_PRICE"></span>:
+                                            </b><span
+                                                translate="TRANSLATE.MACRO_DET_APPLY_X_ERP_ON_LIST_PRICE_CALCULATION_DESC"></span><br />
+                                        </span>
+                                        <b><span translate="TRANSLATE.MACRO_DET_EXAMPLE" class="pe-2"></span></b><span
+                                            translate="TRANSLATE.MACRO_ERP_ON_LIST_PRICE_COST_TO_PARTNER"></span> = 96,
+                                        {{'TRANSLATE.MACRO_ERP_ON_LIST_PRICE_ERP_PRICE' | translate}} = 100, <span
+                                            translate="TRANSLATE.MACRO_DET_APPLY_X_ERP_ON_LIST_PRICE_PERCENTAGE"></span> = 3<br />
+                                        <b><span translate="TRANSLATE.MACRO_DET_SALE_PRICE"></span></b>  ((3 * 100)/100) + 96 = 99<br/>
+                                        <span translate="TRANSLATE.MACRO_DET_APPLY_X_ERP_ON_LIST_PRICE_EXPLANATION"></span><br/>
+                                        <b><span translate="TRANSLATE.MACRO_DET_APPLY_X_ERP_ON_LIST_PRICE_MARGIN_FORMULA"></span></b><br/>
+                                        <span translate="TRANSLATE.MACRO_DET_APPLY_X_ERP_ON_LIST_PRICE"></span><br/>
+                                    </div>
+                                    }
+                                </div>
+    
+                            </div>
+    
+                        </div>
+                    }
+                    }
+
+                    
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNER_PLAN_DETAILS_LABEL_TEXT_PROVIDERS"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <select2 [data]="providersDataSet" formControlName="providers"  hideSelected="true"
+                                (update)="preventBackspaceOnSelectedProviders()"
+                                [ngClass]="{'disabled-select': (planType === 'clone' || isEditMode)}"
+                                [templates]="providers" [multiple]="true" [readonly]="isEditMode || !showCategories"
+                                [disabled]="(planType === 'clone' || selectedProviders.length === 0)">
+                                <ng-template #providers let-data="data">
+                                    <span [ngClass]="{'multiple-select-choice' : !isEditMode, 'ps-0' : planType === 'clone'}"
+                                        translate="TRANSLATE.{{data?.text}}"></span>
+                                </ng-template>
+                            </select2>
+                            @if (selectedProviders.length>0 && planType !=='saveWithAllOffers') {
+                                <span translate="TRANSLATE.PARTNER_PLAN_DETAILS_INFO_TEXT_SELECTED_PROVIDERS"></span><span>
+                                    : <span class="text-break">
+                                        @for(item of selectedProviderKey; track item){
+                                            {{ item | translate }}
+                                            @if(selectedProviderKey.indexOf(item)< selectedProviderKey.length -1){
+                                                <span>,&nbsp;</span>
+                                            }
+                                            
+                                        }
+                                    </span>
+                                </span>
+                                }
+                        </div>
+                    </div>
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNER_PLAN_DETAILS_LABEL_TEXT_CATEGORIES"> </label>
+                        </div>
+                        <div class="col-md-5">
+                            <select2 [data]="categoriesDataSet" formControlName="categories"
+                                (update)="preventBackspaceOnSelectedProviderCategories($event)" [templates]="Categories"
+                                hideSelected="true"
+                                [ngClass]="{'disabled-select': (planType === 'clone' || isEditMode || selectedProviders.length === 0)}"
+                                [multiple]="true" [readonly]="isEditMode || !showCategories"
+                                [disabled]="(planType === 'clone' || selectedProviders.length === 0)">
+                                <ng-template #Categories let-data="data">
+                                    <span [ngClass]="{'multiple-select-choice' : !isEditMode, 'ps-0' : planType === 'clone'}"
+                                        translate="TRANSLATE.{{data?.text}}"></span>
+                                </ng-template>
+                            </select2>
+                            @if (selectedsCategories.length>0 && planType !=='saveWithAllOffers') {
+                                <span
+                                    translate="TRANSLATE.PARTNER_PLAN_DETAILS_INFO_TEXT_SELECTED_CATEGORIES"></span><span>
+                                    : <span class="text-break">
+                                        @for(item of selectedCategoryKey; track item){
+                                            {{ item | translate }}
+                                            @if(selectedCategoryKey.indexOf(item)< selectedCategoryKey.length -1){
+                                                <span>,&nbsp;</span>
+                                            }
+                                            
+                                        }
+                                    </span>
+                                </span>
+                                }
+                        </div>
+                    </div>
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNER_PLAN_DETAILS_LABEL_TEXT_SERVICE_TYPE"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <select2 [data]="ProviderCategoriesDataSet" formControlName="providerCategories"
+                                hideSelected="true" [templates]="ProviderCategories" [multiple]="true"
+                                [readonly]="isEditMode || planType === 'clone' || !showServiceType"
+                                [ngClass]="{'disabled-select':(planType === 'clone' || planType === 'edit' || selectedProviders.length === 0 || selectedsCategories.length === 0)}"
+                                [disabled]="(planType === 'clone' || planType === 'edit' || selectedProviders.length === 0 || selectedsCategories.length === 0)">
+                                <ng-template #ProviderCategories let-data="data">
+                                    <span class="pe-2" [ngClass]="{'multiple-select-choice' : !isEditMode , 'ps-0' : planType === 'clone'}">{{data.text|translate}}</span>  - 
+                                    <span class="ps-2"
+                                        [ngClass]="{'multiple-select-choice' : !isEditMode, 'ps-0' : planType === 'clone'}">{{data.value|translate}}</span>
+                                </ng-template>
+                            </select2>
+                            {{selectedProviderCategories}}
+                            @if(selectedproviderCategoriesForProvider.length > 0 && planType !=='saveWithAllOffers') {
+                                <span
+                                    translate="TRANSLATE.PARTNER_PLAN_DETAILS_INFO_TEXT_SELECTED_PROVIDER_CATEGORIES"></span><span>
+                                    : <span class="text-break">{{selectedproviderCategoriesForProvider.join(', ')}}</span></span>
+                                }
+                        </div>
+                    </div>
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNER_ADD_PLAN_SIDEBAR_FILTER_TEXT_TERM_DURATION"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <select class="form-select form-select-sm fw-semibold" formControlName="termDuration"
+                                (change)="preventBackspaceOnSelectedTermDurations()"
+                                [ngClass]="{'disabled-select': (planType === 'clone' || isEditMode)}">
+                                @for(option of termDuration; track $index){
+                                <option [value]="option.validityData" [disabled]="isEditMode">
+                                    <span>{{option.Validity}} </span>
+                                    <span translate="TRANSLATE.{{option.validityDataDescriptionValue}}"></span>
+                                </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.RESELLER_PLAN_DETAILS_LABEL_TEXT_BILLING_CYCLES"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <select2 class="billing-cycle-select" [data]="billingCycleDataset" [templates]="billingCycle" [multiple]="true"
+                                formControlName="billingCycles" [ngClass]="{'disabled-select': (planType === 'clone' || isEditMode)}">
+                                <ng-template #billingCycle let-data="data">
+                                    <span [attr.title]="data?.text" [ngClass]="{'multiple-select-choice' : !isEditMode, 'ps-0' : planType === 'clone'}">{{data?.text}}</span>
+                                </ng-template>
+                            </select2>
+                            @if(selectedBillingCycle.length >0 && planType !=='saveWithAllOffers'){
+                                <span
+                                    translate="TRANSLATE.PARTNER_PLAN_DETAILS_INFO_TEXT_SELECTED_BILLING_CYCLES"></span><span>
+                                    : <span class="text-break">{{selectedBillingCycle}}</span></span>
+                                }
+                        </div>
+                    </div>
+                    }
+                    @if(planType=='add' && showApplyPromotionToAllOffersCheckBox){
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <span class="fw-semibold fs-6 mb-2"
+                                [innerHTML]="'TRANSLATE.PARTNER_PLAN_DETAILS_LABEL_TEXT_APPLY_PROMOTION_TO_ALL_PROMOTION' | translate"></span>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-check form-check-inline  me-5">
+                                <input type="checkbox" class="form-check-input mt-6"
+                                    formControlName="IsApplyPromotionToAllOffersSelected">
+                            </label>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </form>
+            }
+        </div>
+        <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3">
+            @if(planId){
+            <button class="btn btn-light btn-sm me-2" [appPermission]="'HasEditPlans'" (click)="savePlan()"
+                appBusyLoader>
+                <span translate="TRANSLATE.PARTNE_PLAN_DETAILS_BUTTON_TEXT_SAVE_YOUR_CHANGES"></span>
+            </button>
+            }
+            @if (isEditMode) {
+            @if (planDetails.IsPlanWithAllOffers) {
+            <button type="button" class="btn btn-light btn-sm me-2" (click)="addMissingOffersInPlan('Status')"
+                [appPermission]="'SAVE_PLAN_WITH_ALL_OFFERS'" appBusyLoader>
+                <span translate="TRANSLATE.PARTNER_PLANS_BUTTON_TEXT_ADD_MISSING_OFFERS"></span>
+            </button>
+            }
+            <button type="button" class="btn btn-primary  btn-sm me-2" [appPermission]="'VIEW_OFFERS'" (click)="viewOffer()">
+                <span translate="TRANSLATE.BUTTON_TEXT_VIEW_OFFERS"></span>
+            </button>
+            }
+            @if(planType == 'add' ) {
+            @if(!enableMacro) {
+            <button type="button" class="btn btn-light-primary btn-sm me-2 text-nowrap" (click)="defineMacro()"
+                [appPermission]="'SAVE_PLAN_WITH_ALL_OFFERS'">
+                <span translate="TRANSLATE.PARTNER_PLANS_BUTTON_TEXT_ADD_MACRO_AND_SAVE_PLAN_WITH_ALL_OFFERS"></span>
+            </button>
+            <button type="button" class="btn btn-primary btn-sm me-2 text-nowrap" [appPermission]="'VIEW_OFFERS'"
+                [appPermission]="'SAVE_PLAN_WITH_ALL_OFFERS'" (click)="viewOffer()">
+                <span translate="TRANSLATE.BUTTON_TEXT_VIEW_OFFERS"></span>
+            </button>
+            }
+            @if(enableMacro) {
+            <button type="button" class="btn btn-light btn-sm me-2" (click)="cancelSavePlanWithAllOffers()"
+                [appPermission]="'SAVE_PLAN_WITH_ALL_OFFERS'">
+                <span translate="TRANSLATE.PARTNER_PLANS_BUTTON_TEXT_CANCEL_SAVE_PLAN_WITH_ALL_OFFERS"></span>
+            </button>
+            <button type="button" class="btn btn-primary  btn-sm me-2" [appPermission]="'VIEW_OFFERS'"
+                [appPermission]="'SAVE_PLAN_WITH_ALL_OFFERS'" (click)="savePlanWithAllOffers()" appBusyLoader>
+                <span translate="TRANSLATE.PARTNER_PLANS_BUTTON_TEXT_SAVE_PLAN_WITH_ALL_OFFERS"></span>
+            </button>
+            }
+
+
+            }
+            @else if(planType == 'clone') {
+            <button type="button" class="btn btn-sm btn-primary me-2" (click)="clonePlan()"
+                [appPermission]="'CLONE_PLAN'" appBusyLoader>
+                <span translate="TRANSLATE.PARTNER_PLANS_BUTTON_TEXT_CLONE_PLAN"></span>
+            </button>
+            }
+        </div>
+    </div>
+</div>
+<ng-template #tooltipTemplate>
+    <div class="width-600">
+        <div class="title fw-semibold p-4">{{'TRANSLATE.SEAT_LIMIT_DETAILS' | translate}}</div>
+        <hr/>
+        <ul>
+            <li>
+                <span translate="PLAN_LEVEL_SEATLIMIT_DETAILS_1"></span>
+            </li>
+            <li>
+                <span translate="PLAN_LEVEL_SEATLIMIT_DETAILS_2"></span>
+            </li>
+            <li>
+                <span translate="PLAN_LEVEL_SEATLIMIT_DETAILS_3"></span>
+            </li>
+            <li>
+                <span translate="PLAN_LEVEL_SEATLIMIT_DETAILS_4"></span>
+            </li>
+        </ul>
+    </div>
+  </ng-template>

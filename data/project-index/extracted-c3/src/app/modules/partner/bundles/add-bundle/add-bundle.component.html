@@ -1,0 +1,615 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-1 gap-lg-1" *ngIf="pageMode==='AddOffers'">
+        <button [appPermission]="'GET_PARTNER_BUNDLES'" type="button" class="btn btn-sm fw-bold btn-light-primary"
+            (click)="reviewPlan()">
+            {{'TRANSLATE.PARTNER_BUNDLES_BUTTON_TEXT_REVIEW_BUNDLE_PRODUCTS' | translate}}
+        </button>
+    </div>
+
+    <div class="header-actions d-flex align-items-center gap-1 gap-lg-1"
+        *ngIf="pageMode === 'add' || pageMode === 'edit'">
+        <a class="btn btn-sm fw-bold btn-light-primary" (click)="backToBundle()">
+            <i class="ki-outline ki-to-left fs-2"></i><span
+                translate="TRANSLATE.PARTNER_BUNDLES_CAPTION_BUTTON_TEXT_BACK_TO_PARTNER_BUNDLES"></span>
+        </a>
+    </div>
+    <div class="header-actions d-flex align-items-center gap-1 gap-lg-1" *ngIf="pageMode==='ReviewOffers'">
+        <button [appPermission]="'GET_PARTNER_BUNDLES'" type="button" class="btn btn-sm fw-bold btn-light-primary"
+            (click)="loadDetailsPage()">
+            <i class="ki-outline ki-to-left fs-2"></i>{{'TRANSLATE.PARTNER_BUNDLES_BUTTON_TEXT_BACK_TO_BUNDLE_DETAILS' |
+            translate}}
+        </button>
+        <button [appPermission]="'ACTION_SAVE_BUNDLE'" *ngIf="lazyLoadedProducts?.length>0" type="button"
+            class="btn btn-sm fw-bold btn-light-primary" (click)="addMorePlanOffers()">
+            {{'TRANSLATE.PARTNER_BUNDLES_BUTTON_TEXT_ADD_MORE_PRODUCTS' | translate}}
+        </button>
+        <button [appPermission]="'ACTION_SAVE_BUNDLE'" ng-disabled="btnSaveDisabled"
+            *ngIf="!(addCustomOffer?.ProductId && addCustomOffer?.ProductId > 0)" type="button"
+            class="btn btn-sm fw-bold btn-light-primary" (click)="confirmAutoRenewAlteration()" appBusyLoader>
+            {{'TRANSLATE.PARTNER_BUNDLES_BUTTON_TEXT_SAVE_BUNDLE' | translate}}
+        </button>
+    </div>
+</ng-template>
+<div class="add-customer-container" *ngIf="pageMode==='add' || pageMode==='edit'">
+    <div class="card custom-card">
+        <!-- <div class="card-header ">
+            <span class="fw-bold fs-3 d-flex align-items-center"
+                translate="TRANSLATE.PARTNE_PLAN_DETAILS_HEADER_TEXT_BASIC_DETAILS"></span>
+        </div> -->
+        <div class="card-body">
+            @if(isDataLoaded){
+            <form [formGroup]="bundlesRegisterForm">
+                <div class="form-group row">
+                    <div class="form-group row">
+                        <div
+                            class="col-md-3 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNE_PLAN_DETAILS_LABEL_TEXT_NAME"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <input type="text" [disabled]="Permissions.HasSavePlan!='Allowed'"
+                                class="form-control form-control-sm" formControlName="bundleName">
+                            @if(bundlesRegisterForm.get('bundleName')?.errors?.required &&
+                            isSubmit){
+                            <span class="text-danger" translate="TRANSLATE.REQUIRED_FIELD_TEXT"></span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-3 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNER_BUNDLES_LABEL_TEXT_Description"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <textarea placeholder="{{'TRANSLATE.PLACEHOLDER_ENTER_TEXT' | translate}}" rows="4"
+                                cols="50" class="form-control form-control-sm" formControlName="description">
+                            </textarea>
+                            @if(bundlesRegisterForm.get('description')?.errors?.required && isSubmit;
+                            ){
+                            <span class="text-danger" translate="TRANSLATE.REQUIRED_FIELD_TEXT"></span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="form-group row mt-7">
+                        <div class="col-md-3 col-form-label text-start text-sm-left">
+                            <label class="fw-semibold fs-6 mb-2" 
+                                   translate="TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_PRODUCT_ICON"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="input-group mb-3">
+                                <input #inputFile type="file" class="form-control" id="inputGroupFile02"
+                                    (change)="onFileSelected($event)">
+                            </div>
+                            <span class="help-block text-muted" translate="TRANSLATE.CUSTOM_ICON_HELP_TEXT"></span>
+                        </div>
+                    </div>
+
+                    @if(!!url){
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-3 col-form-label text-left text-sm-left text-md-start text-lg-start text-start">
+                            <label class="fw-semibold fs-6 mb-2" translate="TRANSLATE.NEW_PARTNER_PRODUCT_ICON"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <img [src]="url" width="120"> 
+                            <button class=" ms-4 btn btn-danger btn-sm" (click)="ClearImage()">
+                                <span translate="TRANSLATE.REMOVE_PARTNER_PRODUCT_ICON"></span></button>
+                        </div>
+                    </div>
+                    }
+                    @if (bundlesRegisterForm.get('ImageUrl')?.value) {
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-3 col-form-label text-start text-sm-start text-md-start text-lg-start text-start">
+                            <label class="fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.CURRENT_PARTNER_PRODUCT_ICON"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <img [src]="bundlesRegisterForm.get('ImageUrl')?.value" width="120"  />
+                            <button class=" ms-4 btn btn-danger btn-xs" (click)="ClearImage()"><i class="fa fa-trash"></i>
+                                <span translate="TRANSLATE.REMOVE_PARTNER_PRODUCT_ICON"></span></button>
+                        </div>
+                    </div>
+                    }
+
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-3 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PLAN_DETAILS_LABEL_SUPPORTED_MARKETS"></label>
+                            <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                                [ngbTooltip]="'TRANSLATE.SUPPORTED_MULTIPLE_MARKET_LABEL_INFO_TOOLTIP' | translate">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                        </div>
+                        <div class="col-md-5">
+                            <ng-select formControlName="supportMarket">
+                                @for(market of supportedMarketData; track $index){
+                                <ng-option [value]="market.ID">
+                                    {{market.MarketCode}} - {{market.Region}}
+                                </ng-option>
+                                }
+                            </ng-select>
+                            @if(bundlesRegisterForm.get('supportMarket')?.errors?.required && isSubmit;
+                            ){
+                            <span class="text-danger" translate="TRANSLATE.REQUIRED_FIELD_TEXT"></span>
+                            }
+                            @if(allSelectedProductsInLocalStorage && allSelectedProductsInLocalStorage.length > 0 &&
+                            pageMode !== 'edit') {
+                            <span class="text-danger"
+                                translate="TRANSLATE.PRODUCT_BUNDLE_NOTE_SELECTED_VALUE_LOSS"></span>
+                            }
+                        </div>
+
+                    </div>
+
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-3 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNER_BUNDLE_CREATION_LABEL_TEXT_TERM_DURATION"></label>
+                            <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                                [ngbTooltip]="'TRANSLATE.PARTNER_BUNDLE_CREATION_LABEL_TEXT_TERM_DURATION_TOOLTIP' | translate">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                        </div>
+                        <div class="col-md-5">
+                            <ng-select formControlName="termDuration" (change)="termDurationChange()">
+                                @for(option of termDuration; track $index){
+                                <ng-option [value]="option.validityData">
+                                    <span>{{option.Validity}} </span>
+                                    <span translate="TRANSLATE.{{option.validityDataDescriptionValue}}"></span>
+
+                                </ng-option>
+                                }
+                            </ng-select>
+                            @if(bundlesRegisterForm.get('termDuration')?.errors?.required && isSubmit;
+                            ){
+                            <span class="text-danger" translate="TRANSLATE.REQUIRED_FIELD_TEXT"></span>
+                            }
+                            @if(allSelectedProductsInLocalStorage && allSelectedProductsInLocalStorage.length > 0 &&
+                            pageMode !== 'edit') {
+                            <span class="text-danger"
+                                translate="TRANSLATE.PRODUCT_BUNDLE_NOTE_SELECTED_VALUE_LOSS"></span>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-3 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNER_BUNDLES_LABEL_TEXT_BILLING_CYCLE"></label>
+                            <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                                [ngbTooltip]="'TRANSLATE.BUNDLES_BILLING_CYCLE_TOOLTIP' | translate">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                        </div>
+                        <div class="col-md-5">
+                            <ng-select formControlName="billingCycle" (change)="billingCycleChange()">
+                                <ng-option [value]="null">
+                                    <span> </span>
+                                </ng-option>
+                                @for(option of BillingCycles; track $index){
+                                <ng-option [value]="option.BillingCycleId">
+
+                                    <span translate="TRANSLATE.{{option.BillingCycleDescription}}"></span>
+                                </ng-option>
+                                }
+                            </ng-select>
+                            @if(bundlesRegisterForm.get('billingCycle')?.errors?.required && isSubmit;
+                            ){
+                            <span class="text-danger" translate="TRANSLATE.REQUIRED_FIELD_TEXT"></span>
+                            }
+                            @if(allSelectedProductsInLocalStorage && allSelectedProductsInLocalStorage.length > 0 &&
+                            pageMode !== 'edit') {
+                            <span class="text-danger"
+                                translate="TRANSLATE.PRODUCT_BUNDLE_NOTE_SELECTED_VALUE_LOSS"></span>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-3 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNER_BUNDLES_LABEL_TEXT_BILLING_Type"></label>
+                            <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                                [ngbTooltip]="'TRANSLATE.BUNDLES_BILLING_TYPE_TOOLTIP' | translate">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+
+                        </div>
+                        <div class="col-md-5">
+                            <ng-select formControlName="billingType" (change)="billingCycleChange()">
+
+                                @for(option of billingTypes; track $index){
+                                <ng-option [value]="option.BillingTypeId">
+                                    <span translate="TRANSLATE.{{option.BillingTypeDescription}}"></span>
+                                </ng-option>
+                                }
+                            </ng-select>
+                            @if(bundlesRegisterForm.get('billingType')?.errors?.required && isSubmit;
+                            ){
+                            <span class="text-danger" translate="TRANSLATE.REQUIRED_FIELD_TEXT"></span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-3 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNER_BUNDLES_LABEL_TEXT_SALE_TYPE"></label>
+                            <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                                [ngbTooltip]="'TRANSLATE.BUNDLES_SALETYPE_TOOLTIP' | translate">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                        </div>
+                        <div class="col-md-5">
+                            <ng-select formControlName="saleType" (change)="saleTypeChange()">
+                                @for(option of saleType; track $index){
+                                <ng-option [value]="option.ID">
+
+                                    <span translate="TRANSLATE.{{option.Description}}"></span>
+                                </ng-option>
+                                }
+                            </ng-select>
+                            @if(bundlesRegisterForm.get('saleType')?.errors?.required && isSubmit;
+                            ){
+                            <span class="text-danger" translate="TRANSLATE.REQUIRED_FIELD_TEXT"></span>
+                            }
+                            @if(allSelectedProductsInLocalStorage && allSelectedProductsInLocalStorage.length > 0 &&
+                            pageMode !== 'edit') {
+                            <span class="text-danger"
+                                translate="TRANSLATE.PRODUCT_BUNDLE_NOTE_SELECTED_VALUE_LOSS"></span>
+                            }
+                        </div>
+                    </div>
+
+                    @if ((selectedConsumption.Name.toLowerCase() === 'quantity' ||
+                    selectedConsumption.Name.toLowerCase() === 'process')&& selectedBillingCycle?.IsRecurring ) {
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-3 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class=" required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNER_BUNDLES_LABEL_TEXT_CHARGE_PERIODS"></label>
+                            <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                                [ngbTooltip]="'TRANSLATE.PARTNER_BUNDLES_LABEL_TEXT_CHARGE_PERIODS_HELP_TEXT' | translate">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                        </div>
+                        <div class="col-md-5">
+                            <ng-select formControlName="billingPeriodTypes">
+                                @for(option of billingPeriodTypes; track $index){
+                                <ng-option [value]="option.ID">
+
+                                    <span translate="{{option.Description | translate}}"></span>
+                                </ng-option>
+                                }
+                            </ng-select>
+                            @if(bundlesRegisterForm.get('billingPeriodTypes')?.errors?.required && isSubmit;
+                            ){
+                            <span class="text-danger" translate="TRANSLATE.REQUIRED_FIELD_TEXT"></span>
+                            }
+                        </div>
+                    </div>
+                    }
+                    @if ((selectedConsumption.Name.toLowerCase() === 'quantity' ||
+                    selectedConsumption.Name.toLowerCase() === 'process')&& selectedBillingCycle?.IsRecurring ) {
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-3 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class=" required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNER_BUNDLES_LABEL_TEXT_ON_PURCHASE_BILLING_ACTION"></label>
+                            <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                                [ngbTooltip]="'TRANSLATE.PARTNER_BUNDLES_LABEL_TEXT_ON_PURCHASE_BILLING_ACTION_HELP_TEXT' | translate">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                        </div>
+                        <div class="col-md-5">
+                            <ng-select formControlName="billingActionsForPurchase"
+                                [(ngModel)]="addCustomOffer.OnPurchaseBillingAction"
+                                (change)="ChangeBillingActionsForPurchase()">
+
+                                @for(option of billingActionsForPurchase; track $index){
+                                <ng-option [value]="option.ID">
+
+                                    <span translate="{{option.Description | translate}}"></span>
+                                </ng-option>
+                                }
+                            </ng-select>
+                            @if(bundlesRegisterForm.get('billingActionsForPurchase')?.errors?.required && isSubmit;
+                            ){
+                            <span class="text-danger" translate="TRANSLATE.REQUIRED_FIELD_TEXT"></span>
+                            }
+                        </div>
+                    </div>
+                    }
+                    @if ((selectedConsumption.Name.toLowerCase() === 'quantity' ||
+                    selectedConsumption.Name.toLowerCase() === 'process') && selectedBillingCycle?.IsRecurring ) {
+
+
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-3 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNER_BUNDLES_LABEL_TEXT_ON_RELEASE_BILLING_ACTION"></label>
+                            <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                                [ngbTooltip]="'TRANSLATE.PARTNER_BUNDLES_LABEL_TEXT_ON_RELEASE_BILLING_ACTION_HELP_TEXT' | translate">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+
+                        </div>
+                        <div class="col-md-5">
+                            <ng-select [(ngModel)]="addCustomOffer.OnReleaseBillingAction"
+                                formControlName="billingActionsForRelease">
+
+                                @for(option of billingActionsForRelease; track $index){
+                                <ng-option [value]="option.ID">
+
+                                    <span translate="{{option.Description | translate}}"></span>
+                                </ng-option>
+                                }
+                            </ng-select>
+                            @if(bundlesRegisterForm.get('billingActionsForRelease')?.errors?.required && isSubmit;
+                            ){
+                            <span class="text-danger" translate="TRANSLATE.REQUIRED_FIELD_TEXT"></span>
+                            }
+                        </div>
+                    </div>
+
+                    }
+                    <div class="form-group row mt-7">
+                        <div
+                            class="col-md-3 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="fw-semibold fs-6"
+                                translate="TRANSLATE.PARTNER_BUNDLES_LABEL_TEXT_AUTO_RENEWAL"></label>
+                            <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                                [ngbTooltip]="'PARTNER_BUNDLES_LABEL_TEXT_AUTO_RENEWAL_HELP_TEXT' | translate">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+
+                        </div>
+                        <div class="col-md-5 mt-3">
+                            <div class="input-group-with-checkbox">
+                                <label class="form-check form-check-inline me-5">
+                                    <input type="checkbox" class="form-check-input" formControlName="isAutoRenewable">
+
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+            }
+        </div>
+        <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3">
+            @if (isEditMode && addCustomOffer.IsActive) {
+            <button [appPermission]="'ACTION_SAVE_BUNDLE'" type="button" class="btn btn-primary btn-sm"
+                (click)="updateCustomOffer()">
+                <span translate="TRANSLATE.PARTNER_BUNDLES_BUTTON_TEXT_SAVE_BUNDLE"></span>
+            </button>
+            }
+            @if(isEditMode){
+            <button type="button" class="btn btn-light btn-primary btn-sm" (click)="moveToNextStep()">
+                <span translate="TRANSLATE.PARTNER_BUNDLES_BUTTON_TEXT_SHOW_OFFERS"></span>
+            </button>
+            }
+            @if(bundleType === 'add') {
+            <button type="button" class="btn btn-primary btm-sm" (click)="setPlanDetails()">
+                <span translate="TRANSLATE.PARTNER_BUNDLES_BUTTON_TEXT_NEXT"></span>
+            </button>
+            }
+        </div>
+    </div>
+
+    <swal #successSwal [swalOptions]="swalOptions" [title]="successMsg" icon="success" [focusCancel]="true"
+        [customClass]="{confirmButton: 'btn btn-success'}">
+    </swal>
+
+</div>
+<div class="add-customer-container" *ngIf="pageMode==='ReviewOffers'">
+    <!-- @if(allSelectedProductsInLocalStorage?.length > 0){ -->
+    <app-review-offers [allSelectedProductsInLocalStorage]="allSelectedProductsInLocalStorage"
+        [isProductsDataLoading]="isProductsDataLoading" (onActionData)="onAddplanAction($event)"
+        [bundlesDetails]="addCustomOffer"></app-review-offers>
+    <!-- } -->
+</div>
+
+<div class="add-customer-container" *ngIf="pageMode==='AddOffers'">
+    <div class="row height-100vh">
+        <div class="col-md-3">
+            <!--begin::Forms Widget 15-->
+            <div class="card card-custom gutter-b scroll max-height-500">
+                <!--begin::Body-->
+                <div class="card-body">
+                    @if (providers.length > 0) {
+                    <div class="providers">
+                        <label class="mb-4 text-gray-900 fw-bold fs-3 filter-title text-uppercase">
+                            <span translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_PROVIDERS"></span></label>
+                        <div class="form-group row">
+                            <div class="checkbox-list">
+                                @for (provider of allProviders; track $index) {
+                                <div class="input-group-with-checkbox mb-1">
+                                    <label class="form-check form-check-inline  me-5">
+                                        <input type="checkbox" class="form-check-input" value="{{provider.Name}}"
+                                            (click)="toggleProviderSelection(provider)"
+                                            [checked]="providerSelection?.indexOf(provider) > -1">
+                                        <span class="text-gray-900"
+                                            translate="TRANSLATE.{{provider.Description}}"></span>
+                                    </label>
+                                </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    }
+                    @if (filteredCategories.length > 0) {
+                    <div class="providers">
+                        <label class="mb-4 text-gray-900 fw-bold fs-3 filter-title text-uppercase">
+                            <span translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_CATEGORY"></span></label>
+                        <div class="form-group row">
+                            <div class="checkbox-list">
+                                @for (category of filteredCategories; track $index) {
+                                <div class="input-group-with-checkbox mb-1">
+                                    <label class="form-check form-check-inline  me-5">
+                                        <input type="checkbox" class="form-check-input" value="{{category.Description}}"
+                                            (click)="toggleCategorySelection(category)"
+                                            [checked]="categorySelection?.indexOf(category) > -1">
+                                        <span class="text-gray-900">
+                                            {{category?.Name?.toLowerCase() === 'onlineservicesnce' === true ?
+                                            ('TRANSLATE.CATEGORY_FILTER_DESC_NCE'|translate) :
+                                            ('TRANSLATE.'+(category?.CategoryDescriptionKey) | translate)}}
+                                        </span>
+                                    </label>
+                                </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    }
+                    @if (filteredProviderCategories.length > 0) {
+                    <div class="providers">
+                        <label class="mb-4 text-gray-900 fw-bold fs-3 filter-title text-uppercase">
+                            <span translate="TRANSLATE.CUSTOMER_SHOP_SIDEBAR_FILTER_TEXT_SERVICE_TYPES"></span></label>
+                        <div class="form-group row">
+                            <div class="checkbox-list">
+                                @for (providerCategory of filteredProviderCategories; track $index) {
+                                <div class="input-group-with-checkbox mb-1">
+                                    <label class="form-check form-check-inline  me-5">
+                                        <input type="checkbox" class="form-check-input"
+                                            value="{{providerCategory.ProviderCategoryName}}"
+                                            (click)="toggleProviderCategorySelection(providerCategory)"
+                                            [checked]="providerCategorySelection?.indexOf(providerCategory) > -1">
+                                        <span class="text-gray-900">
+                                            {{providerCategory.ProviderCategoryName.split('-').length > 0 ?
+                                            providerCategory.ProviderCategoryName.split('-').join('- \n'):
+                                            (providerCategory.ProviderCategoryName|translate)}}
+                                        </span>
+                                    </label>
+                                </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
+                <!--end::Body-->
+            </div>
+            <!--end::Forms Widget 15-->
+        </div>
+        <div class="col-md-9">
+            <!--begin::Search-->
+            <div class="col-md-12 d-flex justify-content-center">
+                <div class="d-flex align-items-center position-relative my-1 me-4 w-95">
+                    <input type="text" data-action="filter" [(ngModel)]="searchKeyword"
+                        (ngModelChange)="this.searchUpdate.next($event)"
+                        class="header-input-field form-control form-control-sm"
+                        [placeholder]="'TRANSLATE.PARTNER_BUNDLES_PLACEHOLDER_SEARCH' | translate">
+                    <i (click)="getProducts()"
+                        class="ki-outline ki-magnifier fs-3 position-absolute right-0 ms-5 btn btn-primary btn-sm text-white"></i>
+                    <!--begin::Card title-->
+                </div>
+            </div>
+            @if(lazyLoadedProducts?.length > 0){
+            <div class="product-wrapper col-md-12" (scrolled)="onScroll()" infiniteScroll [infiniteScrollDistance]="0.3"
+                [infiniteScrollThrottle]="50" [scrollWindow]="false">
+                @for (item of lazyLoadedProducts; track $index) {
+                <div class="col-md-12" appLazyLoad (lazyLoad)="onLazyLoad(item)">
+                    <div class="p-2">
+                        <app-product-item [productItemDetails]="productItemDetailsAddNew" [productItem]="item"
+                            (onActionData)="onAddplanAction($event)"
+                            [ngClass]="{'d-none': item.showNceProductsInSiteDepartment === false}"></app-product-item>
+                    </div>
+                </div>
+                }
+            </div>
+            <!-- <div class="row col-md-12">
+                @for (item of lazyLoadedProducts; track $index) {
+                <div class="col-md-12" appLazyLoad (lazyLoad)="onLazyLoad(item)">
+                    <div class="p-2">
+                        <app-product-item [productItemDetails]="productItemDetailsAddNew" [productItem]="item" (onActionData)="onAddplanAction($event)" [ngClass]="{'d-none': item.showNceProductsInSiteDepartment === false}"></app-product-item>
+                    </div>
+                </div>
+                }
+            </div> -->
+            }@else{
+            @if(!isloading){
+            <div class="d-flex align-items-center justify-content-center" style="height: 100%;">
+                <div class="row">
+                    <div class="col-md-12">
+                        <app-common-no-record></app-common-no-record>
+                    </div>
+                </div>
+            </div>
+            }
+            }
+        </div>
+    </div>
+
+
+</div>
+
+<ng-template #bundleConfirmationModal let-modal>
+    <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">
+            <span translate="PARTNER_BUNDLES_CHILD_AUTORENEW_ALTERATION_HEADING_TEXT"></span>
+        </h2>
+
+        <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModalPopup()" data-bs-dismiss="modal">
+            <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+        </div>
+    </div>
+    <div class="modal-body">
+        <div class="col-md-12">
+            <div class="pb-3">
+                <span translate="PARTNER_BUNDLES_CHILD_AUTORENEW_ALTERATION_INFO"></span>
+            </div>
+            <div>
+                <table show-filter="true" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th><span translate="PARTNER_BUNDLE_CHILD_AUTO_RENEW_ALTERATION_OFFER_NAME_TEXT"></span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let row of this.childItems">
+                            <td class="font-weight-normal">{{row.Name}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-sm btn-light btn-active-light-primary" type="button" (click)="closeModalPopup()">
+            <span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span>
+        </button>
+        <button class="btn btn-sm btn-primary" (click)="onSubmit()">
+            <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+        </button>
+    </div>
+</ng-template>

@@ -1,0 +1,720 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-1 gap-lg-1">
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="backToPlans()">
+            <i class="ki-outline ki-to-left fs-2"></i>&nbsp;
+            {{'TRANSLATE.PLAN_MANAGE_ADD_BUTTON_TEXT_BACK_TO_PLAN' | translate}} </button>
+    </div>
+</ng-template>
+<div class="add-reseller-plan-container">
+    <div class="card custom-card">
+        <!-- <div class="card-header ">
+            <span class="fw-bold fs-3 d-flex align-items-center"
+                translate="TRANSLATE.PARTNE_PLAN_DETAILS_HEADER_TEXT_BASIC_DETAILS"></span>
+        </div> -->
+        <div class="card-body">
+            @if(isDataLoaded) {
+            <form [formGroup]="planDetailsRegisterForm">
+                <div class="form-group row">
+                    <div class="form-group row">
+                        <div class="col-md-2 text-start mt-4">
+                            <label class="required fw-semibold fs-6"
+                                translate="TRANSLATE.PARTNER_RESELLER_PLAN_DETAILS_LABEL_TEXT_NAME"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <input type="text" class="form-control form-control-sm" formControlName="planName"
+                                [disabled]="Permissions.HasSavePlan!='Allowed'"
+                                placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_PLAN_NAME' | translate}}">
+                            @if(planDetailsRegisterForm.get('planName')?.errors?.required &&
+                            (planDetailsRegisterForm.get('planName')?.touched || buttonClicked)){
+                            <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row mt-7">
+                        <div class="col-md-2 text-start mt-4">
+                            <label class="required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNER_RESELLER_PLAN_DETAILS_LABEL_TEXT_DESCRIPTION"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <textarea rows="4" cols="50" class="form-control form-control-sm"
+                                formControlName="description" [disabled]="Permissions.HasSavePlan!='Allowed'"
+                                placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_PLAN_DESCRIPTION' | translate}}">
+                            </textarea>
+                            @if(planDetailsRegisterForm.get('description')?.errors?.required &&
+                            (planDetailsRegisterForm.get('description')?.touched || buttonClicked)){
+                            <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                            }
+                        </div>
+                    </div>
+                    @if(planType !== 'clone'){
+                    <div class="form-group row mt-7"
+                        *ngIf="Permissions.HasManageResellerPlanCurrencyAttributes.toLowerCase()==='allowed'">
+                        <div class="col-md-2 text-start mt-4">
+                            <label class="required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNER_RESELLER_PLAN_DETAILS_LABEL_TEXT_CURRENCY_CODE"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <select class="form-select  form-select-sm fw-bold"
+                                [disabled]="planDetails.InternalPlanId && planType === 'Edit'"
+                                formControlName="currencyCode"
+                                [required]="Permissions.HasManageResellerPlanCurrencyAttributes.toLowerCase()==='allowed'">
+                                @for(currency of currencyCodes; track $index){
+                                <option [value]="currency" [disabled]="isEditMode">
+                                    {{currency}}</option>
+                                }
+                            </select>
+                            @if(planDetailsRegisterForm.get('currencyCode')?.errors?.required &&
+                            (planDetailsRegisterForm.get('currencyCode')?.touched || buttonClicked)){
+                            <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                            }
+                        </div>
+                    </div>
+                    @if(planDetails.CurrencyCode){
+                    <div class="form-group row mt-7">
+                        <div class="col-md-2 text-start mt-4">
+                            <label class="required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PLAN_DETAILS_LABEL_SUPPORTED_MARKETS"></label>
+                            <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                                ngbTooltip="{{'TRANSLATE.SUPPORTED_MULTIPLE_MARKET_LABEL_INFO_TOOLTIP' | translate}}">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                        </div>
+                        <div class="col-md-5">
+                            <select2 [data]="supportedMarketDataSet" formControlName="supportMarket"
+                                [templates]="template" [multiple]="true" hideSelected="true">
+                                <ng-template #template let-data="data">
+                                    <span [ngClass]="{'multiple-select-choice' : !isEditMode,'ps-0' : planType === 'clone'}" title="">
+                                        <strong>{{data?.marketCode}}</strong>: {{data?.region}}
+                                    </span>
+                                </ng-template>
+                            </select2>
+                            @if(planDetailsRegisterForm.get('supportMarket')?.errors?.required &&
+                            (planDetailsRegisterForm.get('supportMarket')?.touched || buttonClicked)){
+                            <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                            }
+                        </div>
+                    </div>
+                    }
+                    }
+
+                    @if(planType === "clone"){
+                    <div class="form-group row mt-7">
+                        <div class="col-md-2 text-start mt-4">
+                            <label class="required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.RESELLER_PLAN_DETAILS_PRICE_SETTING"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <select class="form-select  form-select-sm fw-bold" formControlName="priceSetting"
+                                (change)="enableMacroBasedOnSelection()"
+                                [required]="Permissions.HasCloneResellerPlan.toLowerCase()==='allowed'">
+                                <option [value]="null"
+                                    translate="TRANSLATE.RESELLER_PLAN_DETAILS_PRICE_SETTING_DROPDOWN_DEFAULT_OPTION">
+                                </option>
+                                <option *ngFor="let setting of resellerPlanPriceSettings" [ngValue]="setting"
+                                    [translate]="'TRANSLATE.'+setting.Key">
+                                </option>
+                            </select>
+                            @if(planDetailsRegisterForm.get('priceSetting')?.errors?.required &&
+                            (planDetailsRegisterForm.get('priceSetting')?.touched || buttonClicked)
+                            || (this.planDetailsRegisterForm.get('priceSetting')?.value === 'null')){
+                            <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                            }
+                        </div>
+                    </div>
+                    }
+
+                    <div class="form-group row mt-7"
+                        *ngIf="!((planType.toLowerCase() === 'clone' && (planDetails?.PriceSetting?.Name !== undefined && planDetails?.PriceSetting?.Name !== null && planDetails?.PriceSetting?.Name !== '' && planDetails?.PriceSetting?.Name === 'CopyPricesFromSourceResellerPlan')) || !Permissions.HasPriceLockConfiguration)">
+                        <label class="col-md-2 text-start fw-semibold">
+                            <span
+                                [innerHTML]="'TRANSLATE.PARTNER_RESELLER_PLAN_DETAILS_NEW_PRICE_BEHIND_LABEL_TEXT' | translate"></span>
+                            <!-- <i class="ki-outline ki-information-2 fs-6 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.PARTNER_RESELLER_PLAN_DETAILS_NEW_PRICE_BEHIND_TOOLTIP_TEXT' | translate}}"></i> -->
+                            <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                                ngbTooltip="{{'TRANSLATE.PARTNER_RESELLER_PLAN_DETAILS_NEW_PRICE_BEHIND_TOOLTIP_TEXT' | translate}}">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                        </label>
+                        <div class="col-md-5 align-self-center">
+                            <div class="input-group-with-checkbox">
+                                <label class="form-check form-check-inline">
+                                    <input type="checkbox" class="form-check-input"
+                                        ng-model="vm.PlanInfo.CanPartnerPriceLag" formControlName="canPartnerPriceLag"
+                                        id="resellerSalePriceBehind">
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row mt-7"
+                        *ngIf="!((planType.toLowerCase() === 'clone' && (planDetails?.PriceSetting?.Name !== undefined && planDetails?.PriceSetting?.Name !== null && planDetails?.PriceSetting?.Name !== '' && planDetails?.PriceSetting?.Name === 'CopyPricesFromSourceResellerPlan')) || !Permissions.HasPriceLockConfiguration)">
+                        <label class="col-md-2 text-start fw-semibold">
+                            <span
+                                [innerHTML]="'TRANSLATE.PARTNER_RESELLER_PLAN_DETAILS_NEW_PRICE_EXCEED_LABEL_TEXT' | translate"></span>
+                            <!-- <i class="ki-outline ki-information-2 fs-6 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.PARTNER_RESELLER_PLAN_DETAILS_NEW_PRICE_EXCEED_TOOLTIP_TEXT' | translate}}"></i> -->
+                            <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                                ngbTooltip="{{'TRANSLATE.PARTNER_RESELLER_PLAN_DETAILS_NEW_PRICE_EXCEED_TOOLTIP_TEXT' | translate}}">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                        </label>
+                        <div class="col-md-9 align-self-center">
+                            <div class="input-group-with-checkbox">
+                                <label class="form-check form-check-inline">
+                                    <input type="checkbox" class="form-check-input"
+                                        ng-model="vm.PlanInfo.CanPartnerPriceLead" formControlName="canPartnerPriceLead"
+                                        id="resellerSalePriceExceed">
+                                    <span></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if(isEditMode || !isEditMode && enableMacro || (planType === 'clone' && planDetails?.PriceSetting?.Name === 'ApplyMacroToDefineTheNewPrices' 
+                    && planDetails?.PriceSetting?.Name !== undefined && planDetails?.PriceSetting?.Name !== null && planDetails?.PriceSetting?.Name !== '')){
+                    @if(enableMacro) {
+                    <div class="form-group row mt-7">
+                        <div class="col-md-2 text-start mt-4">
+                            <label class="fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNE_PLAN_DETAILS_LABEL_TEXT_MACRO"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <select class="form-select  form-select-sm fw-bold" formControlName="macro"
+                                (change)="onMacroChange($event)">
+                                <option *ngFor="let option of macroTypes" [value]="option.ID" [disabled]="isEditMode">
+                                    {{'TRANSLATE.'+ option.Name | translate }} 
+                                </option>
+                            </select>
+                            @if (planDetails.MacroDetails === 'Copy Partner Price') {
+                                <div class="row ml-sm-5 mt-1">
+                                    <div class="col-xs-1"></div>
+                                    <div class="col ml-1 pl-0 macro-det">
+                                        <div style="display: flex;">
+                                            <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i>
+                                            <div style="margin-left: 10px;">
+                                                <b><span translate="TRANSLATE.MACRO_COPY_PARTNERT_PRICE"></span>:</b>
+                                                <span class="ms-1" translate="TRANSLATE.MACRO_DET_COPY_PARTNERT_PRICE_CALCULATION_DESC"></span><br />
+                                                <b><span class="me-1" translate="TRANSLATE.MACRO_DET_EXAMPLE"></span></b>
+                                                <span translate="TRANSLATE.MACRO_DET_PARTNER_PRICE"></span> = 10,
+                                                <span translate="TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE"></span> = 15<br />
+                                                <b><span translate="TRANSLATE.MACRO_DET_SALE_PRICE"></span></b> 10
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            @if (planDetails.MacroDetails === 'Copy Provider Selling Price') {
+                            <div class="row ml-sm-5 mt-1">
+                                <div class="col-xs-1">
+
+                                </div>
+                                <div class="col ml-1 pl-0 macro-det">
+                                    <div style="display: flex;">
+                                        <span><i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i> </span>
+                                            <div style="margin-left: 10px;">
+                                            <b><span translate="TRANSLATE.MACRO_COPY_PROVIDER_SELLING_PRICE"></span>: </b><span
+                                        translate="TRANSLATE.MACRO_DET_COPY_PROVIDER_SELLING_PRICE_CALCULATION_DESC"></span><br />
+                                    <b><span class="me-1" translate="TRANSLATE.MACRO_DET_EXAMPLE"></span></b> <span
+                                        translate="TRANSLATE.MACRO_DET_PARTNER_PRICE"></span> = 10, <span
+                                        translate="TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE"></span> = 15 <br />
+                                    <b><span translate="TRANSLATE.MACRO_DET_SALE_PRICE"></span></b> 15
+                                </div>
+                                </div>
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    @if(selectedMacro?.NeedsPercent){
+                    <div class="form-group row mt-7" *ngIf="selectedMacro?.Description !== 'Apply X% Margin on Partner Price' && selectedMacro?.Description !== 'Apply X% ERP on List Price'">
+                        <div class="col-md-2 text-start mt-4">
+                            <label class="required fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNE_PLAN_DETAILS_LABEL_TEXT_MACRO_VALUE"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <input type="number" class="form-control form-control-sm" formControlName="macroValue"
+                                placeholder="{{'TRANSLATE.PARTNER_PLAN_DETAILS_PLACEHOLDER_MACRO_VALUE' | translate}}">
+                            @if(planDetailsRegisterForm.get('macroValue')?.errors?.required &&
+                            (planDetailsRegisterForm.get('macroValue')?.touched || buttonClicked)
+                            &&selectedMacro?.NeedsPercent || (this.planDetailsRegisterForm.get('macroValue')?.value ===
+                            'null')){
+                            <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                            }
+                            @if(selectedMacro?.Description === 'Apply X% on Partner Price'){
+                            <div class="row ml-sm-4 mt-1">
+                                <div class="col-xs-1">
+                                </div>
+                                <div class="col ml-1 pl-0 macro-det">
+                                    <div style="display: flex;">
+                                        <span><i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i> </span>
+                                            <div style="margin-left: 10px;">
+                                            <b><span translate="TRANSLATE.MACRO_APPLY_X_PERCENT_ON_PARTNER_PRICE"></span>:
+                                    </b><span
+                                        translate="TRANSLATE.MACRO_DET_APPLY_X_PERCENT_ON_PARTNER_PRICE_CALCULATION_DESC"></span><br />
+                                    <b><span class="me-1" translate="TRANSLATE.MACRO_DET_EXAMPLE"></span></b><span
+                                        translate="TRANSLATE.MACRO_DET_PARTNER_PRICE"></span> = 10, <span
+                                        translate="TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE"></span> = 15,
+                                    <span translate="TRANSLATE.MACRO_DET_PERCENTAGE"></span> = 20<br />
+                                    <b><span translate="TRANSLATE.MACRO_DET_SALE_PRICE"></span></b> 10+(10* (20/100)) =
+                                    12
+                                </div>
+                            </div>
+                            </div>
+                            </div>
+                            }
+                            @if(selectedMacro?.Description === 'Apply X% on Markup'){
+                            <div class="row ml-sm-4 mt-1">
+                                <div class="col-xs-1"></div>
+                                <div class="col ml-1 pl-0 macro-det">
+                                    <div style="display: flex;">
+                                        <span>
+                                            <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i>
+                                        </span>
+                                        <div style="margin-left: 10px;">
+                                        <b><span translate="TRANSLATE.MACRO_APPLY_X_PERCENT_ON_MARKUP"></span>:
+                                    </b>
+                                    <span
+                                        translate="TRANSLATE.MACRO_DET_APPLY_X_PERCENT_ON_MARKUP_CALCULATION_DESC"></span><br />
+                                    <b>
+                                        <span class="me-1" translate="TRANSLATE.MACRO_DET_EXAMPLE"></span>
+                                    </b>
+                                    <span translate="TRANSLATE.MACRO_DET_PARTNER_PRICE"></span> = 10,
+                                    <span translate="TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE"></span> = 15,
+                                    <span translate="TRANSLATE.MACRO_DET_PERCENTAGE"></span> = 20
+                                    <br />
+                                    <b><span translate="TRANSLATE.MACRO_DET_SALE_PRICE"></span></b>
+                                    10 + ((15 - 10) * (20 / 100)) = 11
+                                </div>
+                            </div>
+                            </div>
+                            </div>
+                            }
+
+                            @if(selectedMacro?.Description === 'Apply X% on Provider Selling Price') {
+                            <div class="row ml-sm-4 mt-1">
+                                <div class="col-xs-1"></div>
+                                <div class="col ml-1 pl-0 macro-det">
+                                    <div style="display: flex;">
+                                        <span>
+                                            <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i>
+                                        </span>
+                                        <div style="margin-left: 10px;">
+                                        <b><span
+                                        translate="TRANSLATE.MACRO_APPLY_X_PERCENT_ON_PROVIDER_SELLING_PRICE"></span>:
+                                    </b>
+                                    <span
+                                        translate="TRANSLATE.MACRO_DET_APPLY_X_PERCENT_ON_PROVIDER_SELLING_PRICE_CALCULATION_DESC"></span>
+                                    <br />
+                                    <b>
+                                        <span class="me-1" translate="TRANSLATE.MACRO_DET_EXAMPLE"></span>
+                                    </b>
+                                    <span translate="TRANSLATE.MACRO_DET_PARTNER_PRICE"></span> = 10,
+                                    <span translate="TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE"></span> = 15,
+                                    <span>
+                                        <span translate="TRANSLATE.MACRO_DET_PERCENTAGE"></span> = -20
+                                    </span><br />
+                                    <b>
+                                        <span translate="TRANSLATE.MACRO_DET_SALE_PRICE"></span>
+                                    </b> 15 + (15 * (-20 / 100)) = 12
+                                </div>
+                            </div>
+                            </div>
+                            </div>
+                            }
+
+                        </div>
+                    </div>
+                    }
+                    @if(selectedMacro?.Description === 'Apply X% Margin on Partner Price' || selectedMacro?.Description === 'Apply X% ERP on List Price' ){
+                        <div class="form-group row mt-7">
+                            <div class="col-md-2 text-start mt-4">
+                                <label class="required fw-semibold fs-6 mb-2"
+                                    translate="TRANSLATE.PARTNE_PLAN_DETAILS_LABEL_TEXT_MARGIN_VALUE"></label>
+                            </div>
+                            <div class="col-md-5">
+                                <input type="number" class="form-control form-control-sm" formControlName="macroValue" placeholder="{{'TRANSLATE.PARTNE_PLAN_DETAILS_LABEL_TEXT_MARGIN_VALUE' | translate}}">
+                                @if(planDetailsRegisterForm.get('macroValue')?.errors?.required && (planDetailsRegisterForm.get('macroValue')?.touched || buttonClicked)
+                                    || (this.planDetailsRegisterForm.get('macroValue')?.value === 'null')){
+                                    <span class="text-danger">{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED'|translate}}</span>
+                                }
+                                @if(selectedMacro?.Description === 'Apply X% Margin on Partner Price'){
+                                    <div class="row ml-sm-4 mt-1">
+                                        <div class="col-xs-1"></div>
+                                        <div class="col ml-1 pl-0 macro-det">
+                                            <div style="display: flex;">
+                                                <span><i class="ki-duotone ki-information-2 fs-5 mt-1 me-1" aria-hidden="true">
+                                                        <span class="path1"></span>
+                                                        <span class="path2"></span>
+                                                        <span class="path3"></span>
+                                                    </i></span>
+                                                <div style="margin-left: 10px;">
+                                                    <b><span translate="TRANSLATE.MACRO_APPLY_X_MARGIN_ON_PARTNER_PRICE"></span>:</b>
+                                                    <span translate="TRANSLATE.MACRO_DET_APPLY_X_MARGIN_ON_PARTNER_PRICE_CALCULATION_DESC"></span><br />
+                                                    <b><span class="me-1" translate="TRANSLATE.MACRO_DET_EXAMPLE"></span></b><span
+                                                        translate="TRANSLATE.MACRO_DET_PARTNER_PRICE"></span> = 10, <span
+                                                        translate="TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE"></span> = 15,
+                                                    <span translate="TRANSLATE.MACRO_DET_APPLY_X_MARGIN_ON_PARTNER_PRICE_PERCENTAGE"></span> = 20<br />
+                                                    <b><span translate="TRANSLATE.MACRO_DET_SALE_PRICE"></span></b> 10 / (1 - (20 / 100)) = 12.5
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                 @if(selectedMacro?.Description === 'Apply X% ERP on List Price'){
+                                    <div class="row ml-sm-4 mt-1">
+                                        <div class="col-xs-1"></div>
+                                        <div class="col ml-1 pl-0 macro-det">
+                                            <div style="display: flex;">
+                                                <span><i class="ki-duotone ki-information-2 fs-5 mt-1 me-1" aria-hidden="true">
+                                                        <span class="path1"></span>
+                                                        <span class="path2"></span>
+                                                        <span class="path3"></span>
+                                                    </i></span>
+                                                <div style="margin-left: 10px;">
+                                                    <b><span translate="TRANSLATE.MACRO_APPLY_X_PERCENT_ERP_ON_LIST_PRICE"></span>:</b>
+                                                    <span translate="TRANSLATE.MACRO_DET_APPLY_X_ERP_ON_LIST_PRICE_CALCULATION_DESC"></span><br />
+                                                    <b><span class="me-1" translate="TRANSLATE.MACRO_DET_EXAMPLE"></span></b><span
+                                                        translate="TRANSLATE.MACRO_ERP_ON_LIST_PRICE_COST_TO_PARTNER"></span> = 96, <span
+                                                        translate="TRANSLATE.MACRO_ERP_ON_LIST_PRICE_ERP_PRICE"></span> = 100,
+                                                    <span translate="TRANSLATE.MACRO_DET_APPLY_X_MARGIN_ON_PARTNER_PRICE_PERCENTAGE"></span> = 3<br />
+                                                    <b><span translate="TRANSLATE.MACRO_DET_SALE_PRICE"></span></b> ((3 * 100)/100) + 96 = 99<br/>
+                                                    <span translate="TRANSLATE.MACRO_DET_APPLY_X_ERP_ON_LIST_PRICE_EXPLANATION"></span><br/>
+                                                    <b><span translate="TRANSLATE.MACRO_DET_APPLY_X_ERP_ON_LIST_PRICE_MARGIN_FORMULA"></span></b><br/>
+                                                    <span translate="TRANSLATE.MACRO_DET_APPLY_X_ERP_ON_LIST_PRICE"></span><br/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                    }
+                   
+                    }
+                    
+
+                    <div class="form-group row mt-7"
+                        *ngIf="((Permissions.HasResellerUsagePlanMacro === 'Allowed' && planType.toLowerCase() === 'clone' && (planDetails?.PriceSetting?.Name !== undefined && planDetails?.PriceSetting?.Name !== null && planDetails?.PriceSetting?.Name !== '' && planDetails?.PriceSetting?.Name === 'ApplyMacroToDefineTheNewPrices')) || (planType.toLowerCase() === 'savewithalloffers' && Permissions.HasResellerUsagePlanMacro === 'Allowed'))">
+                        <label class="col-md-2 fw-semibold text-start">
+                            <span translate="TRANSLATE.RESELLER_PLAN_DETAILS_LABEL_TEXT_FOR_USAGE_MACRO"></span>
+                        </label>
+                        <div class="col-md-5">
+                            <select class="form-select-sm form-select" ng-model="vm.PlanInfo.UsageMacro"
+                                formControlName="usageMacro" name="macro"
+                                ng-options="option as option.Description | translate for option  in vm.Macros"
+                                (change)="usageMacroChange()">
+                                @for (option of macroTypes; track $index) {
+                                    <option [value]="option.ID" *ngIf=" option.Description !== 'Apply X% Margin on Partner Price' &&  option.Description !== 'Apply X% ERP on List Price'">
+                                        {{option.Description | translate}}
+                                    </option>
+                                }
+                            </select>
+                            <div class="row ml-sm-5 mt-1"
+                                *ngIf="planDetailsForUsageMacro?.Description === 'Copy Partner Price'">
+                                <div class="col-xs-1">
+                                </div>
+                                <div class="col ml-1 pl-0 macro-det">
+                                    <b>{{'TRANSLATE.MACRO_COPY_PARTNERT_PRICE' | translate}}
+                                        <span><i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i> </span>:
+                                    </b>{{'TRANSLATE.MACRO_DET_COPY_PARTNERT_PRICE_CALCULATION_DESC' | translate}}
+                                    <br />
+                                    <b class="me-1">{{'TRANSLATE.MACRO_DET_EXAMPLE' | translate}}</b>
+                                    {{'TRANSLATE.MACRO_DET_PARTNER_PRICE' | translate}} = 10,
+                                    {{'TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE' | translate}} = 15 <br />
+                                    <b>{{'TRANSLATE.MACRO_DET_SALE_PRICE' | translate}}</b> 10
+                                </div>
+                            </div>
+                            <div class="row ml-sm-5 mt-1"
+                                *ngIf="planDetailsForUsageMacro?.Description === 'Copy Provider Selling Price'">
+                                <div class="col-xs-1">
+                                </div>
+                                <div class="col ml-1 pl-0 macro-det">
+                                    <b>{{'TRANSLATE.MACRO_COPY_PROVIDER_SELLING_PRICE' | translate}}<span><i
+                                                class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i> </span>: </b>
+                                    {{'TRANSLATE.MACRO_DET_COPY_PROVIDER_SELLING_PRICE_CALCULATION_DESC' | translate}}
+                                    <br />
+                                    <b class="me-1">{{'TRANSLATE.MACRO_DET_EXAMPLE' | translate}}</b>
+                                    {{'TRANSLATE.MACRO_DET_PARTNER_PRICE' | translate}} = 10,
+                                    {{'TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE' | translate}} = 15 <br />
+                                    <b>{{'TRANSLATE.MACRO_DET_SALE_PRICE' | translate}}</b> 15
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row mt-7"
+                        *ngIf="((planType === 'clone' && (planDetails?.PriceSetting?.Name !== undefined && planDetails?.PriceSetting?.Name !== null && planDetails?.PriceSetting?.Name !== '' && planDetails?.PriceSetting?.Name === 'ApplyMacroToDefineTheNewPrices')) || planType === 'saveWithAllOffers') && planDetailsForUsageMacro?.NeedsPercent">
+                        <label class="col-md-2  fw-semibold text-start"> <span
+                                translate="TRANSLATE.RESELLER_PLAN_DETAILS_LABEL_TEXT_MACRO_FOR_USAGE_VALUE"></span><span
+                                class="text-danger"> * </span> </label>
+                        <div class="col-md-5">
+                            <input name="usageMacroValue" type="number" ng-model="vm.PlanInfo.UsageMacroValue"
+                                formControlName="usageMacroValue" class="form-control form-control-sm"
+                                placeholder="{{'TRANSLATE.RESELLER_PLAN_DETAILS_LABEL_TEXT_MACRO_FOR_USAGE_VALUE' | translate}}"
+                                required>
+                            <span
+                                *ngIf="( planDetailsRegisterForm.get('usageMacroValue')?.touched ||  planDetailsRegisterForm.get('usageMacroValue').dirty) &&  planDetailsRegisterForm.get('usageMacroValue')?.errors?.required"
+                                class="text-danger">{{'TRANSLATE.REQUIRED_FIELD_TEXT' | translate}}</span>
+                            <div class="row ml-sm-4 mt-1"
+                                *ngIf="planDetailsForUsageMacro?.Description === 'Apply X% on Partner Price'">
+                                <div class="col-xs-1">
+
+                                </div>
+                                <div class="col ml-1 pl-0 macro-det">
+                                    <b>{{'TRANSLATE.MACRO_APPLY_X_PERCENT_ON_PARTNER_PRICE' | translate}}
+                                        <span><i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i> </span>: </b>
+                                    {{'TRANSLATE.MACRO_DET_APPLY_X_PERCENT_ON_PARTNER_PRICE_CALCULATION_DESC' |
+                                    translate}} <br />
+                                    <b class="me-1">{{'TRANSLATE.MACRO_DET_EXAMPLE' | translate}}</b>
+                                    {{'TRANSLATE.MACRO_DET_PARTNER_PRICE' | translate}} = 10,
+                                    {{'TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE' | translate}} = 15,
+                                    {{'TRANSLATE.MACRO_DET_PERCENTAGE' | translate}} = 20<br />
+                                    <b>{{'TRANSLATE.MACRO_DET_SALE_PRICE' | translate}}</b> 10+(10* (20/100)) = 12
+                                </div>
+                            </div>
+                            <div class="row ml-sm-4 mt-1"
+                                *ngIf="planDetailsForUsageMacro?.Description === 'Apply X% on Markup'">
+                                <div class="col-xs-1"></div>
+                                <div class="col ml-1 pl-0 macro-det">
+                                    <b>
+                                        {{ 'TRANSLATE.MACRO_APPLY_X_PERCENT_ON_MARKUP' | translate }}
+                                        <span>
+                                            <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i>
+                                        </span>:
+                                    </b>
+                                    {{ 'TRANSLATE.MACRO_DET_APPLY_X_PERCENT_ON_MARKUP_CALCULATION_DESC' | translate
+                                    }}<br />
+                                    <b class="me-1">{{ 'TRANSLATE.MACRO_DET_EXAMPLE' | translate }}</b>
+                                    {{ 'TRANSLATE.MACRO_DET_PARTNER_PRICE' | translate }} = 10,
+                                    {{ 'TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE' | translate }} = 15,<br />
+                                    <b>{{ 'TRANSLATE.MACRO_DET_PERCENTAGE' | translate }} = 20</b><br />
+                                    <b>{{ 'TRANSLATE.MACRO_DET_SALE_PRICE' | translate }}</b> 10 + ((15 - 10) * (20 /
+                                    100)) = 11
+                                </div>
+                            </div>
+
+                            <div class="row ml-sm-4 mt-1"
+                                *ngIf="planDetailsForUsageMacro?.Description === 'Apply X% on Provider Selling Price'">
+                                <div class="col-xs-1">
+                                </div>
+                                <div class="col ml-1 pl-0 macro-det">
+                                    <b>{{'TRANSLATE.MACRO_APPLY_X_PERCENT_ON_PROVIDER_SELLING_PRICE' | translate}}
+                                        <span><i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i> </span>: </b>
+                                    {{'TRANSLATE.MACRO_DET_APPLY_X_PERCENT_ON_PROVIDER_SELLING_PRICE_CALCULATION_DESC' |
+                                    translate}} <br />
+                                    <b class="me-1">{{'TRANSLATE.MACRO_DET_EXAMPLE' | translate}}</b>
+                                    {{'TRANSLATE.MACRO_DET_PARTNER_PRICE' | translate}} = 10,
+                                    {{'TRANSLATE.MACRO_DET_PROVIDER_SELLING_PRICE' | translate}} = 15,
+                                    {{'TRANSLATE.MACRO_DET_PERCENTAGE' | translate}} = -20<br />
+                                    <b>{{'TRANSLATE.MACRO_DET_SALE_PRICE' | translate}}</b> 15+(15*(-20/100)) = 12
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if(planType === 'clone' || planType === 'saveWithAllOffers' || planType === 'edit'){
+                    <div class="form-group row mt-7">
+                        <div class="col-md-2 text-start mt-4">
+                            <label class="fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.RESELLER_PLAN_DETAILS_LABEL_TEXT_PROVIDERS"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <select2 [data]="providersDataSet" [templates]="providers" [multiple]="true"
+                                formControlName="providers" (update)="onProvidersChange()">
+                                <ng-template #providers let-data="data">
+                                    <span [ngClass]="{'multiple-select-choice' : !isEditMode, 'ps-0' : planType === 'clone'}" title="">{{data?.text}}</span>
+                                </ng-template>
+                            </select2>
+                            @if (selectedProviders.length>0 && planType !=='saveWithAllOffers') {
+                            <span translate="TRANSLATE.RESELLER_PLAN_DETAILS_INFO_TEXT_SELECTED_PROVIDERS"></span><span>
+                                : <span class="text-break">{{ selectedProviders.join(', ') }}</span></span>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row mt-7">
+                        <div class="col-md-2 text-start mt-4">
+                            <label class="fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.RESELLER_PLAN_DETAILS_LABEL_TEXT_CATEGORIES"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <select2 [data]="categoriesDataSet" [templates]="Categories" [multiple]="true"
+                                formControlName="categories" (update)="onCategoriesChange()">
+                                <ng-template #Categories let-data="data">
+                                    <span [ngClass]="{'multiple-select-choice' : !isEditMode, 'ps-0' : planType === 'clone'}" title="">{{data?.text}}</span>
+                                </ng-template>
+                            </select2>
+                            @if (selectedsCategories.length>0 && planType !=='saveWithAllOffers') {
+                            <span
+                                translate="TRANSLATE.RESELLER_PLAN_DETAILS_INFO_TEXT_SELECTED_CATEGORIES"></span><span>
+                                : <span class="text-break">{{ selectedsCategories.join(', ') }}</span></span>
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group row mt-7">
+                        <div class="col-md-2 text-start mt-4">
+                            <label class="fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.RESELLER_PLAN_DETAILS_LABEL_TEXT_PROVIDER_CATEGORIES"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <select2 [data]="providerCategoriesDataset" [templates]="providerCategories"
+                                [multiple]="true" formControlName="providerCategories">
+                                <ng-template #providerCategories let-data="data">
+                                    <span [ngClass]="{'multiple-select-choice' : !isEditMode, 'ps-0' : planType === 'clone'}" title="">{{data?.text}}</span>
+                                </ng-template>
+                            </select2>
+                            @if (selectedproviderCategoriesForProvider.length>0 && planType !=='saveWithAllOffers') {
+                            <span
+                                translate="TRANSLATE.RESELLER_PLAN_DETAILS_INFO_TEXT_SELECTED_PROVIDER_CATEGORIES"></span><span> : <span class="text-break">{{selectedproviderCategoriesForProvider.join(',')}}</span></span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="form-group row mt-7">
+                        <div class="col-md-2 text-start mt-4">
+                            <label class="fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.RESELLER_ADD_PLAN_SIDEBAR_FILTER_TEXT_TERM_DURATION"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <select class="form-select form-select-sm fw-bold" formControlName="termDuration"
+                                (change)="onTermDurationsChange()">
+                                <option *ngFor="let option of termDuration" [value]="option.validityData">
+                                    <span>{{option.Validity}}</span>&nbsp;
+                                    <span [translate]="'TRANSLATE.'+option.validityDataDescriptionValue"></span>
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row mt-7">
+                        <div class="col-md-2 text-start mt-4">
+                            <label class="fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.RESELLER_PLAN_DETAILS_LABEL_TEXT_BILLING_CYCLES"></label>
+                        </div>
+                        <div class="col-md-5">
+                            <select2 [data]="billingCycleDataset" [templates]="billingCycle" [multiple]="true"
+                                formControlName="billingCycle">
+                                <ng-template #billingCycle let-data="data">
+                                    <span [ngClass]="{'multiple-select-choice' : !isEditMode, 'ps-0' : planType === 'clone'}" title="">{{data?.text}}</span>
+                                </ng-template>
+                            </select2>
+                            @if(selectedBillingCycle.length >0 && planType !=='saveWithAllOffers'){
+                            <span
+                                translate="TRANSLATE.RESELLER_PLAN_DETAILS_INFO_TEXT_SELECTED_BILLING_CYCLES"></span><span>
+                                : <span class="text-break">{{selectedBillingCycle}}</span></span>
+                            }
+                        </div>
+                    </div>
+
+                    @if (showApplyPromotionToAllOffersCheckBox) {
+                    <div class="form-group row mt-7">
+                        <div class="col-md-2 text-start mt-4">
+                            <label class="fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNER_PLAN_DETAILS_LABEL_TEXT_APPLY_PROMOTION_TO_ALL_PROMOTION"></label>
+                        </div>
+                        <div class="col-md-5 form-check">
+                            <label class="form-check form-check-inline">
+                                <input type="checkbox" class="form-check-input mt-4"
+                                    [value]="isApplyPromotionToAllOffersSelected" formControlName="applyPromotion" />
+                            </label>
+
+                        </div>
+                    </div>
+                    }
+                    }
+                </div>
+                <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3">
+            @if (isEditMode) {
+            @if (planDetails.IsPlanWithAllOffers) {
+            <button type="button" class="btn btn-sm btn-primary" (click)="addMissingOffersInPlan()"
+                *ngIf="Permissions.HasViewResellerPlanOffers.toLowerCase()==='allowed' && Permissions.HasSaveResellerPlanWithAllOffers.toLowerCase()==='allowed'">
+                <span translate="TRANSLATE.RESELLER_PLAN_BUTTON_TEXT_ADD_MISSING_OFFERS"></span>
+            </button>
+            }
+            <button type="button" class="btn btn-sm btn-light btn-active-light-primary" (click)="submitDetails()"
+                *ngIf="Permissions.HasViewResellerPlanOffers.toLowerCase()==='allowed' && planType!=='clone' && planType!=='saveWithAllOffers'">
+                <span translate="TRANSLATE.BUTTON_TEXT_VIEW_OFFERS"></span>
+            </button>
+            }
+            @if(planType === 'add' || planType === 'saveWithAllOffers') {
+            @if(!enableMacro) {
+            <button type="button" class="btn btn-sm btn-light btn-active-light-primary" (click)="submitDetails()"
+                [appPermission]="'VIEW_OFFERS'" [appPermission]="'BTN_VIEW_RESELLER_PLAN_OFFERS'">
+                <span translate="TRANSLATE.BUTTON_TEXT_VIEW_OFFERS"></span>
+            </button>
+            <button type="button" class="btn btn-sm btn-primary" (click)="defineMacro()"
+                *ngIf="Permissions.HasSaveResellerPlanWithAllOffers.toLowerCase()==='allowed'">
+                <span translate="TRANSLATE.RESELLER_PLAN_BUTTON_TEXT_ADD_MACRO_AND_SAVE_PLAN_WITH_ALL_OFFERS"></span>
+            </button>
+            }
+            @if(enableMacro) {
+            <button type="button" class="btn btn-sm btn-light btn-active-light-primary"
+                (click)="cancelSavePlanWithAllOffers()"
+                *ngIf="Permissions.HasSaveResellerPlanWithAllOffers.toLowerCase()==='allowed'">
+                <span translate="TRANSLATE.RESELLER_PLANS_BUTTON_TEXT_CANCEL_SAVE_PLAN_WITH_ALL_OFFERS"></span>
+            </button>
+            <button type="button" class="btn btn-sm btn-primary" (click)="saveResellerPlanWithAllOffers()"
+                *ngIf="Permissions.HasSaveResellerPlanWithAllOffers.toLowerCase()==='allowed'" appBusyLoader>
+                <span translate="TRANSLATE.RESELLER_PLAN_BUTTON_TEXT_SAVE_PLAN_WITH_ALL_OFFERS"></span>
+            </button>
+            }
+            }
+            @else if(planType === 'clone') {
+            <button type="button" class="btn btn-sm btn-primary"
+                *ngIf="Permissions.HasCloneResellerPlan.toLowerCase()==='allowed'" (click)="clonePlan()" appBusyLoader>
+                <span translate="TRANSLATE.RESELLER_PLANS_BUTTON_TEXT_CLONE_PLAN"></span>
+            </button>
+            }
+        </div>
+                </form>
+            }
+        </div>
+       
+    </div>
+</div>

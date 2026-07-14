@@ -1,0 +1,22 @@
+.customer-profile{
+    display: flex;
+    gap:20px;
+    flex-direction: column;
+}
+.hide {
+    display: none;
+}
+::ng-deep{
+    app-sites{
+        .hide-no-data{
+            .position-relative.top-70px{
+                display: none !important;
+            }
+        }
+        .dt-paging.paging_full_numbers{
+            .pagination{
+                visibility: hidden;
+            }
+        }
+    }
+}

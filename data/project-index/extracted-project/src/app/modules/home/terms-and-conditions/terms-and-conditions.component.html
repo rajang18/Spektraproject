@@ -1,0 +1,126 @@
+<ng-template #modalsomething>
+    <div class="modal-header">
+        <h3 class="modal-title text-primary" id="modal-title">
+            <span translate="TRANSLATE.CUSTOMER_AGREEMENT_HYPERLINK_POPUP_HEADER_TEXT"></span>
+        </h3>
+    </div>
+    <div class="modal-body">
+        <div class="pt-4 pb-4" [hidden]="partnerAgreementClickedFlag">
+
+            <h5 class="align-inline"> <span translate="TRANSLATE.CUSTOMER_AGREEMENT_PLEASE_READ_TEXT"></span>&nbsp;
+                <a id="linkPartner" (click)="partnerAgreement()" class="text-primary cursor-pointer">
+                    <span translate="TRANSLATE.CUSTOMER_AGREEMENT_HYPERLINK_POPUP_TEXT_FOR_PARTNER"></span>
+                </a>
+            </h5>
+
+        </div>
+        <div style="padding-left:20px" [hidden]="ezidebitAgreementClickedFlag">
+
+            <h5> <span translate="TRANSLATE.CUSTOMER_AGREEMENT_PLEASE_READ_TEXT"></span> &nbsp;<a id="linkEzidebit"
+                    (click)="ezidebitAgreement()" class="text-primary"> <span
+                        translate="TRANSLATE.CUSTOMER_AGREEMENT_HYPERLINK_POPUP_TEXT"></span></a>.</h5>
+        </div>
+        <div style="padding-left:20px" [hidden]="microsoftCloudAgreementClickedFlag">
+            <h5> <span translate="TRANSLATE.CUSTOMER_AGREEMENT_PLEASE_READ_TEXT"></span> &nbsp; <a
+                    id="customerConsentLink" (click)="microsoftCloudAgreement()" class="text-primary"> <span
+                        translate="TRANSLATE.CUSTOMER_AGREEMENT_HYPERLINK_POPUP_TEXT_FOR_MICROSOFT_CLOUD_AGREEMENT"></span></a>
+            </h5>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a class="btn btn-primary btn-sm" (click)="cancel()"><span translate="TRANSLATE.BUTTON_TEXT_OK"></span></a>
+    </div>
+</ng-template>
+
+
+
+
+
+<div class="container-fluid" id="some1">
+    <div class="row" id="ezi">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <form name="vm.frmAcceptTermsAndConditions" #frmAcceptTermsAndConditions="ngForm"
+                        (ngSubmit)="SaveTermsAndConditions(frmAcceptTermsAndConditions)" role="form" class="form"
+                        novalidate>
+                        <div class="m-heading-1 border-green m-bordered mb-5">
+                            <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+                                    <!-- {{isUserAcceptedTermsAndConditions }}
+                                            {{TermsAndConditions | json}} -->
+                                    <div *ngIf="!isUserAcceptedTermsAndConditions && TermsAndConditions.IsCustomTermsandConditionsHyperlinkActive"
+                                        [innerHTML]="'TRANSLATE.'+TermsAndConditions.ContentWhenCustomHyperlink| translate :{ partnerName: TermsAndConditions.CompanyName, hyperlinkContent: TermsAndConditions.CustomHyperlinkText} "
+                                        #partner1></div>
+                                    <!-- [innerHTML]="'TRANSLATE.'+ TermsAndConditions.Content | translate: { partnerName: TermsAndConditions.CompanyName}"  -->
+                                    <div *ngIf="!isUserAcceptedTermsAndConditions && !TermsAndConditions.IsCustomTermsandConditionsHyperlinkActive"
+                                        id="someone" #partner2>
+                                        <span translate="TRANSLATE.TERM_AND_CONDITIONS_READ_TEXT">
+                                        </span>
+                                        <ul class="mt-3">
+                                            <li>
+                                                <a (click)='PartnerAgreementClicked()'
+                                                    class="text-primary cursor-pointer"
+                                                    translate="TRANSLATE.TERM_AND_CONDITIONS_LINK_TEXT">
+                                                </a>
+                                            </li>
+                                        </ul>
+                                        <br>
+                                        <span translate="TRANSLATE.TERM_AND_CONDITIONS_ACCEPTS_TEXT"></span>
+                                    </div>
+                                    <div *ngIf="isUserAcceptedTermsAndConditions"
+                                        [innerHTML]="('TRANSLATE.TERMS_AND_CONDITIONS_CONTENT_TEXT_WITH_ONLY_MCA') | translate">
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="form-group row ml-0">
+                            <div class="col-md-12">
+                                <div *ngIf="billingProfile==='EziDebit' && !isUserAcceptedTermsAndConditions">
+                                    <p><strong><span
+                                                translate="TRANSLATE.TERMS_AND_CONDITIONS_EZIDEBIT_AGREEMENT_TITLE"></span></strong>
+                                    </p>
+                                    <p>
+                                        &nbsp;&nbsp;&nbsp;&nbsp; <span
+                                            translate="{{'TRANSLATE.TERMS_AND_CONDITIONS_EZIDEBIT_AGREEMENT_BTN_WITH_TEXT'}}"></span>
+                                    </p>
+                                </div>
+                                <div class="form-group row"
+                                    ng-class="{'has-error':vm.frmAcceptTermsAndConditions.$submitted &amp;&amp; vm.frmAcceptTermsAndConditions.TermsAndConditions_IsAccepted.$error.required}">
+                                    <label class="form-check form-check-inline ms-3 me-5">
+                                        <input type="checkbox" class="form-check-input "
+                                            [(ngModel)]="TermsAndConditions.IsAccepted" #IsAccepted="ngModel"
+                                            name="TermsAndConditions_IsAccepted" required>
+                                        <span></span>
+                                        {{"TRANSLATE.TERMS_AND_CONDITIONS_READ" | translate}}
+                                    </label>
+                                    <!-- {{IsAccepted.invalid}} -->
+                                    <!-- {{IsAccepted | json}} -->
+                                    <span *ngIf="IsAccepted.invalid && this.isFormSubmitted" class="text-danger">
+                                        <span
+                                            translate="{{'TRANSLATE.VALIDATION_MESSAGE_REQUIRED' | translate}}"></span>
+                                    </span>
+                                </div>
+
+                                <!--For Ezidebit-->
+                                <div class="form-group"
+                                    ng-class="{'has-error':vm.frmAcceptTermsAndConditions.$submitted &amp;&amp; vm.frmAcceptTermsAndConditions.TermsAndConditions_IsAccepted.$error.required}"
+                                    *ngIf="billingProfile==='EziDebit'">
+                                    <div translate="TRANSLATE.CUSTOMER_AGREEMENT_EZIDEBIT_ALLOW_TEXT"></div>
+                                    <br>
+                                </div>
+                                <div class="form-actions">
+                                    <div class="col-md-12 text-end control-label">
+                                        <button type="submit" class="btn btn-primary btn-sm">
+                                            <!-- <busy-message><i class="fa fa-spinner fa-spin"></i><span translate="BUSY_MESSAGE_TEXT_PLEASE_WAIT"></span></busy-message> -->
+                                            <span translate="TRANSLATE.BUTTON_TEXT_ACCEPT"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

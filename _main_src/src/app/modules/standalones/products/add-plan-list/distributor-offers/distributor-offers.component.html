@@ -1,0 +1,118 @@
+<div class="card card-border gutter-b"
+    style="margin-bottom: 0px;padding-top: 10px;padding-bottom: 10px;padding-left: 10px;padding-right: 10px;">
+    <div class="card-body p-3">
+        <div class="row">
+            <div class="col-md-10">
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong class="ms-1">{{product.Name}}</strong>
+                        <br />
+                        @if (product.ValidityType!=null && product.ValidityType == 'Month(s)') {
+                        <span
+                            class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2"
+                            aria-hidden="true" placement="top"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                            {{product.Validity}}
+                            {{ (product.Validity === 1 ? (product.ValidityType === 'Month(s)' ?
+                            'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                            'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+
+                        </span>
+                        }
+                        @if (product.ValidityType === 'Year(s)' || product.ValidityType === 'Year') {
+                        <span class="label label-dark font-weight-bold label-inline text-white badge bg-warning ms-md-2"
+                            aria-hidden="true" placement="top"
+                            [ngClass]="{'labelcolor':product.BillingCycleName == 'Monthly','TermLabelColor': product.BillingCycleName == 'Annual'}"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                            {{product.Validity}}
+                            {{ (product.Validity === 1 ? (product.ValidityType === 'Month(s)' ?
+                            'TRANSLATE.TERM_DURATION_DESC_MONTH' : 'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                            'TRANSLATE.TERM_DURATION_DESC_YEAR(S)') | translate }}
+                        </span>
+                        }
+                        <span class="label fw-bold label-inline text-white badge ms-md-2" [ngClass]="{
+                            'bg-warning': product.BillingCycleName?.toLowerCase() === 'monthly',
+                            'bg-success': product.BillingCycleName?.toLowerCase() === 'annual',
+                            'bg-dark': product.BillingCycleName?.toLowerCase() === 'triennial',
+                            'bg-info': product.BillingCycleName?.toLowerCase() === 'onetime'
+                            }"
+                            placement="top"
+                            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}">
+                            {{'TRANSLATE.'+product.BillingCycleDescriptionKey | translate}} </span>
+                        <span class="label label-light-primary font-weight-bold badge ms-md-2"
+                            *ngIf="product.ProviderSettings && product.ProviderSettings.ProviderCategory">
+                            {{product.ProviderSettings.ProviderCategory | translate}} </span>
+                        <span
+                            class="label label-light-info fw-semibold label-inline badge ms-md-2 mt-1"
+                            placement="top"
+                            ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_CATEGORY' | translate}}">{{'TRANSLATE.CATEGORY_DESC_DISTRIBUTOR_OFFERS'
+                            | translate}}</span>
+                            <span *ngIf="product.SubCategoryName" [appPermission]="'GET_SUBCATEGORIES_PILLS'"
+                                class="badge badge-danger fw-semibold label-inline ms-md-1 mt-1"
+                                placement="top"
+                                ngbTooltip="{{ 'TRANSLATE.PARTNER_CUSTOM_CATEGORY_FOR_SUBCATEGORY_TOOLTIP_PILL' | translate }}">
+                                {{ product.SubCategoryName | translate }}
+                             </span>
+
+                    </div>
+                    <div class="col-md-3 col-6 col-sm-6 mt-2 text-end mt-sm-2 mt-lg-0 mt-xl-0">
+                        <span>{{'TRANSLATE.LABLE_TEXT_COST_TO_PARTNER' | translate}}</span>
+                        <br />
+                        <strong>{{product.PriceforPartner | CurrencyFilter : product.CurrencySymbol :
+                            product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                            product.CurrencyDecimalSeperator}}</strong>
+                    </div>
+                    <div class="col-md-3 col-6 col-sm-6 mt-2 text-end mt-sm-2 mt-lg-0 mt-xl-0">
+                        <span>{{'TRANSLATE.LABEL_TEXT_RETAIL_PRICE' | translate}}</span>
+                        <br />
+                        <strong>{{product.ProviderSellingPrice | CurrencyFilter : product.CurrencySymbol :
+                            product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                            product.CurrencyDecimalSeperator}}</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 mt-2 text-end" *ngIf="product.Settings.IsAddon == 'false' && !product.HasAddons"
+                [hidden]="!showAddButton" [appPermission]="'SAVE_PLAN'">
+                <a class="btn btn-primary btn-sm" (click)="callOnAction(product, 'addtoplan');" [hidden]="!showAddButton">
+                    {{'TRANSLATE.BUTTON_TEXT_ADD' | translate}}
+                </a>
+            </div>
+            <div class="col-md-2 mt-2 text-end"
+                *ngIf="product.Settings.IsAddon == 'false' && product.HasAddons && product.IsResellerPlanView"
+                [hidden]="!showAddButton" [appPermission]="'SAVE_PLAN'">
+                <a class="btn btn-primary btn-sm" (click)="callOnAction(product, 'addtoplanwithaddons');" [hidden]="!showAddButton">
+                    {{'TRANSLATE.BUTTON_TEXT_ADD' | translate}}
+                </a>
+            </div>
+            <div class="col-md-2 text-end"
+                *ngIf="product.Settings.IsAddon == 'false' && product.HasAddons && !product.IsResellerPlanView"
+                [hidden]="!showAddButton" [appPermission]="'SAVE_PLAN'">
+                <div class="actions" *ngIf="product.Settings.IsAddon == 'false'">
+                    <div class="btn-group" *ngIf="product.CategoryName !== 'Custom'">
+                        <a class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)" [hidden]="!showAddButton">
+                            {{'TRANSLATE.BUTTON_TEXT_ADD' | translate}} <i class="fa fa-angle-down"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a (click)="callOnAction(product, 'addtoplan');" [hidden]="!showAddButton">
+                                    {{'TRANSLATE.BUTTON_TEXT_ADD' | translate}}
+                                </a>
+                            </li>
+                            <li>
+                                <a (click)="callOnAction(product, 'addtoplanwithaddons'); " [hidden]="!showAddButton">
+                                    {{ 'BUTTON_TEXT_ADD_WITH_ADDONS' | translate}}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="btn-group" *ngIf="product.CategoryName === 'Custom'" [hidden]="!showAddButton">
+                        <a (click)="callOnAction(product, 'addtoplan');" class="btn btn-primary btn-sm" [hidden]="!showAddButton"
+                            href="javascript:void(0)">
+                            {{'TRANSLATE.BUTTON_TEXT_ADD' | translate}}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

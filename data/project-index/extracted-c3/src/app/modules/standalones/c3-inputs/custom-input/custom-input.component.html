@@ -1,0 +1,131 @@
+@if(cc?.IsTenantConfiguration){
+<div class="row">
+    <div class="col-md-5">
+        <div class="fs-6 mb-3 pt-3 align-items-center d-inline-flex text-start">
+            <span class="fw-semibold">{{'TRANSLATE.'+data.DisplayName | translate}}<span class="text-danger ms-1"
+                    *ngIf="data.IsRequired">*</span>
+                <i class="ki-duotone ki-information-2 fs-8 ms-1 mt-1 align-self-baseline"
+                    ngbTooltip="{{'TRANSLATE.'+data.Description | translate }}">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                </i></span>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div class="row" [formGroup]="form" *ngIf="pageMode === 'list'">
+            <div class="col-8 fs-6 mb-3 pt-3 d-flex align-items-center justify-content-start text-start text-break">
+                {{data?.Value}}
+            </div>
+            <div class="col-4 text-end">
+                @if (cc?.Permissions.HasSaveConfiguration === 'Allowed' ||
+                cc?.Permissions.HasSaveConfigurationManagedByCustomer === 'Allowed'||
+                cc?.Permissions.HasSaveConfigurationManagedByReseller === 'Allowed') {
+                <button class="btn btn-light-primary btn-sm btn-icon tooltips me-2 " (click)="Edit()"
+                    *ngIf="data.IsCustom === true && ( data.IsManagedByPartner || data.IsManagedByCustomer  || data.IsManagedByReseller)"
+                    ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_EDIT'|translate}}"><i
+                        class="ki-outline ki-pencil"></i></button>
+                }
+                @if(cc.Permissions.HasRevertConfiguration === 'Allowed'){
+
+                <button class="btn btn-light-primary btn-sm btn-icon tooltips  me-2" (click)="revertTenantConfig(data)"
+                    *ngIf="data.IsCustom === true && (data.IsManagedByPartner || data.IsManagedByCustomer || data.IsManagedByReseller)"
+                    ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_REVERT'|translate}}"><i
+                        class="ki-outline ki-arrow-circle-left"></i></button>
+                }
+                @if (cc?.Permissions.HasOverRideConfiguration === 'Allowed' ||
+                cc?.Permissions.HasOverRideConfigurationManagedByCustomer === 'Allowed' ||
+                cc?.Permissions.HasOverRideConfigurationManagedByReseller === 'Allowed') {
+                <button class="btn btn-light-primary btn-sm btn-icon tooltips  me-2"
+                    *ngIf="data.IsCustom === false && (data.IsManagedByPartner || data.IsManagedByCustomer || data.IsManagedByReseller)"
+                    (click)="Edit()" ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_OVERRIDE'|translate}}"><i
+                        class="ki-outline ki-arrow-circle-right"></i></button>
+                }
+
+            </div>
+        </div>
+
+        <div class="row" [formGroup]="form" *ngIf="pageMode === 'edit'">
+            <div class="col-8 fs-6 d-flex align-items-center justify-content-start text-start text-wrap">
+                @if(data.Name !== 'OneTimeMultiplyPercentage'){
+                    <input type="text" class="form-control form-control-sm col-12 text-wrap" [value]="data.Value"
+                    [formControlName]="frmControlName" #text (input)="onChange(text.value)" (blur)="onTouched()">
+                }
+                @if (data.Name === 'OneTimeMultiplyPercentage') {
+                    <input type="number" class="form-control form-control-sm" id="{{data.Name}}"
+                        [formControlName]="frmControlName" pattern="^[0-9]+(\.[0-9]{1,8})?$" name="{{data.Name}}"
+                        [required]="data.IsRequired" [disabled]="!data.IsManagedByPartner" (keyup)="onBlur()" />
+                 }
+                
+                @if(form.get(data.Name)?.touched && form.get(data.Name)?.errors?.required){
+                    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                }
+            </div>
+            <div class="col-4 text-end">
+                <button class="btn btn-light-primary btn-sm btn-icon tooltips me-2" (click)="saveTenantConfig(data)"
+                    ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_SAVE'|translate}}"><i class="ki-outline ki-check"></i></button>
+                <button class="btn btn-light-danger btn-sm btn-icon tooltips me-2" (click)="cancelTenantConfig()"
+                    ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_CANCEL'|translate}}"><i
+                        class="ki-outline ki-cross"></i></button>
+            </div>
+        </div>
+
+    </div>
+</div>
+}
+
+@if(!cc?.IsTenantConfiguration && data.IsRequired && data.IsShowOnScreen){
+<div class="form-group row mt-6" [formGroup]="form" *ngIf="data.IsShowOnScreen">
+    <label class="col-4 col-form-label">
+        <span>{{'TRANSLATE.'+ data.DisplayName |translate}}</span>
+        <span class="text-danger" *ngIf="data.IsRequired">*</span>
+        <i class="ki-duotone ki-information-2 fs-8 ms-1 bottom-10"
+            ngbTooltip="{{'TRANSLATE.'+data.Description | translate }}">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+        </i>
+    </label>
+    <div class="col-6 ">
+        @if(data.Name !== 'OneTimeMultiplyPercentage'){
+        <input type="text" [disabled]="!data.IsManagedByPartner" class="form-control form-control-sm "
+            [ngClass]="{'input-disable': !data.IsManagedByPartner}" #text
+            [ngStyle]="{'pointer-events': !data.IsManagedByPartner ? 'none':'initial','cursor': !data.IsManagedByPartner? 'not-allowed':'initial'}"
+            (blur)="onTouched()" [value]="data.Value" [formControlName]="frmControlName">
+        }
+        @if (data.Name === 'OneTimeMultiplyPercentage') {
+        <input type="text" #text (input)="onChange(text.value)" pattern="^[0-9]+(\.[0-9]{1,8})?$" [value]="data.Value"
+            class="form-control form-control-sm" id="{{data.Name}}" [formControlName]="frmControlName"
+            name="{{data.Name}}" [required]="data.IsRequired" [disabled]="!data.IsManagedByPartner">
+        }
+        <!-- <div *ngIf="isInvalid" class="text-danger">This field is required</div> -->
+        @if(form.get(data.Name)?.touched && form.get(data.Name)?.errors?.required){
+        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+        }
+        @if(form.get(data.Name)?.touched && form.get(data.Name)?.errors?.pattern){
+        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_ENTER_VALID_PHONE_NUMBER"></span>
+        }
+    </div>
+</div>
+}
+
+@if (!cc?.IsTenantConfiguration && !data.IsRequired && data.IsShowOnScreen) {
+<form name="frmPartnerSetting" [formGroup]="form" class="form-group  row mt-6">
+    <label class="col-4 col-form-label">
+
+        <span class="fw-semibold" translate="{{'TRANSLATE.'+data.DisplayName}}"></span>
+        <i class="ki-duotone ki-information-2 fs-8 ms-1 bottom-10"
+            ngbTooltip="{{'TRANSLATE.'+data.Description | translate }}">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+        </i>
+    </label>
+    <div class="col-6">
+        <input type="text" class="form-control form-control-sm " id="{{data.Name}}" [formControlName]="frmControlName"
+            #text (input)="onChange(text.value)" (blur)="onTouched()" [value]="data.Value" ng-model="datasource.Value"
+            name="{{data.Name}}" [disabled]="!data.IsManagedByPartner" />
+    </div>
+</form>
+
+}

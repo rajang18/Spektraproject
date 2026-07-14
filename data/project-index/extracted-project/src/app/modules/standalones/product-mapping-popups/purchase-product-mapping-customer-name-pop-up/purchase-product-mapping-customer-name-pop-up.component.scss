@@ -1,0 +1,34 @@
+.custom-height {
+    height: 300px;
+    // position: relative;
+    // height: calc(93vh - (var(--bs-app-footer-height) + var(--bs-app-header-height) + var(--bs-app-toolbar-height) + 100px));
+    // overflow-y: auto;
+    // overflow-x: hidden;
+}
+
+::ng-deep {
+    app-purchase-product-mapping-customer-name-pop-up{
+        .dt-container.dt-bootstrap5.dt-empty-footer {
+            .row:nth-child(1) {
+                .col-sm-12 {
+                    height: 270px;
+                    overflow: auto;
+                }
+            }
+        }
+        .custom-height.no-height{
+            .dt-container.dt-bootstrap5.dt-empty-footer {
+                .row:nth-child(1) {
+                    .col-sm-12.p-0{
+                        height: 0px !important;
+                    }
+                }
+            }
+        }
+        .position-relative.top-70px.row.fixed-height-card.pt-0.mt-0 {
+            height: 200px; 
+            overflow-y: auto; 
+            overflow-x: hidden;
+        }
+    }
+}

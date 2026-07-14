@@ -1,0 +1,57 @@
+<!-- header -->
+<!-- <section class="fixed-top">
+    <nav class="navbar">
+        <div class="container-fluid">
+          <a class="navbar-brand">
+            <img *ngIf="userSettingsData?.WelcomeLogoPath && !imgLoadingFailed" class="welcome-logo ps-10" [src]="userSettingsData?.WelcomeLogoPath" (error)="handleImageError($event)"  >
+            <img *ngIf="!userSettingsData?.WelcomeLogoPath || imgLoadingFailed" class="welcome-logo ps-10 default-logo" [src]="defaultLogo" >
+          </a>
+          <form class="d-flex pe-15">
+            <div class="btn hover-anim">
+                <a class="contact-us" [ngStyle]="{'color': userSettingsData?.WelcomePageButtonStyle ? userSettingsData?.WelcomePageButtonStyle : 'white'}" > -->
+<!-- Contact us -->
+<!-- <span translate="TRANSLATE.WELCOMELAYOUT_BEGIN_NAVIGATION_4_CONTACT"></span>
+                </a>
+                <div class="anim mt-1"></div>
+            </div>
+            <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false"
+                aria-label="Toggle navigation"
+                [ngStyle]="{'color': userSettingsData?.WelcomePageButtonStyle ? userSettingsData?.WelcomePageButtonStyle : 'white'}"
+                (click)="loginRedirect()">
+                <span translate="TRANSLATE.WELCOMELAYOUT_BEGIN_NAVIGATION_1_LOGIN"></span>
+            </button>
+          </form>
+        </div>
+    </nav>
+</section> -->
+<!-- content starts -->
+@if(!isLoading){
+<div [innerHTML]="welcomeLayout" class="welcomelayout">
+
+</div>
+ }
+ @else {
+<div id="splash-screen" class="splash-screen">
+  <div class=" d-flex align-items-center mt-5">
+    <span class="spinner-border text-primary" role="status"></span>
+    <span class="text-muted fs-6 fw-semibold ms-5"><span class="me-1">{{'TRANSLATE.LOADING_MESSAGE' | translate}}</span></span>
+  </div>
+</div>
+ }
+<!-- content ends -->
+<!-- footer -->
+<!-- <footer class="fixed-bottom pb-4">
+    <div class="d-flex justify-content-between">
+        <div class="text-md-start text-sm-center ps-10">
+            <span class="me-1">{{currentDateStr}}&copy;</span>
+            <a [href]="userSettingsData?.CompanyUrl" target="_blank" class="text-primary-00">{{userSettingsData?.ContactCompanyName}}</a>
+            <span class="me-1">{{'TRANSLATE.FOOTER_TEXT_1_ALL_RIGHTS_RESERVED' | translate}}</span>
+        </div> -->
+<!--end::Copyright-->
+<!-- <div class="text-md-end text-sm-center me-12">
+            <span class="me-1">{{'TRANSLATE.FOOTER_TEXT_1_POWERED_BY' | translate}}</span>
+            <a [href] ="userSettingsData?.PoweredByCompanyURL" target="_blank" class="text-primary-00">{{userSettingsData?.PoweredByCompanyName}}</a>
+        </div>
+    </div>
+</footer> -->

@@ -1,0 +1,72 @@
+<div class="d-flex flex-column-fluid">
+    <div class="container-fluid">
+            <div class="card-body">
+                <form [formGroup]="PartnerLogoForms">
+                    <div class="row">
+                        <div class="col-4 text-left text-sm-left text-md-right text-lg-right text-start">
+                            <label class="col-form-label">
+                                <span translate="TRANSLATE.PARTNER_LOGOS_LABEL_TEXT"></span>
+                            </label>
+                        </div>
+                        <div class="col-6 pt-1">
+                            <ng-select [(ngModel)]="SelectedLogoID" (ngModelChange)="formChanges()" formControlName="partnerLogos" 
+                                (change)="getPartnerLogoDetail()" class="" [placeholder]="('SETTINGS_LOGO_SELECT_A_LOGO' | translate)">
+                                <ng-option [value]="''" [disabled]="true">
+                                    <span>{{'TRANSLATE.SETTINGS_LOGO_SELECT_A_LOGO' | translate}}</span>
+                                </ng-option>
+                                @for (item of partnerLogos; track $index) {
+                                <ng-option [value]="item.ID">
+                                    <span>{{'TRANSLATE.'+ item.DisplayName |translate}}</span>
+                                </ng-option>
+                                }
+                            </ng-select>
+                        </div>
+                    </div>
+                    @if(SelectedLogoID != '' && PartnerLogoDetails?.DisplayName){
+                    <div class="row mt-7">
+                        <label class="col-4 col-form-label">
+                            <span  class="fw-semibold" translate="TRANSLATE.{{PartnerLogoDetails.DisplayName}}"></span>
+                            <span class="text-danger">*</span>
+                            <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" ngbTooltip="{{'TRANSLATE.'+ PartnerLogoDetails.Description |translate}}">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                            </i>
+                        </label>
+                        <div class="col-6">
+                            <input filestyle="" type="file" formControlName="ClientSettingsDetails_WelcomeLogo"
+                                data-button-text="Select" data-class-button="btn btn-default" required
+                                (change)="onFileChange($event);formChanges()"
+                                data-class-input="form-control inline" nv-file-select="" uploader="LogoUploader"
+                                filters="size, type" class="form-control" style="width:100%" />
+
+                        </div>
+                        <div class="offset-4 col-3 mt-2" *ngIf="fileSelected">
+                            <span class="input-group-append">
+                                <button type="button" (click)="removeFile()" class="btn btn-danger">
+                                    <span class="icon-trash mr"></span>
+                                    <span translate="TRANSLATE.BUTTON_TEXT_REMOVE"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row mt-7">
+                        <label class="col-4 col-form-label">
+                            <span class="fw-semibold" translate="TRANSLATE.PARTNER_LOGOS_LABEL_TEXT_PREVIEW_IMAGE"></span>
+                        </label>
+                        <div class="col-6 d-flex align-items-center"
+                            *ngIf="PartnerLogoDetails.Value != undefined && PartnerLogoDetails.Value != null && PartnerLogoDetails.Value != ''">
+                            <img [src]="PartnerLogoDetails.Value" [alt]="PartnerLogoDetails.Name" width="82"
+                                height="22" />
+                        </div>
+                    </div>
+                    }
+                </form>
+                <div class="mt-4 d-flex justify-content-end" *ngIf="SelectedLogoID !== ''">
+                    <button class="btn btn-sm btn-primary" (click)="onSaveButtonClick()" [appPermission]="'SAVE_LOGO_SETTINGS'" appBusyLoader>
+                        <span  translate="TRANSLATE.BUTTON_TEXT_SAVE"></span>
+                    </button>
+                </div>
+            </div>
+    </div>
+</div>

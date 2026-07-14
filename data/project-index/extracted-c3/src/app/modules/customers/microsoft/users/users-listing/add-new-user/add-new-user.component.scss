@@ -1,0 +1,14 @@
+::ng-deep {
+    app-add-new-user {
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}
+
+.input-group-with-select {
+    color: var(--bs-gray-500);
+    background-color: var(--bs-gray-200);
+    border-color: var(--bs-gray-300);
+    opacity: 1;
+}

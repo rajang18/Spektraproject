@@ -1,0 +1,32 @@
+<div class="card card-custom">
+    <!-- begin::Header -->
+    <div class="card-header card-header-stretch overflow-auto">
+      <ul class="nav nav-stretch nav-line-tabs fw-bold border-transparent flex-nowrap" role="tablist">
+        <li class="nav-item">
+          <a *ngIf="HasCustomNotification === 'Allowed'"
+            routerLink="customNotifications"
+            routerLinkActive="active"
+            class="nav-link cursor-pointer"
+            role="tab" (click)="setActiveTab('customNotifications')"
+            routerLinkActive="text-primary active" [routerLinkActiveOptions]="{ exact: true }" 
+          >
+            {{'TRANSLATE.CUSTOM_NOTIFICATIONS_TAB_HEADING_TEXT_UI_NOTIFICATIONS' | translate}}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a *ngIf="HasWebhookNotification === 'Allowed'"
+            routerLink="webhookNotifications"
+            routerLinkActive="active"
+            class="nav-link cursor-pointer"
+            role="tab" (click)="setActiveTab('webhookNotifications')"
+            routerLinkActive="text-primary active" [routerLinkActiveOptions]="{ exact: true }" 
+          >
+          {{'TRANSLATE.WEBHOOK_TAB_HEADING_TEXT_WEBHOOK' | translate}}
+        </a>
+        </li>
+      </ul>
+    </div>
+    <div class="card-body">
+      <router-outlet></router-outlet>
+    </div>
+  </div>

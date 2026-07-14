@@ -1,0 +1,11 @@
+<div class="col-md-12 d-flex justify-content-center align-items-center flex-column text-center">
+    <ng-container *ngIf="menuMode$ | async as menuMode">
+        <h3>
+            <img *ngIf="menuMode === 'light'" src='../../../../assets/media/png/no-records-found4.png' width="150" height="150" />
+            <img *ngIf="menuMode === 'dark'" src='../../../../assets/media/png/Dark theme No Record Found.png' width="150" height="150" />
+        </h3>
+        <h4>
+            <span [innerHTML]="('TRANSLATE.MESSAGE_TEXT_NO_RECORDS_FOUND')| translate"></span>
+        </h4>
+    </ng-container>
+</div>

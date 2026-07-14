@@ -1,0 +1,140 @@
+<div class="card card-border">
+    <div class="card-body pt-4">
+        <!--begin::Toolbar-->
+        <div class="d-flex justify-content-end">
+            <app-order-status-indicators [product]="product"></app-order-status-indicators>
+        </div>
+        <!--end::Toolbar-->
+        <!--begin::User-->
+        <div class="d-flex align-items-center ">
+            <!--begin::Pic-->
+            <div class="flex-shrink-0 me-4">
+                @if(product.ImageUrl){
+                <div class="symbol me-3">
+                    <img class="symbol-label" [src]="product.ImageUrl">
+                </div>
+                }
+                @else{
+                <div class="symbol symbol symbol-65 symbol-dark">
+                    <span class="symbol-label fs-3 bg-dark text-white">
+                        {{product.Name | formatforinitials}}
+                    </span>
+                </div>
+                }
+            </div>
+            <!--end::Pic-->
+            <!--begin::Title-->
+            <div class="d-flex flex-column col-9">
+                <a href="javascript:void(0)" class="text-gray-800 fw-bold fs-3 mb-0">{{product.Name}}</a>
+            </div>
+
+            <!--end::Title-->
+        </div>
+        <!--end::User-->
+        <!--begin::Desc-->
+        <p class="mb-0 text-danger" *ngIf="product.ProviderError && product.ProviderError.length > 0">
+            {{product.ProviderError | innerTranslate}}
+        </p>
+        <p class="mb-0 text-danger"
+            *ngIf="(!product.ProviderError || product.ProviderError.length == 0) && product.ApproveOrRejectRemark">
+            {{product.ApproveOrRejectRemark | innerTranslate}}
+        </p>
+        <!--end::Desc-->
+        <!--begin::Info-->
+        <div class="h-200px">
+            <div class="d-flex align-items-center">
+                <span class="ms-0 label label-light-info fw-bold label-inline badge"
+                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}">{{'TRANSLATE.CATEGORY_DESC_PERPETUAL_SOFTWARE'
+                    | translate}}</span>
+                @if(product.MarketCode !== null && entityName == cloudHubConstants.ENTITY_PARTNER){
+                <span class="badge badge-info ml-1" ngbTooltip="{{product.MarketRegion}}">{{product.MarketCode}}</span>
+                }
+                @if(product.ProviderSettings && product.ProviderSettings.EnforceAttestation == 'TRUE'){
+                <span
+                    ngbTooltip="{{'TRANSLATE.MICROSOFT_ATTESTATION_TYPE_TOOLTIP' | translate}}{{'TRANSLATE.'+product.ProviderSettings.AttestationType | translate}}"
+                    class="font-weight-normal separator-primary text-primary cursor-pointer pl-2"><span><i
+                            class="ki-outline ki-verify text-primary"></i></span></span>
+                }
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-1" *ngIf="product.BillingCycleName">
+                <span
+                    class="text-dark-75 fw-bold mr-2">{{'TRANSLATE.PARTNER_MANAGED_CART_LIST_TEMPLATE_USAGE_LABEL_TEXT_BILLING_CYCLE'
+                    | translate}}</span>
+                <a href="javascript:void(0)" class="text-muted text-hover-primary">{{'TRANSLATE.' +
+                    product.BillingCycleDescription | translate}}</a>
+            </div>
+            <div class="d-flex justify-content-between align-items-cente my-1"
+                *ngIf="product.ProviderSettings && product.ProviderSettings.ProviderCategory">
+                <span
+                    class="text-dark-75 fw-bold mr-2">{{'TRANSLATE.MICROSOFT_CART_LIST_TEMPLATE_AZURE_LABEL_TEXT_CATEGORY'
+                    | translate}}</span>
+                <a href="javascript:void(0)"
+                    class="text-muted text-hover-primary">{{product.ProviderSettings.ProviderCategory | translate}}</a>
+            </div>
+            <div class="d-flex justify-content-between align-items-center my-1" *ngIf="product.Quantity">
+                <span class="text-dark-75 fw-bold mr-2">{{'TRANSLATE.CUSROMER_PRODUCTS_LIST_TITLE_QUANTITY' |
+                    translate}}</span>
+                <span class="text-muted">{{product.Quantity}}</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center my-1"
+                *ngIf="product.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE">
+                <span
+                    class="text-dark-75 fw-bold mr-2">{{'TRANSLATE.MICROSOFT_CART_LIST_TEMPLATE_ONLINE_SERVICES_LABEL_TEXT_UNIT_PRICE'
+                    | translate}}</span>
+                <span class="text-muted">
+                    <span class="bold">{{product.DisplayFinalSalePrice | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeparator : product.CurrencyDecimalSeparator}}</span>&nbsp;
+                    <span *ngIf="product.Discount != null && product.Discount > 0" class="text-danger">
+                        <del class="ng-binding strike-through text-danger">{{ product.DisplayOriginalSalePrice  | CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces : product.CurrencyThousandSeparator : product.CurrencyDecimalSeparator}}</del>
+                    </span>
+                </span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center my-1"
+                *ngIf="product.Discount != null && product.Discount > 0">
+                <span
+                    class="text-dark-75 fw-bold mr-2">{{'TRANSLATE.MICROSOFT_CART_LIST_TEMPLATE_ONLINE_SERVICES_LABEL_TEXT_DISCOUNT'
+                    | translate}}</span>
+                <span class="text-muted">
+                    <span *ngIf="product.DiscountType == 'Percentage'" class="text-danger">{{product.Discount}}%</span>
+                    <span *ngIf="product.DiscountType != 'Percentage'" class="text-danger">{{product.Discount |
+                        CurrencyFilter : product.CurrencySymbol : product.CurrencyDecimalPlaces :
+                        product.CurrencyThousandSeparator : product.CurrencyDecimalSeparator }}</span>
+                </span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center my-1">
+                <span class="text-dark-75 fw-bold mr-2">{{'TRANSLATE.ORDER_DETAILS_FIELD_ORDERED_ON' |
+                    translate}}</span>
+                <span class="text-muted">{{product.OrderedOn | dateTimeFilter: globalDateFormat }}</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center my-1">
+                <span class="text-dark-75 fw-bold mr-2">{{'TRANSLATE.ENTITY_NAME_ORDER' | translate}}</span>
+                <span class="text-muted">{{'TRANSLATE.'+product.EntityName | translate}}</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center my-1" *ngIf="product.ScheduledDate !== null">
+                <span class="text-dark-75 fw-bold mr-2">{{'TRANSLATE.ORDER_DETAILS_SCHEDULED_DATE' | translate}}</span>
+                <span class="text-muted">{{product.ScheduledDate | dateTimeWithUTCSuffixFilter:false}}</span>
+            </div>
+            @if(ShowTermsAndConditionsForSubscriptionUpdate === true && product.IsTermsAndConditionsAccepted !== null){
+            <div class="d-flex justify-content-between align-items-center my-1">
+                <span class="text-dark-75 fw-bold mr-2">{{'TRANSLATE.ORDER_DETAILS_TERMS_AND_CONDITIONS' |
+                    translate}}</span>
+                <span class="text-muted">{{'TRANSLATE.ORDER_DETAILS_TERMS_AND_CONDITIONS_ACCEPTED' |
+                    translate}}</span>
+            </div>
+            }
+        </div>
+    </div>
+
+    <div class="card-footer p-5">
+        <a [appPermission]="'menu_customer_comments'" class="btn btn-block btn-sm btn-light-primary fw-bold text-uppercase mb-2 col-md-12"
+        (click)="callManageProducts()">{{'TRANSLATE.BTN_TEXT_COMMENT' | translate}}</a>
+
+        @if((product.ItemStatus === 'Scheduled' || ((product.CartStatusName === 'Scheduled' || product.CartStatusName
+        === 'PartiallyFulfilled') && product.ItemStatus === 'Onhold') || (product.CartStatusName === 'Onhold' &&
+        (product.ItemStatus === 'Onhold' || product.ItemStatus === 'Scheduled') && product.ScheduledDate !== null)) &&
+        isScheduledDateFuture && (product.LinkedCartLineItemId === null || (product.LinkedCartLineItemId !== null &&
+        product.IsPrimaryInLinkedProduct))){
+            <a [appPermission]="'BTN_REMOVE_AND_CANCEL_ORDER'" class="btn btn-block btn-sm btn-light-danger fw-bold text-uppercase mb-0 col-md-12"
+                (click)="cancelOrderedProduct()">{{'TRANSLATE.BTN_TEXT_REMOVE' | translate}}</a>
+        }
+    </div>
+</div>

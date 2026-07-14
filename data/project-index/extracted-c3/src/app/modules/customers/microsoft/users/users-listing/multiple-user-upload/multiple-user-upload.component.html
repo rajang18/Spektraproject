@@ -1,0 +1,160 @@
+<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="backToList()">
+            <i class="ki-duotone ki-to-left fs-2">
+            </i> <span translate="TRANSLATE.NOTIFICATION_BUTTON_TEXT_BACK_TO_LIST"></span>
+        </button>
+    </div>
+</ng-template>
+
+
+
+<div class="d-flex flex-column-fluid">
+    <div class="container-fluid">
+        @if(PageMode == 'upload'){
+        <div class="card card-custom">
+            <div class="card-body">
+                <form [formGroup]="frmUploadUser">
+                    <div class="form-group row">
+                        <div
+                            class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+                
+                            <div class="col-md-12">
+                                <h6><span translate="TRANSLATE.USERS_UPLOAD_FORM_INSTRUCTIONS"></span></h6>
+                                <ol>
+                                    <li>
+                                        <span class="me-1" translate="TRANSLATE.CUSTOMER_MICROSOFT_USER_BULK_UPLOAD_HELP_TEXT"></span>
+                                        <strong>
+                                            <a href="javascript:void(0)" (click)='downloadTemplate()'><span
+                                                    translate="TRANSLATE.CUSTOMER_MICROSOFT_USER_BULK_UPLOAD_DOWNLOAD_CSV_HYPERLINK_TEXT"></span>
+                                            </a>
+                                        </strong>
+                                        <span class="ms-1"
+                                            translate="TRANSLATE.CUSTOMER_MICROSOFT_USER_BULK_UPLOAD_HELP_TEXT_DOWNLOAD"></span>
+                                    </li>
+                                    <li>
+                                        <span translate="TRANSLATE.USERS_UPLOAD_FORM_INSTRUCTIONS_PART_2"></span>
+                                    </li>
+                                    <li>
+                                        <span translate="TRANSLATE.USERS_UPLOAD_FORM_INSTRUCTIONS_PART_3"></span>
+                                    </li>
+                                    <li>
+                                        <span translate="TRANSLATE.USERS_UPLOAD_FORM_INSTRUCTIONS_PART_4"></span>
+                                    </li>
+                                    <li>
+                                        <span translate="TRANSLATE.USERS_UPLOAD_FORM_INSTRUCTIONS_PART_5"></span>
+                                    </li>
+                                    <li>
+                                        <span translate="TRANSLATE.USERS_UPLOAD_FORM_INSTRUCTIONS_PART_6"></span>
+                
+                                    </li>
+                                    <li>
+                                        <span translate="TRANSLATE.USERS_UPLOAD_FORM_INSTRUCTIONS_PART_7"></span>
+                
+                                    </li>
+                                    <li>
+                                        <span [innerHTML]="'TRANSLATE.USERS_UPLOAD_FORM_INSTRUCTIONS_PART_8' | translate"></span>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="form-group row mt-4">
+                        <div class="col-md-6">
+                            <label class="control-label fw-semibold mb-1">
+                                <span translate="TRANSLATE.USERS_UPLOAD_FORM_LABEL_UPLOAD_FILE"></span>
+                                <!--<span class="text-danger"> *</span>-->
+                            </label>
+                            <div class="text-right mt-1">
+                                <input (change)="fileChange($event)" filestyle type="file" #fileUpload accept=".csv" data-class-button="btn-outline-secondary"
+                                class="form-control file-upload-input-height inline p0" />
+                            </div>
+                
+                        </div>
+                        <div class="col-md-6">
+                                <label class="control-label fw-semibold mb-2">
+                                    <span translate="TRANSLATE.USERS_UPLOAD_FORM_LABEL_USAGE_LOCATION"></span> <span
+                                        class="text-danger">*</span>
+                                </label>
+                                  <ng-select formControlName="Formlocation" class="font-weight-bold text-muted"
+                                  [placeholder]="'TRANSLATE.ADD_CUSTOMER_PLEASE_SELECT_A_COUNTRY' | translate"
+                                   [searchFn]="searchFn" [items]="countriesData" (change)="checkCountryChange()" 
+                                  bindLabel="Name" bindValue="Code" [clearable]="true">
+                              </ng-select>
+                                @if(frmUploadUser.get('Formlocation')?.errors?.required &&
+                                (frmUploadUser.get('Formlocation')?.touched)){
+                                <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> }           
+                        </div>
+                    </div>
+                    <div class="form-group row mt-7">
+                        <div class="text-end">
+                            <button class="btn btn-light-primary btn-sm" (click)="submit()">
+                                <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+        }
+        @if(PageMode == 'status'){
+        <div class="card card-custom">
+            <div class="card-body" block-ui="block">
+                @if(this.status.InProgressCount != 0){
+                <div class="portlet-title" >
+                    <div class="caption">
+                        <span class="caption-subject font-green sbold"><span translate="TRANSLATE.USERS_STATUS_WARNING_MESSAGE" ></span></span>
+                    </div>
+                </div>
+                }
+                <div class="form" role="form">
+                    <div class="form-group row">
+                        <div class="col-12">
+                            <ul class="list-group">
+                                @for(row of statusDataSource; track $index){
+                                <li class="list-group-item">
+                                    @if(this.status.InProgressCount != 0){
+                                    <span ng-show="vm.status.InProgressCount != 0 ">
+                                        <i class="fa" [ngClass]="{'far fa-check-circle text-success' : row.Status == 'SUCCESS',
+                                                                'fas fa-spin fa-spinner text-success' : row.Status === null, 
+                                                                'fas fa-exclamation-circle text-danger' : (row.Status !=null &amp;&amp;row.Status !='SUCCESS') }"></i>
+                                        &nbsp;
+                                        {{row.Email}}
+                                        &nbsp;
+                                        @if(row.Status != 'SUCCESS' && row.Status != null ){
+                                        <span class="text-danger">{{row.Status}} : {{row.ErrorDetail}}</span>
+                                        }
+                                    </span>
+                                    }
+                                    
+                                    @if(this.status.InProgressCount == 0){
+                                    <span >
+                                        <i class="fa" [ngClass]="{'far fa-check-circle text-success' : row.Status=== 'SUCCESS','fas fa-exclamation-circle text-danger' : (row.Status !=null&amp;&amp;row.Status !='SUCCESS') }"></i>
+                                        &nbsp;
+                                        {{row.Email}}
+                                        &nbsp;
+                                        @if(row.Status != 'SUCCESS'){
+                                        <span class="text-danger">{{row.Status}} : {{row.ErrorDetail}}</span>
+                                        }
+                                    </span>
+                                    }
+                                </li>
+                            }
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="form-group row float-right">
+                        @if(this.status.InProgressCount == 0){
+                        <div class="col-md-12 control-label">
+                            <button type="button" class="btn btn-light-danger mt-5" (click)="IgnoreErrors()"><i class="fas fa-align-right"></i><span translate="TRANSLATE.USERS_STATUS_BUTTON_TRY_A_NEW_UPLOAD" ></span></button>
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        }   
+    </div>
+</div>

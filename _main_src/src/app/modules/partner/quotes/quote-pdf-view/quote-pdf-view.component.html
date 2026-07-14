@@ -1,0 +1,460 @@
+<div id="pdf" class="p-4 pdf-class-custom">
+  <div class="brand flex-column-auto d-flex justify-content-{{quotePDFLogoAlignment}} align-items-center bg-white pl-7"
+    id="kt_brand">
+    <a *ngIf="PDFlogobase64">
+      <img [src]="PDFlogobase64" alt="logo" class="img-fluid" [style.max-width]="quotePDFLogoWidth + 'px' " />
+    </a>
+  </div>
+  <br>
+<!-- Ispdfview:{{Ispdfview}} -->
+  
+  <h3 class="text-{{quotePDFLogoAlignment}} mt-1 pr-6 text-gray-700"
+        *ngIf="frmAddQuote_QuoteName && (DisplayCustomerName || selectedCustomerDetails?.CustomerName)">
+    {{DisplayCustomerName || selectedCustomerDetails?.CustomerName}} - {{frmAddQuote_QuoteName}}
+  </h3>
+  <br>
+  <div class="row">
+    <div class="col-md-6 pdf-half-col pr-3 ps-12">
+      <h5 class="text-break text-gray-700">
+        <span *ngIf="DisplayCustomerName || selectedCustomerDetails?.CustomerName">{{ DisplayCustomerName || selectedCustomerDetails?.CustomerName }}</span>
+      </h5>
+
+  <ng-container *ngIf="addressDetails && addressDetails.length > 0">
+  <div class="text-muted d-flex flex-wrap align-items-center mb-10" *ngFor="let row of addressDetails">
+    <div class="d-flex flex-column flex-grow-1 my-lg-0 my-2 pr-3">
+      <span *ngIf="row.IsChecked">
+        {{ row.Line1 }}
+        {{ row.Line2 }}
+        {{ row.City }}
+        {{ row.State }}
+        {{ row.Country }}
+        {{ row.Zip }}
+      </span>
+    </div>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="(!addressDetails || !hasCheckedAddress(addressDetails)) && buyerAddressList && buyerAddressList.length > 0">
+  <div class="text-muted d-flex flex-wrap align-items-center mb-10" *ngFor="let row of buyerAddressList">
+    <div class="d-flex flex-column flex-grow-1 my-lg-0 my-2 pr-3">
+      <span *ngIf="row.IsChecked">
+        {{ row.Line1 }}
+        {{ row.Line2 }}
+        {{ row.City }}
+        {{ row.State }}
+        {{ row.Country }}
+        {{ row.Zip }}
+      </span>
+    </div>
+  </div>
+</ng-container>
+    </div>
+
+    <div class="col-md-6 pdf-half-col pl-5" *ngIf="selectedCustomerDetails?.CustomerName || DisplayCustomerName">
+      <h5 class="text-break text-gray-700">
+        <span>{{ ContactCompanyName }}</span>
+      </h5>
+      <p class="text-muted">
+        <span class="text-break" *ngIf="AddressLine1">{{AddressLine1}},</span><br />
+       <span *ngIf="AddressLine2">{{AddressLine2}},&nbsp;</span>
+        <span *ngIf="City">{{City}},&nbsp;</span>
+        <span *ngIf="State">{{State}},&nbsp;</span>
+        <span *ngIf="ZipCode">{{ZipCode}}&nbsp;</span>
+        <span *ngIf="Country">{{Country}}</span>
+      </p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 pdf-half-col pr-3 ps-12">
+      <div *ngFor="let contact of QuoteContact">
+        <div *ngIf="contact.IsChecked">
+
+          <h4 class="text-break text-gray-700">{{contact.FullName}}</h4>
+          <p class="text-muted text-break">{{contact.EmailId}}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 pdf-half-col" *ngIf="selectedCustomerDetails?.CustomerName || DisplayCustomerName">
+      <h5 class="text-break" *ngIf="CreateByDetails.EmailAddress != ''">{{'QUOTE_PREPARED_BY' | translate }}<span
+          *ngIf="CreateByDetails.Name != ''"> {{CreateByDetails.Name}} </span></h5>
+      @if (!Ispdfview && CreateByDetails.EmailAddress != '') {
+      <p class="text-muted pe-2 text-break">
+        {{ CreateByDetails.EmailAddress }}
+      </p>
+      }
+      @if (Ispdfview && CreateByDetails.EmailAddress) {
+      <p class="text-muted pe-2">
+        {{ CreateByDetails.EmailAddress.length > 40
+        ? CreateByDetails.EmailAddress.substring(0, 40)
+        : CreateByDetails.EmailAddress
+        }}
+        @if (CreateByDetails.EmailAddress.length > 40) {
+        <br>
+        <span>{{ CreateByDetails.EmailAddress.substring(40) }}</span>
+        }
+      </p>
+      }
+
+      <span class="text-muted" *ngIf="frmAddQuote_ExpiresOn">
+        {{'TRANSLATE.QUOTE_CREATED' | translate}} {{currentDate1 | date: globalDateFormat}}
+      </span><br />
+      <span class="text-muted" *ngIf="frmAddQuote_ExpiresOn">
+        {{'TRANSLATE.QUOTE_EXPIRES' | translate}} {{frmAddQuote_ExpiresOn | date: globalDateFormat }}
+      </span>
+      <!-- If required we can use it for translating in future. -->
+      <!-- <span class="text-muted" *ngIf="frmAddQuote_ExpiresOn">
+        {{'TRANSLATE.QUOTE_CREATED' | translate}} {{getTranslatedFullDate(currentDate1) }}
+      </span><br />
+       <span class="text-muted" *ngIf="frmAddQuote_ExpiresOn">
+        {{'TRANSLATE.QUOTE_EXPIRES' | translate}} {{getTranslatedFullDate(frmAddQuote_ExpiresOn) }}
+      </span>  -->
+    </div>
+
+
+    <div class="container pt-2" *ngIf="quoteLineItemsData.length > 0">
+      <div class="row pr-3 mb-1">
+        <div class="col-12 mb-3">
+        </div>
+
+        <ng-container *ngIf="groupByBillingTerm; else flatQuoteLineItems">
+
+          <div class="col-12 pdf-no-break" *ngFor="let group of getGroupedQuoteLineItems(); trackBy: trackByIndex">
+            <div [style.overflow-x]="!Ispdfview ? 'auto' : 'visible'" [style.width]="'100%'">
+                            <table class="table table-bordered pr-3 mb-4 pdf-no-break" [style.min-width]="!Ispdfview ? '175%' : null">
+
+
+              <thead>
+                <tr class="bg-light">
+                  <th class="font-weight-600 font-size-h6">{{ 'TRANSLATE.QUOTE_TABLE_PRODUCT_SERVICE' | translate }}</th>
+                  <th class="text-end font-weight-600 font-size-h6">{{ 'TRANSLATE.QUOTE_TABLE_QUANTITY' | translate }}</th>
+                  <th class="text-end font-weight-600 font-size-h6">{{ 'TRANSLATE.QUOTE_TABLE_UNIT_PRICE_USD' | translate }}</th>
+                  <th class="text-end font-weight-600 font-size-h6">{{ 'TRANSLATE.QUOTE_TABLE_DISCOUNT_AMOUNT' | translate }}</th>
+                  <th class="text-end font-weight-600 font-size-h6">{{ 'TRANSLATE.QUOTE_TABLE_TOTAL_PRICE_USD' | translate }}</th>
+                  <th class="text-end font-weight-600 font-size-h6" *ngIf="!showPricesExcludeVAT">{{ 'TRANSLATE.QUOTE_TABLE_VAT_PERCENTAGE' | translate:{taxPercentage: (selectedCustomerDetails?.TaxPercentage || 0)} }}</th>
+                  <th class="text-end font-weight-600 font-size-h6" *ngIf="!showPricesExcludeVAT">{{ 'TRANSLATE.QUOTE_TABLE_TOTAL_PRICE_USD_INCL_VAT' | translate }}</th>
+                  <th class="font-weight-600 font-size-h6">{{ 'TRANSLATE.QUOTE_TABLE_SUBSCRIPTION_TERM' | translate }}</th>
+                  <th class="font-weight-600 font-size-h6">{{ 'TRANSLATE.QUOTE_TABLE_BILLING_CYCLE' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let row of group.items; trackBy: trackByIndex" class="row-break-inside">
+                  <tr class="row-break-inside">
+                    <td class="font-weight-normal">
+                      {{ row.Name }}
+                      <span *ngIf="row.IsAddon">
+                        <sup translate="TRANSLATE.CUSTOMER_SHOP_SUP_TEXT_ADD_ON" class="text-warning"></sup>
+                      </span>
+                      <br />
+                      <span class="label label-light-info font-weight-bold label-inline fs-9 p-1 rounded ms-md-2"
+                        *ngIf="row.PlanProductId !== 0"
+                        ngbTooltip="{{ 'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate }}">
+                        {{ row.CategoryName === 'OnlineServicesNCE' ? 'NCE' : row.CategoryName }}
+                      </span>
+
+                      <span class="label font-weight-bold text-white fs-9 px-2 py-1 rounded bg-success ms-md-2 pdf-inline-badge"
+                            *ngIf="row.PlanProductId !== 0"
+                            ngbTooltip="{{ 'TRANSLATE.CUSTOM_OFFER_TOOLTIP_TEXT_CONSUMTION_TYPE' | translate }}">
+                            {{ row.ConsumptionType }}
+                      </span>
+                    </td>
+                    <td class="text-end font-weight-normal">{{ row.Quantity }}</td>
+                    <td class="text-end font-weight-normal">
+                      {{ getLineItemUnitPrice(row) | CurrencyFilter: CurrencySymbol :CurrencyDecimalPlaces
+                      :CurrencyThousandSeperator :CurrencyDecimalSeperator}}
+                    </td>
+                    <td class="text-end font-weight-normal">
+                      {{ getLineItemDiscountAmount(row) | CurrencyFilter: CurrencySymbol :CurrencyDecimalPlaces
+                      :CurrencyThousandSeperator :CurrencyDecimalSeperator}}
+                    </td>
+                    <td class="text-end font-weight-normal">
+                      {{ getDisplayLineItemTotal(row) | CurrencyFilter: CurrencySymbol :CurrencyDecimalPlaces
+                      :CurrencyThousandSeperator :CurrencyDecimalSeperator}}
+                    </td>
+                    <td class="text-end font-weight-normal" *ngIf="!showPricesExcludeVAT">{{
+                      getDisplayLineItemVatAmount(row) | CurrencyFilter: CurrencySymbol :CurrencyDecimalPlaces
+                      :CurrencyThousandSeperator :CurrencyDecimalSeperator}}</td>
+                    <td class="text-end font-weight-normal" *ngIf="!showPricesExcludeVAT">
+                      {{ getLineItemTotalPriceInclVat(row) | CurrencyFilter: CurrencySymbol :CurrencyDecimalPlaces
+                      :CurrencyThousandSeperator :CurrencyDecimalSeperator}}
+                    </td>
+                    <td class="font-weight-normal">{{ getLineItemSubscriptionTerm(row) }}</td>
+                    <td class="font-weight-normal">{{ row.BillingCycleName }}</td>
+                  </tr>
+
+                  <ng-container *ngIf="row.LinkedProduct" class="row-break-inside">
+                    <tr class="row-break-inside">
+                      <td class="font-weight-normal ps-6">
+                        <i class="ki-duotone ki-paper-clip text-warning small"></i>
+                        {{ row.LinkedProduct.Name }}
+                        <span *ngIf="row.LinkedProduct.IsAddon">
+                          <sup translate="TRANSLATE.CUSTOMER_SHOP_SUP_TEXT_ADD_ON" class="text-warning"></sup>
+                        </span>
+                        <br />
+                        <span class="label label-light-info font-weight-bold label-inline fs-9 p-1 rounded ms-md-2"
+                          ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}"
+                          *ngIf="row.LinkedProduct.PlanProductId !== 0">
+                          {{ row.LinkedProduct.CategoryName === 'OnlineServicesNCE' ? 'NCE' : row.LinkedProduct.CategoryName }}
+                        </span>
+                      </td>
+                      <td class="text-end font-weight-normal">{{ row.LinkedProduct.Quantity }}</td>
+                      <td class="text-end font-weight-normal">
+                        {{ getLineItemUnitPrice(row.LinkedProduct) | CurrencyFilter: CurrencySymbol
+                        :CurrencyDecimalPlaces :CurrencyThousandSeperator :CurrencyDecimalSeperator}}
+                      </td>
+                      <td class="text-end font-weight-normal">
+                        {{ getLineItemDiscountAmount(row.LinkedProduct) | CurrencyFilter: CurrencySymbol
+                        :CurrencyDecimalPlaces :CurrencyThousandSeperator :CurrencyDecimalSeperator}}
+                      </td>
+                      <td class="text-end font-weight-normal">
+                        {{ getDisplayLineItemTotal(row.LinkedProduct) | CurrencyFilter: CurrencySymbol
+                        :CurrencyDecimalPlaces :CurrencyThousandSeperator :CurrencyDecimalSeperator}}
+                      </td>
+                      <td class="text-end font-weight-normal" *ngIf="!showPricesExcludeVAT">{{
+                        getDisplayLineItemVatAmount(row.LinkedProduct) | CurrencyFilter: CurrencySymbol
+                        :CurrencyDecimalPlaces :CurrencyThousandSeperator :CurrencyDecimalSeperator}}</td>
+                      <td class="text-end font-weight-normal" *ngIf="!showPricesExcludeVAT">
+                        {{ getLineItemTotalPriceInclVat(row.LinkedProduct) | CurrencyFilter: CurrencySymbol
+                        :CurrencyDecimalPlaces :CurrencyThousandSeperator :CurrencyDecimalSeperator}}
+                      </td>
+                      <td class="font-weight-normal">{{ getLineItemSubscriptionTerm(row.LinkedProduct) }}</td>
+                      <td class="font-weight-normal">{{ row.LinkedProduct.BillingCycleName }}</td>
+                    </tr>
+                  </ng-container>
+                </ng-container>
+
+                <tr class="row-break-inside fw-semibold pdf-no-break subtotal-row">
+                                    <td [attr.colspan]="!showPricesExcludeVAT ? 7 : 5">
+                    {{ 'TRANSLATE.QUOTE_TABLE_SUBSCRIPTION_TERM' | translate }}: {{ group.groupName }}
+                  </td>
+                  <td colspan="3" class="text-end">
+                    {{ 'TRANSLATE.QUOTE_SUMMARY_SUBTOTAL' | translate }}: {{ group.subtotal | CurrencyFilter: CurrencySymbol :CurrencyDecimalPlaces
+                    :CurrencyThousandSeperator :CurrencyDecimalSeperator}}
+                  </td>
+                </tr>
+              </tbody>
+                          </table>
+            </div>
+          </div>
+        </ng-container>
+
+
+        <ng-template #flatQuoteLineItems>
+                                        <div class="col-12 pdf-no-break">
+            <div [style.overflow-x]="!Ispdfview ? 'auto' : 'visible'" [style.width]="'100%'">
+                            <table class="table table-bordered pr-3 mb-4 pdf-no-break" [style.min-width]="!Ispdfview ? '175%' : null">
+
+
+
+              <thead>
+                <tr class="bg-light">
+                                    <th class="font-weight-600 font-size-h6">{{ 'TRANSLATE.QUOTE_TABLE_PRODUCT_SERVICE' | translate }}</th>
+                  <th class="text-end font-weight-600 font-size-h6">{{ 'TRANSLATE.QUOTE_TABLE_QUANTITY' | translate }}</th>
+                  <th class="text-end font-weight-600 font-size-h6">{{ 'TRANSLATE.QUOTE_TABLE_UNIT_PRICE_USD' | translate }}</th>
+                  <th class="text-end font-weight-600 font-size-h6">{{ 'TRANSLATE.QUOTE_TABLE_DISCOUNT_AMOUNT' | translate }}</th>
+                  <th class="text-end font-weight-600 font-size-h6">{{ 'TRANSLATE.QUOTE_TABLE_TOTAL_PRICE_USD' | translate }}</th>
+                  <th class="text-end" *ngIf="!showPricesExcludeVAT">{{ 'TRANSLATE.QUOTE_TABLE_VAT_PERCENTAGE' | translate:{taxPercentage: (selectedCustomerDetails?.TaxPercentage || 0)} }}</th>
+                  <th class="text-end font-weight-600 font-size-h6" *ngIf="!showPricesExcludeVAT">{{ 'TRANSLATE.QUOTE_TABLE_TOTAL_PRICE_USD_INCL_VAT' | translate }}</th>
+                  <th class="font-weight-600 font-size-h6">{{ 'TRANSLATE.QUOTE_TABLE_SUBSCRIPTION_TERM' | translate }}</th>
+                  <th class="font-weight-600 font-size-h6">{{ 'TRANSLATE.QUOTE_TABLE_BILLING_CYCLE' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let row of quoteLineItemsData; trackBy: trackByIndex" class="row-break-inside">
+                  <tr class="row-break-inside">
+                    <td class="font-weight-normal">
+                      {{ row.Name }}
+                      <span *ngIf="row.IsAddon">
+                        <sup translate="TRANSLATE.CUSTOMER_SHOP_SUP_TEXT_ADD_ON" class="text-warning"></sup>
+                      </span>
+                      <br />
+                      <span class="label label-light-info font-weight-bold label-inline fs-9 p-1 rounded ms-md-2"
+                        ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}"
+                        *ngIf="row.PlanProductId !== 0">
+                        {{ row.CategoryName === 'OnlineServicesNCE' ? 'NCE' : row.CategoryName }}
+                      </span>
+                      <span
+
+                        class="label font-weight-bold text-white fs-9 px-2 py-1 rounded bg-success ms-md-2 pdf-inline-badge"
+                          *ngIf="row.PlanProductId !== 0"
+                          ngbTooltip="{{'TRANSLATE.CUSTOM_OFFER_TOOLTIP_TEXT_CONSUMTION_TYPE' | translate}}">
+                          {{ row.ConsumptionType }}
+                      </span>
+                    </td>
+                    <td class="text-end font-weight-normal">{{ row.Quantity }}</td>
+                    <td class="text-end font-weight-normal">{{ getLineItemUnitPrice(row) | CurrencyFilter:
+                      CurrencySymbol :CurrencyDecimalPlaces :CurrencyThousandSeperator :CurrencyDecimalSeperator}}</td>
+                    <td class="text-end font-weight-normal">{{ getLineItemDiscountAmount(row) | CurrencyFilter:
+                      CurrencySymbol :CurrencyDecimalPlaces :CurrencyThousandSeperator :CurrencyDecimalSeperator}}</td>
+                    <td class="text-end font-weight-normal">{{ getDisplayLineItemTotal(row) | CurrencyFilter:
+                      CurrencySymbol :CurrencyDecimalPlaces :CurrencyThousandSeperator :CurrencyDecimalSeperator}}</td>
+                                        <td class="text-end font-weight-normal" *ngIf="!showPricesExcludeVAT">{{
+                      getDisplayLineItemVatAmount(row) | CurrencyFilter: CurrencySymbol :CurrencyDecimalPlaces
+                      :CurrencyThousandSeperator :CurrencyDecimalSeperator}}</td>
+                    <td class="text-end font-weight-normal" *ngIf="!showPricesExcludeVAT">
+                      {{ getLineItemTotalPriceInclVat(row) | CurrencyFilter: CurrencySymbol :CurrencyDecimalPlaces
+                      :CurrencyThousandSeperator :CurrencyDecimalSeperator}}
+                    </td>
+                    <td class="font-weight-normal">{{ getLineItemSubscriptionTerm(row) }}</td>
+                    <td class="font-weight-normal">{{ row.BillingCycleName }}</td>
+                  </tr>
+                </ng-container>
+                <tr class="row-break-inside fw-semibold pdf-no-break subtotal-row" *ngIf="groupByBillingTerm">
+                  <td [attr.colspan]="!showPricesExcludeVAT ? 8 : 6">{{ 'TRANSLATE.QUOTE_SUMMARY_SUBTOTAL' | translate }}</td>
+                  <td class="text-end">{{ getSummaryRows()[0]?.amount | CurrencyFilter: CurrencySymbol
+                    :CurrencyDecimalPlaces :CurrencyThousandSeperator :CurrencyDecimalSeperator}}</td>
+                </tr>
+              </tbody>
+                          </table>
+            </div>
+          </div>
+        </ng-template>
+
+
+      </div>
+    </div>
+  </div>
+
+        <div class="row row-break-inside mt-4 gy-4 pdf-no-break summary-section mx-0" *ngIf="quoteLineItemsData.length > 0">
+        <div class="col-md-6 pdf-half-col d-flex pe-2">
+      <div class="row rounded border-color w-100 h-100 mx-0" style="border: 1px solid #B2B1B1; page-break-inside: avoid; break-inside: avoid;">
+        <div class="col-md-12 pt-4 pb-4">
+          <div class="text-muted pb-3 font-weight-600">{{ getDisplayGrandTotalLabel() }}</div>
+          <div class="fs-2x fw-bold mb-3 font-weight-600">
+            {{ getDisplayQuoteLineItemsTotalPrice() | CurrencyFilter : CurrencySymbol : CurrencyDecimalPlaces :
+            CurrencyThousandSeperator : CurrencyDecimalSeperator }}
+          </div>
+          <div class="text-muted small font-weight-600" *ngIf="showPricesExcludeVAT">All prices are excluding VAT</div>
+          <div class="text-muted small font-weight-600" *ngIf="!showPricesExcludeVAT">All prices are including VAT</div>
+        </div>
+      </div>
+    </div>
+        <div class="col-md-6 pdf-half-col d-flex">
+      <div class="row rounded border-color w-100 h-100 mx-0" style="border: 1px solid #B2B1B1; page-break-inside: avoid; break-inside: avoid;">
+        <div class="col-md-12 pt-4 pb-4">
+          <div class="fw-semibold mb-4 pdf-no-break font-weight-600">{{ 'TRANSLATE.QUOTE_SUMMARY_TITLE' | translate }}</div>
+          <div *ngFor="let summaryRow of getSummaryRows(); trackBy: trackByIndex"
+            class="pdf-no-break d-flex justify-content-between align-items-start flex-nowrap mb-2">
+            <span class="text-nowrap pe-3 font-weight-600">{{ summaryRow.label }}</span>
+            <span class="text-nowrap font-weight-600">
+              {{ summaryRow.amount | CurrencyFilter : CurrencySymbol : CurrencyDecimalPlaces : CurrencyThousandSeperator
+              : CurrencyDecimalSeperator }}
+            </span>
+          </div>
+          <div class="d-flex justify-content-between mb-2 mb-2 font-weight-600">
+            <span>{{ 'TRANSLATE.QUOTE_SUMMARY_DISCOUNT' | translate }}</span>
+            <span>{{ getTotalDiscountAmount() | CurrencyFilter : CurrencySymbol : CurrencyDecimalPlaces :
+              CurrencyThousandSeperator : CurrencyDecimalSeperator }}</span>
+          </div>
+          <div class="d-flex justify-content-between mb-2 font-weight-600"
+             *ngIf="selectedCustomerDetails?.TaxName && !showPricesExcludeVAT">
+            <span class="text-nowrap">{{ 'TRANSLATE.QUOTE_SUMMARY_TAX' | translate }} ({{ selectedCustomerDetails?.TaxPercentage || 0 }}%)</span>
+            <span>{{ totalTaxAmount | CurrencyFilter : CurrencySymbol : CurrencyDecimalPlaces :
+              CurrencyThousandSeperator : CurrencyDecimalSeperator }}</span>
+          </div>
+          <hr />
+          <div class="d-flex justify-content-between fw-semibold pdf-no-break grand-total-row font-weight-600">
+            <span class="text-nowrap">{{ 'TRANSLATE.QUOTE_SUMMARY_GRAND_TOTAL' | translate }}</span>
+            <span>{{ getGrandTotalAmount() | CurrencyFilter : CurrencySymbol : CurrencyDecimalPlaces :
+              CurrencyThousandSeperator : CurrencyDecimalSeperator }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+    <div class="col-md-12 pr-7 rounded">
+        @if (fnGetInnerText(CommentsToBuyer) && CommentsToBuyer != null && CommentsToBuyer !== undefined) {
+        <br>
+        <div class="row-break-inside p-3"> 
+        <div class="row p-3 rounded row-break-inside border-color pdf-no-break"
+          style="border: 1px solid #B2B1B1; page-break-inside: avoid; break-inside: avoid;">
+          <div class="col-md-12 pt-1">
+            <h6>{{'TRANSLATE.QUOTE_COMMENTS_TO_BUYERS' | translate}}</h6>
+            <p [innerHTML]="cleanedCommentsToBuyer"></p>
+          </div>
+        </div>
+        </div>
+        }
+
+        @if (fnGetInnerText(PurchaseTerms) && PurchaseTerms != null && PurchaseTerms !== undefined) {
+        <br>
+        <div class="row-break-inside p-3"> 
+        <div class="row p-3 row-break-inside rounded border-color pdf-no-break"
+          style="border: 1px solid #B2B1B1; page-break-inside: avoid; break-inside: avoid;">
+          <div class="col-md-12 pt-1">
+            <h6>{{'TRANSLATE.QUOTE_PDF_PURCHASE_TERM' | translate}}</h6>
+            <p [innerHTML]="cleanedPurchaseTerms"></p>
+          </div>
+        </div>
+        </div>
+        }
+
+        @if (fnGetInnerText(PaymentTerms) && PaymentTerms != null && PaymentTerms !== undefined) {
+        <br>
+        <div class="row-break-inside p-3"> 
+        <div class="row p-3 row-break-inside rounded border-color pdf-no-break"
+          style="border: 1px solid #B2B1B1; page-break-inside: avoid; break-inside: avoid;">
+          <div class="col-md-12 pt-1">
+            <h6>{{'TRANSLATE.QUOTE_PDF_PAYMENT_TERM' | translate}}</h6>
+            <p [innerHTML]="cleanedPaymentTerms"></p>
+          </div>
+        </div>
+        </div>
+        }
+
+        @if (fnGetInnerText(AdditionalCustomerDetails) && AdditionalCustomerDetails != null && AdditionalCustomerDetails !== undefined) {
+        <br>
+        <div class="row-break-inside p-3"> 
+        <div class="row p-3 row-break-inside rounded border-color pdf-no-break"
+          style="border: 1px solid #B2B1B1; page-break-inside: avoid; break-inside: avoid;">
+          <div class="col-md-12 pt-1">
+            <h6>{{'TRANSLATE.QUOTE_LABEL_TEXT_ADDITIONAL_CUSTOMER_DETALILS' | translate}}</h6>
+            <p [innerHTML]="cleanedAdditionalCustomerDetails"></p>
+          </div>
+        </div>
+        </div>
+        }
+  </div>
+
+
+  <!-- Signature Section -->
+  <div class="row row-break-inside" *ngIf="IsShowCounterSign">
+    <div class="col-md-6 pdf-half-col pr-5 mt-1">
+      <br />
+      <h5>{{ 'TRANSLATE.QUOTE_SIGNATURE' | translate }}</h5>
+      <br />
+      <div style="border-top: 1px solid #ccc; margin: 10px 0;"></div>
+      <p class="text-muted">{{ 'TRANSLATE.QUOTE_SIGNATURE' | translate }}</p>
+      <br />
+      <div style="border-top: 1px solid #ccc; margin: 10px 0;"></div>
+      <p class="text-muted">{{ 'TRANSLATE.QUOTE_PRINTED_NAME' | translate }}</p>
+      <br />
+    </div>
+    <div class="col-md-6 pdf-half-col mt-9 pr-7">
+      <br /> <br />
+      <div style="border-top: 1px solid #ccc; margin: 10px 0;"></div>
+      <p class="text-muted">{{ 'TRANSLATE.QUOTE_DATE' | translate }}</p>
+    </div>
+  </div>
+
+  <!-- Countersignature Section -->
+  <div class="row row-break-inside" *ngIf="IsCounterSign && IsShowCounterSign">
+    <div class="col-md-6 pdf-half-col pr-5 mt-1">
+      <h5>{{ 'TRANSLATE.QUOTE_COUNTERSIGNATURE' | translate }}</h5>
+      <br />
+      <div style="border-top: 1px solid #ccc; margin: 10px 0;"></div>
+      <p class="text-muted">{{ 'TRANSLATE.QUOTE_COUNTERSIGNATURE' | translate }}</p>
+      <br />
+      <div style="border-top: 1px solid #ccc; margin: 10px 0;"></div>
+      <p class="text-muted">{{ 'TRANSLATE.QUOTE_PRINTED_NAME' | translate }}</p>
+      <br />
+    </div>
+    <div class="col-md-6 pdf-half-col mt-2 pr-7">
+      <br /><br />
+      <div style="border-top: 1px solid #ccc; margin: 10px 0;"></div>
+      <p class="text-muted">{{ 'TRANSLATE.QUOTE_DATE' | translate }}</p>
+    </div>
+  </div>
+</div>

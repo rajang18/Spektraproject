@@ -1,0 +1,279 @@
+<div class="modal-dialog m-auto w-100">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">{{'TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_LABEL_TEXT_NEW_PRODUCT_CREATION' | translate}}</h4>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <form [formGroup]="newPSAProductCreationForm">
+                <div class="form-group row">
+                    <label
+                        class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-xl-right">
+                        <span translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_NEW_PRODUCT_LABEL_IDENTIFIER"
+                            class="ng-scope"></span>
+                    </label>
+                    <div class="col-md-4">
+                        <input name="identifier" type="text" formControlName="identifier" class="form-control"
+                            placeholder="Enter Identifier" required="">
+                            @if(newPSAProductCreationForm.get('identifier')?.errors?.required &&
+                            newPSAProductCreationForm.get('identifier')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                            }
+                    </div>
+                    <label
+                        class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-xl-right">
+                        <span
+                            translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_NEW_PRODUCT_LABEL_INTEGRATION_CROSS_REFERENCE"
+                            class="ng-scope"></span>
+                    </label>
+                    <div class="col-md-4 col-form-label">
+                        <input name="integrationCrossReference" type="text" formControlName="integrationCrossReference"
+                            class="form-control "
+                            placeholder="Enter Integration cross reference">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label
+                        class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-xl-right">
+                        <span translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_NEW_PRODUCT_LABEL_DESCRIPTION"
+                            class="ng-scope"></span>
+                    </label>
+                    <div class="col-md-4">
+                        <input name="description" type="text" formControlName="description" class="form-control "
+                            placeholder="Enter Product label" required="">
+                            @if(newPSAProductCreationForm.get('description')?.errors?.required &&
+                            newPSAProductCreationForm.get('description')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                            }
+                    </div>
+                    <label
+                        class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-xl-right">
+                        <span translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_NEW_PRODUCT_LABEL_SLA"
+                            class="ng-scope"></span>
+                    </label>
+                    <div class="col-md-4">
+                        <select class="form-select form-select-solid form-select-lg fw-bold" formControlName="psaSLAs">
+                            @for(option of pSASLAs; track $index){
+                            <option [value]="option.Id">
+                                {{option.Name}}
+                            </option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row mt-5">
+                    <label
+                        class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-xl-right">
+                        <span translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_NEW_PRODUCT_LABEL_CATEGORY"
+                            class="ng-scope"></span>
+                        <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-md-4">
+                        <select class="form-select form-select-solid form-select-lg fw-bold" (change)="onCategoryChange()"
+                            formControlName="category">
+                            @for(option of pSACategories; track $index){
+                            <option [value]="option.Id">
+                                {{option.Name}}
+                            </option>
+                            }
+                        </select>
+                        @if(newPSAProductCreationForm.get('category')?.errors?.required &&
+                        newPSAProductCreationForm.get('category')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div>
+                    <label
+                        class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-xl-right">
+                        <span
+                            translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_NEW_PRODUCT_LABEL_CUSTOMER_DESCRIPTION"
+                            class="ng-scope"></span>
+                        <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-md-4">
+                        <input name="customerDescription" type="text" formControlName="customerDescription"
+                            class="form-control " placeholder="Enter Customer description" required="">
+                            @if(newPSAProductCreationForm.get('customerDescription')?.errors?.required &&
+                            newPSAProductCreationForm.get('customerDescription')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                            }
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label
+                        class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-xl-right">
+                        <span translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_NEW_PRODUCT_LABEL_SUBCATEGORY"
+                            class="ng-scope"></span>
+                        <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-md-4">
+                        <select class="form-select form-select-solid form-select-lg fw-bold" (change)="onSubCategoryChange()"
+                            formControlName="subCategories">
+                            @for(option of pSASubCategories; track $index){
+                            <option [value]="option.Id">
+                                {{option.Name}}
+                            </option>
+                            }
+                        </select>
+                        @if(newPSAProductCreationForm.get('subCategories')?.errors?.required &&
+                        newPSAProductCreationForm.get('subCategories')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div>
+                    <label
+                        class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-xl-right">
+                        <span translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_NEW_PRODUCT_LABEL_TYPE"
+                            class="ng-scope"></span>
+                        <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-md-4">
+                        <select class="form-select form-select-solid form-select-lg fw-bold" (change)="onProductTypeChange()"
+                            formControlName="productType">
+                            @for(option of productTypes; track $index){
+                            <option [value]="option.Id">
+                                {{option.Name}}
+                            </option>
+                            }
+                        </select>
+                        @if(newPSAProductCreationForm.get('productType')?.errors?.required &&
+                        newPSAProductCreationForm.get('productType')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label
+                        class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-xl-right">
+                        <span translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_NEW_PRODUCT_LABEL_UNIT_OF_MEASURE"
+                            class="ng-scope"></span>
+                    </label>
+                    <div class="col-md-4">
+                        <select class="form-select form-select-solid form-select-lg fw-bold" (change)="onUOMChange()"
+                            formControlName="uom">
+                            @for(option of pSAUOMS; track $index){
+                            <option [value]="option.Id">
+                                {{option.Name}}
+                            </option>
+                            }
+                        </select>
+                    </div>
+                    <label
+                        class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-xl-right">
+                        <span translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_NEW_PRODUCT_LABEL_PRODUCT_CLASS"
+                            class="ng-scope"></span>
+                    </label>
+                    <div class="col-md-4">
+                        <select class="form-select form-select-solid form-select-lg fw-bold" (change)="onProductClassChange()"
+                            formControlName="productClass">
+                            @for(option of productClass; track $index){
+                            <option [value]="option.Id">
+                                {{option.Name}}
+                            </option>
+                            }
+                        </select>
+                        @if(newPSAProductCreationForm.get('productClass')?.errors?.required &&
+                        newPSAProductCreationForm.get('productClass')?.touched){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                        }
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label
+                        class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-xl-right">
+                        <span name="price"
+                            translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_NEW_PRODUCT_LABEL_PRICE"
+                            class="ng-scope"></span>
+                        <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-md-4">
+                        <input name="price" type="text" formControlName="price" class="form-control "
+                            placeholder="Enter Label Price" required="">
+                            @if(newPSAProductCreationForm.get('price')?.errors?.required &&
+                            newPSAProductCreationForm.get('price')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                            }
+                    </div>
+                    <label
+                        class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-xl-right">
+                        <span translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_NEW_PRODUCT_LABEL_DROP_SHIP_FLAG"
+                            class="ng-scope"></span>
+                    </label>
+                    <div class="col-md-4">
+                        <div class="input-group-with-checkbox col-form-label">
+                            
+                                <input type="checkbox" id="ch1" formControlName="dropShipFlag"
+                                    placeholder="Enter Drop Ship Flag" name="dropShipFlag"
+                                    class="">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row mt-5">
+                    <label
+                        class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-xl-right">
+                        <span translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_NEW_PRODUCT_LABEL_COST"
+                            class="ng-scope"></span>
+                        <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-md-4">
+                        <input name="costPrice" type="text" formControlName="costPrice" class="form-control "
+                            placeholder="Enter Label Cost" required="">
+                            @if(newPSAProductCreationForm.get('costPrice')?.errors?.required &&
+                            newPSAProductCreationForm.get('costPrice')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                            }
+                    </div>
+                    <label
+                        class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-xl-right">
+                        <span
+                            translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_NEW_PRODUCT_LABEL_SPECIAL_ORDER_FLAG"
+                            class="ng-scope">Name</span>
+                    </label>
+                    <div class="col-md-4">
+                        <div class="input-group-with-checkbox col-form-label">
+                            <label class="checkbox checkbox-outline checkbox-outline-2x col-form-label">
+                                &nbsp;
+                                <input type="checkbox" id="ch1" placeholder="Enter Special Order Flag"
+                                    formControlName="specialOrderFlag" name="specialOrderFlag"
+                                    class="ng-pristine ng-untouched ng-valid ng-empty">
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label
+                        class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-xl-right">
+                        <span name="notes"
+                            translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_NEW_PRODUCT_LABEL_NOTES"
+                            class="ng-scope"></span>
+                    </label>
+                    <div class="col-md-4">
+                        <input name="notes" type="text" formControlName="notes" class="form-control "
+                            placeholder="Enter Notes">
+                    </div>
+                    <label
+                        class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-xl-right">
+                        <span translate="TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_NEW_PRODUCT_LABEL_TAXABLE_FLAG"
+                            class="ng-scope"></span>
+                    </label>
+                    <div class="col-md-4 col-form-label">
+                        <div class="input-group-with-checkbox">
+                            <label class="checkbox checkbox-outline checkbox-outline-2x col-form-label">
+                                <input type="checkbox" id="ch1" placeholder="Enter Taxable Flag"
+                                    formControlName="taxableFlag" name="taxableFlag"
+                                    class="ng-pristine ng-untouched ng-valid ng-empty">
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3 mt-2">
+            <button type="button" class="btn btn-light btn-active-light-primary" data-bs-dismiss="modal"
+                (click)="closeModalPopup()">{{'TRANSLATE.BUTTON_TEXT_CANCEL' | translate}}</button>
+            <button type="button" class="btn btn-primary">
+                <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT" (click)="saveNewPSAProduct()"></span></button>
+
+        </div>
+    </div>
+ </div>

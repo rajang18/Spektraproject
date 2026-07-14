@@ -1,0 +1,36 @@
+@if(isLanguageLoaded){
+
+  @if(!_loaderService?.isLayoutLoaded){
+    <div id="splash-screen test3" class="splash-screen">
+      <img id="logo" class="object-fit app-sidebar-logo-default" />
+      <div>
+        <span class="spinner-border text-primary" role="status"></span>
+      </div>
+      <div class=" d-flex align-items-center mt-5">
+        <span id="greetingsText" class="text-muted fs-6 fw-semibold ms-5"></span>
+        <span id="userNameText" class="text-muted fs-6 fw-semibold"></span>
+      </div>
+      <div class=" d-flex align-items-center mt-5">
+        <span id="pleaseWaitText" class="text-muted fs-6 fw-semibold ms-5">{{leadingMsg}}</span>
+      </div>
+    </div>
+  }
+  <div  appPageTracking class="d-flex flex-column flex-root app-root">
+    <router-outlet></router-outlet>
+</div>
+}
+@else{
+<div id="splash-screen" class="splash-screen">
+    <img id="logo"  class="object-fit app-sidebar-logo-default" />
+    <div>
+      <span class="spinner-border text-primary" role="status"></span>
+    </div>
+    <div  class=" d-flex align-items-center mt-5">
+        <span id="greetingsText" class="text-muted fs-6 fw-semibold ms-5"></span>
+        <span id="userNameText" class="text-muted fs-6 fw-semibold"></span>
+    </div>
+    <div  class=" d-flex align-items-center mt-5">
+      <span id="pleaseWaitText" class="text-muted fs-6 fw-semibold ms-5">{{leadingMsg}}</span>
+    </div>
+</div>
+}

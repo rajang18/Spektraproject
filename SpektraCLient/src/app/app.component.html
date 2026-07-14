@@ -1,0 +1,195 @@
+<mat-sidenav-container class="dashboard-shell">
+  <mat-sidenav
+    class="sidebar"
+    mode="side"
+    [opened]="isSidebarOpen()"
+    fixedInViewport
+  >
+    <div class="sidebar__brand">
+      <span class="sidebar__brand-mark">S</span>
+      <div>
+        <strong>Spektra AI</strong>
+        <span>Engineering Copilot</span>
+      </div>
+    </div>
+
+    <mat-divider />
+
+    <mat-nav-list class="sidebar__nav">
+      @for (item of navigationItems(); track item.route) {
+        <button
+          mat-button
+          type="button"
+          class="sidebar__nav-item"
+          [class.sidebar__nav-item--active]="selectedRoute() === item.route"
+          (click)="selectRoute(item.route)"
+        >
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </button>
+      }
+    </mat-nav-list>
+
+    <div class="sidebar__footer">
+      <mat-icon>verified_user</mat-icon>
+      <div>
+        <strong>Enterprise Secure</strong>
+        <span>SSO ready workspace</span>
+      </div>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="content">
+    <mat-toolbar class="topbar">
+      <button
+        mat-icon-button
+        type="button"
+        aria-label="Toggle sidebar"
+        matTooltip="Toggle sidebar"
+        (click)="toggleSidebar()"
+      >
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <div class="topbar__title">
+        <span>AI Engineering Copilot</span>
+        <small>{{ activeProjects() }} active project workflows</small>
+      </div>
+
+      <span class="topbar__spacer"></span>
+
+      <button mat-icon-button type="button" aria-label="Notifications" matTooltip="Notifications">
+        <mat-icon matBadge="3" matBadgeColor="warn">notifications</mat-icon>
+      </button>
+
+      <button mat-button type="button" [matMenuTriggerFor]="profileMenu" class="profile-button">
+        <span class="profile-button__avatar">AK</span>
+        <span class="profile-button__label">Architect</span>
+        <mat-icon>expand_more</mat-icon>
+      </button>
+
+      <mat-menu #profileMenu="matMenu">
+        <button mat-menu-item type="button">
+          <mat-icon>person</mat-icon>
+          <span>Profile</span>
+        </button>
+        <button mat-menu-item type="button">
+          <mat-icon>settings</mat-icon>
+          <span>Settings</span>
+        </button>
+      </mat-menu>
+    </mat-toolbar>
+
+    <main class="dashboard">
+      <section class="hero-panel">
+        <div>
+          <p class="eyebrow">Enterprise AI Platform</p>
+          <h1>Build, analyze, test, and plan engineering work faster.</h1>
+          <p class="hero-panel__copy">
+            A unified cockpit for converting requirements, analyzing logs, generating tests,
+            and preparing Jira tasks with AI-assisted workflows.
+          </p>
+        </div>
+
+        <div class="hero-panel__actions">
+          <button mat-flat-button color="primary" type="button">
+            <mat-icon>auto_awesome</mat-icon>
+            Start Workflow
+          </button>
+          <button mat-stroked-button type="button">
+            <mat-icon>history</mat-icon>
+            View Activity
+          </button>
+        </div>
+      </section>
+
+      <section class="card-grid" aria-label="AI copilot capabilities">
+        @for (card of dashboardCards(); track card.route) {
+          <mat-card class="capability-card" appearance="outlined">
+            <mat-card-header>
+              <div mat-card-avatar class="capability-card__icon">
+                <mat-icon>{{ card.icon }}</mat-icon>
+              </div>
+              <mat-card-title>{{ card.title }}</mat-card-title>
+              <mat-card-subtitle>{{ card.trend }}</mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <strong>{{ card.metric }}</strong>
+              <p>{{ card.description }}</p>
+            </mat-card-content>
+
+            <mat-card-actions align="end">
+              <button mat-button type="button" (click)="selectRoute(card.route)">
+                Open
+                <mat-icon>arrow_forward</mat-icon>
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        }
+      </section>
+
+      <section class="recent-projects">
+        <div class="section-heading">
+          <div>
+            <h2>Recent Projects</h2>
+            <p>Latest AI-assisted engineering workflows across teams.</p>
+          </div>
+          <button mat-stroked-button type="button">
+            <mat-icon>add</mat-icon>
+            New Project
+          </button>
+        </div>
+
+        <div class="table-wrap">
+          <table mat-table [dataSource]="recentProjects()" class="projects-table">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Project</th>
+              <td mat-cell *matCellDef="let project">
+                <strong>{{ project.name }}</strong>
+                <span>{{ project.owner }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="workflow">
+              <th mat-header-cell *matHeaderCellDef>Workflow</th>
+              <td mat-cell *matCellDef="let project">{{ project.workflow }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let project">
+                <mat-chip
+                  class="status-chip"
+                  [class.status-chip--active]="project.status === 'Active'"
+                  [class.status-chip--review]="project.status === 'Review'"
+                  [class.status-chip--completed]="project.status === 'Completed'"
+                >
+                  {{ project.status }}
+                </mat-chip>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="updated">
+              <th mat-header-cell *matHeaderCellDef>Updated</th>
+              <td mat-cell *matCellDef="let project">{{ project.updated }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="progress">
+              <th mat-header-cell *matHeaderCellDef>Progress</th>
+              <td mat-cell *matCellDef="let project">
+                <div class="progress-cell">
+                  <mat-progress-bar mode="determinate" [value]="project.progress" />
+                  <span>{{ project.progress }}%</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+        </div>
+      </section>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

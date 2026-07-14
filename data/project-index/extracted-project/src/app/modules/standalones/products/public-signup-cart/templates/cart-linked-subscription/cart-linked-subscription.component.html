@@ -1,0 +1,91 @@
+<div *ngIf="product.LinkedSubscription">
+    <div class="card">
+        <div class="card-body">
+            <div ngbAccordion>
+                <div ngbAccordionItem [collapsed]="true">
+                    <div ngbAccordionHeader>
+                        <button ngbAccordionButton class="text-primary">
+                            <i class="fa fa-link bold text-success"></i> <span
+                                class="text-success bold">{{'TRANSLATE.CART_PAGE_ACCORDION_TITLE_LINKED_PRODUCT' |
+                                translate}}</span> </button>
+                    </div>
+                    <div ngbAccordionCollapse>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="col-md-3">
+                                                <div class="col-md-12">
+                                                    <div class="portlet-title shop-item-title">
+                                                        <a class="caption-subject font-blue bold"
+                                                            [innerHtml]="product.LinkedSubscription.Name| limitLength:70"></a><span
+                                                            class="bold font-blue"
+                                                            *ngIf="product.LinkedSubscription.Name !=null && product.LinkedSubscription.Name.length > 70">
+                                                            ...</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <h5 class="font-yellow-gold">
+                                                        <span
+                                                            *ngIf="product.LinkedSubscription.BillingCycleName && product.BillingCycleName !== ''">
+                                                            <small>
+                                                                <b class="font-yellow-gold"
+                                                                    [translate]="'TRANSLATE.'+product.BillingCycleDescription"></b>
+                                                            </small>
+                                                        </span>
+                                                        <span
+                                                            *ngIf="product.LinkedSubscription.ProviderSettings && product.ProviderSettings.ProviderCategory">
+                                                            <small>
+                                                                <b class="font-yellow-gold"
+                                                                    [translate]="'TRANSLATE.'+product.ProviderSettings.ProviderCategory"></b>
+                                                            </small>
+                                                        </span>
+                                                    </h5>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="col-md-12"
+                                                    *ngIf="product.LinkedSubscription.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE">
+                                                    <strong> <span translate="CART_PAGE_TITLE_PRICE"></span></strong>
+                                                </div>
+                                                <div class="col-md-12"
+                                                    *ngIf="product.LinkedSubscription.BillingTypeName.toLowerCase() === cloudHubConstants.BILLING_TYPE_PRICE">
+                                                    <strong>
+                                                        <span class="text-center font-blue ">
+                                                            {{product.LinkedSubscription.FinalSalePrice | CurrencyFilter
+                                                            : product.CurrencySymbol :
+                                                            product.CurrencyDecimalPlaces :
+                                                            product.CurrencyThousandSeperator :
+                                                            product.CurrencyDecimalSeperator}}
+                                                            <small class="strike-through red"
+                                                                *ngIf="product.LinkedSubscription.Discount != null && product.LinkedSubscription.Discount > 0">
+                                                                <b>{{product.LinkedSubscription.OriginalSalePrice}}</b>
+                                                            </small>
+                                                        </span>
+                                                    </strong>
+                                                </div>
+                                                <div class="col-md-12 pr0"
+                                                    *ngIf="product.LinkedSubscription.Discount != null && product.LinkedSubscription.Discount > 0">
+                                                    <small><b class="font-yellow-gold">
+                                                            <span>{{ 'TRANSLATE.CART_PAGE_DISCOUNT_INFORMATION' |
+                                                                translate: {discount:
+                                                                product.LinkedSubscription.Discount }
+                                                                }}</span></b></small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

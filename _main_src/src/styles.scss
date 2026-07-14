@@ -1,0 +1,138 @@
+/* You can add global styles to this file, and also import other style files */
+@import "./assets/sass/style.scss";
+// Replace above style with this css file to enable RTL styles
+// @import "./assets/css/style.rtl";
+@import './assets/sass/plugins.scss';
+// @import "./assets/css/style.rtl.css";
+@import "./assets/sass/style.angular.scss";
+
+// Keenicons - High quality and pixel perfect font icons available in 3 styles, duotone, outline and solid for Metronic elements
+@import "./assets/plugins/keenicons/duotone/style.css";
+@import "./assets/plugins/keenicons/outline/style.css";
+@import "./assets/plugins/keenicons/solid/style.css";
+@import "~@ng-select/ng-select/themes/default.theme.css";
+ 
+
+/* Hide Angular UI until app is ready */
+body.app-loading .app-root {
+  visibility: hidden;
+}
+
+/* Splash always visible */
+.splash-screen {
+  position: absolute;
+  z-index: 1000;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-family: Helvetica, 'sans-serif';
+  background-color: #000;
+  color: #5E6278;
+  line-height: 1;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+
+.TermLabelColor {
+    background-color: #3D9C49 !important;  
+}
+
+.labelcolor {
+    background-color: #DF2B03 !important;
+}
+
+.label.label-light-info {
+    color: #8950FC;
+    background-color: #EEE5FF;
+}
+
+.label.label-light-primary {
+    color: #3699FF;
+    background-color: #E1F0FF;
+}
+
+.label.label-light-warning {
+    color: #FFA800;
+    background-color: #FFF4DE;
+}
+.label.label-light-success {
+    color: #ffffff;
+    background-color:#1BC5BD;
+}
+.font-weight-bold {
+    font-weight: 500 !important;
+}
+.text-warning {
+    color: #FFA800 !important;
+}
+
+.label.label-inline {
+    width: auto;
+}
+
+.editable-wrap{display:inline-block;white-space:pre;margin:0}.editable-wrap .editable-controls,.editable-wrap .editable-error{margin-bottom:0}.editable-wrap .editable-controls>input,.editable-wrap .editable-controls>select,.editable-wrap .editable-controls>textarea{margin-bottom:0}.editable-wrap .editable-input{display:inline-block}.editable-buttons{display:inline-block;vertical-align:top}.editable-buttons button{margin-left:5px}.editable-input.editable-has-buttons{width:auto}.editable-text{white-space:nowrap}.editable-bsdate{white-space:nowrap}.editable-bstime{white-space:nowrap}.editable-bstime .editable-input input[type=text]{width:46px}.editable-bstime .well-small{margin-bottom:0;padding:10px}.editable-range output{display:inline-block;min-width:30px;vertical-align:top;text-align:center}.editable-color input[type=color]{width:50px}.editable-checkbox label span,.editable-checklist label span,.editable-radiolist label span{margin-left:7px;margin-right:10px}.editable-hide{display:none!important}
+.editable-click,
+a.editable-click{
+  text-decoration:none;
+  color: #428bca;
+  border-bottom:dashed 1px #428bca
+}
+.editable-click:hover,a.editable-click:hover
+{
+  text-decoration:none;
+  color: #2a6496;
+  border-bottom-color: #2a6496
+}
+.editable-empty,.editable-empty:hover,.editable-empty:focus,a.editable-empty,a.editable-empty:hover,a.editable-empty:focus
+{
+  font-style:italic;
+  color:#D14;
+  text-decoration:none
+}
+a.text-hover-primary :hover{
+    color: $primary;
+}
+
+.label-bg-success{
+    background-color: #1BC5BD !important; 
+  }
+  .label-bg-info{
+    color: #8950FC;
+    background-color: #EEE5FF;
+  }
+  .label-bg-primary{
+    color: #3699FF;
+    background-color: #E1F0FF;
+  }
+  .label-bg-warning{
+    color: #FFA800;
+    background-color: #FFF4DE;
+  }
+  .label-bg-light-danger{
+    color: #F64E60;
+    background-color: #FFE2E5;
+  }
+  .card-btn-place{
+    margin-top: -10px !important;
+  }
+
+/* Custom SweetAlert spacing */
+.custom-swal-popup {
+  margin: 64px auto !important;
+  width: calc(100% - 160px) !important;
+  max-width: 680px !important;
+  box-sizing: border-box;
+  padding: 32px 32px 28px !important;
+}
+
+.custom-swal-popup .swal2-title,
+
+
+.custom-swal-popup .swal2-close {
+  top: 0.75rem;
+  right: 0.75rem;
+}

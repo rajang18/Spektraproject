@@ -1,0 +1,139 @@
+<ng-template #actionHeader>
+    <a class="btn btn-light-primary btn-sm fw-semibold" (click)="backToCustomers()" >
+        <i class="ki-outline ki-to-left fs-2"></i>{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_BUTTON_TEXT_BACK_TO_CUSTOMERS' | translate}}
+    </a>
+</ng-template>
+
+
+
+<div class="d-flex flex-column-fluid" ng-scope>
+    <div class="container-fluid">
+        <div class="card card-custom">
+            @if (pageMode) {
+                <div class="card-body">
+                    @if (pageMode?.toLowerCase() === PageModeEnum.Add.toLowerCase()) {
+                        <div class="form">
+                            <!--Render the Bulk onboarding form only if there are no customers being onboarded-->
+                            <form [formGroup]="frmProviderDetails">
+                                <div class="form-group row" role="form" name="vm.frmProviderDetails" novalidate>
+                                    <div class="col-md-2  text-start text-sm-start text-md-start text-lg-start text-xl-start col-form-label">
+                                        <label class="control-label">
+                                            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_PROVIDER"></span>
+                                            <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_PROVIDER_TOOLTIP' | translate}}">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <select class="form-control form-select form-select-sm" formControlName="providerId" name="onboardCustomerModel_ProviderId"
+                                            (change)="onProviderChange()">
+                                            <option ngValue="">
+                                                {{'TRANSLATE.CUSTOMER_SEARCH_DEFAULT_OPTION'|translate}}
+                                            </option>
+                                            @for (provider of providers; track $index) {
+                                                <option [ngValue]="provider.ID" ng-selected="provider.ID == vm.providerId">
+                                                {{provider.Name}}
+                                            </option>
+                                            }
+                                            
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+        
+                            <!--The view Containing the form for Bulk Onboarding Microsoft Customers renders here-->
+                            <div class="row">
+                                <!-- <div ui-view ng-if="vm.providerId !== null" class="col-md-12"></div> -->
+                                 @if (providerId !==null) {
+                                    <router-outlet></router-outlet>
+                                 }
+                            </div>
+                            <!--The Portlet that will show the onboarding customers status list-->
+        
+                        </div>
+                    }
+                    
+                    @if (pageMode?.toLowerCase() === PageModeEnum.Status.toLowerCase()) {
+                        <div class="form">
+                            <div class="form-body row">
+        
+                                <div class="col-md-6 caption">
+                                    <div class="d-flex"> 
+                                        <i class="ki-outline ki-loading fs-1 mt-1"></i>
+                                        &nbsp;
+                                        <h3 class="caption-subject font-dark sbold uppercase mt-1" translate="TRANSLATE.SUBSCRIPTION_MANAGE_STATUS_CAPTION_STATUS"></h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 actions">
+                                    @if (isLatestBatchHavingCustomersWithUnmappedSubscriptions === true && enableButtonForDownloadingMappingDetailsOfBatch === true) {
+                                    <a class="btn btn-primary btn-sm float-end fw-semibold" (click)="subscriptionMappingDetailsOfLatestBulkOnboardingBatch(null)">
+                                        <span translate="TRANSLATE.BULK_ONBOARD_CUSTOMERS_DOWNLOAD_MAPPING_DETAILS_FOR_ENTIRE_BATCH"></span>
+                                    </a>
+                                }
+                                </div>
+                            </div>
+                            <div class="form-body row mb-2">
+                                <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6 mt-10 ng-star-inserted">
+                                    <h4 class="block" translate="TRANSLATE.BULK_ONBOARDING_STATUS_INFO_HEADER"></h4>
+                                    <p translate="TRANSLATE.BULK_ONBOARDING_STATUS_INFO_HELP_TEXT"> </p>
+                                </div>
+                            </div>
+                            <ul class="list-group row" >
+                                @for (row of customerOnboardStatus; track $index) {
+                                    <li ng-repeat="row in vm.customerOnboardStatus" class="list-group-item">
+                                        <span>
+                                           <i class="ki-outline ki-check-circle text-success"
+                                           *ngIf="row.OnboardingStatus === 'Success' && row.TotalSubscriptionsAtProvider === row.TotalSubscriptionsOnboarded"></i>
+                                   
+                                       <i class="ki-outline ki-check-circle text-warning"
+                                           *ngIf="row.OnboardingStatus === 'Success' && row.TotalSubscriptionsAtProvider !== row.TotalSubscriptionsOnboarded"></i>
+                                   
+                                       <i class="ki-outline ki-loading text-success"
+                                           *ngIf="row.OnboardingStatus === 'Submitted' || row.OnboardingStatus === 'InProgress'"></i>
+                                   
+                                       <i class="ki-outline ki-information-5 text-danger"
+                                           *ngIf="row.OnboardingStatus !== null && row.OnboardingStatus === 'Error'"></i>&nbsp; {{row.ServiceProviderCustomerName}}&nbsp;({{row.ServiceProviderCustomerId}})
+                                            &nbsp;
+                                            <br />
+                                            @if (row.OnboardingStatus ==='Error') {
+                                            <span class="text-danger mt-2">
+                                                {{'TRANSLATE.'+row.OnboardingStatus | translate}} : <span translate="{{'TRANSLATE.'+row.ErrorDetails | translate}}"></span>
+                                            </span>
+                                            }
+            
+                                             @if ((row.OnboardingStatus === 'Success' && row.TotalSubscriptionsAtProvider !== row.TotalSubscriptionsOnboarded)) {
+                                                <span class="mt-2" [innerHTML]="('TRANSLATE.BULK_ONBOARD_CUSTOMERS_INFO_TEXT_FOR_ONBOARDED_SUBSCRIPTION_DETAILS')| translate :{ TotalSubscriptionsOnboarded: row.TotalSubscriptionsOnboarded,TotalSubscriptionsAtProvider:row.TotalSubscriptionsAtProvider}">
+                                                
+                                                </span>
+                                             }
+                                            
+                                            @if ((row.OnboardingStatus === 'Success' && row.TotalSubscriptionsAtProvider !== row.TotalSubscriptionsOnboarded)) {
+                                                <span class="text-right mt-2">
+                                                    <a (click)="subscriptionMappingDetailsOfLatestBulkOnboardingBatch(row.ServiceProviderCustomerId)">&nbsp;<span class="text-primary" style="cursor: pointer" translate="TRANSLATE.BULK_ONBOARD_CUSTOMERS_DOWNLOAD_MAPPING_DETAILS"></span></a>
+                                                </span>
+                                            }
+                                           
+                                        </span>
+                                    </li>
+                                }
+                               
+                            </ul>
+                            @if (readyToComplete) {
+                                <div class="form-actions float-end mt-4">
+    
+                                    <a class="btn btn-primary btn-sm fw-semibold" [appPermission]="'BULKONBOARDCUSTOMERS'" (click)="updateTheStatusAsComplete()">
+                                        <!-- <busy-message><i class="fa fa-refresh fa-spin"></i> <span translate="TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT" ></span></busy-message> -->
+                                        <span translate="TRANSLATE.BULK_UPLOAD_CUSTOMER_BUTTON_COMPLETE" ></span>
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    }
+                    
+                </div>
+            }
+        </div>
+    </div>
+</div>

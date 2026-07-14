@@ -1,0 +1,185 @@
+<div class="card">
+    <div class="card-body overflow-auto">
+        @if ((!isPartnerLevel && providerTenantsCount !== null && providerTenantsCount === 0) || (isPartnerLevel &&
+        providerCoustomerCount !== null && providerCoustomerCount === 0)) {
+        <div class="col-md-12">
+            <div class="card card-custom mt-7">
+                <div class="card-body">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <div class="col-md-12 unlink-provider mb-0">
+                                <h5>
+                                    <i class="fa fa-unlink"></i>
+                                    @if (!isPartnerLevel) {
+                                    <span
+                                        translate="TRANSLATE.CUSTOMER_NOT_LINKED_TO_ANY_PROVIDER_TENANTS_ERROR"></span>
+                                    }
+                                    @if (isPartnerLevel) {
+                                    <span
+                                        translate="TRANSLATE.PARTNER_CUSTOMER_NOT_LINKED_TO_ANY_PROVIDER_TENANTS_ERROR"></span>
+                                    }
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+
+        @if ((!isPartnerLevel && providerTenantsCount != null && providerTenantsCount > 0) || (isPartnerLevel &&
+        providerCoustomerCount !== null && providerCoustomerCount > 0)) {
+        <div class="col-md-12 h-100">
+          <form>
+            @if (isPartnerLevel) {
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label col-form-label-sm  fw-semibold fs-6 mb-2">
+                <span translate="TRANSLATE.AZURE_REPPORT_CUSTOMERS"></span>
+                <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" aria-hidden="true"
+                   [ngbTooltip]="'TRANSLATE.AZURE_REPPORT_CUSTOMERS_TOOLTIP' | translate">
+                  <span class="path1"></span>
+                  <span class="path2"></span>
+                  <span class="path3"></span>
+                </i>
+                <span class="required"></span>
+              </label>
+              <div class="col-md-5">
+                <select class="form-select  form-select-sm fw-bold"
+                        [(ngModel)]="this.currentC3CustomerId" name="CustomerId" (change)="onCustomerChange()">
+                  @for (customer of allCustomers; track $index) {
+                  <option [value]="customer.C3Id">
+                    {{
+customer.Name |
+                                translate
+                    }}
+                  </option>
+                  }
+                </select>
+              </div>
+            </div>
+            }
+
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label col-form-label-sm fw-semibold fs-6 mb-2">
+                <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_TENANTS"></span>
+                <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1" aria-hidden="true"
+                   [ngbTooltip]="'TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_MICROSOFT_TENANT_SELECTOR' | translate">
+                  <span class="path1"></span>
+                  <span class="path2"></span>
+                  <span class="path3"></span>
+                </i>
+
+              </label>
+              <div class="col-md-5">
+                <select class="form-select  form-select-sm fw-bold"
+                        [(ngModel)]="selectedServiceProviderCustomerId" name="ServiceProviderCustomer"
+                        (change)="getAzureSubscriptions()">
+                  @for (tenant of Tenants; track $index) {
+                  <option [value]="tenant.CustomerRefId">
+                    {{
+tenant.CustomerName |
+                                translate
+                    }} ({{tenant.CustomerRefId}})
+                  </option>
+                  }
+                </select>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-md-2 col-form-label col-form-label-sm fw-semibold fs-6 mb-2"
+                     translate="TRANSLATE.AZURE_REPORTS_LABEL_TEXT_SUBSCRIPTION">
+              </label>
+              <div class="col-md-5">
+                <select class="form-select form-select-sm  fw-bold"
+                        [(ngModel)]="currentSubscriptionId" name="azureGroups_main" [disabled]="true">
+                  @for (subscription of subscriptionDataSource; track $index) {
+                  <option [value]="subscription.SubscriptionId">
+                    {{subscription.SubscriptionName | translate}}
+                    -
+                    {{subscription.SubscriptionId}}
+                  </option>
+                  }
+                </select>
+              </div>
+            </div>
+            <div class="col-md-12 d-flex justify-content-end">
+              @if (isShowStatus) {
+              <button class="btn btn-sm fw-bold btn-primary btn-xs me-2 text-end" (click)="handleTableConfig()">
+                <i class="fa fa-list"></i> <span translate="TRANSLATE.ENTITLEMENT_MANAGEMENT_LABEL_ENTITLEMENT_LIST"></span>
+              </button>
+              }
+              @if (isShowStatus) {
+              <button ng-if="vm.isShowStatus" class="btn btn-sm fw-bold btn-primary btn-xs mr-2 text-end"
+                      (click)="loadStatusView()">
+                <i class="fa fa-sitemap"></i> <span translate="TRANSLATE.ENTITLEMENT_MANAGEMENT_LABEL_CREATION_STATUS"></span>
+              </button>
+              }
+              @if (!isShowStatus && currentSubscriptionId != null && currentSubscriptionId != '' && selectedServiceProviderCustomerId != null && selectedServiceProviderCustomerId != '') {
+              <button class="btn btn-sm fw-bold btn-primary btn-xs mr-2 text-end"
+                      [appPermission]="'BULK_ADD_ENTITLEMENTS'" (click)="this.addEntitlement()">
+                <i class="fa fa-plus"></i> <span translate="TRANSLATE.ENTITLEMENT_MANAGEMENT_LABEL_ADD_ENTITLEMENT"></span>
+              </button>
+              }
+            </div>
+          </form>
+          @if (!!datatableConfig && pageMode === 'list' && currentSubscriptionId != null && currentSubscriptionId != '' && selectedServiceProviderCustomerId != null && selectedServiceProviderCustomerId != '') {
+          <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+          </app-c3-table>
+          }
+          @if (pageMode === 'status') {
+          <div>
+            <div class="group">
+              <div class="caption">
+                <h4>
+                  <i class="fa fa-hourglass-half"></i>
+                  <span class="caption-subject font-dark sbold uppercase"
+                        translate="TRANSLATE.SUBSCRIPTION_MANAGE_STATUS_CAPTION_STATUS"></span>
+                </h4>
+              </div>
+              <br />
+            </div>
+            <div class="portlet-body form">
+              <form role="form" class="clearfix">
+                @if (!readyToComplete) {
+                <div class="note note-info">
+                  <h5 class="block" translate="TRANSLATE.ENTITLEMENT_MANAGEMENT_STATUS_NOTIFICATION_HEADER">
+                  </h5>
+                  <p translate="TRANSLATE.ENTITLEMENT_MANAGEMENT_STATUS_NOTIFICATION_INFO"> </p>
+                </div>
+                }
+                <ul class="list-group">
+                  @for (data of addEntitlementStatus; track $index) {
+                  <li class="list-group-item">
+                    <span>
+                      <i class="fa" [ngClass]="{
+                                                    'fa-check-circle-o font-green-jungle': data.Status === 'Success',
+                                                    'fa-spin fa-spinner font-green-jungle': data.Status === 'Submitted' || data.Status === 'InProgress',
+                                                    'fa-exclamation-circle font-red': data.Status !== null && (data.Status === 'Error' || data.Status === 'Failed')
+                                                }"></i>
+                      &nbsp;
+                      {{data.EntitlementName}}
+                      &nbsp;
+                      <br />
+                      @if (data.Status === 'Error' || data.Status === 'Failed') {
+                      <span class="text-danger">
+                        {{data.Status}} : <span [translate]="data.ErrorDetails"></span>
+                      </span>
+                      }
+                    </span>
+                  </li>
+                  }
+                </ul>
+                @if (readyToComplete) {
+                <button class="btn btn-success pull-right" (click)="complete()">
+                  <span translate="TRANSLATE.ENTITLEMENT_MANAGEMENT_LABEL_COMPLETE"></span>
+                </button>
+                }
+
+              </form>
+            </div>
+          </div>
+          }
+        </div>
+        }
+    </div>
+</div>

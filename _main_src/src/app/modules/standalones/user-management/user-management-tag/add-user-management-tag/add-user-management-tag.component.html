@@ -1,0 +1,70 @@
+<div class="add-customer-container">
+    <div class="custom-card">
+        <div class="card-body">
+            <div>
+                <i class="fa fa-tags">&nbsp;&nbsp;
+                </i>
+                <span>{{'TRANSLATE.PARTNERS_HEADER_TEXT_MANAGE_TAG' | translate}}</span>
+                <div class="header-actions d-flex align-items-center gap-2 gap-lg-3 justify-content-end">
+                    <button type="button" class="btn btn-sm fw-semibold btn-light-primary" (click)="backToList()">
+                        <i class="ki-outline ki-to-left fs-2"></i> <span translate="TRANSLATE.ACCOUNT_MANAGERS_ADD_EDIT_BUTTON_TEXT_BACK_TO_TAGS"></span>
+                    </button>
+                </div>
+            </div>
+            <form [formGroup]="addtagform">
+                <div class="form-group row mt-7">
+                    <div class="form-group row mt-7">
+                        <div class="required col-md-3 col-form-label text-left text-sm-left text-md-right text-lg-right text-end">
+                            <label class="fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNERS_LABLE_TEXT_TAG_KEY"></label>
+                        </div> 
+                        <div class="col-md-9">
+                            <select class="form-select form-select-sm fw-bold"
+                           formControlName="tagKey" (change)="onTagValueChange($event)"> 
+                           @for(tag of this.tagKeyDetails; track $index){
+                           <option [value]="tag.TagKey">{{tag.TagKey}}</option>
+                           }    
+                      </select>
+                        @if(addtagform.get('tagKey')?.errors?.required &&
+                            addtagform.get('tagKey')?.touched){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                        }
+                        </div>
+                    </div>  
+                    <div class="form-group row mt-7">
+                        <div class="required col-md-3 col-form-label text-left text-sm-left text-md-right text-lg-right text-end">
+                            <label class="fw-semibold fs-6 mb-2"
+                                translate="TRANSLATE.PARTNERS_LABLE_TEXT_TAG_VALUES"></label>
+                        </div> 
+                        <div class="col-md-9">
+                            <ng-select name="tagValue" [multiple]="true" formControlName="tagValue"
+                                 >
+                                @for (item of tagValueDetails; track $index) {
+                                <ng-option [value]="item.TagValue">{{item.TagValue}}</ng-option>
+                                    }
+                                </ng-select>
+                            <!-- <select2 [data]="tagValueDetailsDataSet" class="" formControlName="tagValue"
+                                 [templates]="tagValueDetails" [multiple]="true">
+                                    <ng-template #tagValueDetails let-data="data">
+                                        <span [ngClass]="{'multiple-select-choice' : !isEditMode}" translate="{{data?.value}}"></span>
+                                    </ng-template>
+                            </select2>   -->
+                            @if(addtagform.get('tagValue')?.errors?.required &&
+                                addtagform.get('tagValue')?.touched){
+                                <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                            }
+                        </div>
+                    </div>   
+                </div>
+            </form>
+        </div>
+        <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3"> 
+            <button type="button" class="btn btn-light btn-active-light-primary" (click)="backToList()" appBusyLoader> 
+                {{ 'TRANSLATE.BUTTON_TEXT_CANCEL' | translate }}
+            </button>
+            <button type="button" class="btn btn-primary" (click)="onSubmit()" appBusyLoader>
+                {{ 'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate }}
+            </button>
+        </div>
+    </div>
+</div>

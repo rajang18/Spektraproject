@@ -1,0 +1,446 @@
+<ng-template #actionHeader>
+    <div class="d-flex align-items-center gap-2 gap-lg-3">
+        <div class="font-weight-bold p-0 my-2 font-size-sm" *ngIf="isShowLimitMessage">
+            <span style="margin-right: 10px; font-weight:600"
+                [innerHTML]="('TRANSLATE.TRANSACTION_LIMIT_MESSAGE')| translate :{ RemainingAmount: RemainingLimit,TotalLimit:TransactionAmountLimit}">
+            </span>
+        </div>
+        
+        @if (productsInCart.length > 0) {
+            <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+              <button type="button" class="btn btn-sm fw-semibold btn-light-danger" (click)="deleteAllProductFromCart()">
+                <span translate="TRANSLATE.CLEAR_CART"></span>
+              </button>
+            </div>
+          } 
+    </div>
+</ng-template>
+<ng-template #purchasefailed>
+
+    <ul class="purchase-error-popup-font" *ngIf="ProviderCustomersWhoNotProvidedCustomerConsent != null && ProviderCustomersWhoNotProvidedCustomerConsent.length > 0 || (ProviderTenantsCount == 0 && ProviderTenantsCount != null)">
+        <li class="provider_custom_consent_not_provided" *ngIf="ProviderCustomersWhoNotProvidedCustomerConsent != null && ProviderCustomersWhoNotProvidedCustomerConsent.length > 0" [innerHTML]="provider_custom_consent_not_provided"></li>
+        <li *ngIf="ProviderTenantsCount == 0 && ProviderTenantsCount != null" translate="CUSTOMER_NOT_LINKED_TO_ANY_PROVIDER_TENANTS_ERROR_MESSAGE"></li>
+    </ul>
+    <ul class="purchase-error-popup-font" *ngIf="transactionsEnabledForCustomer != null && !transactionsEnabledForCustomer">
+        <li  translate="CUSTOMER_CANNOT_PERFORM_TRANSACTIONS_MESSAGE"></li>
+    </ul>
+    <ul class="purchase-error-popup-font" *ngIf="!CanPaurchase"> 
+        <li translate="CUSTOMER_CANNOT_PERFORM_SHOP_DUE_TO_CUSTOMER_ADMIN_LITE_ROLE_MESSAGE"></li>
+    </ul>
+
+
+ </ng-template>
+<div class="row">
+    <div class="col-12" *ngIf="(ProviderCustomersWhoNotProvidedCustomerConsent != null && ProviderCustomersWhoNotProvidedCustomerConsent.length > 0 || (ProviderTenantsCount == 0 && ProviderTenantsCount != null && areMSOffersPresent > 0)) || (
+            transactionsEnabledForCustomer != null && !transactionsEnabledForCustomer)">
+         <div class="alert alert-warning mb-0" role="alert" *ngIf="warningPopOver">
+            <div class="alert-text d-flex align-items-center">
+                <i class="ki-outline ki-information-5 fs-1 me-1 text-warning"></i>
+                <span (click)="setTranslateText()"
+                 [ngbPopover]="purchasefailed" placement="bottom">
+                    {{'TRANSLATE.ERROR_MESSAGE_PURCHASES_MAY_FAIL' | translate}}
+                </span>
+                <i class="ki-outline ki-cross fs-1 ms-auto text-danger cursor-pointer" (click)="warningPopOver = false"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9 manage-screen-cards" (scrolled)="onScroll()" infiniteScroll [infiniteScrollDistance]="0.3"
+    [infiniteScrollThrottle]="50" [scrollWindow]="false">
+        @if(lazyLoadedProducts.length > 0){
+            @for (item of lazyLoadedProducts; track $index) {
+                <div class="col-md-12" appLazyLoad (lazyLoad)="onLazyLoad(item)">
+                    <div class="p-2">
+                        <app-product-item [productItemDetails]="productItemDetails" [productItem]="item" (onActionData)="onAddplanAction($event)" [ngClass]="{'d-none':item.showNceProductsInSiteDepartment == false}"></app-product-item>
+                    </div>
+                </div>        
+            }
+        }
+        @else{
+            @if(!isProductLoading){
+                <div>
+                    <div class="row">
+                        <div class="col-md-12 centered">
+                            <h3 class="text-center">
+                                <img src='../../../../assets/media/img/Empty cart@96.png' width="150" height="150" />
+                            </h3>
+                            <h4 class="text-center">
+                                <span>
+                                    <span [innerHTML]="'TRANSLATE.CART_PAGE_TEXT_INFO_NO_PRODUCTS1' | translate"></span> <a (click)='gotoCart()' class='text-primary' role='button'>{{'TRANSLATE.CART_PAGE_TEXT_INFO_NO_PRODUCTS' | translate}} <span class='fa fa-cart-plus'></span> </a>
+                                </span>
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+    <div class="col-md-3">
+        <div class="card card-custom gutter-b">
+            <!--begin::Body-->
+            <div class="card-body">
+                <!-- <perfect-scrollbar class="scroller-custom scroll" wheel-propagation="true" swipe-propagation="true" on-scroll="onScroll(scrollTop, scrollHeight)" always-visible="true" suppress-scroll-X="true" style="min-height:0px;max-height:450px"> -->
+                    <!--begin::Wrapper-->
+                    <div class="scroll pb-0 scroll-height">
+                        <div class="d-flex justify-content-between flex-column h-100">
+                            <!--begin::Container-->
+                            @if(cartTotal?.length>0 && cartTotal[0]?.TotalCount>0){
+                                <div class="h-100" ng-if="cartTotal[0].TotalCount>0">
+                                    <!--begin::Header-->
+                                    <div class="d-flex flex-column">
+                                        <!--begin::Title-->
+                                        <a class="text-gray-800 fs-1 fw-bold text-hover-primary cursor-pointer">
+                                            <span translate="TRANSLATE.CUSTOMER_CART_PORTLET_TITLE_TEXT_PRICE_DETAILS"></span>
+                                        </a>
+                                        <!--end::Title-->
+                                    </div>
+                                    <!--end::Header-->
+                                    <!--begin::Body-->
+                                    @for(total of cartTotal; track $index) {
+                                        <div class="pt-1">
+                                            <!--begin::Item-->
+                                            @if(cartTotal.length>1){
+                                                <div class="d-flex align-items-center">
+                                                    <!--begin::Text-->
+                                                    <div class="d-flex flex-column flex-grow-1">
+                                                        <a class="text-dark-75 text-gray-800 fw-bold cursor-pointer text-hover-primary mb-1 font-size-lg font-weight-bolder">
+                                                            <span translate="TRANSLATE.CUSTOMER_CART_PARAGRAPH_TITLE_TEXT_CURRENCY"></span>
+                                                        </a>
+                                                    </div>
+                                                    <!--end::Text-->
+                                                    <!--begin::label-->
+                                                    <span class="font-weight-bolder label label-xl label-light-success label-inline px-3 py-5 min-w-45px mr-3">{{total.CurrencyCode}}</span>
+                                                    <!--end::label-->
+                                                </div>
+                                            }
+                                            <!--end::Item-->
+                                            <!--begin::Item-->
+                                            <div class="d-flex align-items-center">
+                                                <!--begin::Text-->
+                                                <div class="d-flex flex-column flex-grow-1">
+                                                    <a class="text-dark-75 text-gray-800 fw-bold cursor-pointer text-hover-primary mb-1 font-size-lg font-weight-bolder">
+                                                        <span translate="TRANSLATE.CUSTOMER_CART_PARAGRAPH_TITLE_TEXT_TOTAL_COST"></span>
+                                                    </a>
+                                                </div>
+                                                <!--end::Text-->
+                                                <!--begin::label-->
+                                                <span class="font-weight-normal text-dark-75 text-gray-800 fw-bold cursor-pointer px-3 py-5 min-w-45px">
+                                                    {{total.TotalCurrencyBasedAmount + total.TotalCurrencyBaseddDiscount | CurrencyFilter : total.CurrencySymbol : total.CurrencyDecimalPlaces : total.CurrencyThousandSeparator : total.CurrencyDecimalSeparator}}
+                                                </span>
+                                                <!--end::label-->
+                                            </div>
+                                            <!--end::Item-->
+                                            <!--begin::Item-->
+                                            <div class="d-flex align-items-center">
+                                                <!--begin::Text-->
+                                                <div class="d-flex flex-column flex-grow-1">
+                                                    <a class="text-dark-75 text-gray-800 fw-bold cursor-pointer text-hover-primary mb-1 font-size-lg font-weight-bolder">
+                                                        <span translate="TRANSLATE.CUSTOMER_CART_PARAGRAPH_TITLE_TEXT_TOTAL_COUNT"></span>
+                                                    </a>
+                                                </div>
+                                                <!--end::Text-->
+                                                <!--begin::label-->
+                                                <span class="font-weight-normal text-dark-75 text-gray-800 fw-bold cursor-pointer px-3 py-5 min-w-45px">
+                                                    {{total.CurrencyBasedCount}}
+                                                </span>
+                                                <!--end::label-->
+                                            </div>
+                                            <!--begin::Item-->
+                                            <div class="d-flex align-items-center">
+                                                <!--begin::Text-->
+                                                <div class="d-flex flex-column flex-grow-1">
+                                                    <a class="text-dark-75 text-gray-800 fw-bold cursor-pointer text-hover-primary mb-1 font-size-lg font-weight-bolder">
+                                                        <span translate="TRANSLATE.CUSTOMER_CART_PARAGRAPH_TITLE_TEXT_TOTAL_DISCOUNT"></span>
+                                                    </a>
+                                                </div>
+                                                <!--end::Text-->
+                                                <!--begin::label-->
+                                                <span class="font-weight-normal text-dark-75 text-gray-800 fw-bold cursor-pointer px-3 py-5 min-w-45px">
+                                                    {{total.TotalCurrencyBaseddDiscount | CurrencyFilter : total.CurrencySymbol : total.CurrencyDecimalPlaces : total.CurrencyThousandSeparator : total.CurrencyDecimalSeparator}}
+                                                </span>
+                                                <!--end::label-->
+                                            </div>
+                                            <!--end::Item-->
+                                            @if(total.TaxName != null && total.TaxName != ''){
+                                                <div class="d-flex align-items-center">
+                                                    <!--begin::Text-->
+                                                    <div class="d-flex flex-column flex-grow-1" [appPermission]="'VIEW_SHOW_TAX_IN_CART'">
+                                                        <a class="text-dark-75 text-gray-800 fw-bold cursor-pointer text-hover-primary mb-1 font-size-lg font-weight-bolder">
+                                                            <span translate="TRANSLATE.CUSTOMER_CART_PARAGRAPH_TITLE_TEXT_TAX_NAME"></span>
+                                                        </a>
+                                                    </div>
+                                                    <!--end::Text-->
+                                                    <!--begin::label-->
+                                                    <span class="font-weight-normal text-dark-75 text-gray-800 fw-bold cursor-pointer px-3 py-5 min-w-45px" [appPermission]="'VIEW_SHOW_TAX_IN_CART'">
+                                                        <span [appPermission]="'VIEW_SHOW_TAX_IN_CART'"> {{total.TaxName}} {{'(' + total.TaxPercentage + '%' + ')' }}</span>
+                                                    </span>
+                                                    <!--end::label-->
+                                                </div>
+                                            }
+                                            <!--end::Item-->
+                                            @if(total.TotalTaxAmount){
+                                                <div class="d-flex align-items-center">
+                                                    <!--begin::Text-->
+                                                    <div class="d-flex flex-column flex-grow-1" [appPermission]="'VIEW_SHOW_TAX_IN_CART'">
+                                                        <a class="text-dark-75 text-gray-800 fw-bold cursor-pointer text-hover-primary mb-1 font-size-lg font-weight-normal">
+                                                            <span translate="TRANSLATE.CUSTOMER_CART_PARAGRAPH_TITLE_TEXT_TOTAL_TAXES" ngbTooltip="{{'TRANSLATE.CUSTOMER_ORDER_CART_TOOLTIP_TOTAL_TAX_AMOUNT'|translate}}" tooltip-placement="right"></span>
+                                                        </a>
+                                                    </div>
+                                                    <!--end::Text-->
+                                                    <!--begin::label-->
+                                                    <span class="font-weight-normal text-dark-75 text-gray-800 fw-bold cursor-pointer px-3 py-5 min-w-45px" [appPermission]="'VIEW_SHOW_TAX_IN_CART'">
+                                                        <span> {{total.TotalTaxAmount | CurrencyFilter : total.CurrencySymbol : total.CurrencyDecimalPlaces : total.CurrencyThousandSeparator : total.CurrencyDecimalSeparator}} </span>
+                                                    </span>
+                                                    <!--end::label-->
+                                                </div>
+                                            }
+                                            <!--end::Item-->
+                                            <!--begin::Item-->
+                                            <div class="d-flex align-items-center">
+                                                <!--begin::Text-->
+                                                <div class="d-flex flex-column flex-grow-1">
+                                                    <a class="text-dark-75 text-gray-800 fw-bold cursor-pointer text-hover-primary mb-1 font-size-lg font-weight-bolder"><span translate="TRANSLATE.CUSTOMER_CART_PARAGRAPH_TITLE_TEXT_AMOUNT_PAYABLE"></span></a>
+                                                </div>
+                                                <!--end::Text-->
+                                                <!--begin::label-->
+                                                <span class="font-weight-normal text-dark-75 text-gray-800 fw-bold cursor-pointer px-3 py-5 min-w-45px" [appPermission]="'VIEW_SHOW_TAX_IN_CART'">
+                                                    {{getTotalAmountPayable(total.TotalCurrencyBasedAmount,total.TotalTaxAmount) | CurrencyFilter : total.CurrencySymbol : total.CurrencyDecimalPlaces : total.CurrencyThousandSeparator : total.CurrencyDecimalSeparator }}
+                                                </span>
+                                                @if(HasShowTaxInCart == 'Denied'){
+                                                    <span class="font-weight-normal text-dark-75 text-gray-800 fw-bold cursor-pointer px-3 py-5 min-w-45px">
+                                                        {{total.TotalCurrencyBasedAmount | CurrencyFilter : total.CurrencySymbol : total.CurrencyDecimalPlaces : total.CurrencyThousandSeparator : total.CurrencyDecimalSeparator }}
+                                                    </span>
+                                                }
+                                                <!--end::label-->
+                                            </div>
+                
+                                            <!--end::Item-->
+                                        </div>
+                                    }
+                                    <!--end::Body-->
+                                </div>
+                            }
+                            <!--eng::Container-->
+                        </div>
+                    </div>
+                    <!--end::Wrapper-->
+                <!-- </perfect-scrollbar> --> 
+                 <!-- was mentioned to  bring the heading and the ng-select down so that ng-select can take more width -->
+                 @if(enableSiteDepartmentOption &&  lazyLoadedProducts.length > 0 && !disableOperatingEntityForTrailOffer){
+                     <div class="mb-5  pb-5">
+                        <span class="d-block fw-bold text-left"><span translate="TRANSLATE.CART_ITEM_LBL_TEXT_SITE_AND_DEPARTMENT"></span></span>
+                         <ng-select placeholder="{{'TRANSLATE.CUSTOMER_CART_SITE_DEPARTMENT_DROPDOWN_PLACRHOLDER_TEXT' | translate}}"    ngbTooltip="{{selectedSiteDepartmentDetail?.FriendlyRecordName || ('TRANSLATE.CUSTOMER_CART_SITE_DEPARTMENT_DROPDOWN_PLACRHOLDER_TEXT' | translate)}}" 
+                         [(ngModel)]="selectedSiteDepartmentDetailFriendlyRecordName" #tooltip="ngbTooltip" (ngModelChange)="OnSelectOfSiteDepartment($event,tooltip)" (close)="tooltip.close()" >
+                            @for(row of sitesDepartmentsDetails; track $index;){
+                                <ng-option [value]="row">  {{row.FriendlyRecordName}} </ng-option>
+                            }
+                         </ng-select>
+                         <!-- <ui-select class="mt-3" ng-model="vm.selectedSiteDepartmentDetail" theme="bootstrap" reset-search-input="true" style="width:235px">
+                             <ui-select-match allow-clear="false">
+                                 <span ng-if="$select.selected.FriendlyRecordName" uib-tooltip="{{$select.selected.FriendlyRecordName}}" tooltip-append-to-body="true">
+                                     {{$select.selected.FriendlyRecordName | limitTo:25}}{{$select.selected.FriendlyRecordName.length > 25 ? '...' : ''}}
+                                 </span>
+                             </ui-select-match>
+                             <ui-select-choices repeat="row in vm.sitesDepartmentsDetails | propsFilter: {FriendlyRecordName: $select.search}" ng-click="vm.OnSelectOfSiteDepartment($select.selected)" null-option="None">
+                                 <div ng-bind-html="row.FriendlyRecordName | highlight: $select.search"></div>
+                             </ui-select-choices>
+                         </ui-select> -->
+                     </div>
+                 }
+                 @if(defaultTermsAndConditionURL !== '' && lazyLoadedProducts != undefined && lazyLoadedProducts != [] && lazyLoadedProducts?.length>0 && lazyLoadedProducts[0]?.EnableDefaultTermsAndCondition == true && NonNCEProductInCart?.length > 0){
+                     <div class="ms-5 mb-5 form-check ps-3">
+                        <label class="form-check form-check-inline ps-1">
+                            <input class="form-check-input" type="checkbox" value="" name="DefaultTermsAndConditionURLText" id="flexCheckDefault" [(ngModel)]="IsAgreedtoDefaultTermsAndConditionOnOrder" [required]="isCheckboxRequired()" [ngbTooltip]="isCheckboxRequired() ? ('TRANSLATE.CHECK_THIS_BOX_TOOLTIP_TEXT'|translate) : null" title="" container="body" triggers="hover" />
+                            <span class="font ms-3 p-no-padding p-no-margin removeSpacing" style="display:inline-block; cursor: pointer;" [innerHTML]="DefaultTermsAndConditionText">
+
+                            </span>
+                            <a class="font-weight-bolder ms-3 cursor-pointer" style="display:block;" (click)="openDefaultProductsTermsAndConditionsUrl()" translate="TRANSLATE.CUSTOMER_ORDER_CART_DEFAULT_TERMS_AND_CONDITION_TEXT">
+            
+                            </a>
+                            @if(!IsAgreedtoDefaultTermsAndConditionOnOrder && formCartSubmit){
+                                <span class="text-danger">{{'TRANSLATE.CUSTOMER_ORDER_CART_TERMS_AND_CONDITION_IS_NOT_ENABLED_TEXT' | translate}}</span>
+                            }
+                        </label>
+                     </div>
+                 }
+                 @if(NCETermsAndConditionURL != null && NCETermsAndConditionURL !== '' && cartTotal?.length>0 && cartTotal[0]?.EnableNCETermsAndCondition == 'Yes' && NCEProductInCart?.length>0 && NCEProductInCart[0]?.CategoryName == 'OnlineServicesNCE'){
+                     <div class="ms-5 mb-5 form-check ps-3">
+                        <label class="form-check form-check-inline ps-1">
+                         <input class="form-check-input" type="checkbox" name="NCETermsAndConditionURLText" value="" id="flexCheckDefault" [(ngModel)]="IsAgreedtoNCETermsAndConditionOnOrder" [required]="isCheckboxRequiredNCE()" [ngbTooltip]="isCheckboxRequiredNCE() ? ('TRANSLATE.CHECK_THIS_BOX_TOOLTIP_TEXT'|translate) : null" title="" container="body" triggers="hover"/>
+                         <span class="font ms-3 p-no-padding p-no-margin" style="display:inline-block;" [innerHTML]="NCETermsAndConditionURLText"></span><a class="font-weight-bolder ms-3 cursor-pointer" style="display:block;" (click)="openNCEProductsTermsAndConditionsUrl()" translate="TRANSLATE.CUSTOMER_ORDER_CART_TERMS_AND_CONDITION_TEXT"></a>
+                         @if(!IsAgreedtoNCETermsAndConditionOnOrder && cartSubmitButton){
+                             <span class="text-danger">{{'TRANSLATE.CUSTOMER_ORDER_CART_NCE_TERMS_AND_CONDITION_IS_NOT_ENABLED_TEXT' | translate}}</span>
+                         }
+                        </label>
+                     </div>
+                 }
+    
+                <!--Schedule Order-->
+                @if(lazyLoadedProducts.length > 0 && EnableScheduleOrder === 'Yes' && !IsContainsLicenseSupport){
+                    <div class="ms-5 mb-5 form-check ps-3" [appPermission]="'SCHEDULE_ORDER'">
+                        <label class="form-check form-check-inline ps-1">
+                            <input class="form-check-input" type="checkbox" name="IsScheduleOrder" [(ngModel)]="IsScheduleOrder" (ngModelChange)="scheduleOrderChange()" />
+                            <span class="font ms-3 p-no-padding p-no-margin" style="display:inline-block;">{{ 'TRANSLATE.SCHEDULE_ORDER_CHECKBOX_TEXT' | translate }}</span><!--<span>I agree to schedule an order for future date</span>-->
+                        </label>
+                    </div>
+                }
+                @if(IsScheduleOrder && lazyLoadedProducts.length > 0){
+                    <div class="mb-5" style="display:flex;">
+                        <span class="font ms-3 p-no-padding p-no-margin" style="display:inline-block;">{{ 'TRANSLATE.CUSTOM_END_DATE_INFO_FOR_SCHEDULE_ORDER' | translate}}</span>
+                        <i class="fas fa-info-circle fa-lg pt-1 ms-3" style="color: #F0AD4E;" aria-hidden="true"></i>
+                    </div>
+                }
+                @if(IsScheduleOrder && lazyLoadedProducts.length > 0){
+                    <div class="mb-5" ng-controller="DatepickerUIController">
+                        <div class="input-group">
+                            <!-- uib-datepicker-popup="{{''MMM dd, yyyy HH:mm:ss''}}"  -->
+                            <input readonly is-open="opened"
+                                [minDate]="{year: currentDate.year, month: currentDate.month, day: (currentDate.day)}"
+                                [max]="toMaxDate"
+                                ngbDatepicker 
+                                [readOnly]="true"
+                                [placement]="['bottom-end', 'top-end', 'bottom-start', 'top-start' ]" 
+                                #ad="ngbDatepicker"
+                                class="form-control" 
+                                placeholder="{{'TRANSLATE.SCHEDULE_ORDER_DATE_PLACEHOLDER_TEXT'|translate}}"
+                                [(ngModel)]="ScheduleDate"
+                                ng-init="vm.ScheduleDate" 
+                                name="scheduledate" 
+                                [required]="IsScheduleOrder" 
+                            />
+                            <button class="btn btn-secondary btn-sm" (click)="ad.toggle()" type="button"><i
+                                    class="ki-outline ki-calendar fs-3 text-primary"></i></button>
+                        </div>
+                        @if((formCartSubmit||cartSubmitButton) && !ScheduleDate){
+                            <span class="text-danger">{{'TRANSLATE.SCHEDULE_DATE_VALIDATION_ERROR_MESSAGE' | translate}}</span>
+                        }
+                    </div>
+                }
+    
+                <!--begin::Footer-->
+                <button type="button" class="btn btn-success btn-lg btn-block w-100" (click)="gotoCart()" appBusyLoader><span translate="TRANSLATE.CUSTOMER_CART_BUTTON_TEXT_CONTINUE_SHOPPING"></span></button> 
+                 @if(!IsScheduleOrder && isEligibleForOrder === true && !CartHasOnlyInstantPayItems && !IsContainsLicenseSupport && IsCartProcessingCompleted){ 
+                    <button class="btn btn-primary btn-lg btn-block w-100 mt-2"
+                       busy
+                       busy-when-url="api/carts"
+                       busy-add-classes="disabled"
+                       not-busy-remove-classes="disabled" 
+                       [ngClass]="isOrderProcessing"
+                       [disabled]="lazyLoadedProducts.length == 0"
+                       (click)="checkoutCart()" appBusyLoader>
+                        {{'TRANSLATE.CUSTOMER_CART_BUTTON_TEXT_PLACE_ORDER' | translate}}
+                    </button>
+                }
+                <!-- {{IsScheduleOrder ? 'IsScheduleOrder':''}}{{isEligibleForOrder ? 'isEligibleForOrder' : ''}}{{CartHasOnlyInstantPayItems ? 'CartHasOnlyInstantPayItems' : ''}}{{IsCartProcessingCompleted ? 'IsCartProcessingCompleted' : ''}} -->
+                @if(IsScheduleOrder && lazyLoadedProducts.length > 0 && isEligibleForOrder == true && CartHasOnlyInstantPayItems === false && IsContainsLicenseSupport === false && IsCartProcessingCompleted){
+                    <button [appPermission]="'CART_CHECKOUT'" type="button" class="btn btn-warning btn-lg btn-block w-100 mt-2" (click)="scheduleOrder()" appBusyLoader>
+                        {{'TRANSLATE.SCHEDULE_AN_ORDER_BUTTON_TEXT' | translate}}
+                    </button>
+                } 
+                @if(CartHasOnlyInstantPayItems === true && IsCartProcessingCompleted === true && IsInstantPayPaymentExempt === false){
+                    <button type="button" class="btn btn-primary btn-lg btn-block w-100 mt-2" (click)="gotoPayNow()" appBusyLoader><span translate="TRANSLATE.CUSTOMER_CART_BUTTON_TEXT_PAY_NOW"></span></button>
+                }
+                @if(CartHasOnlyInstantPayItems === true && IsCartProcessingCompleted === true && IsInstantPayPaymentExempt === true){
+                    <button type="button" class="btn btn-primary btn-lg btn-block" (click)="gotoPayNow()" appBusyLoader><span translate="TRANSLATE.CUSTOMER_CART_BUTTON_TEXT_PLACE_ORDER"></span></button>
+                }
+                <!--end::Footer-->
+            </div>
+            <!--end::Body-->
+        </div>
+    </div>
+</div>
+
+<ng-template #cartModal let-modal>
+    <div class="modal-dialog m-0 m-0" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="exampleModalLongTitle">
+                    <span class="bold word-break-all ">
+                        {{CartLineItemName}}
+                    </span>
+                </h2>
+                <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModal()" data-bs-dismiss="modal">
+                    <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+                </div>
+                <!-- <div class="d-flex align-items-center justify-content-between" (click)="closeModal()">
+                    <div>
+                        <a><i class="ki-duotone ki-cross text-danger fs-2x">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                            </i>
+                        </a>
+                    </div>
+                </div> -->
+            </div>
+            <div class="modal-body scroll fixed-height-one" >
+                
+                  <!-- @if (!!datatableConfig) {
+                    <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+                    </app-c3-table>
+                  } -->
+                    <table class="table" ng-table="vm.commentsTable" template-pagination="custom/pager">
+                        <thead style="background-color:white">
+                        </thead>
+                        <tbody>
+                            @for(row of allCommentsData; track $index) {
+                                <tr>
+                                    <td>
+                                        <div class="message">
+                                            <div class="d-flex flex-column mb-5" [ngClass]="{'align-items-start':row.IsAuthor== true,'align-items-end': row.IsAuthor == false}">
+                                                @if(row.IsAuthor){
+                                                    <div class="d-flex align-items-center" ng-if="row.IsAuthor== true">
+                                                        <div class="symbol  symbol-circle symbol-light-primary me-3">
+                                                            <span class="symbol-label font-size-h5 bg-light-primary text-primary fw-semibold me-2"> {{row.CreateBy | formatforinitials}} </span>
+                                                        </div>
+                                                        <div>
+                                                            <a class="text-dark-75 text-gray-800 cursor-pointer text-hover-primary font-weight-bold font-size-h6 me-2">
+                                                                <span>{{row.CreateBy}}</span>
+                                                            </a>
+                                                            <span class="text-muted font-size-sm">{{row.CreateDate | dateTimeFilter : globalDateFormat}}</span>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                @if(!row.IsAuthor){
+                                                    <div class="d-flex align-items-center" ng-if="row.IsAuthor== false">
+                                                        <div>
+                                                            <span class="text-muted font-size-sm me-1">{{row.CreateDate | dateTimeFilter : globalDateFormat}}</span>
+                                                            <a class="text-dark-75 text-gray-800 cursor-pointer text-hover-primary font-weight-bold font-size-h6">{{row.CreateBy}}</a>
+                                                        </div>&nbsp;
+                                                        <div class="symbol symbol-circle symbol-light-primary  ">
+                                                            <span class="symbol-label font-size-h5 bg-light-primary text-primary fw-semibold me-2"> {{row.CreateBy | formatforinitials}} </span>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                <div class="mt-2 rounded p-5  text-dark-50 font-weight-bold font-size-lg text-left max-w-400px me-2" [ngClass]="{'bg-light-success':row.IsAuthor=== true,'bg-light-info': row.IsAuthor === false}">
+                                                    {{row.Content}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                            @if(allCommentsData?.length==0){
+                                <tr>
+                                    <td colspan="1">
+                                        <div class="d-flex justify-content-center">
+                                            <app-common-no-record></app-common-no-record>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                <!-- </perfect-scrollbar> -->
+            </div>
+            <div class="modal-footer">
+                <textarea class="form-control border-0 p-0" rows="2" placeholder="{{'TRANSLATE.CUSTOMER_CART_COMMENT_INPUT_PLACEHOLDER_TEXT' | translate}}" required [(ngModel)]="newComment"></textarea>
+                <div class="d-flex align-items-center justify-content-between mt-5">
+                    <div class="mr-3">
+                    </div>
+                    <div>
+                        <a class="btn btn-primary btn-sm" [ariaDisabled]="sendCommentLoading" (click)="saveCartlineComments()">{{sendCommentLoading ? ('TRANSLATE.COMMON_LOADING_MESSAGE' | translate) : ('TRANSLATE.NEW_COMMENT_SEND' | translate)}}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

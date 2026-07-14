@@ -1,0 +1,58 @@
+<ng-template #actionHeader>
+  <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+    <button type="button" class="btn btn-sm fw-semibold btn-light-primary me-3" [routerLink]="['/partner/customers']">
+      <i class="ki-outline ki-to-left fs-2"></i>
+     <span translate="TRANSLATE.PARTNER_CUSTOMER_PLANS_BTN_TEXT_BACK_TO_CUSTOMERS"></span>
+    </button>
+  </div>
+</ng-template>
+<div class="d-flex flex-column-fluid">
+  <!--begin::Container-->
+  <div class="container-fluid">
+      <!--begin::Card-->
+      <div class="card card-custom">
+          <div class="card-body">
+              <div class="form-group row">
+                  <div class="col-md-12">
+                      <label class="control-label">
+                          <b><span translate="TRANSLATE.REQUEST_A_RESELLER_RELATIONSHIP_HELP_LINE_1"></span></b>
+                      </label>
+                  </div>
+              </div>
+              <!-- <div class="form-group row">
+                  <div class="col-12 col-md-12 col-lg-12 col-xl-12 mt-4">
+                      <div class="form-check d-flex align-items-md-center align-items-start align-items-sm-start align-items-lg-center align-items-xl-center">
+                          <input type="checkbox" class="form-check-input" [(ngModel)]="CanConsiderDAP" name="CanConsiderDAP" (change)="BuildMessage()"> &nbsp;
+                          <label class="form-check-label">
+                              <span translate="TRANSLATE.REQUEST_A_RESELLER_RELATIONSHIP_HELP_LINE_2"></span>
+                          </label>
+                      </div>
+                  </div>
+              </div> -->
+              <div class="form-group row mt-4">
+                  <div class="col-md-12 mt-4 mb-4">
+                      <label class="control-label">
+                          <b><span translate="TRANSLATE.REQUEST_A_RESELLER_RELATIONSHIP_LBL_EMAIL_TEXT"></span></b>
+                      </label>
+                      <textarea *ngIf="(ResellerRelationshipDetails?.HasSupportsResellersWithBusinessId == 'Yes' && ResellerRelationshipDetails?.ProviderBusinessId != null && ResellerRelationshipDetails?.ProviderBusinessId != '')" [(ngModel)]="resellerRelationshipRequestMessage" (change)="OnRelationshipRequestMessageChange()" rows="24" class="form-control textarea-autoresizing"></textarea>
+                      <textarea *ngIf="!(ResellerRelationshipDetails?.HasSupportsResellersWithBusinessId == 'Yes' && ResellerRelationshipDetails?.ProviderBusinessId != null && ResellerRelationshipDetails?.ProviderBusinessId != '')" [(ngModel)]="resellerRelationshipRequestMessage" (change)="OnRelationshipRequestMessageChange()" rows="18" class="form-control textarea-autoresizing"></textarea>
+                  </div>
+              </div>
+              <div class="form-group row float-end">
+                  <div class="col-md-12">
+                      <div class="float-right">
+                        <a class="btn btn-sm fw-semibold btn-light-primary me-2" ngxClipboard [cbContent]="resellerRelationshipRequestMessage" (click)="ConfirmCopy()">
+                          <i class="ki-outline ki-copy"></i>
+                          <span translate="TRANSLATE.BTN_TEXT_COPY_TO_CLIPBOARD"></span>
+                        </a>
+                        <a class="btn btn-sm fw-semibold btn-light-primary" href="mailto:?subject={{emailSubject}}&amp;body={{EncodedRelationshipRequestMessage}}" data-bi-id="OpenInEmailLink" data-bi-name="OpenInEmailLink" data-bi-slot="4009">
+                            <i class="ki-outline ki-sms"></i>
+                            <span translate="TRANSLATE.BTN_TEXT_OPEN_IN_EMAIL"></span>
+                        </a>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>

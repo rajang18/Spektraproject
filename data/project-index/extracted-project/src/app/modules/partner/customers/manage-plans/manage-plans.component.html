@@ -1,0 +1,58 @@
+<ng-template #actionHeader>
+  <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+    <button type="button" [appPermission] = "'CHANGE_PURCHASED_PRODUCTS_PLAN'" class="btn btn-sm fw-semibold btn-light-primary" (click)="ChangePlan()">
+      <span translate="TRANSLATE.PARTNER_CUSTOMER_PLANS_CHANGE_PLAN"></span>
+    </button>
+    <button type="button" class="btn btn-sm fw-semibold btn-primary" (click)="backToList()">
+      <i class="ki-outline ki-to-left fs-2"></i> <span
+        translate="TRANSLATE.PARTNER_CUSTOMER_PLANS_BTN_TEXT_BACK_TO_CUSTOMERS"></span>
+    </button>
+  </div>
+</ng-template>
+
+<div class="card">
+  <div class="card-body overflow-auto">
+    <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+      <div>
+        @if(data.IsActive === true){
+        <a class="btn btn-light-warning btn-sm " [appPermission]="'BTN_ASSIGN_PLAN_TO_CUSTOMER'"
+          (click)="UpdateCustomerPlanStatus(data.InternalPlanId, false, data.IsActive)">
+          <span translate="TRANSLATE.PARTNER_CUSTOMER_PLAN_BUTTON_TEXT_DISABLE"></span>
+        </a>
+        }
+        @if(data.IsActive === false){
+        <a class="btn btn-light-primary btn-sm " [appPermission]="'BTN_ASSIGN_PLAN_TO_CUSTOMER'"
+          (click)="UpdateCustomerPlanStatus(data.InternalPlanId, true, data.IsActive)">
+          <span translate="TRANSLATE.PARTNER_CUSTOMER_PLAN_BUTTON_TEXT_ENABLE"></span>
+        </a>
+        }
+        @if(data.IsActive === null){
+        <a class="btn btn-light-success btn-sm " [appPermission]="'BTN_ASSIGN_PLAN_TO_CUSTOMER'"
+          (click)="UpdateCustomerPlanStatus(data.InternalPlanId, true, data.IsActive)">
+          <span translate="TRANSLATE.PARTNER_CUSTOMER_PLAN_BUTTON_TEXT_ASSIGN"></span>
+        </a>
+        }
+      </div>
+    </ng-template>
+
+    @if(showTable){
+    <div class="col-md-12 d-flex justify-content-between my-1">
+      <div class="d-flex align-items-center position-relative my-1">
+        <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
+          <span class="custom-path1"></span>
+          <span class="custom-path2"></span>
+        </i>
+        <input type="text" data-field="Name" data-action="filter" placeholder="Search..."
+          class="header-input-field form-control form-control-solid w-200px ps-10">
+      </div>
+    </div>
+    <ng-container>
+      @if (!!datatableConfig) {
+      <app-c3-table [datatableConfig]="datatableConfig">
+      </app-c3-table>
+      }
+    </ng-container>
+    }
+
+  </div>
+</div>

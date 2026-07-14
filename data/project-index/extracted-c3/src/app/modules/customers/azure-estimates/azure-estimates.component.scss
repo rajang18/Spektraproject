@@ -1,0 +1,34 @@
+.dropdown-menu.dropdown-menu-md {
+    width: 250px;
+}
+
+.navi {
+    padding: 0;
+    margin: 0;
+    display: block;
+    list-style: none;
+}
+
+.navi .navi-item {
+    padding: 0;
+    display: block;
+    list-style: none;
+}
+
+.navi .navi-item .navi-link {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    color: black; /* Default state: black text */
+    text-decoration: none; /* Remove underline */
+    font-size: 1rem; /* Set font size */
+}
+
+.navi .navi-item .navi-link:hover {
+    color: #3699FF; /* Hover state: blue text */
+    background-color: transparent; /* Ensure background doesn't change */
+}

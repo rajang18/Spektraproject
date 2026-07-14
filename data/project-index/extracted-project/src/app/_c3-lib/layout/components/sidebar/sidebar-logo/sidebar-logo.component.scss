@@ -1,0 +1,9 @@
+.w-50px{
+    width: 150px;
+}
+.object-fill{
+    object-fit: fill;
+}
+.app-sidebar-toggle.active{
+    transform: translate(-50%, -50%) rotate(180deg) !important;
+}

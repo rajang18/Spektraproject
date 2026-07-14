@@ -1,0 +1,52 @@
+<style>
+    input::-ms-reveal,
+    input::-ms-clear {
+        display: none;
+    }
+</style>
+<div class="form-group mb-1 row mt-6" [formGroup]="form" *ngIf="!cc.IsTenantConfiguration && data.IsShowOnScreen">
+    <div class="form-group mb-1 row mt-6">
+            <label class="col-4 col-form-label me-2">
+                <span translate="{{'TRANSLATE.'+ data.DisplayName | translate}}"></span>
+                <!-- why below was missed ? -->
+                <span class="text-danger" *ngIf="data.IsRequired">*</span>
+                <span>
+                    <i class="ki-duotone ki-information-2 fs-8 ms-1 bottom-10" aria-hidden="true" ngbTooltip="{{'TRANSLATE.'+ data.Description  | translate}}">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                        <span class="path3"></span>
+                    </i>
+                </span>
+            </label>
+            <div class="col-md-6 pe-0">
+               
+                <div class="input-group">
+                    <input type="{{inputType}}" class="form-control form-control-sm" [formControlName]="frmControlName" id="{{data.Name}}" ng-model="datasource.Value" name="{{data.Name}}" [disabled]="!data.IsManagedByPartner" />
+                    <div class="input-group-prepend">
+                        <span class="input-group-text rounded-start-0" id="basic-addon1">
+                            <!-- <i [ngClass]="{'fa fa-eye': isPasswordVisible(data.Name), 'fa fa-eye-slash': !isPasswordVisible(data.Name)}"
+                            (click)="togglePasswordVisibility(data.Name)"></i> -->
+                            @if(isChecked){
+                                <i class="ki-outline ki-eye fs-4"
+                            (click)="isPasswordVisible(data.Name)"
+                            ngbTooltip="{{'TRANSLATE.' + toolTipTextForMaskedControleTypeIcon  | translate}}"
+                            ></i>
+                            } 
+                            @else {
+                                <i class="ki-outline ki-eye-slash fs-4"
+                                (click)="isPasswordVisible(data.Name)"
+                                ngbTooltip="{{'TRANSLATE.' + toolTipTextForMaskedControleTypeIcon  | translate}}"
+                                ></i>
+                            }
+                           
+                        </span>
+                    </div>
+                    
+                </div>
+                <!-- validation error - required -->
+                @if(form.get(data.Name)?.touched && form.get(data.Name)?.errors?.required){
+                    <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                }
+            </div>
+    </div>
+</div>

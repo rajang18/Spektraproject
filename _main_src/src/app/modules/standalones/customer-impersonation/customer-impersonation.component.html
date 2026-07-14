@@ -1,0 +1,57 @@
+<div class="modal-dialog m-0 modal-dialog m-0-centered w-100">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="" id="modal-title">
+                <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_TD_BUTTON_TOOLTIP_TEXT_QUICK_IMPERSONATION"
+                    class=""></span>
+            </h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModalPopup()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+              </div>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <div>
+                <h5>
+                    <span translate="TRANSLATE.QUICK_IMPERSONATION_HEADER_TEXT" class="font-size-h6 "></span>
+                </h5>
+                <div class="row" style="overflow: scroll;" [ngClass]="{'custom-border': adminUserList?.length < 3}">
+                    <div class="col-md-12">
+                        <ng-template #name let-data="adtData" let-emitter="captureEvents">
+                            <div class="d-flex align-items-center fw-semibold"  style="word-break:break-word;">
+                                @if(data.DisplayName!=null) {
+                                    <span >{{data.DisplayName}}</span>
+                                }
+                                @if(data.DisplayName==null) {
+                                    <span>{{data.EmailId}}</span>
+                                }
+                            </div>
+                        </ng-template>
+
+                        <ng-template #role let-data="adtData" let-emitter="captureEvents">
+                            @if(data?.UserRole){
+                            <div class="d-flex align-items-center">
+                                <span translate="TRANSLATE.{{data?.UserRole}}"></span>
+                            </div>
+                            }
+                        </ng-template>
+                        
+                        <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+                            <div>
+                                <button class="btn btn-light-primary btn-active-primary btn-sm" (click)="impersonate(data)">{{'TRANSLATE.QUICK_IMPERSONATION_TABLE_ACTION_BUTTON_YTEXT_IMPERSONATION' | translate}}</button>
+                            </div>
+                        </ng-template>
+                        @if(!!datatableConfig)
+                        {
+                        <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" [searchFilter]="false">
+                        </app-c3-table>
+                    }
+                    </div>
+                </div>
+            </div><!-- end ngIf: vm.AdminUserList.length>0 -->
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary btn-active-primary btn-sm" (click)="closeModalPopup()"><span
+                    translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span></button>
+        </div>
+    </div>
+</div>

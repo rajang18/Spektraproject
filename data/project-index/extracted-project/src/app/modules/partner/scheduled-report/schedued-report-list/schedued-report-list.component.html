@@ -1,0 +1,72 @@
+<ng-template #actionHeader>
+  <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+      <button type="button" class="btn btn-sm fw-bold btn-light-primary me-1" (click)="showHelpText = !showHelpText">
+          <span translate="TRANSLATE.CHANGE_PLAN_HELP"></span>&nbsp;
+          <i class="ki-outline ki-question-2 fs-4"></i>
+      </button>
+  </div>
+</ng-template>
+
+
+<div class="card">
+  <div class="card-body">
+    <div class="m-heading-1 border-green m-bordered" *ngIf="showHelpText">
+      <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+        <div class="card-title">
+          <h6 class="fw-bold">{{'TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_HEADING_SCHEDULED_REPORTS' | translate}}</h6>
+        </div>
+        <div class="row m-heading-1 border-green m-bordered">
+          <ul class="ms-8">
+            <li>{{'TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_SCHEDULED_REPORTS_1' | translate}}</li>
+            <li>{{'TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_SCHEDULED_REPORTS_2' | translate}} </li>
+            <li>{{'TRANSLATE.CPV_CONSENT_VIEW_INSTRUCTIONS_SCHEDULED_REPORTS_3' | translate}} </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+      <div class="d-flex justify-content-end">
+        <div class="btn-group">
+          <div class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto"
+               ngbTooltip="{{'TRANSLATE.PARTNER_SCHEDULED_REPORT_TABLE_TD_BUTTON_TOOLTIP_TEXT_RECIPIENTS' | translate}}"
+               [ngClass]="toolbarButtonHeightClass" (click)="scheduledReportRecipient(data)">
+            <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+              <i class="ki-outline ki-profile-user text-primary">
+                <!-- <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                    <span class="path4"></span> -->
+              </i>
+            </span>
+          </div>
+        </div>
+        <div class="btn-group">
+          <div class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto"
+               ngbTooltip="{{'TRANSLATE.PARTNER_SCHEDULED_REPORT_TABLE_TD_BUTTON_TOOLTIP_TEXT_RUN_HISTORY' | translate}}"
+               [ngClass]="toolbarButtonHeightClass" (click)="scheduledreportrunhistory(data)">
+            <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+              <i class="ki-outline ki-arrows-loop text-primary">
+                <!-- <span class="path1"></span>
+                   <span class="path2"></span> -->
+              </i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+
+    <!-- Check if datatableConfig is defined and then render the table -->
+    <ng-container *ngIf="datatableConfig">
+      <app-c3-table [reload]="reloadEvent" [hasPagination]="hasPagination" [datatableConfig]="datatableConfig">
+      </app-c3-table>
+    </ng-container>
+
+    <ng-template #shareableReportDescription let-data="adtData">
+      <span class="fw-semibold">{{data.ShareableReportDescription | translate}}</span>
+    </ng-template>
+
+    <ng-template #scheduledDatetemp let-adtData="adtData">
+       <span>  {{ 'TRANSLATE.' + adtData.ScheduledDate | translate:{ recurrenceDay: adtData.RecurrencePointInTime } }}</span>
+    </ng-template>
+  </div>
+</div>

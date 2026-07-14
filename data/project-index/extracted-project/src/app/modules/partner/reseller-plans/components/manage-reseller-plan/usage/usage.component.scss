@@ -1,0 +1,8 @@
+.product-wrapper {
+    position: relative;
+    height: calc(100vh - (var(--bs-app-footer-height) + var(--bs-app-header-height) + var(--bs-app-toolbar-height) + 100px));
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 10px;
+    margin:10px 0px;
+}

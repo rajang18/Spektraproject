@@ -1,0 +1,45 @@
+<ng-container [formGroup]="emailRowForm">   
+    <td>
+        <select class="form-select form-select-sm" formControlName="emailType">
+             <option value="">{{'TRANSLATE.selectEmailType' | translate}}</option>
+            @for(type of emailTypes; track $index){
+            <option [value]="type?.ID">
+                {{'TRANSLATE.'+type?.Description | translate}}</option>
+            }
+        </select>
+        @if(emailRowForm.get('emailType')?.errors?.required &&
+        emailRowForm.get('emailType').touched){
+        <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+        }
+    </td>
+    <td>
+        <input type="text" class="form-control form-control-sm" formControlName="email"
+            placeholder="{{'TRANSLATE.enterEmail' | translate}}">
+        @if(emailRowForm.get('email')?.errors?.required &&
+        emailRowForm.get('email').touched){
+        <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+        }
+        @if(emailRowForm.get('email')?.errors?.invalidEmail &&
+                            emailRowForm.get('email')?.touched && 
+                            emailRowForm.get('email')?.value){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_PLEASE_ENTER_A_VALID_EMAIL"></span>
+                        }
+    </td>
+
+    <td>
+        <div class="d-flex justify-content-end">
+            <button ngbTooltip="{{'TRANSLATE.PROFILE_USER_BUTTON_TOOLTIP_TEXT_SAVE_2' | translate}}"  class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto d-flex align-items-center" [appPermission]="'ADD_CUSTOMER_EMAIL'"
+                (click)="savePhoneTypes()" [ngClass]="toolbarButtonHeightClass" [disabled]="emailRowForm.invalid">
+                <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg h-20px w-20px">
+                    <i class="ki-outline ki-file-added text-primary"></i>  
+                </span>
+            </button>
+            <button ngbTooltip="{{'TRANSLATE.PROFILE_USER_BUTTON_TOOLTIP_TEXT_CANCEL' | translate}}" class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto d-flex align-items-center"
+            [ngClass]="toolbarButtonHeightClass"(click)="onCancel()" >
+            <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg h-20px w-20px">
+                <i class="ki-outline ki-cross text-primary"></i>
+            </span>
+        </button>
+        </div>
+    </td>
+</ng-container>

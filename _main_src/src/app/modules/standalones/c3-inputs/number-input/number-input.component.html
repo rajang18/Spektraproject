@@ -1,0 +1,223 @@
+@if(cc.IsTenantConfiguration){
+<div class="row">
+    <div class="col-md-5">
+        <div class="fs-6 mb-3 pt-3 align-items-center d-inline-flex text-start">
+            <span class="fw-semibold">{{'TRANSLATE.'+data.DisplayName | translate}}<span class="text-danger ms-1"
+                    *ngIf="data.IsRequired">*</span>
+                <i class="ki-duotone ki-information-2 fs-8 ms-1 mt-1 align-self-baseline"
+                    ngbTooltip="{{'TRANSLATE.'+data.Description | translate }}">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                </i></span>
+        </div>
+    </div>
+    <div class="col-md-7">
+        @if (pageMode === 'list') {
+        <div>
+            <div class="form-group mb-2 row my-auto" [formGroup]="form">
+                <div class="col-8 fs-6 mb-3 pt-3  d-flex align-items-center justify-content-start text-start">
+                    {{data.Value}}
+                </div>
+                <div class="col-4 text-end">
+                    @if (cc.Permissions.HasSaveConfiguration === 'Allowed' && data.IsCustom === true) {
+                    <button class="btn btn-light-primary btn-sm btn-icon tooltips me-2" (click)="Edit()"
+                        ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_EDIT'|translate}}"><i
+                            class="ki-outline ki-pencil"></i></button>
+                    }
+                    @if (cc.Permissions.HasRevertConfiguration === 'Allowed' && data.IsCustom === true) {
+                    <button class="btn btn-light-primary btn-sm btn-icon tooltips me-2"
+                        (click)="revertTenantConfig(data)" ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_REVERT'|translate}}"><i
+                            class="ki-outline ki-arrow-circle-left"></i></button>
+                    }
+                    @if (cc.Permissions.HasOverRideConfiguration === 'Allowed' && data.IsCustom === false) {
+                    <button class="btn btn-light-primary btn-sm btn-icon tooltips me-2" (click)="Edit()"
+                        ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_OVERRIDE'|translate}}"><i
+                            class="ki-outline ki-arrow-circle-right"></i></button>
+                    }
+                </div>
+            </div>
+        </div>
+        }
+        @if (pageMode==='edit') {
+        <div>
+            <div class="form-group mb-2 row" [formGroup]="form">
+                <div class="col-8 pt-3">
+                    @if ((data.Name !== 'RIMultiplyPercentage' && data.Name
+                    !== 'PerpetualSoftwareMultiplyPercentage' && data.Name !== 'SoftwareSubscriptionMultiplyPercentage'
+                    && data.Name !==
+                    'ThirdPartySubscriptionMultiplyPercentage' && data.Name !== 'TransactionAmountLimit' &&
+                    data.DisplayName !=='TENANT_CONFIG_DISP_COOL_OFF_PERIOD') && data.Name !==
+                    'AzureUsageMultiplyPercentage' && data.Name !== 'AzureSavingsPlanMultiplyPercentage' && data.Name !== 'ACHProcessingFeeInPercentage' && data.Name !== 'CreditCardProcessingFeeInPercentage') {
+                    <input type="number" class="form-control form-control-sm" id="{{data.Name}}"
+                        [formControlName]="frmControlName" appDecimalNumber name="data.Name" required />
+                    }
+                     @if (data.Name === 'ACHProcessingFeeInPercentage' || data.Name === 'CreditCardProcessingFeeInPercentage') {
+                    <input type="number" class="form-control form-control-sm" id="{{data.Name}}" pattern="^[0-9]+(\.[0-9]{1,8})?$"
+                        [formControlName]="frmControlName" name="{{data.Name}}" decimal-number-zero [required]="data.IsRequired"
+                        [disabled]="!data.IsManagedByPartner" />
+                    }
+                    @if (data.Name === 'RIUsageMultiplyPercentage') {
+                    <input type="number" class="form-control form-control-sm" id="{{data.Name}}" pattern="^[0-9]+(\.[0-9]{1,8})?$"
+                        [formControlName]="frmControlName" name="{{data.Name}}" decimal-number-zero required
+                        [disabled]="!data.IsManagedByPartner" />
+                    }
+
+                    @if (data.Name === 'TransactionAmountLimit') {
+                    <input type="number" class="form-control form-control-sm" id="{{data.Name}}"
+                        [formControlName]="frmControlName" name="{{data.Name}}" required
+                        [disabled]="!data.IsManagedByPartner" pattern="^[0-9]+(\.[0-9]{1,8})?$" (keyup)="onBlur()">
+                    }
+
+
+                    @if (data.DisplayName ==='TENANT_CONFIG_DISP_COOL_OFF_PERIOD') {
+                    <input type="number" pattern="/^[0-9]*$/" class="form-control form-control-sm" id="{{data.Name}}"
+                        [formControlName]="frmControlName" name="{{data.Name}}" required
+                        [disabled]="!data.IsManagedByPartner" />
+                    }
+
+
+                    <!--<input type="text" ng-if="data.Name !== 'OneTimeMultiplyPercentage' && data.Name !== 'RIMultiplyPercentage' && data.Name !== 'PerpetualSoftwareMultiplyPercentage' && data.Name !== 'SoftwareSubscriptionMultiplyPercentage' && data.Name !== 'ThirdPartySubscriptionMultiplyPercentage' && data.Name !== 'TransactionAmountLimit' && data.Name !=== 'DaysToSendCartStatusNotification' && data.DisplayName !=='TENANT_CONFIG_DISP_COOL_OFF_PERIOD' && data.Name !== 'AzureUsageMultiplyPercentage'"
+                           class="form-control" id="{{data.Name}}"  pattern="/^[0-9]+$/" name="{{data.Name}}" [required]="data.IsRequired" [disabled]="!data.IsManagedByPartner" />-->
+
+                    @if (data.Name === 'RIMultiplyPercentage') {
+                    <input type="number" class="form-control form-control-sm" id="{{data.Name}}" 
+                        [formControlName]="frmControlName" pattern="^[0-9]+(\.[0-9]{1,8})?$" name="{{data.Name}}"
+                        [required]="data.IsRequired" [disabled]="!data.IsManagedByPartner" (keyup)="onBlur()" />
+                    }
+
+
+                    @if (data.Name === 'PerpetualSoftwareMultiplyPercentage') {
+                    <input type="number" class="form-control form-control-sm" [formControlName]="frmControlName"
+                        id="{{data.Name}}" pattern="^[0-9]+(\.[0-9]{1,8})?$" name="{{data.Name}}"
+                        [required]="data.IsRequired" [disabled]="!data.IsManagedByPartner" (keyup)="onBlur()" />
+                    }
+
+
+                    @if (data.Name === 'SoftwareSubscriptionMultiplyPercentage') {
+                    <input type="number" class="form-control form-control-sm" [formControlName]="frmControlName"
+                        id="{{data.Name}}" pattern="^[0-9]+(\.[0-9]{1,8})?$" name="{{data.Name}}"
+                        [required]="data.IsRequired" [disabled]="!data.IsManagedByPartner" (keyup)="onBlur()" />
+                    }
+
+
+                    @if (data.Name === 'ThirdPartySubscriptionMultiplyPercentage') {
+                    <input type="number" class="form-control form-control-sm" [formControlName]="frmControlName"
+                        id="{{data.Name}}" pattern="^[0-9]+(\.[0-9]{1,8})?$" name="{{data.Name}}"
+                        [required]="data.IsRequired" [disabled]="!data.IsManagedByPartner" (keyup)="onBlur()" />
+                    }
+
+
+                    @if (data.Name === 'AzureUsageMultiplyPercentage') {
+                    <input type="number" class="form-control form-control-sm" id="{{data.Name}}"
+                        [formControlName]="frmControlName" pattern="^[0-9]+(\.[0-9]{1,8})?$" name="{{data.Name}}"
+                        [required]="data.IsRequired" [disabled]="!data.IsManagedByPartner" (keyup)="onBlur()" />
+                    }
+
+                     @if (data.Name === 'AzureSavingsPlanMultiplyPercentage') {
+                    <input type="number" class="form-control form-control-sm" [formControlName]="frmControlName"
+                        id="{{data.Name}}" pattern="^[0-9]+(\.[0-9]{1,8})?$" name="{{data.Name}}"
+                        [required]="data.IsRequired" [disabled]="!data.IsManagedByPartner" (keyup)="onBlur()"  />
+                    }
+                </div>
+                <div class="col-4 pt-3 text-end">
+                    <div class="">
+                        <button class="btn btn-light-primary btn-sm btn-icon tooltips me-2"
+                            (click)="saveTenantConfig(data)" ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_SAVE'|translate}}"><i
+                                class="ki-outline ki-check"></i></button>
+                        <button class="btn btn-sm btn-light-danger text-danger  btn-icon tooltips me-2"
+                            (click)="cancelTenantConfig()" ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_CANCEL'|translate}}"><i
+                                class="ki-outline ki-cross"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+
+    </div>
+</div>
+}
+
+@if (!cc.IsTenantConfiguration && data.IsShowOnScreen) {
+<div class="form-group mb-1 row mt-6" [formGroup]="form">
+    <label class="col-4 col-form-label">
+        <span translate="{{'TRANSLATE.'+data.DisplayName}}"></span>
+        <!-- <span *ngIf="data.IsRequired" class="text-danger">*</span> -->
+        <i class="ki-duotone ki-information-2 fs-8 ms-1 bottom-10"
+            ngbTooltip="{{'TRANSLATE.'+data.Description | translate }}">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+        </i>
+    </label>
+    <div class="col-6">
+        @if (data.Name !== 'RIMultiplyPercentage' && data.Name !==
+        'PerpetualSoftwareMultiplyPercentage' && data.Name !== 'SoftwareSubscriptionMultiplyPercentage' && data.Name !==
+        'ThirdPartySubscriptionMultiplyPercentage' && data.Name !== 'DaysToSendCartStatusNotification' &&
+        data.DisplayName !=='TENANT_CONFIG_DISP_COOL_OFF_PERIOD' && data.Name !== 'AzureUsageMultiplyPercentage' && 
+        data.Name !== 'AzureSavingsPlanMultiplyPercentage' ) {
+        <input type="number" #text (input)="onChange(text.value)" (keyup)="onBlur()" [value]="data.Value"
+            class="form-control form-control-sm" id="{{data.Name}}" [formControlName]="frmControlName"
+            name="{{data.Name}}" [required]="data.IsRequired" [disabled]="!data.IsManagedByPartner">
+        }
+
+        @if (data.Name === 'RIMultiplyPercentage') {
+        <input type="text" #text (input)="onChange(text.value)" pattern="^[0-9]+(\.[0-9]{1,8})?$"  [value]="data.Value"
+            class="form-control form-control-sm" id="{{data.Name}}" [formControlName]="frmControlName"
+            name="{{data.Name}}" [required]="data.IsRequired" [disabled]="!data.IsManagedByPartner">
+        }
+
+        @if (data.Name === 'PerpetualSoftwareMultiplyPercentage') {
+        <input type="text" #text (input)="onChange(text.value)" [value]="data.Value" pattern="^[0-9]+(\.[0-9]{1,8})?$" 
+            class="form-control form-control-sm" id="{{data.Name}}" [formControlName]="frmControlName"
+            name="{{data.Name}}" [required]="data.IsRequired" [disabled]="!data.IsManagedByPartner">
+        }
+
+        @if (data.Name === 'SoftwareSubscriptionMultiplyPercentage') {
+        <input type="text" #text (input)="onChange(text.value)" [value]="data.Value" pattern="^[0-9]+(\.[0-9]{1,8})?$"
+            class="form-control form-control-sm" id="{{data.Name}}" [formControlName]="frmControlName"
+            name="{{data.Name}}" [required]="data.IsRequired" [disabled]="!data.IsManagedByPartner">
+        }
+
+        @if (data.Name === 'ThirdPartySubscriptionMultiplyPercentage') {
+        <input type="text" #text (input)="onChange(text.value)" [value]="data.Value" pattern="^[0-9]+(\.[0-9]{1,8})?$"
+            class="form-control form-control-sm" id="{{data.Name}}" [formControlName]="frmControlName"
+            name="{{data.Name}}" [required]="data.IsRequired" [disabled]="!data.IsManagedByPartner">
+        }
+
+        @if (data.Name === 'DaysToSendCartStatusNotification') {
+        <input type="number" #text (input)="onChange(text.value)" (keyup)="onBlur()" [value]="data.Value"
+            class="form-control form-control-sm" id="{{data.Name}}" [formControlName]="frmControlName"
+            name="{{data.Name}}" [required]="data.IsRequired" [disabled]="!data.IsManagedByPartner">
+        }
+
+        @if (data.Name === 'AzureUsageMultiplyPercentage') {
+        <input type="text" #text (input)="onChange(text.value)" [value]="data.Value" pattern="^[0-9]+(\.[0-9]{1,8})?$" 
+            class="form-control form-control-sm" id="{{data.Name}}" [formControlName]="frmControlName"
+            name="{{data.Name}}" [required]="data.IsRequired" [disabled]="!data.IsManagedByPartner" />
+        }
+
+
+        @if (data.DisplayName ==='TENANT_CONFIG_DISP_COOL_OFF_PERIOD') {
+        <input type="number" #text (input)="onChange(text.value)" (blur)="onBlur()" [value]="data.Value"
+            class="form-control form-control-sm" id="{{data.Name}}" [formControlName]="frmControlName"
+            name="{{data.Name}}" [disabled]="!data.IsManagedByPartner" />
+        }
+
+        @if (data.Name === 'AzureSavingsPlanMultiplyPercentage') {
+        <input type="text" #text (input)="onChange(text.value)" pattern="^[0-9]+(\.[0-9]{1,8})?$" [value]="data.Value"
+            class="form-control form-control-sm" id="{{data.Name}}" [formControlName]="frmControlName"
+            name="{{data.Name}}" [required]="data.IsRequired" [disabled]="!data.IsManagedByPartner">
+        }
+
+        @if(form.get(data.Name)?.touched && form.get(data.Name)?.errors?.required){
+        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+        }
+
+        @if(form.get(data.Name)?.touched && form.get(data.Name)?.errors?.pattern){
+        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_ENTER_VALID_PHONE_NUMBER"></span>
+        }
+
+    </div>
+</div>
+}

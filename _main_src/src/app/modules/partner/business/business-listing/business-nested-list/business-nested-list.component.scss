@@ -1,0 +1,17 @@
+::ng-deep{
+    app-business-nested-list{
+        table{
+            thead{
+                display: none !important;
+            }
+            tr:last-child {
+            .dt-control{
+                visibility: unset;
+              }
+            }
+        }
+        .dt-container.dt-bootstrap5.dt-empty-footer > .row:last-child {
+            display: none;
+        }
+    }
+}

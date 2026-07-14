@@ -1,0 +1,294 @@
+<div class="m-4">
+    <ng-container *ngIf="!!datatableConfig2">
+        <app-c3-table [reload]="reloadEvent2" [datatableConfig]="datatableConfig2">
+        </app-c3-table>
+    </ng-container>
+</div>
+<ng-template #customerName let-row="adtData" let-emitter="captureEvents">
+    <div class="fw-bold">
+        {{row.CustomerName}}
+        <br />
+        <span class="pt-5 pb-5" *ngIf="row.ResellerName !== null && row.ResellerName !== ''">{{row.ResellerName}}</span>
+    </div>
+</ng-template>
+
+<ng-template #actions let-data="adtData" let-emitter="captureEvents">
+    @if(activeServiceDetail.Name.toLowerCase() === 'autotask' && (data.ExportStatus === 'Success' ||
+    data.ValidationStatus === 'Failed' || data.ValidationStatus === 'Error')){
+    <div class="d-flex align-items-center" [appPermission]="'DEACTIVATE_PSA_LOG'">
+        <button ngbTooltip="{{'TRANSLATE.TOOLTIP_TEXT_DELETE_PSA_LOG'|translate}}" class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+            (click)="deactivatePSALog('logid',data.StagingTableID)">
+            <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg  h-20px w-20px">
+                <i class="ki-outline ki-trash text-primary" *ngIf="data.ExportStatus === 'Success'"></i>
+                <i class="ki-outline ki-trash text-primary"
+                    *ngIf="data.ValidationStatus === 'Failed' || data.ValidationStatus === 'Error'"></i>
+            </span>
+        </button>
+    </div>
+    }
+</ng-template>
+
+<ng-template #newStatusTemplate let-row="adtData" let-emitter="captureEvents">
+    <div>
+        {{'TRANSLATE.'+row.NewStatus | translate}}<span
+            *ngIf="row.OldStatus !== null && row.NewStatus !== row.OldStatus"><br /><sub>{{'TRANSLATE.FROM' |
+                translate}} {{'TRANSLATE.'+row.OldStatus | translate}}</sub></span>
+    </div>
+</ng-template>
+
+<ng-template #validationStatusTemplate let-row="adtData" let-emitter="captureEvents">
+    <div>
+        <div>
+            <span *ngIf="row.ValidationStatus === 'Success'">
+                {{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_SUCCESS' |
+                translate}}</span>
+            <span *ngIf="row.ValidationStatus === 'Failed'">
+                {{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_FAILED' |
+                translate}}</span>
+            <span class="text-warning" *ngIf="row.ValidationStatus === 'Warning'">
+                {{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_WARNING' | translate}}
+            </span>
+            <span class="text-warning"
+                *ngIf="row.ValidationStatus === 'Deactivated'">{{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_DEACTIVATED'
+                | translate}}</span>
+            <span class="text-danger"
+                *ngIf="row.ValidationStatus === 'Error'">{{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_ERROR'
+                | translate}}</span>
+            <span
+                *ngIf="row.ValidationStatus === 'Queued'">{{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_QUEUED'
+                | translate}}</span>
+            <span
+                *ngIf="row.ValidationStatus === 'In Progress'">{{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_IN_PROGRESS'
+                | translate}}</span>
+            <span class="text-danger"
+                *ngIf="row.ValidationStatus === 'Abandoned'">{{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_ABANDONED'
+                | translate}}</span>
+            <span
+                *ngIf="row.ValidationStatus === 'Processing'">{{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_IN_PROGRESS'
+                | translate}}</span>
+            <span class="text-danger"
+                *ngIf="row.ValidationStatus === 'Stopped'">{{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_STOPPED'
+                | translate}}</span>
+        </div>
+        @if(activeServiceDetail.Name.toLowerCase() === 'autotask'){
+            <div>
+                @for (item of row.ValidationError; track $index) {
+                    @if(item == 'SERVICE_NAME_LENGTH_ERROR'){
+                        <div>
+                            <span class="custom-text-warning-msg-color" *ngIf="!!item">{{'TRANSLATE.' + item | translate}}</span>
+                        </div>
+                    }@else{
+                        <div>
+                            <span class="text-danger" *ngIf="!!item">{{'TRANSLATE.' + item | translate}}</span>
+                        </div>
+                    }
+                }
+            </div>
+        }
+        @else {
+            <div>
+                <span class="text-danger" *ngIf="!!row.ValidationError">{{'TRANSLATE.' + row.ValidationError | translate}}
+                </span>
+            </div>
+        }
+        
+    </div>
+
+</ng-template>
+
+<ng-template #exportStatusTemplate let-row="adtData" let-emitter="captureEvents">
+    <div>
+        <div>
+            <span *ngIf="row.ExportStatus === 'Success'">
+                {{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_SUCCESS' |
+                translate}}</span>
+            <span
+                *ngIf="row.ExportStatus === 'Failed'">{{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_FAILED'
+                | translate}}</span>
+            <span class="text-warning"
+                *ngIf="row.ExportStatus === 'Warning'">{{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_WARNING'
+                | translate}}</span>
+            <span class="text-warning"
+                *ngIf="row.ExportStatus === 'Deactivated'">{{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_DEACTIVATED'
+                | translate}}</span>
+            <span class="text-danger"
+                *ngIf="row.ExportStatus === 'Error'">{{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_ERROR'
+                | translate}}</span>
+            <span
+                *ngIf="row.ExportStatus === 'Queued'">{{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_QUEUED'
+                | translate}}</span>
+            <span
+                *ngIf="row.ExportStatus === 'In Progress'">{{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_IN_PROGRESS'
+                | translate}}</span>
+            <span class="text-danger"
+                *ngIf="row.ExportStatus === 'Abandoned'">{{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_ABANDONED'
+                | translate}}</span>
+            <span
+                *ngIf="row.ExportStatus === 'Processing'">{{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_IN_PROGRESS'
+                | translate}}</span>
+            <span class="text-danger"
+                *ngIf="row.ExportStatus === 'Stopped'">{{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_SUMMARY_TABLE_CUSTOMER_STATUS_STOPPED'
+                | translate}}</span>
+
+        </div>
+        <div>
+            @if(activeServiceDetail.Name.toLowerCase() === 'autotask'){
+                <div>
+                    @for (item of row.ExportError; track $index) {
+                        <div> 
+                            <span class="text-danger" *ngIf="!!item">{{ item | c3Translate}}</span>
+                        </div>
+                    }
+                </div>
+            }@else{
+                <span class="text-danger" *ngIf="!!row.ExportError">{{'TRANSLATE.' + row.ExportError | translate}}</span>
+            }
+        </div>
+    </div>
+
+</ng-template>
+
+<ng-template #subscriptionNameTemplate let-row="adtData" let-emitter="captureEvents">
+    <div>
+        {{row?.SubscriptionName}}
+        <sup *ngIf="row.ProductForTrial != null && row.ProductForTrial != undefined && row.ProductForTrial != ''"
+            class="text-warning font-weight-normal"><span
+                translate="TRANSLATE.PLAN_MANAGE_TRAIL_OFFER_SYMBOL_TRAIL_OFFER"></span></sup>
+        <br />
+        <span class="label font-weight-bold label-inline pt-5 pb-5 "
+            *ngIf="row.EntityName && row.EntityName.toLowerCase() === 'site'">{{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_TABLE_LABLE_TEXT_SITE'
+            | translate}}: {{row.RecordName}}</span>
+        <span class="label font-weight-bold label-inline pt-5 pb-5 "
+            *ngIf="row.EntityName && row.EntityName.toLowerCase() === 'sitedepartment'">{{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_TABLE_LABLE_TEXT_DEPARTMENT'
+            | translate}}: {{row.RecordName}}</span>
+        <br />
+        <span class="text-white badge bg-warning ms-md-2 font-weight-bold" aria-hidden="true"
+            *ngIf="(row.ValidityType == 'Month(s)' && row.ProductForTrial == null )"
+            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">{{row.Validity}}
+            {{(row.Validity == 1? row.ValidityType === 'Month(s)'? 'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+            'TRANSLATE.TERM_DURATION_DESC_YEAR' : 'TRANSLATE.TERM_DURATION_DESC_YEARS') | translate }}</span>
+        <span class="label label-warning font-weight-bold label-inline mb-1 text-white badge bg-warning ms-md-2"
+            aria-hidden="true"
+            *ngIf="(row.ValidityType === 'Year(s)' || row.ValidityType === 'Year') && row.ProductForTrial == null"
+            [ngClass]="{'labelcolor':row.BillingCycleDescriptionKey == 'BILL_CYCLE_DESC_MONTHLY','TermLabelColor': row.BillingCycleDescriptionKey == 'BILL_CYCLE_DESC_ANNUAL'}"
+            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">{{row.Validity}}
+            {{(row.Validity == 1 ? row.ValidityType === 'Month(s)'? 'TERM_DURATION_DESC_MONTH' :
+            'TERM_DURATION_DESC_YEAR' : 'TERM_DURATION_DESC_YEAR(S)') | translate }}
+        </span>
+        <span *ngIf="row.BillingCycleName !== null && row.BillingCycleName !== ''"
+            class="label fw-bold label-inline text-white badge"
+            [ngClass]="{
+                'bg-warning': row.BillingCycleDescriptionKey  === 'BILL_CYCLE_DESC_MONTHLY',
+                'bg-success': row.BillingCycleDescriptionKey  === 'BILL_CYCLE_DESC_ANNUAL',
+                'bg-dark': row.BillingCycleDescriptionKey  === 'BILL_CYCLE_DESC_TRIENNIAL',
+                'bg-info': row.BillingCycleDescriptionKey  === 'BILL_CYCLE_DESC_ONETIME'
+            }" aria-hidden="true"
+            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCTS_BILLING_CYCLE' | translate}}" placement="top">
+            {{'TRANSLATE.' + row.BillingCycleDescriptionKey | translate}}
+        </span>
+        <span class="label label-warning font-weight-bold label-inline mb-1 text-white badge bg-warning ms-md-2"
+            aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TRIAL_PERIOD' | translate}}"
+            *ngIf="row.ProductForTrial != null">{{row.Validity}} {{ 'TRANSLATE.'+row.ValidityType | translate }}</span>
+        <span class="label label-light-info font-weight-bold label-inline text-info badge bg-light-info ms-md-2"
+            *ngIf="row.CategoryName && row.CategoryName.toLowerCase() == cloudHubConstants.CATEGORY_ONLINE_SERVICES_NEW_COMMERCE_EXPERIENCE"
+            ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CATEGORY' | translate}}">{{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE'
+            | translate}}</span>
+        <span class="label label-light-info font-weight-bold label-inline text-info badge bg-light-info ms-md-2"
+            *ngIf="row.CategoryName && row.CategoryName.toLowerCase() == cloudHubConstants.CATEGORY_CUSTOM"
+            ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CATEGORY' | translate}}">{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_TD_TEXT_CUSTOM'
+            | translate}}</span>
+        <span class="label label-light-info font-weight-bold label-inline text-info badge bg-light-info ms-md-2"
+            *ngIf="row.CategoryName && row.CategoryName.toLowerCase() == cloudHubConstants.CATEGORY_SOFTWARE_SUBSCRIPTIONS"
+            ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CATEGORY' | translate}}">{{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE_SOFTWARE_SUBSCRIPTIONS'
+            | translate}}</span>
+        <span class="label label-light-info font-weight-bold label-inline text-info badge bg-light-info ms-md-2"
+            *ngIf="row.CategoryName && row.CategoryName.toLowerCase() == cloudHubConstants.CATEGORY_PERPETUAL_SOFTWARE"
+            ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CATEGORY' | translate}}">{{'TRANSLATE.LABEL_TEXT_NEW_COMMERCE_EXPERIENCE_PERPETUAL_SOFTWARE'
+            | translate}}</span>
+        <span class="label label-light-info font-weight-bold label-inline text-info badge bg-light-info ms-md-2"
+            *ngIf="row.CategoryName && row.CategoryName.toLowerCase() == cloudHubConstants.CATEGORY_DISTRIBUTOR_OFFERS"
+            ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CATEGORY' | translate}}">{{'TRANSLATE.LABEL_TEXT_DISTRIBUTER_OFFER'
+            | translate}}</span>
+        <span class="label label-light-info font-weight-bold label-inline text-info badge bg-light-info ms-md-2"
+            *ngIf="row.CategoryName && row.CategoryName.toLowerCase() == cloudHubConstants.CATEGORY_AZURE_PLAN && !row.IsChildProduct"
+            ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CATEGORY' | translate}}">{{'TRANSLATE.LABEL_TEXT_AZURE_PLAN'
+            | translate}}</span>
+        <span class="label label-light-info font-weight-bold label-inline text-info badge bg-light-info ms-md-2"
+            *ngIf="row.CategoryName && row.CategoryName.toLowerCase() == cloudHubConstants.CATEGORY_AZURE_PLAN && row.IsChildProduct" 
+            ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CATEGORY' | translate}}">{{'TRANSLATE.LABEL_TEXT_AZURE_PLAN_ENTITLEMENT'
+            | translate}}</span>
+        <span *ngIf="row.MarketCode" class="label label-info label-inline mt-1 text-white badge bg-info ms-md-2"
+            ngbTooltip="{{row.MarketRegion}}">{{row.MarketCode}}</span>
+        
+        <span *ngIf="row.IsEST" class="badge EST-Pill-styling text-white ms-md-2" ngbTooltip="{{'TRANSLATE.CATEGORY_PILL_EST_TOOLTIP' | translate }}" >{{ 'TRANSLATE.CATEGORY_PILL_NAME_EST' | translate}}</span>
+        
+        <!-- <span *ngIf="row.BillingCycleName !== null && row.BillingCycleName !== ''"
+            class="label label-dark fw-bold label-inline text-white badge bg-dark"
+            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCTS_BILLING_CYCLE' | translate}}" placement="top">
+            {{'TRANSLATE.' + row.BillingCycleDescriptionKey | translate}}
+        </span> -->
+    </div>
+</ng-template>
+
+<ng-template #priceTemplate let-row="adtData" let-emitter="captureEvents">
+    <span>
+        {{row.NewPrice | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator
+        :
+        row.CurrencyDecimalSeperator}}
+        <span *ngIf="row.OldPrice !== null && row.OldPrice > 0 && row.NewPrice !== row.OldPrice"><br />
+            <sub>{{'TRANSLATE.FROM' | translate}}
+                {{row.OldPrice| CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces :
+                row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator}}
+            </sub>
+        </span>
+    </span>
+</ng-template>
+
+<ng-template #providerPriceTemplate let-row="adtData" let-emitter="captureEvents">
+    <span>
+        {{row.ProviderPrice | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces :
+        row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator}}
+        <span
+            *ngIf="row.OldProviderPrice !== null && row.OldProviderPrice > 0 && row.ProviderPrice !== row.OldProviderPrice && row.ConsumptionTypeName != 'Usage'"><br />
+            <sub>
+                {{'TRANSLATE.FROM' | translate}} {{row.OldProviderPrice | CurrencyFilter : row.CurrencySymbol :
+                row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator}}
+            </sub>
+        </span>
+    </span>
+</ng-template>
+
+<ng-template #status let-row="adtData" let-emitter="captureEvents">
+    <span>
+        {{'TRANSLATE.'+row.NewStatus | translate}}
+        @if(row.OldStatus !== null && row.NewStatus !== row.OldStatus) {
+        <span><br />
+            <sub>{{'TRANSLATE.FROM' | translate}}
+                {{'TRANSLATE.'+row.OldStatus | translate}}
+            </sub>
+        </span>
+        }
+    </span>
+</ng-template>
+
+<ng-template #quantity let-row="adtData" let-emitter="captureEvents">
+    @if (row.ConsumptionTypeName.toLowerCase() === cloudHubConstants.CONSUMPTION_USAGE_BASED) {
+    <span>
+        {{row.NewQuantity}}
+        @if(row.OldQuantity != null && row.OldQuantity != row.NewQuantity && additionType != this.cloudHubConstants.SUBSCRIPTION_HISTORY){
+        <span>
+            <br />
+            <sub>{{'TRANSLATE.FROM' | translate}} {{row.OldQuantity}}</sub>
+        </span>
+        }
+    </span>
+    }
+    @else if(row.ConsumptionTypeName.toLowerCase() !== cloudHubConstants.CONSUMPTION_USAGE_BASED) {
+    <span>
+        {{row.NewQuantity}}<span *ngIf="row.OldQuantity !== null && row.OldQuantity !== row.NewQuantity">
+            <br />
+            <sub>{{'TRANSLATE.FROM' | translate}} {{row.OldQuantity}}</sub>
+        </span>
+    </span>
+    }
+</ng-template>

@@ -1,0 +1,63 @@
+<div class="modal-dialog m-0">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title" class="text-primary">
+                <span *ngIf="!isPurchaseTrialOffer" translate="TRANSLATE.TRIAL_OFFER_QUANTITY_HEADER_POPUP"></span>
+                <span *ngIf="isPurchaseTrialOffer"
+                    translate="TRANSLATE.CUSTOMER_PRODUCT_STATUS_CHANGE_BUTTON_PURCHASE_SUBSCRIPTION"></span>
+            </h2>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModalPopup()"
+                data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+            </div>
+        </div>
+        <div class="modal-body">
+            <div class="col-md-12">
+                <div class="card-body pl-0 pr-0">
+                    <div class="card">
+                        <div ngbAccordion>
+                            <div ngbAccordionItem #accItem="ngbAccordionItem" [collapsed]="false">
+                                <div ngbAccordionHeader>
+                                    <button ngbAccordionButton class="accordion-icon-collapse">
+                                        <span class="text-primary fs-4"
+                                            translate="TRANSLATE.TRIAL_OFFER_SUBSCRIPTION_HEADING_TEXT_NOTE"></span>
+                                        <!-- Icons -->
+                                        <span class="ms-auto pt-1">
+                                            <span *ngIf="accItem.collapsed"><i
+                                                    class="ki-outline ki-plus fs-2 text-primary"></i></span>
+                                            <!-- Plus Icon -->
+                                            <span *ngIf="!accItem.collapsed"><i
+                                                    class="ki-outline ki-minus fs-2 text-primary"></i></span>
+                                            <!-- Minus Icon -->
+                                        </span>
+                                    </button>
+                                </div>
+                                <div ngbAccordionCollapse>
+                                    <div class="card-body p-1">
+                                        <div
+                                            class="notice bg-light-primary rounded border-primary border border-dashed mw-auto flex-shrink-0 p-6">
+                                            <ul class="ml-12 col-12">
+                                                <li><span translate="TRANSLATE.TRIAL_OFFER_SUBSCRIPTION_NOTE_1"></span>
+                                                </li>
+                                                <li><span translate="TRANSLATE.TRIAL_OFFER_SUBSCRIPTION_NOTE_2"></span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer py-2">
+            <button class="btn  btn-primary btn-sm" type="submit" (click)="submit()">
+                <span translate="TRANSLATE.BUTTON_TEXT_SUBMIT"></span>
+            </button>
+            <button class="btn  btn-secondary btn-sm" type="submit" (click)="closeModalPopup()">
+                <span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span>
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,224 @@
+<div class="card-custom">
+    <div class="card-header">
+        <div class="card-title">
+            <span>
+                <span class="fw-semibold">{{'TRANSLATE.CUSTOMER_PROFILE_PAYMENT_HEADER_TEXT_PAYMENT_PROFILES' |
+                    translate}}</span>
+            </span>
+        </div>
+        <div class="card-toolbar" *ngIf="paymentPageMode !== 'PendingPayment'">
+            <button type="button" class="btn btn-sm btn-primary btn-xs mr-2"
+                *ngIf="addingNewPaymentProfile !== true && permissions.HasAddCustomerPaymentProfile === 'Allowed'"
+                (click)="addingNewPaymentProfile = true" appBusyLoader>
+                <i class="ki-outline ki-plus fs-2"></i>
+                <span>{{'TRANSLATE.CUSTOMER_PROFILE_PAYMENT_BUTTON_TEXT_ADD' | translate}}</span>
+            </button>
+        </div>
+    </div>
+    <!-- {{paymentPageMode | json}} -->
+    <div class="card-body">
+        <div *ngIf="addingNewPaymentProfile && paymentPageMode !== 'PendingPayment'" class="col-md-12">
+            <div class="row">
+                <div class=" d-flex gap-2 mb-3" *ngIf="billingProvider!=='ezidebit'" data-toggle="buttons">
+                    <button id="labelCC" class="btn btn-sm"
+                        [ngClass]="{'[checked] btn-primary' : pageMode === 'CC','[checked] btn-light-primary' : pageMode != 'CC'}"
+                        *ngIf="isCreditCardEnabled" (click)="setPaymentTypePageMode('CC')" appBusyLoader>
+                        <span translate="TRANSLATE.CUSTOMER_PROFILE_PAYMENT_LABEL_TEXT_CREDIT_CARD"></span>
+                        <!-- <input type="radio" class="toggle"> -->
+                    </button>
+
+                    <button id="labelACH" class="btn  btn-sm"
+                        [ngClass]="{'[checked] btn-primary' : pageMode === 'ACH','[checked] btn-light-primary' : pageMode != 'ACH'}"
+                        *ngIf="isACHEnabled" (click)="setPaymentTypePageMode('ACH')" appBusyLoader>
+                        <span translate="TRANSLATE.CUSTOMER_PROFILE_PAYMENT_LABEL_TEXT_BANK_ACCOUNT"></span>
+                        <!-- <input type="radio" class="toggle"> -->
+                    </button>
+                </div>
+                <div>
+                    <app-payment-account [billingProvider]="billingProvider" [customerDetails]="customerDetails"
+                        (onPaymentDetailsSubmitted)="onPaymentDetailsSubmitted($event)"
+                        (onDiscardChanges)="onDiscardChanges()" [data]="pageMode"></app-payment-account>
+                </div>
+                <!-- <payment-account customer-details="vm.customerDetails" on-payment-account-saved="vm.OnPaymentDetailsSubmitted(data)" on-discard-changes="vm.DiscardPaymentDetails()" billing-provider="vm.billingProvider" payment-type="vm.PageMode" ng-if="vm.IsCreditCardEnabled || vm.IsACHEnabled" class="col-md-12"></payment-account> -->
+                <div *ngIf="!(isCreditCardEnabled || isACHEnabled)">
+                    <h6 class="fw-semibold" translate="TRANSLATE.NO_PAYMENT_TYPES_ENABLED"></h6>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="!addingNewPaymentProfile && paymentPageMode !== 'PendingPayment'">
+            <div *ngIf="paymentProfiles?.length === 0">
+                <h6 class="fw-semibold"><span
+                        translate="TRANSLATE.CUSTOMER_PROFILE_PAYMENT_NO_PROFILE_FOUND_MESSAGE"></span></h6>
+            </div>
+            <div class="mt-actions">
+                <div class="mt-action">
+                    @for(payment of paymentProfiles; track payment.Id; let i = $index ){
+                    <div class="mt-action-body mt-widget-2 hovernow">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mt-action-details ">
+                                    <h4>
+                                        <span>
+                                            <span class="mt-action-icon ">
+                                                <i *ngIf="payment.PaymentType === 'ACH' || payment.PaymentType === 'Bank Account'"
+                                                    class="ki-outline ki-bank fs-2 margin-left-3 text-success"></i>
+                                                <i *ngIf="payment.PaymentType === 'CreditCard' || payment.PaymentType === 'CC'"
+                                                    class="ki-outline ki-credit-cart fs-2 text-success"></i>
+                                            </span>
+                                            <span *ngIf="payment.PaymentProfileAlias !== null" class="mt-action-author">
+                                                {{payment.PaymentProfileAlias}}
+                                                <sup>
+                                                    <span
+                                                        class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg h-20px w-20px"
+                                                        *ngIf="payment.IsDefault">
+                                                        <i class="ki-outline ki-check-circle text-success tooltips"></i>
+                                                    </span>
+                                                </sup>
+                                            </span>
+
+                                        </span>
+                                        <span *ngIf="payment.PaymentProfileAlias === null" class="mt-action-author">
+                                            <span
+                                                *ngIf="payment.PaymentType === 'ACH' || payment.PaymentType === 'Bank Account'">{{'TRANSLATE.CUSTOMER_PROFILE_PAYMENT_LABEL_TEXT_BANK_ACCOUNT'
+                                                | translate}}</span>
+                                            <span
+                                                *ngIf="payment.PaymentType === 'CreditCard' || payment.PaymentType === 'CC'">{{'TRANSLATE.CUSTOMER_PROFILE_PAYMENT_LABEL_TEXT_CREDIT_CARD'
+                                                | translate}}</span>
+                                            <sup>
+                                                <span
+                                                    class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg h-20px w-20px"
+                                                    *ngIf="payment.IsDefault">
+                                                    <i class="ki-outline ki-check-circle text-success tooltips"></i>
+                                                </span>
+                                            </sup>
+                                        </span>
+                                    </h4>
+                                    <p class="mt-action-desc">
+                                    <h6>
+                                        {{payment.AccountNumber}}
+                                        <span
+                                            *ngIf="payment.IsVerified === true && (payment.PaymentType === 'ACH'|| payment.PaymentType === 'Bank Account') && billingProvider?.toLowerCase() === 'stripe'"
+                                            class="label font-weight-bold label-inline badge badge-light-success">
+                                            <i class="ki-outline ki-check text-success fs-2"></i>
+                                            <span class="path1"></span><span class="path2"></span>
+                                            <span class="ms-1">
+                                                {{'TRANSLATE.CUSTOMER_PAYMENT_PROFILE_TEXT_ACTIVE' | translate}}
+                                            </span>
+                                        </span>
+                                        <span
+                                            class="badge badge-light-danger font-weight-bold label-inline badge bg-light-danger ms-md-2"
+                                            [ngbTooltip]="'TRANSLATE.CUSTOMER_PAYMENT_PROFILE_TOOLTIP_TEXT_NOT_VERIFIED' | translate"
+                                            *ngIf="(payment.IsVerified === false || payment.IsVerified == null) && (payment.PaymentType === 'ACH'|| payment.PaymentType === 'Bank Account') && billingProvider?.toLowerCase() === 'stripe'">
+                                            <i class="ki-solid ki-information-5 text-danger"></i>
+                                            <span class="path1"></span><span class="path2"></span>
+                                            <span class="ms-2">
+                                                {{'TRANSLATE.CUSTOMER_PAYMENT_PROFILE_TEXT_VALIDATION_REQUIRED' |
+                                                translate}}
+                                            </span>
+                                        </span>
+                                    </h6>
+                                </div>
+                            </div>
+                            <div class="col-md-6 d-flex align-items-center">
+                                <div class="col-md-12">
+                                    <div class="d-flex justify-content-end align-items-center flex-wrap gap-2">
+                                        <a *ngIf="!payment.IsDefault && permissions.HasMakeDefaultPaymentProfile === 'Allowed'"
+                                            ngbTooltip="{{'TRANSLATE.PROFILE_PAYMENTS_SET_DEFAULT_PAYMENT_PROFILE_BUTTON_TOOLTIP_TEXT' | translate}}"
+                                            tooltip-placement="left"
+                                            class="btn btn-xs btn-sm btn-lg btn-outline-primary text-hover-white mr-2"
+                                            (click)="setDefaultPaymentOption(payment)">
+                                            <i class="ki-outline ki-check text-primary fs-3"></i>
+                                        </a>
+                                        <a *ngIf="!payment.IsDefault && permissions.HasDeleteCustomerPaymentProfile === 'Allowed'"
+                                            ngbTooltip="{{'TRANSLATE.PROFILE_PAYMENTS_DELETE_PAYMENT_PROFILE_BUTTON_TOOLTIP_TEXT' | translate}}"
+                                            tooltip-placement="left"
+                                            class="btn btn-xs btn-sm btn-lg btn-outline-primary text-hover-white mr-2"
+                                            (click)="deletePaymentOption(payment)">
+                                            <i class="ki-outline ki-trash text-primary fs-3"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-primary btn-xs mr-2"
+                                            *ngIf="permissions.HasSaveCustomerPaymentProfile === 'Allowed' && (!payment.IsVerified || payment.IsVerified === null || payment.IsVerified === undefined || payment.IsVerified === '') && (payment.PaymentType?.toLowerCase() === 'ach' || payment.PaymentType?.toLowerCase() === 'bank account') && billingProvider?.toLowerCase() === 'stripe'"
+                                            class="btn btn-xs btn-sm btn-lg btn-primary mr-2"
+                                            (click)="validateBankAccountProfile(payment)" appBusyLoader>
+                                            <i class="ki-outline ki-shield-tick fs-2"></i>
+                                            <span>{{'TRANSLATE.PROFILE_PAYMENTS_VALIDATE_PAYMENT_PROFILE_BUTTON_TEXT' |
+                                                translate}}</span>
+                                        </button>
+                                        <button type="button"
+                                            *ngIf="payment.IsVerified && (payment.PaymentType?.toLowerCase() === 'ach' || payment.PaymentType?.toLowerCase() === 'bank account') && billingProvider?.toLowerCase() === 'stripe'"
+                                            class="btn btn-xs btn-sm btn-lg btn-light-success mr-2 disabled"
+                                            appBusyLoader>
+                                            <i class="ki-outline ki-shield-tick fs-2"></i>
+                                            <span>{{'TRANSLATE.PROFILE_PAYMENTS_VALIDATED_PAYMENT_PROFILE_BUTTON_TEXT' |
+                                                translate}}</span>
+                                        </button>
+                                    </div>
+                                    <div class="margin-top-10 clearfix"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="!addingNewPaymentProfile && paymentPageMode === 'PendingPayment'">
+            <div>
+                <h6><span translate="CUSTOMER_PROFILE_PAYMENT_PROFILE_PENDING_MESSAGE"></span></h6>
+            </div>
+            <div class="mt-actions">
+                <div class="mt-action">
+                    <div class="mt-action-body mt-widget-2 hovernow">
+                        <div class="mt-action-row">
+                            <div class="mt-action-info ">
+
+                                <div class="mt-action-details ">
+                                    <h6>
+                                        <i class="fa fa-spinner fa-spin"></i>
+                                        <span>
+                                            <span class="mt-action-icon ">
+                                                <i *ngIf="pendingPaymentProfiles.PaymentType === 'ACH' || pendingPaymentProfiles.PaymentType === 'Bank Account'"
+                                                    class="fa fa-bank"></i>
+                                                <i *ngIf="pendingPaymentProfiles.PaymentType === 'CreditCard' || pendingPaymentProfiles.PaymentType === 'CC'"
+                                                    class="fa fa-credit-card"></i>
+                                            </span>
+                                            <span class="mt-action-author">
+                                                <span
+                                                    *ngIf="pendingPaymentProfiles.PaymentType === 'ACH' || pendingPaymentProfiles.PaymentType === 'Bank Account'">
+                                                    {{'TRANSLATE.CUSTOMER_PROFILE_PAYMENT_LABEL_TEXT_BANK_ACCOUNT' |
+                                                    translate }}
+                                                </span>
+                                                <span
+                                                    *ngIf="pendingPaymentProfiles.PaymentType === 'CreditCard' || pendingPaymentProfiles.PaymentType === 'CC'">
+                                                    {{'TRANSLATE.CUSTOMER_PROFILE_PAYMENT_LABEL_TEXT_CREDIT_CARD' |
+                                                    translate }}
+                                                </span>
+
+                                            </span>
+                                        </span>
+                                    </h6>
+                                    <p class="mt-action-desc">
+                                    <h6>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{pendingPaymentProfiles.AccountNumber}}
+                                    </h6>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="mt-action-buttons">
+                                <div class="col-md-12">
+                                    <div class="clearfix">
+                                        <!--<i class="fa fa-spinner fa-spin"></i>-->
+                                    </div>
+                                    <div class="margin-top-10 clearfix"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

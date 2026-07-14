@@ -1,0 +1,22 @@
+@if(isShow){
+<div class="card card-custom card-stretch gutter-b mt-6">
+    <div class="card-body">
+        @for(invoice of invoices; track $index){
+        <ul class="list-unstyled">
+            <li>
+                <span [innerHTML]="'TRANSLATE.DASHBOAR_INVOICE_HELP_TEXT_LINE_1' | translate : { 
+                        InvoiceGeneratedDate: invoice.InvoiceGeneratedDate | c3Date,
+                        BillingStartDate: invoice.BillingStartDate | c3Date,
+                        BillingEndDate: invoice.BillingEndDate | c3Date,
+                        InvoiceAmount: invoice.InvoiceAmount | CurrencyFilter : invoice.CurrencySymbol : invoice.CurrencyDecimalPlaces : invoice.CurrencyThousandSeparator : invoice.CurrencyDecimalSeparator
+                    }"></span>
+
+            </li>
+        </ul>
+        }
+        <ul class="m-0 p-0">
+            <span class="cursor-pointer text-primary font-bold" translate="TRANSLATE.DASHBOAR_INVOICE_BTN_TEXT_VIEW_INVOICE" (click)="redirectToPage()"></span>
+        </ul>
+    </div>
+</div>
+}

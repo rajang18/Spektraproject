@@ -1,0 +1,500 @@
+<ng-template #actionHeader>
+  <button type="button" class="btn btn-light-primary btn-sm fw-semibold me-2" busy="" busy-add-classes="disabled" not-busy-remove-classes="disabled" (click)="backToInvoices()">
+    <i class="ki-outline ki-to-left fs-2"></i>
+    {{'TRANSLATE.INVOICE_INVOICE_BUTTON_BACK_TO_INVOICES' | translate }}
+  </button>
+</ng-template>
+<div class="col-md-12">
+  <div class="row">
+    <div class="col-md-12 text-lg-end text-sm-start mb-5">
+      <a class="btn btn-light-primary btn-sm me-2" href="javascript:;" *ngIf="permissions.HasEditInvoice === 'Allowed' && (invoiceTypeName === 'OnDemand') && (invoiceDetails.InvoiceStatusName === 'Generated' || invoiceDetails.InvoiceStatusName === 'Published' || invoiceDetails.InvoiceStatusName === 'Approved') && canManageInvoice" (click)="editInvoice()">
+        <span translate="TRANSLATE.EDIT_INVOICE_BUTTON_TEXT"></span>
+      </a>
+      <a #sendInvoiceButton class="btn btn-light-primary btn-sm me-2" href="javascript:;" *ngIf="permissions.hasResendInvoice === 'Allowed' && (invoiceDetails.InvoiceStatusName === 'Finalized' || invoiceDetails.InvoiceStatusName === 'Approved' || invoiceDetails.InvoiceStatusName === 'PartiallyPaid' || invoiceDetails.InvoiceStatusName === 'Paid') && canManageInvoice" (click)="getEmailRecepientsPresentForCustomerInvoiceGeneratedEvent()">
+        <span translate="TRANSLATE.SEND_INVOICE_IN_EMAIL_BUTTON_TEXT"></span>
+      </a>
+      <a class="btn btn-light-primary btn-sm me-2" href="javascript:;" *ngIf="permissions.HasApproveInvoice === 'Allowed' && (invoiceDetails.InvoiceStatusName === 'Published' || invoiceDetails.InvoiceStatusName === 'Generated') && canManageInvoice" (click)="updateInvoiceStatus('Approved')">
+        <span translate="TRANSLATE.INVOICE_INVOICE_APPROVE"></span>
+      </a>
+      <a class="btn btn-light-primary btn-sm me-2" href="javascript:;" *ngIf="permissions.HasFinalizeInvoice === 'Allowed' && (invoiceDetails.InvoiceStatusName === 'Generated' || invoiceDetails.InvoiceStatusName === 'Published' || invoiceDetails.InvoiceStatusName === 'Approved') && canManageInvoice" (click)="updateInvoiceStatus('Finalized')">
+        <span translate="TRANSLATE.INVOICE_INVOICE_FINALIZE"></span>
+      </a>
+      <a #processAutoPaymentButton class="btn btn-light-primary btn-sm me-2" href="javascript:;" *ngIf="(permissions.HasInitiatePayment === 'Allowed' && allowTransaction) && (invoiceDetails.InvoiceStatusName === 'Finalized' || invoiceDetails.InvoiceStatusName === 'PartiallyPaid') && HasInvoicePayment && isBankAccountVerified" (click)="initiateInvoicePayment()">
+        <span translate="TRANSLATE.CUSTOMERS_BUTTON_TEXT_PROCESS_AUTO_PAYMENT"></span>
+      </a>
+      <a class="btn btn-light-primary btn-sm me-2" *ngIf="permissions.HasAddAdjustment === 'Allowed' && (invoiceDetails.InvoiceStatusName === 'Generated' || invoiceDetails.InvoiceStatusName === 'Published' || invoiceDetails.InvoiceStatusName === 'Approved') && canManageInvoice && (invoiceTypeName !== 'OnDemand')" href="javascript:;" (click)="addOrEditAdjustment(0)">
+        <span translate="TRANSLATE.CUSTOMERS_BUTTON_TEXT_ADD_ADJUSTMENT"></span>
+      </a>
+      <div class="btn-group" *ngIf="permissions.HasExportInvoicePDF === 'Allowed'">
+        <div ngbDropdown class="" placement="bottom-right">
+          <a class="btn btn-light-primary btn-sm me-2" id="dropdownBasic1" ngbDropdownToggle>
+            <i class="ki-outline ki-exit-down fs-2"></i> <span translate="TRANSLATE.INVOICE_INVOICE_BUTTON_DOWNLOAD_INVOICE"></span>
+          </a>
+          <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+               class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-1 fs-base w-100px">
+            <div class='menu-item my-0' ngbDropdownItem>
+              <a class="menu-link px-3 py-2" *ngIf="permissions.HasExportInvoicePDF === 'Allowed'" (click)="exportInvoicePDF()">
+                <span class="ml-2 ng-scope">{{'PDF' | translate}}</span>
+              </a>
+            </div>
+            <div class='menu-item my-0' ngbDropdownItem>
+              <a class="menu-link px-3 py-2" *ngIf="permissions.HasExportInvoiceCSV === 'Allowed'" (click)="exportInvoiceCSV()">
+                <span class="">{{'CSV' | translate}}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="row" *ngIf="invoiceDetails?.ID !== undefined">
+        <!--Instructions-->
+        <div class="col-md-12">
+            <div class="alert alert-custom alert-light-info fade show" *ngIf="permissions.HasAddAdjustment === 'Allowed' && (invoiceDetails.InvoiceStatusName === 'Generated' || invoiceDetails.InvoiceStatusName === 'Published') && canManageInvoice">
+                <p> <strong><span class="bold" translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_INVOICE_GRANTED_1"></span></strong>&nbsp; <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_INVOICE_GRANTED_2"></span></p>
+            </div>
+            <div class="alert alert-custom alert-light-success fade show rounded border-primary border border-dashed" *ngIf="permissions.HasAddAdjustment === 'Allowed' && (invoiceDetails.InvoiceStatusName === 'Generated' || invoiceDetails.InvoiceStatusName === 'Published' || invoiceDetails.InvoiceStatusName === 'Approved') && canManageInvoice">
+                <p><strong><span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_INVOICE_APPROVED"></span></strong>&nbsp; <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_INVOICE_APPROVED_2"></span></p>
+            </div>
+            <div class="alert alert-custom alert-light-success fade show text-dark" *ngIf="permissions.HasAddAdjustment === 'Allowed' && invoiceDetails.InvoiceStatusName === 'Finalized' && canManageInvoice">
+                <p><strong translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_INVOICE_FINALIZED_1"></strong>&nbsp; <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_INVOICE_FINALIZED_2"></span></p>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="col-md-12">
+                        <table width="100%" class="table">
+                            <tr [ngClass]="{'bg-gray-500' : invoiceDetailsTemplate === 'resolutionit', 'bg-green': invoiceDetailsTemplate !== 'resolutionit'}">
+                                <td class="font-lg fw-bolder" >
+                                    <div [ngClass]="{'bg-font-grey-gallery': invoiceDetailsTemplate === 'resolutionit', 'bg-font-green': invoiceDetailsTemplate !== 'resolutionit'}"><span translate="TRANSLATE.BILL_FROM"></span>
+                                    <!-- <button class="btn btn-icon btn-active-light-primary btn-sm" [ngClass]="toolbarButtonHeightClass" *ngIf="permissions.HasEditInvoice === 'Allowed' && (invoiceTypeName === 'OnDemand') && (invoiceDetails.InvoiceStatusName === 'Generated' || invoiceDetails.InvoiceStatusName === 'Published' || invoiceDetails.InvoiceStatusName === 'Approved') && canManageInvoice" (click)="editPartnerAddress()"> -->
+                                       <span class="svg-icon svg-icon-white svg-icon-lg h-30px w-30px ms-auto float-end" *ngIf="permissions.HasEditInvoice === 'Allowed' && (invoiceDetails.InvoiceStatusName === 'Generated' || invoiceDetails.InvoiceStatusName === 'Published' || invoiceDetails.InvoiceStatusName === 'Approved') && canManageInvoice" (click)="editPartnerAddress()">
+                                           <i class="ki-outline ki-pencil text-white fs-3" ngbTooltip="{{'TRANSLATE.QUOTE_CAPTION_EDIT_PARTNER_ADDRESS' | translate}}"></i>
+                                       </span>
+                                    <!-- </button> -->
+                                </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border-top:none">
+                                    <div><span class="fw-semibold">{{partnerCompanyName}}</span></div>
+                                </td>
+                            </tr>
+                            <tr *ngIf="partnerAddressLine1 !== null && partnerAddressLine1?.trim()?.length>0" style="border-top:none">
+                                <td style="border-top:none">
+                                    <div><span class="fw-semibold">{{partnerAddressLine1}}</span></div>
+                                </td>
+                            </tr>
+                            <tr *ngIf="partnerAddressLine2 !== null && partnerAddressLine2?.trim()?.length>0" style="border-top:none">
+                                <td style="border-top:none;">
+                                    <div><span class="fw-semibold">{{partnerAddressLine2}}</span></div>
+                                </td>
+                            </tr>
+                            <tr *ngIf="!(partnerFormattedAddress ===null)">
+                                <td style="border-top:none">
+                                    <div><span class="fw-semibold">{{partnerFormattedAddress}}</span></div>
+                                </td>
+                            </tr>
+                            <tr *ngIf="!(businessNumber ===null || businessNumber ==='')">
+                                <td style="border-top:none">
+                                    <div><span class="fw-semibold">{{businessNumberKey}}  {{businessNumber}}</span></div>
+                                </td>
+                            </tr>
+                            <!-- <tr>
+                              <td>
+                                <button class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto" [ngClass]="toolbarButtonHeightClass" *ngIf="permissions.HasEditInvoice === 'Allowed' && (invoiceTypeName === 'OnDemand') && (invoiceDetails.InvoiceStatusName === 'Generated' || invoiceDetails.InvoiceStatusName === 'Published' || invoiceDetails.InvoiceStatusName === 'Approved') && canManageInvoice" (click)="editPartnerAddress()">
+                                  <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+                                    <i class="ki-outline ki-pencil text-primary" ngbTooltip="{{'TRANSLATE.QUOTE_CAPTION_EDIT_PARTNER_ADDRESS' | translate}}"></i>
+                                  </span>
+                                </button>
+                              </td>
+                            </tr> -->
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="col-md-12">
+                        <table width="100%" class="table">
+                            <tr [ngClass]="{'bg-gray-500': invoiceDetailsTemplate === 'resolutionit', 'bg-green': invoiceDetailsTemplate !== 'resolutionit'}">
+                                <td class="font-lg fw-bolder" >
+                                    <div [ngClass]="{'bg-font-grey-gallery': invoiceDetailsTemplate === 'resolutionit', 'bg-font-green': invoiceDetailsTemplate !== 'resolutionit'}"><span translate="TRANSLATE.BILL_TO"></span></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border-top:none">
+                                    <div><span class="fw-semibold">{{recordName}}</span></div>
+                                </td>
+                            </tr>
+                            <tr *ngIf="addressLine1 !== null && addressLine1?.trim()?.length>0">
+                                <td style="border-top:none">
+                                    <div><span class="fw-semibold">{{addressLine1}}</span></div>
+                                </td>
+                            </tr>
+                            <tr *ngIf="addressLine2 !== null && addressLine2?.trim()?.length>0">
+                                <td style="border-top:none">
+                                    <div><span class="fw-semibold">{{addressLine2}}</span></div>
+                                </td>
+                            </tr>
+                            <tr *ngIf="!(formattedAddress ===null)">
+                                <td style="border-top:none">
+                                    <div><span class="fw-semibold">{{formattedAddress}}</span></div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl">
+                <table class="table">
+                    <tr [ngClass]="{'bg-gray-500': invoiceDetailsTemplate === 'resolutionit', 'bg-green': invoiceDetailsTemplate !== 'resolutionit'}">
+                        <td class="font-lg fw-bolder" colspan="4">
+                            <div  [ngClass]="{'bg-font-grey-gallery': invoiceDetailsTemplate === 'resolutionit', 'bg-font-green': invoiceDetailsTemplate !== 'resolutionit'}">
+                                <span class="fw-bolder" *ngIf="invoiceDetailsTemplate !== 'resolutionit'" translate="TRANSLATE.INVOICE_INVOICE_HEADER_TEXT_INVOICE_SUMMERY"></span>
+                                <span class="fw-bolder" *ngIf="invoiceDetailsTemplate === 'resolutionit'" translate="TRANSLATE.INVOICE_INVOICE_HEADER_TEXT_TAX_INVOICE"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2" style="border-top:none">
+                            <div><span class="fw-bold" translate="TRANSLATE.INVOICE_INVOICE_HEADER_TEXT_INVOICE_SUMMERY_TABLE_HEADER_BILLING_PERIOD"></span></div>
+                        </td>
+                        <td style="border-top:none" class="col-md-4">
+                            <div><span class="fw-semibold"> {{billingStartDate | c3Date }} - {{billingEndDate | c3Date }}</span></div>
+                        </td>
+                        <td class="col-md-2" style="border-top:none">
+                            <div><span class="fw-semibold" translate="TRANSLATE.INVOICE_INVOICE_HEADER_TEXT_ACCOUNT_SUMMARY_TABLE_HEADER_INVOICE_NUMBER"></span></div>
+                        </td>
+                        <td style="border-top:none" class="col-md-4">
+                            <div><span class="fw-semibold">{{invoiceNumber?.trim()}}</span></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-2" style="border-top:none">
+                            <div><span class="fw-semibold" translate="TRANSLATE.INVOICE_INVOICE_HEADER_TEXT_INVOICE_SUMMERY_TABLE_HEADER_INVOICE_DATE"></span></div>
+                        </td>
+                        <td style="border-top:none" class="col-md-4">
+                            <div><span class="fw-semibold">{{invoiceDate | c3Date}}</span></div>
+                        </td>
+                        <td class="col-md-2" style="border-top:none">
+                            <div><span><span class="fw-semibold" translate="TRANSLATE.INVOICE_INVOICE_HEADER_TEXT_INVOICE_SUMMERY_TABLE_HEADER_INVOICE_AMOUNT"></span></span></div>
+                        </td>
+                        <td style="border-top:none" class="col-md-4">
+                           <div> <span class="fw-semibold">{{totalPostTaxAmount | CurrencyFilter : currencySymbol : currencyDecimalPlaces : currencyThousandSeperator : currencyDecimalSeperator}}</span></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td *ngIf="(PONumber !== null && PONumber!=='')||(permissions.HasUpdatePONumber === 'Allowed' && canManageInvoice)" class="col-md-2" style="border-top:none">
+                            <div><span class="fw-bold">{{'TRANSLATE.PO_NUMBER' | translate}}</span></div>
+                        </td>
+                        <td *ngIf="PONumber !== null && PONumber!==''" style="border-top:none" class="col-md-4">
+                            <div>
+                                <span class="fw-semibold"> {{PONumber}}</span>&nbsp;
+                                <a *ngIf="permissions.HasUpdatePONumber === 'Allowed' && canManageInvoice" class="btn-icon-only tooltips green-jungle" (click)="editInvoiceProperty('PONumber',PONumber,null)">
+                                    <i class="ki-outline ki-pencil text-primary"></i>
+                                </a>
+                            </div>
+                        </td>
+                        <td *ngIf="(PONumber === null || PONumber==='') && (permissions.HasUpdatePONumber === 'Allowed' && canManageInvoice)" style="border-top:none" class="col-md-4">
+                            <div>
+                                <a class="btn btn-light-primary btn-sm me-2 text-nowrap" (click)="editInvoiceProperty('PONumber',PONumber,null)">
+                                    <i class="ki-outline ki-plus fs-2 fw-bold"></i><span translate="TRANSLATE.ADD_PO_NUMBER"></span>
+                                </a>
+                            </div>
+                        </td>
+                        <!--<td ng-show="IsAutopay == 'No'" class="col-md-2" style="border-top:none">-->
+                        <td *ngIf="((invoiceDueDate !== null && invoiceDueDate!=='')||(permissions.HasUpdateDueDate === 'Allowed' && canManageInvoice))" class="col-md-2" style="border-top:none">
+
+              <div>
+                <span class="fw-semibold"> {{'TRANSLATE.INVOICE_INVOICE_HEADER_TEXT_INVOICE_SUMMERY_TABLE_HEADER_INVOICE_DUE_DATE' | translate}} </span>
+              </div>
+            </td>
+            <!--<td ng-show="IsAutopay == 'No'" style="border-top:none" class="col-md-4">-->
+            <td *ngIf="(invoiceDueDate !== null && invoiceDueDate!=='')" style="border-top:none" class="col-md-4">
+              <div>
+                <span class="fw-semibold">  {{invoiceDueDate | c3Date}}</span>&nbsp;
+                <a role="button" *ngIf="permissions.HasUpdateDueDate === 'Allowed' && canManageInvoice" class="btn-icon-only tooltips green-jungle" (click)="editInvoiceProperty('DueDate',invoiceDueDate,null)">
+                  <i class="ki-outline ki-pencil text-primary"></i>
+                </a>
+              </div>
+            </td>
+            <td *ngIf="(invoiceDueDate === null || invoiceDueDate==='') && (permissions.HasUpdateDueDate === 'Allowed' && canManageInvoice)" style="border-top:none" class="col-md-4">
+              <div>
+                <a class="btn btn-light-primary btn-sm me-2" (click)="editInvoiceProperty('DueDate',invoiceDueDate,null)">
+                  <i class="ki-outline ki-plus fs-2 fw-bold"></i><span translate="TRANSLATE.ADD_DUE_DATE"></span>
+                </a>
+              </div>
+            </td>
+            <td *ngIf="(((PONumber === null || PONumber === '') && !(permissions.HasUpdatePONumber === 'Allowed' && canManageInvoice)) || ((invoiceDueDate === null || invoiceDueDate === '') && !(permissions.HasUpdateDueDate === 'Allowed' && canManageInvoice))) && (VATNumber !== null && VATNumber !== '')" class="col-md-2" style="border-top:none">
+              <div>
+                <span class="fw-semibold">{{'TRANSLATE.INVOICE_INVOICE_HEADER_TEXT_INVOICE_SUMMERY_TABLE_HEADER_VAT_NUMBER' | translate}}</span>
+              </div>
+            </td>
+            <td *ngIf="(((PONumber === null || PONumber === '') && !(permissions.HasUpdatePONumber === 'Allowed' && canManageInvoice)) || ((invoiceDueDate === null || invoiceDueDate === '') && !(permissions.HasUpdateDueDate === 'Allowed' && canManageInvoice))) && (VATNumber !== null && VATNumber !== '')" class="col-md-4" style="border-top:none">
+              <div>
+                <span class="fw-semibold">{{VATNumber}}</span>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="(((PONumber !== null && PONumber !== '') || (permissions.HasUpdatePONumber === 'Allowed' && canManageInvoice)) && ((invoiceDueDate !== null && invoiceDueDate !== '') || (permissions.HasUpdateDueDate === 'Allowed' && canManageInvoice))) && (VATNumber !== null && VATNumber !== '')">
+            <td class="col-md-2" style="border-top:none">
+              <div>
+                <span class="fw-semibold">{{'TRANSLATE.INVOICE_INVOICE_HEADER_TEXT_INVOICE_SUMMERY_TABLE_HEADER_VAT_NUMBER' | translate}}</span>
+              </div>
+            </td>
+            <td class="col-md-4" style="border-top:none">
+              <div>
+                <span class="fw-semibold">{{VATNumber}}</span>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <!--Invoice Payments-->
+
+    <div class="col-md-12 mt-5">
+      <h4><span translate="TRANSLATE.INVOICE_INVOICE_INVOICE_PAYMENTS_HEADER_TEXT"></span></h4>
+      <hr>
+      <!-- Add transaction segment starts-->
+      <div class="row mt-4" *ngIf="permissions.hasRecordPayment && canManageInvoice && isAnyPaymentPending === false && permissions.HasAddAdjustment === 'Allowed' && ( invoiceDetails.InvoiceStatusName === 'Finalized' || invoiceDetails.InvoiceStatusName === 'PartiallyPaid') ">
+        <form [formGroup]="frmAddInvoicePayment" role="form" class="form form-horizontal" novalidate>
+          <div class="form-body row mt-3 mb-4">
+            <div class="col-md-12 mb-4">
+              <div class="gutter-b">
+                <div class="row bs-callout bs-callout-info bg-light-primary rounded border-primary border border-dashed p-6">
+                  <div class="col-md-12">
+                    <h6><span translate="TRANSLATE.CUSTOMERS_INVOICEPAYMENTS_PARAGRAPH_1_PART_1"></span></h6>
+                  </div>
+                  <div class="col-md-12 mt-2">
+                    <ul>
+                      <li>
+                        <span translate="TRANSLATE.CUSTOMERS_INVOICEPAYMENTS_PARAGRAPH_1_PART_2"></span>
+                      </li>
+                      <li>
+                        <span translate="TRANSLATE.CUSTOMERS_INVOICEPAYMENTS_PARAGRAPH_1_PART_3"></span>
+                      </li>
+                      <li>
+                        <span translate="TRANSLATE.CUSTOMERS_INVOICEPAYMENTS_PARAGRAPH_1_PART_4"></span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <input type="number" min="0" step="0.01" formControlName="paidAmount" class="form-control form-control-sm text-end" name="addInvoicePayment_PaidAmount" placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_PAYMENT_AMOUNT' | translate}}" required />
+              @if(frmAddInvoicePayment.get('paidAmount')?.errors?.required && frmAddInvoicePayment.get('paidAmount')?.touched ){
+              <div><span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span></div>
+              }
+            </div>
+            <div class="col-md-5">
+              <input style="width:95%" type="text" formControlName="remarks" class="form-control form-control-sm" name="addInvoicePayment_Remarks" placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_REMARKS' | translate}}" required />
+              @if(frmAddInvoicePayment.get('remarks')?.errors?.required && frmAddInvoicePayment.get('remarks')?.touched ){
+              <div><span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span></div>
+              }
+            </div>
+            <div class="col-md-2 form-group ">
+              <div class="form-group">
+                <div>
+                  <div class="input-group">
+                    <input class="form-control form-control-sm  mb-lg-0" [readOnly]="true" placeholder="{{ 'TRANSLATE.RECORD_PAYMENT_PAID_DATE' |translate}}" formControlName="paidDate" name="startDate" ngbDatepicker #sd="ngbDatepicker" readonly />
+                    <button class="btn btn-light-primary btn-sm" (click)="sd.toggle()" type="button">
+                      <i class="ki-outline ki-calendar fs-3 pe-0"></i>
+                    </button>
+                  </div>
+                </div>
+                @if(frmAddInvoicePayment.get('paidDate')?.errors?.required && frmAddInvoicePayment.get('paidDate')?.touched ){
+                <div><span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span></div>
+                }
+
+              </div>
+            </div>
+
+            <div class="col-md-2">
+              <a class="btn btn-light-primary btn-sm float-end" *ngIf="permissions.hasRecordPayment && canManageInvoice && isAnyPaymentPending === false" busy busy-when-url="api/billing/InvoicePayments/0" busy-add-classes="disabled" not-busy-remove-classes="disabled" (click)="saveManualPayment(frmAddInvoicePayment)" appBusyLoader>
+                <!-- <busy-message><i class="fa fa-refresh fa-spin"></i>{{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}</busy-message> -->
+                {{'TRANSLATE.CUSTOMERS_INVOICEPAYMENTS_FORM_BUTTON' | translate}}
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+      <!-- Add transaction segment finishes-->
+      <div class="table-responsive-md mt-4">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>
+                <span translate="TRANSLATE.INVOICE_INVOICE_INVOICE_PAYMENTS_TABLE_HEADER_DATE"></span>
+              </th>
+              <th>
+                <span translate="TRANSLATE.INVOICE_INVOICE_INVOICE_PAYMENTS_TABLE_HEADER_REMARK"></span>
+              </th>
+              <th>
+                <span translate="TRANSLATE.INVOICE_INVOICE_INVOICE_PAYMENTS_TABLE_HEADER_STATUS"></span>
+              </th>
+              <th class="text-end">
+                <span translate="TRANSLATE.INVOICE_INVOICE_INVOICE_PAYMENTS_TABLE_HEADER_AMOUNT"></span>
+              </th>
+              <th *ngIf="isAnyPaymentFailure === true">
+                <span translate="TRANSLATE.INVOICE_INVOICE_INVOICE_PAYMENTS_TABLE_HEADER_FAILURE_REASON"></span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of currentInvoicePayments; track $index) {
+            <tr>
+              <td>{{row.CreateDate| c3Date}}</td>
+              <td>
+                {{row.Remarks | translate}}<span *ngIf="row.ProcessingFeePercentage && row.ProcessingFeeAmount" class="small d-block">
+                  {{(row.PaymentType === 'Bank Account'? 'CUSTOMERS_INVOICEPAYMENTS_TABLE_COLUMN_BANK_PROCESSING_FEE': 'CUSTOMERS_INVOICEPAYMENTS_TABLE_COLUMN_CC_PROCESSING_FEE')| translate : {
+                  ProcessingFeePercentage: row.ProcessingFeePercentage,PaidAmount: (row.PaidAmont | CurrencyFilter : currencySymbol : currencyDecimalPlaces : currencyThousandSeperator :currencyDecimalSeperator)
+                  }
+                  }}
+                  :
+                  {{ row.ProcessingFeeAmount | CurrencyFilter : currencySymbol : currencyDecimalPlaces : currencyThousandSeperator :
+                  currencyDecimalSeperator }}
+                </span>
+              </td>
+              <td>{{row.Status | translate}}</td>
+              <td class="text-end">{{row.PaidAmont | CurrencyFilter : currencySymbol : currencyDecimalPlaces : currencyThousandSeperator : currencyDecimalSeperator}}</td>
+              <td *ngIf="isAnyPaymentFailure === true">
+                {{row.FailureReason | translate}}
+              </td>
+            </tr>
+            }
+
+            <tr>
+              <td colspan="3" class="text-end"><strong><span translate="TRANSLATE.INVOICE_INVOICE_INVOICE_PAYMENTS_TABLE_HEADER_GRAND_TOTAL"></span></strong></td>
+              <td class="text-end"><strong>{{totalInvoicePaidAmount | CurrencyFilter : currencySymbol : currencyDecimalPlaces : currencyThousandSeperator : currencyDecimalSeperator}}</strong></td>
+              <td *ngIf="isAnyPaymentFailure === true"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="col-md-12 mt-5" *ngIf="permissions.hasRecordPayment && canManageInvoice && remainingPaymentDetails.length > 0 && (invoiceDetails.InvoiceStatusName === 'Approved' ||invoiceDetails.InvoiceStatusName === 'Finalized' || invoiceDetails.InvoiceStatusName === 'PartiallyPaid' || invoiceDetails.InvoiceStatusName === 'Paid')">
+      <h4><span translate="TRANSLATE.INVOICE_INVOICE_INVOICE_LINE_ITEMS_HEADER_TEXT_REMAINING_PREVIOUS_AMOUNT"></span></h4>
+      <hr />
+      <div class="table-responsive-md">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>
+                <span translate="TRANSLATE.INVOICE_INVOICE_INVOICE_REMAINING_PAYMENTS_TABLE_HEADER_TRANSACTION_DATE"></span>
+              </th>
+              <th class="text-end">
+                <span translate="TRANSLATE.INVOICE_INVOICE_INVOICE_REMAINING_PAYMENTS_TABLE_HEADER_PAID_AMOUNT"></span>
+              </th>
+              <th class="text-end">
+                <span translate="TRANSLATE.INVOICE_INVOICE_INVOICE_REMAINING_PAYMENTS_TABLE_HEADER_USED_AMOUNT"></span>
+              </th>
+              <th class="text-end">
+                <span translate="TRANSLATE.INVOICE_INVOICE_INVOICE_REMAINING_PAYMENTS_TABLE_HEADER_REMAINING_AMOUNT"></span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of remainingPaymentDetails; track $index) {
+            <tr>
+              <td>{{row.TransactionDate| c3Date}}</td>
+              <td class="text-end">{{row.PaidAmount | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator}}</td>
+              <td class="text-end">{{row.UsedAmount | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator}}</td>
+              <td class="text-end">{{row.RemainingAmount | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator}}</td>
+            </tr>
+            }
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!--Commenting the below code as we have moved it to templates-->
+    <!--Invoice Line Items-->
+    <!--Commenting the below code as we have moved it to templates-->
+    <!--New Invoice line items view-->
+    <div class="col-md-12 mt-5">
+      <!-- <invoice-detail template-name="invoiceDetailsTemplate" invoice-details="InvoiceDetails" on-action="OnAction(lineItemId, action)" permissions="Permissions" line-item-types="lineItemTypes" line-item-details="lineItemDetails" invoice-line-item-tax-break-ups="invoiceLineItemTaxBreakUps"
+                                      invoice-sub-taxes="invoiceSubTaxes" total-discount-amount="totalDiscountAmount" total-post-tax-amount="totalPostTaxAmount">
+                      </invoice-detail> -->
+      <appInvoiceDetail [templateName]="invoiceDetailsTemplate" [invoiceDetails]="invoiceDetails" [permissions]="permissions" [lineItemTypes]="lineItemTypes" [lineItemDetails]="lineItemDetails" [invoiceLineItemTaxBreakUps]="invoiceLineItemTaxBreakUps"
+                        [invoiceSubTaxes]="invoiceSubTaxes" [totalDiscountAmount]="totalDiscountAmount" [totalPostTaxAmount]="totalPostTaxAmount" (OnAction)="onActionChange($event)">
+      </appInvoiceDetail>
+    </div>
+    <!--Previous invoice dues start-->
+    <div class="col-md-12 mt-5" *ngIf="canShowUnPaidDuesInPdf === true && unpaidDuesDetailsByInvoiceID.length > 0">
+      <h4><span translate="TRANSLATE.INVOICE_INVOICE_INVOICE_LINE_ITEMS_HEADER_TEXT_PREVIOUS_INVOICE_DUES"></span></h4>
+      <div class="table-responsive-md">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th class="text-start">
+                <span translate="TRANSLATE.INVOICE_INVOICE_INVOICE_PREVIOUS_INVOICE_DUES_TABLE_HEADER_INVOICE_NUMBER"></span>
+              </th>
+              <th class="text-start">
+                <span translate="TRANSLATE.INVOICE_INVOICE_INVOICE_PREVIOUS_INVOICE_DUES_TABLE_HEADER_INVOICE_DATE"></span>
+              </th>
+              <th class="text-start">
+                <span translate="TRANSLATE.INVOICE_INVOICE_INVOICE_PREVIOUS_INVOICE_DUES_TABLE_HEADER_DUE_DATE"></span>
+              </th>
+              <th class="text-start">
+                <span translate="TRANSLATE.INVOICE_INVOICE_INVOICE_PREVIOUS_INVOICE_DUES_TABLE_HEADER_INVOICE_STATUS"></span>
+              </th>
+              <th class="text-end">
+                <span translate="TRANSLATE.INVOICE_INVOICE_INVOICE_PREVIOUS_INVOICE_DUES_TABLE_HEADER_INVOICE_AMOUNT"></span>
+              </th>
+              <th class="text-end">
+                <span translate="TRANSLATE.INVOICE_INVOICE_INVOICE_PREVIOUS_INVOICE_DUES_TABLE_HEADER_DUE_AMOUNT"></span>
+              </th>
+            </tr>
+          </thead>
+          @for (currencyTypes of currencyTypes; track $index) {
+          <tbody ng-repeat="currencyTypes in currencyTypes | orderBy : currencyTypes.CurrencyCode">
+            <tr>
+              <td colspan="11">
+                <b>{{currencyTypes.CurrencyCode}}</b>
+              </td>
+            </tr>
+            @for (row of unpaidDuesDetailsByInvoiceID; track $index) {
+            <tr *ngIf="row.CurrencyCode  === currencyTypes.CurrencyCode">
+              <td class="text-start">{{row.InvoiceNumber}}</td>
+              <td class="text-start">{{row.InvoiceGeneratedDate | c3Date}}</td>
+              <td class="text-start">{{row.InvoiceDueDate | c3Date}}</td>
+              <td class="text-start">{{row.DueStatus}}</td>
+              <td class="text-end">{{row.PostTaxAmount | CurrencyFilter : currencyTypes.CurrencySymbol : currencyTypes.CurrencyDecimalPlaces : currencyTypes.CurrencyThousandSeperator : currencyTypes.CurrencyDecimalSeperator}}</td>
+              <td class="text-end">{{row.PendingAmount | CurrencyFilter : currencyTypes.CurrencySymbol : currencyTypes.CurrencyDecimalPlaces : currencyTypes.CurrencyThousandSeperator : currencyTypes.CurrencyDecimalSeperator}}</td>
+            </tr>
+            }
+
+            <tr>
+              <td colspan="10">
+                <div class="form-group row">
+                  <div class="col-md-11 col-sm-10 col-lg-10 col-10 text-end no-padding-right">
+                    <strong><span translate="TRANSLATE.CUSTOMERS_INVOICEPAYMENTS_TABLE_COLUMN_SUB_TOTAL"></span>:</strong>
+                  </div>
+                  <div class="col-md-1 col-sm-2 col-lg-2 col-2 text-end">
+                    <strong> {{getSubTotalOfUnpaidDuesByCurrency(currencyTypes.CurrencyCode) | CurrencyFilter : currencyTypes.CurrencySymbol : currencyTypes.CurrencyDecimalPlaces : currencyTypes.CurrencyThousandSeperator : currencyTypes.CurrencyDecimalSeperator}}</strong>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          }
+
+        </table>
+      </div>
+    </div>
+    <!--Previous invoice dues end-->
+  </div>
+  <h3 *ngIf="isGridDataLoading">
+    <strong> <span translate="TRANSLATE.LOADING_MESSAGE"></span></strong>
+  </h3>
+  <h3 *ngIf="(invoiceDetails === undefined || invoiceDetails?.ID === undefined) && !isGridDataLoading && (delay(4000) | async)">
+    <span translate="TRANSLATE.INVOICE_INVOICE_INVOICE_LINE_ITEMS_TABLE_NOT_FOUND_MESSAGE"></span>
+  </h3>
+</div>

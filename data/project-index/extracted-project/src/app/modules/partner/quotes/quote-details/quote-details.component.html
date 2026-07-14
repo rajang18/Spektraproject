@@ -1,0 +1,1765 @@
+﻿<ng-template #actionHeader>
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <div class="d-flex align-items-center">
+            <!--begin::Button::QUOTE_BUTTON_TEXT_ADD_QUOTE-->
+            <a class="btn btn-light-primary btn-sm btn-light-primary" (click)="BackToQuote()">
+                <i class="ki-outline ki-to-left fs-2"></i><span
+                    translate="TRANSLATE.QUOTE_BUTTON_TEXT_BACK_TO_QUOTE_LIST"></span>
+            </a>
+            <!--end::Button::QUOTE_BUTTON_TEXT_ADD_QUOTE-->
+        </div>
+    </div>
+</ng-template>
+<!--begin::Stepper-->
+<div class="stepper stepper-links d-flex flex-column" id="kt_stepper_example_basic">
+    <div class="d-flex flex-column-fluid">
+        <!--begin::Container-->
+        <div class="container">
+            <div class="card card-custom">
+                <div class="card-body p-0">
+                    <!--begin::Nav-->
+                    <div class="stepper-nav">
+                        <!--begin::Step 1-->
+                        <div class="stepper-item mx-4 my-4 current"  data-kt-stepper-element="nav">
+                            <!--begin::Wrapper-->
+                            <div class="stepper-wrapper d-flex align-items-center">
+                                <!--begin::Label-->
+                                <div class=" stepper-label">
+                                    <h3 class="stepper-title"  [ngStyle]="(disableCondition || QuoteStatus === cloudHubConstants.QUOTE_LIST_STATUS_PUBLISHED || CompletedStateCount >= 0) && presenttab != 0 ? { color: 'rgb(33, 147, 70)' } : {}">
+                                        <span>1.</span>{{'TRANSLATE.QUOTE_ADD_WIZARD_TITLE_QUOTE_DETAILS' | translate}}
+                                    </h3>
+                                </div>
+                                <!--end::Label-->
+                            </div>
+                            <!--end::Wrapper-->
+
+                            <!--begin::Line-->
+                            <div class="stepper-line"></div>
+                            <!--end::Line-->
+                        </div>
+                        <!--end::Step 1-->
+
+                        <!--begin::Step 2-->
+                        <div class="stepper-item mx-4 my-4"  data-kt-stepper-element="nav">
+                            <!--begin::Wrapper-->
+                            <div class="stepper-wrapper d-flex align-items-center">
+                                <!--begin::Label-->
+                                <div class="stepper-label">
+                                    <h3 class="stepper-title"  [ngStyle]="(disableCondition ||QuoteStatus === cloudHubConstants.QUOTE_LIST_STATUS_PUBLISHED || CompletedStateCount >= 1) && presenttab != 1 ? { color: 'rgb(33, 147, 70)' } : {}">
+                                        <span>2.</span>{{'TRANSLATE.QUOTE_BUYER_INFO_WIZARD_TITLE_BUYER_INFO' | translate}}
+                                    </h3>
+                                </div>
+                                <!--end::Label-->
+                            </div>
+                            <!--end::Wrapper-->
+
+                            <!--begin::Line-->
+                            <div class="stepper-line"></div>
+                            <!--end::Line-->
+                        </div>
+                        <!--end::Step 2-->
+
+                        <!--begin::Step 3-->
+                        <div class="stepper-item mx-4 my-4 "  data-kt-stepper-element="nav">
+                            <!--begin::Wrapper-->
+                            <div class="stepper-wrapper d-flex align-items-center">
+                                <!--begin::Label-->
+                                <div class="stepper-label">
+                                    <h3 class="stepper-title"  [ngStyle]="(disableCondition ||QuoteStatus === cloudHubConstants.QUOTE_LIST_STATUS_PUBLISHED || CompletedStateCount >= 2 ) && presenttab != 2 ? { color: 'rgb(33, 147, 70)' } : {}">
+                                        <span>3.</span>{{'TRANSLATE.QUOTE_SELLER_INFO_WIZARD_TITLE_SELLER_INFO' | translate}}
+                                    </h3>
+                                </div>
+                                <!--end::Label-->
+                            </div>
+                            <!--end::Wrapper-->
+
+                            <!--begin::Line-->
+                            <div class="stepper-line"></div>
+                            <!--end::Line-->
+                        </div>
+                        <!--end::Step 3-->
+
+                        <!--begin::Step 4-->
+                        <div class="stepper-item mx-4 my-4"  data-kt-stepper-element="nav">
+                            <!--begin::Wrapper-->
+                            <div class="stepper-wrapper d-flex align-items-center">
+                                <!--begin::Label-->
+                                <div class="stepper-label">
+                                    <h3 class="stepper-title"  [ngStyle]="(disableCondition || QuoteStatus === cloudHubConstants.QUOTE_LIST_STATUS_PUBLISHED || CompletedStateCount >= 3) && presenttab != 3 ? { color: 'rgb(33, 147, 70)' } : {}">
+                                        <span>4.</span>{{'TRANSLATE.QUOTE_LINE_ITEMS_WIZARD_TITLE_LINE_ITEMS' | translate}}
+                                    </h3>
+                                </div>
+                                <!--end::Label-->
+                            </div>
+                            <!--end::Wrapper-->
+
+                            <!--begin::Line-->
+                            <div class="stepper-line"></div>
+                            <!--end::Line-->
+                        </div>
+                        <!--end::Step 4-->
+
+                        <!--begin::Step 5-->
+                        <div class="stepper-item mx-4 my-4"  data-kt-stepper-element="nav">
+                            <!--begin::Wrapper-->
+                            <div class="stepper-wrapper d-flex align-items-center">
+                                <!--begin::Label-->
+                                <div class="stepper-label">
+                                    <h3 class="stepper-title"  [ngStyle]="(disableCondition || QuoteStatus === cloudHubConstants.QUOTE_LIST_STATUS_PUBLISHED || CompletedStateCount >= 4 ) && presenttab != 4 ? { color: 'rgb(33, 147, 70)' } : {}">
+                                        <span>5.</span>{{'TRANSLATE.QUOTE_SIGNATURE_WIZARD_TITLE_SIGNATURE' | translate}}
+                                    </h3>
+                                </div>
+                                <!--end::Label-->
+                            </div>
+                            <!--end::Wrapper-->
+
+                            <!--begin::Line-->
+                            <div class="stepper-line"></div>
+                            <!--end::Line-->
+                        </div>
+                        <!--end::Step 5-->
+
+                        <!--begin::Step 6-->
+                        <div class="stepper-item mx-4 my-4"  data-kt-stepper-element="nav">
+                            <!--begin::Wrapper-->
+                            <div class="stepper-wrapper d-flex align-items-center">
+                                <!--begin::Label-->
+                                <div class="stepper-label">
+                                    <h3 class="stepper-title"  [ngStyle]="(disableCondition || QuoteStatus === cloudHubConstants.QUOTE_LIST_STATUS_PUBLISHED || CompletedStateCount >= 5 ) && presenttab != 5 ? { color: 'rgb(33, 147, 70)' } : {}">
+                                        <span>6.</span>{{'TRANSLATE.QUOTE_REVIEW_AND_PUBLISH_WIZARD_TITLE_REVIEW_AND_PUBLISH' | translate}}
+                                    </h3>
+                                </div>
+                                <!--end::Label-->
+                            </div>
+                            <!--end::Wrapper-->
+
+                            <!--begin::Line-->
+                            <div class="stepper-line"></div>
+                            <!--end::Line-->
+                        </div>
+                        <!--end::Step 6-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end::Nav-->
+    <div class="d-flex flex-column-fluid mt-4">
+        <!--begin::Container-->
+        <div class="container">
+                <div class="p-0">
+                    <div class="row">
+                        <div class="col-xl-12 col-xxl-12">
+                            <div class="row">
+                                <!--begin::Form-->
+                                <form class="form" [formGroup]="frmWizardOne" novalidate="novalidate"
+                                    id="kt_stepper_example_basic_form">
+                                    <!--begin::Group-->
+                                    <!--begin::Step 1-->
+                                    <div class="flex-column current" data-kt-stepper-element="content">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="card shadow wizard-form-height fixed-height-one">
+                                                    <div class="card-header">
+                                                        <div class="card-title">
+                                                            <h4 class="fw-bold fs-2"> {{'TRANSLATE.QUOTE_ADD_WIZARD_TITLE_QUOTE_DETAILS' |translate}}</h4>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-body pb-5">
+                                                      <!--begin::New Customer Checkbox-->
+                                                    <div class="form-group row mb-4">
+                                                        <div class="col-12">
+                                                            <div class="form-check">
+                                                                <input type="checkbox" class="form-check-input"
+                                                                    id="isNewCustomer" formControlName="isNewCustomer"
+                                                                 [attr.disabled]="(PageMode === 'Edit' || PageMode === 'View') ? true : null">
+
+                                                                <label class="form-check-label fw-bold fs-3 text-dark"for="isNewCustomer">
+                                                                    {{'TRANSLATE.QUOTE_DETAILS_NEW_CUSTOMER' | translate}}
+                                                                </label>
+                                                            </div>
+
+                                                                <small class="text-muted">
+                                                                    {{'TRANSLATE.QUOTE_DETAILS_CHECK_IF_THIS_QUOTE_IS_FOR_NEW_CUSTOMER' | translate}}
+                                                                </small>
+                                                        </div>
+                                                    </div>
+                                                        <!--end::New Customer Checkbox-->
+                                                        <!--begin::New Customer Details-->
+                                                            <div *ngIf="isNewCustomerFlag">
+                                                            <div class="mb-5">
+                                                                <h4 class="fw-bold fs-3">
+                                                                    {{'TRANSLATE.QUOTE_DETAILS_NEW_CUSTOMER_DETAILS' | translate}}
+                                                                </h4>
+                                                            </div>
+
+                                                            <!-- Customer Name -->
+                                                            <div class="form-group row mb-4">
+                                                                <div
+                                                                    class="text-left text-sm-left text-md-right text-lg-right text-start">
+                                                                    <label class="text-grey-800 fs-6 fw-semibold">
+                                                                        {{'TRANSLATE.QUOTE_DETAILS_CUSTOMER_NAME' | translate}}
+                                                                        <span class="text-danger">*</span>
+                                                                    </label>
+                                                                </div>
+
+                                                                <div>
+                                                                        <input type="text" class="form-control form-control-sm"
+                                                                            formControlName="newCustomerName"
+                                                                            maxlength="255"
+                                                                            (input)="frmWizardOne.get('newCustomerName')?.markAsTouched()"
+                                                                            placeholder="Enter customer name">
+                                                                    </div>
+                                                                    @if(frmWizardOne.get('newCustomerName')?.errors?.required &&
+                                                                    frmWizardOne.get('newCustomerName')?.touched){
+
+                                                                    <span class="text-danger"
+                                                                        translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED">
+                                                                    </span>
+                                                                    }
+
+                                                                    @if((frmWizardOne.get('newCustomerName')?.value?.length || 0) >= 255 &&
+                                                                        frmWizardOne.get('newCustomerName')?.touched){
+                                                                        <span class="text-danger" 
+                                                                                translate="TRANSLATE.QUOTE_CUSTOMER_NAME_MAXLENGTH_ERROR_MESSAGE">
+                                                                        </span>
+                                                                        }
+                                                                      
+                                                            </div>
+
+                                                            <!-- Currency Code Dropdown -->
+<div class="form-group row mb-4">
+    <div class="text-left text-sm-left text-md-right text-lg-right text-start">
+        <label class="text-grey-800 fs-6 fw-semibold">
+            {{'TRANSLATE.QUOTE_LABEL_TEXT_CURRENCY_CODE' | translate}}
+            <span class="text-danger">*</span>
+        </label>
+    </div>
+    <div>
+        <select class="form-select form-select-sm fw-bold"
+            formControlName="currencyCode"
+            [disabled]="PageMode === 'Edit' || PageMode === 'View'">
+            <option value="">{{'TRANSLATE.QUOTE_PLEASE_SELECT_CURRENCY' | translate}}</option>
+            @for(currency of CurrencyCodes; track $index){
+                <option [value]="currency.CurrencyCode">
+                    {{currency.CurrencyCode}}
+                </option>
+            }
+        </select>
+    </div>
+    @if(frmWizardOne.get('currencyCode')?.errors?.required &&
+    frmWizardOne.get('currencyCode')?.touched){
+        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+    }
+</div>
+
+                                                            <!-- Plan Name Multi Select -->
+                                                            <div class="form-group row mb-4">
+                                                                <div
+                                                                    class="text-left text-sm-left text-md-right text-lg-right text-start">
+                                                                    <label class="text-grey-800 fs-6 fw-semibold">
+                                                                        {{'TRANSLATE.QUOTE_DETAILS_PLAN_NAME' | translate}}
+                                                                        <span class="text-danger">*</span>
+                                                                    </label>
+                                                                </div>
+
+                                                                <div>
+                                                                    <ng-select [items]="planList" bindLabel="Name"
+                                                                        bindValue="ID" [multiple]="true"
+                                                                        [closeOnSelect]="false" [clearSearchOnAdd]="true" placeholder="Select plan"
+                                                                        formControlName="planIds"
+                                                                        (change)="onplanChange($event)">
+                                                                    </ng-select>
+                                                                </div>
+
+                                                                @if(frmWizardOne.get('planIds')?.errors?.required &&
+                                                                frmWizardOne.get('planIds')?.touched){
+
+                                                                <span class="text-danger"
+                                                                    translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED">
+                                                                </span>
+
+                                                                }
+                                                            </div>
+
+                                                        </div>
+                                                        <!--end::New Customer Details-->
+                                                        <!--begin::Choose Customer-->
+                                                                <div class="form-group row mb-4" *ngIf="!isNewCustomerFlag">
+
+                                                            <div class="text-left text-sm-left text-md-right text-lg-right text-start">
+                                                                <label class="text-grey-800 fs-6 fw-semibold">
+                                                                    {{'TRANSLATE.QUOTE_LABEL_TEXT_CHOOSE_CUSTOMER' | translate}}
+                                                                    <span class="text-danger">*</span>
+                                                                </label>
+                                                            </div>
+
+                                                            <div>
+                                                                <select class="form-select form-select-sm fw-bold" required="true"
+                                                                        name="customer_id" formControlName="customer_id"
+                                                                    [disabled]="PageMode === 'Edit' || PageMode === 'View'"
+                                                                    (change)="customerContactList()">
+                                                                    @for(customer of customers; track $index){
+                                                                    <option [value]="customer?.C3Id" >
+                                                                        {{customer?.CustomerName}}
+                                                                    </option>
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                            @if(frmWizardOne.get('customer_id')?.errors?.required &&
+                                                            frmWizardOne.get('customer_id')?.touched){
+                                                            <span class="text-danger"
+                                                                translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED">
+                                                            </span>
+
+                                                            }
+                                                        </div>
+                                                        <!--end::Choose Customer-->                                                 
+                                                        <!--begin::Choose Branch--> 
+                                                            <div class="form-group row mb-4" *ngIf="!isNewCustomerFlag">
+
+                                                            <div class="text-left text-sm-left text-md-right text-lg-right text-start">
+                                                                <label class="text-grey-800 fs-6 fw-semibold">
+                                                                    {{'TRANSLATE.QUOTE_LABEL_TEXT_CHOOSE_BRANCH' | translate}}
+                                                                      <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.QUOTE_BRANCH_TOOLTIP_TEXT' | translate}}">
+                                                                                    <span class="path1"></span>
+                                                                                    <span class="path2"></span>
+                                                                                    <span class="path3"></span>
+                                                                                </i> 
+                                                                </label>
+                                                            </div>
+                                                            <div> 
+                                                                <ng-select
+                                                                    [items]="branchList"
+                                                                    bindValue="RecordIntId"
+                                                                    formControlName="branch_id" (change)="onFormChange();customerContactList()">
+                                                                    <ng-template ng-option-tmp let-item="item">
+                                                                        <div>
+                                                                            <div class="fw-semibold">
+                                                                                <span translate="TRANSLATE.QUOTE_LABEL_BRANCH"></span>: <span class="fw-bold text-black">{{item.RecordName}} <span *ngIf="item.ParentSiteName != null">-</span>  {{item.ParentSiteName}}</span>
+                                                                            </div>
+                                                                            <div class="fw-semibold">
+                                                                                 <span translate="TRANSLATE.QUOTE_LABEL_ENTITY"></span>:  <span class="fw-semibold text-black-50">
+                                                                                 {{ 'TRANSLATE.' + item.EntityName | translate }}
+                                                                            </span>
+                                                                            <br>
+                                                                            </div>
+                                                                            <div class="fw-semibold">
+                                                                                 <span translate="TRANSLATE.QUOTE_LABEL_RECORDC3ID"></span>:  <span class="fw-semibold text-black-50">
+                                                                                {{item.RecordC3Id}}
+                                                                            </span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </ng-template>
+                                                                    <ng-template ng-label-tmp let-item="item">
+                                                                        <span class="fw-bold text-gray-700"> {{item.RecordName}}</span>
+                                                                    </ng-template>
+                                                                </ng-select>
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Choose Branch-->
+                                                        <!--begin::Template-->
+                                                        <div class="form-group mb-4">
+                                                            <div class="text-left text-sm-left text-md-right text-lg-right text-start">
+                                                                <label class="text-grey-800 fs-6 fw-semibold">
+                                                                    {{'TRANSLATE.QUOTE_LABEL_TEXT_TEMPLATE' | translate}}
+                                                                    <span class="text-danger">*</span>
+                                                                </label>
+                                                            </div>
+                                                            
+                                                            <select class="form-select form-select-sm fw-bold" name="frmAddQuote_Template"
+                                                                formControlName="frmAddQuote_Template" 
+                                                                [disabled]="[cloudHubConstants.QUOTE_LIST_STATUS_APPROVED,cloudHubConstants.QUOTE_LIST_STATUS_EXPIRED, cloudHubConstants.QUOTE_LIST_STATUS_DELETED,cloudHubConstants.QUOTE_LIST_STATUS_ORDER_PROCESSED].includes(QuoteStatus) || PageMode === 'View'">
+                                                                <option [value]="''">{{'TRANSLATE.QUOTE_TEMPLATE_TEXT_BASIC' | translate}}</option>
+                                                                
+                                                            </select>
+                                                            @if(frmWizardOne.get('frmAddQuote_Template')?.errors?.required && frmWizardOne.get('frmAddQuote_Template')?.touched){
+                                                            <span class="text-danger"
+                                                                translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                                                            }
+                                                        </div>
+                                                        <!--end::Template-->
+                                                        <!--begin::Quote Name-->
+                                                        <div class="form-group mb-4">
+                                                            <div class="text-left text-sm-left text-md-right text-lg-right text-start">
+                                                                <label class="text-grey-800 fs-6 fw-semibold">
+                                                                    {{'TRANSLATE.QUOTE_LABEL_TEXT_QUOTE_NAME' | translate}}
+                                                                    <span class="text-danger">*</span>
+                                                                </label> 
+                                                            </div> 
+                                                            <input type="text" name="frmAddQuote_QuoteName"
+                                                                formControlName="frmAddQuote_QuoteName"
+                                                                (change)="onFormChange()"
+                                                                class="form-control form-control-sm "
+                                                                placeholder="{{'TRANSLATE.QUOTE_LABEL_TEXT_QUOTE_NAME' | translate}}"
+                                                                [disabled]="[cloudHubConstants.QUOTE_LIST_STATUS_APPROVED,cloudHubConstants.QUOTE_LIST_STATUS_EXPIRED, cloudHubConstants.QUOTE_LIST_STATUS_DELETED,cloudHubConstants.QUOTE_LIST_STATUS_ORDER_PROCESSED].includes(QuoteStatus) || PageMode === 'View'"
+                                                                [required]="true">
+                                                                @if (frmWizardOne.get('frmAddQuote_QuoteName')?.errors?.required
+                                                            &&
+                                                            frmWizardOne.get('frmAddQuote_QuoteName')?.touched){
+                                                            <span class="text-danger"><span
+                                                                    translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                                                            }
+                                                            @if
+                                                            (frmWizardOne.get('frmAddQuote_QuoteName')?.errors?.maxlength &&
+                                                            frmWizardOne.get('frmAddQuote_QuoteName')?.touched) {
+                                                            <span class="text-danger"><span
+                                                                    translate="TRANSLATE.QUOTE_NAME_MAXLENGTH_ERROR_MESSAGE"></span></span>
+                                                            }
+                                                        </div>
+                                                        <!--end::Quote Name-->
+                                                        <!--begin::Expiration Date-->
+                                                        <div class="form-group mb-4">
+                                                            <div class="text-left text-sm-left text-md-right text-lg-right text-start">
+                                                                <label class="text-grey-800 fs-6 fw-semibold">
+                                                                    {{'TRANSLATE.QUOTE_LABEL_TEXT_EXPIRATION_DATE' | translate}}
+                                                                        <span class="text-danger">*</span>
+                                                                      <i class="ki-duotone ki-information-2 fs-5 ms-2" aria-hidden="true" ngbTooltip="{{'TRANSLATE.QUOTE_EXPIRE_DATE_TOOLTIP_TEXT' | translate}}">
+                                                                                    <span class="path1"></span>
+                                                                                    <span class="path2"></span>
+                                                                                    <span class="path3"></span>
+                                                                                </i> 
+                                                                </label>
+                                                            </div>
+                                                            
+                                                            <div ng-controller="DatepickerUIController">
+                                                                <div class="form-group">
+                                                                  <div class="input-group date mb-2">
+                                                                    @if(PageMode != 'View' ){
+                                                                      <input class="form-control form-control-sm  mb-lg-0" 
+                                                                             name="expireDate" 
+                                                                             placement="bottom-right"
+                                                                             formControlName="expireDate"
+                                                                             (ngModelChange)="onFormChange()"
+                                                                             placeholder="{{'TRANSLATE.QUOTE_LABEL_TEXT_EXPIRATION_DATE'|translate}}"
+                                                                             [minDate]="todayDate" 
+                                                                             [readOnly]="true"
+                                                                             ngbDatepicker #sd="ngbDatepicker"
+                                                                             [disabled]="[cloudHubConstants.QUOTE_LIST_STATUS_APPROVED, cloudHubConstants.QUOTE_LIST_STATUS_EXPIRED, cloudHubConstants.QUOTE_LIST_STATUS_DELETED, cloudHubConstants.QUOTE_LIST_STATUS_ORDER_PROCESSED].includes(QuoteStatus) || PageMode === 'View'"
+                                                                             [required]="true">
+                                                                      <button class="btn btn-sm btn-light-primary me-6" (click)="sd.toggle()" type="button">
+                                                                        <i class="ki-outline ki-calendar fs-3 pe-0"></i>
+                                                                      </button>
+                                                                    } @else {
+                                                                      <input class="form-control  mb-lg-0" 
+                                                                             name="expireDate" 
+                                                                             formControlName="expireDate"
+                                                                             (ngModelChange)="onFormChange()"
+                                                                             [readOnly]="true"
+                                                                             [placeholder]="frmAddQuote_ExpiresOn ? frmAddQuote_ExpiresOn : globalDateFormat"
+                                                                             ngbDatepicker #sd="ngbDatepicker"
+                                                                             [disabled]="[cloudHubConstants.QUOTE_LIST_STATUS_APPROVED, cloudHubConstants.QUOTE_LIST_STATUS_EXPIRED, cloudHubConstants.QUOTE_LIST_STATUS_DELETED, cloudHubConstants.QUOTE_LIST_STATUS_ORDER_PROCESSED].includes(QuoteStatus) || PageMode === 'View'"
+                                                                             [required]="true">
+                                                                      <button class="btn btn-sm btn-light-primary me-6" (click)="sd.toggle()" type="button">
+                                                                        <i class="ki-outline ki-calendar fs-3 pe-0"></i>
+                                                                      </button>
+                                                                    }
+                                                                  </div>
+                                                              
+                                                                  <!-- Validation Message Block Moved Here -->
+                                                                  @if (frmWizardOne.get('expireDate')?.errors?.required && frmWizardOne.get('expireDate')?.touched){
+                                                                    <div class="text-danger mt-1">
+                                                                      <span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span>
+                                                                    </div>
+                                                                  }
+                                                                </div>
+                                                              </div>
+                                                              
+                                                        </div>
+                                                        <!--end::Expiration Date-->
+                                                        <!--begin::Comments to Buyers-->
+                                                        <div class="form-group mb-4">
+                                                            <label class="text-grey-800 fs-6 fw-semibold">
+                                                                <span
+                                                                    translate="TRANSLATE.QUOTE_LABEL_TEXT_COMMENTS_TO_BUYER"></span>
+                                                            </label>
+                                                            <div [ngxSummernote]="config" name="quote_description"
+                                                                formControlName="quote_description"
+                                                                (ngModelChange)="onFormChange()"
+                                                                [ngxSummernoteDisabled]="PageMode === 'View'">
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Comments to Buyers-->
+                                                        <!--begin::Purchase Team-->
+                                                        <div class="form-group mb-4">
+                                                            <label class="text-grey-800 fs-6 fw-semibold">
+                                                                <span
+                                                                    translate="TRANSLATE.QUOTE_LABEL_TEXT_PURCHASE_TERM"></span>
+                                                            </label>
+                                                            <div class="form-group row">
+                                                                <div class="radio-list">
+                                                                    <label
+                                                                        class="radio radio-outline radio-outline-2x control-label mb-5">
+                                                                        <input type="radio" class="form-check-input"
+                                                                            formControlName="purchaseTermsOption" name="purchaseTermsOption"
+                                                                            [value]="default"
+                                                                            (click)="onPurchasTermsOptionClick('default')"
+                                                                            [disabled]="[cloudHubConstants.QUOTE_LIST_STATUS_APPROVED, cloudHubConstants.QUOTE_LIST_STATUS_EXPIRED, cloudHubConstants.QUOTE_LIST_STATUS_DELETED, cloudHubConstants.QUOTE_LIST_STATUS_ORDER_PROCESSED].includes(QuoteStatus) || PageMode === 'View'"
+                                                                            [required]="true">
+                                                                        <span></span>
+                                                                        {{'TRANSLATE.DEFAULT_PURCHASE_TERMS_RADIO_BUTTON_LABEL' | translate}}
+                                                                    </label>
+                                                                    <label
+                                                                        class="radio radio-outline radio-outline-2x control-label mt-3 mb-7 mx-8">
+                                                                        <input type="radio" class="form-check-input"
+                                                                            formControlName="purchaseTermsOption" name="purchaseTermsOption"
+                                                                            [value]="custom"
+                                                                            (click)="onPurchasTermsOptionClick('custom')"
+                                                                            [required]="true" 
+                                                                            [disabled]="[cloudHubConstants.QUOTE_LIST_STATUS_APPROVED, cloudHubConstants.QUOTE_LIST_STATUS_EXPIRED, cloudHubConstants.QUOTE_LIST_STATUS_DELETED, cloudHubConstants.QUOTE_LIST_STATUS_ORDER_PROCESSED].includes(QuoteStatus) || PageMode === 'View'"
+                                                                            >
+                                                                        <span></span>
+                                                                        {{'TRANSLATE.CUSTOM_PURCHASE_TERMS_RADIO_BUTTON_LABEL' | translate}}
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div [ngxSummernote]="config" name="quote_puchasedescription"
+                                                                formControlName="quote_puchasedescription"
+                                                                (ngModelChange)="onFormChange()"
+                                                                [ngxSummernoteDisabled]="PageMode === 'View' || purchaseTermDisableOption">
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Purchase Team-->
+                                                        <!--begin::Payment Term-->
+                                                        <div class="form-group">
+                                                            <label class="text-grey-800 fs-6 fw-semibold">
+                                                                <span
+                                                                    translate="TRANSLATE.PAYMENT_TERM_LABEL_QUOTE"></span>
+                                                            </label>
+                                                            <div class="form-group row">
+                                                                <div class="radio-list">
+                                                                    <label
+                                                                        class="radio radio-outline radio-outline-2x control-label mb-5">
+                                                                        <input type="radio" class="form-check-input"
+                                                                            formControlName="paymentTermsOption" name="paymentTermsOption"
+                                                                            [value]="default"
+                                                                            (click)="onPaymentTermsOptionClick('default')"
+                                                                            [required]="true"
+                                                                            [disabled]="[cloudHubConstants.QUOTE_LIST_STATUS_APPROVED, cloudHubConstants.QUOTE_LIST_STATUS_EXPIRED, cloudHubConstants.QUOTE_LIST_STATUS_DELETED, cloudHubConstants.QUOTE_LIST_STATUS_ORDER_PROCESSED].includes(QuoteStatus) || PageMode === 'View'">
+                                                                        <span></span>
+                                                                        {{'TRANSLATE.DEFAULT_PURCHASE_TERMS_RADIO_BUTTON_LABEL' | translate}}
+                                                                    </label>
+                                                                    <label
+                                                                        class="radio radio-outline radio-outline-2x control-label mt-3 mb-7 mx-8">
+                                                                        <input type="radio" class="form-check-input"
+                                                                            formControlName="paymentTermsOption" name="paymentTermsOption"
+                                                                            [value]="custom"
+                                                                            (click)="onPaymentTermsOptionClick('custom')"
+                                                                            [required]="true"
+                                                                            [disabled]="[cloudHubConstants.QUOTE_LIST_STATUS_APPROVED, cloudHubConstants.QUOTE_LIST_STATUS_EXPIRED, cloudHubConstants.QUOTE_LIST_STATUS_DELETED, cloudHubConstants.QUOTE_LIST_STATUS_ORDER_PROCESSED].includes(QuoteStatus) || PageMode === 'View'"
+                                                                            >
+                                                                        <span></span>
+                                                                        {{'TRANSLATE.CUSTOM_PURCHASE_TERMS_RADIO_BUTTON_LABEL' | translate}}
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div [ngxSummernote]="config" name="quote_paymentsterm"
+                                                                formControlName="quote_paymentsterm"
+                                                                (ngModelChange)="onFormChange()"
+                                                                [ngxSummernoteDisabled]="PageMode === 'View' || paymenTermDisableOption">
+                                                            </div>
+                                                        </div>
+                                                        <!--end::Payment term-->
+                                                         <!--begin::Additional details-->
+                                                        <div class="form-group mb-4 mt-4">
+                                                            <label class="text-grey-800 fs-6 fw-semibold">
+                                                                <span translate="TRANSLATE.QUOTE_LABEL_TEXT_ADDITIONAL_CUSTOMER_DETAILS"></span>
+                                                                      <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.QUOTE_ADDITIONAL_DETAILS_TOOLTIP_TEXT' | translate}}">
+                                                                                    <span class="path1"></span>
+                                                                                    <span class="path2"></span>
+                                                                                    <span class="path3"></span>
+                                                                                </i> 
+                                                            </label>
+                                                            <div [ngxSummernote]="config1" name="quote_customer_additional_details"
+                                                                formControlName="quote_customer_additional_details"
+                                                                (ngModelChange)="onFormChange()"
+                                                                [ngxSummernoteDisabled]="PageMode === 'View'">
+                                                            </div>
+                                                             <span class="text-danger" translate="TRANSLATE.QUOTE_ERROR_CUSTOMER_DETAILS_MAX_LENGTH" *ngIf="showMaxError">
+                                                            </span>
+                                                        </div>
+                                                        <!--end::Additional details-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 card shadow rounded sc  container custom-container"
+                                                ng-show="vm.activeTab==='one'">
+                                                <div class="fixed-height-one" id="sample-table-for-pdf" infiniteScroll 
+                                                [infiniteScrollDistance]="0.3"
+                                                [infiniteScrollThrottle]="50" 
+                                                [scrollWindow]="false"
+                                                >
+                                                    <app-quote-pdf-view [selectedCustomerDetails]="selectedCustomerDetails"
+                                                    [DisplayCustomerName]="displayCustomerNameForPdf"
+                                                    [frmAddQuote_QuoteName]="frmAddQuote_QuoteName"
+                                                    [addressDetails]="addressDetails" 
+                                                    [QuoteContact]="QuoteContact"
+                                                    [users]="users" 
+                                                    [quoteLineItemsData]="quoteLineItemsData"
+                                                    [totalQuoteValue]="totalQuoteValue"
+                                                    [DisplayTotalFinalSalePrice]="DisplayTotalFinalSalePrice"
+                                                    [totalTaxAmount]="totalTaxAmount" 
+                                                    [quoteLineItemsTotalPrice]="quoteLineItemsTotalPrice"
+                                                    [totalDiscount]="totalDiscount"
+                                                    [billingCycleSubtotals]="billingCycleSubtotals"
+                                                    [CommentsToBuyer]="CommentsToBuyer"
+                                                    [PurchaseTerms]="PurchaseTerms" 
+                                                    [AdditionalCustomerDetails]="AdditionalCustomerDetails"
+                                                    [IsShowCounterSign]="IsShowCounterSign"
+                                                    [IsCounterSign]="IsCounterSign" 
+                                                    [PDFlogobase64]="PDFlogobase64"
+                                                    [CurrencySymbol]="CurrencySymbol"
+                                                    [CurrencyDecimalPlaces]="CurrencyDecimalPlaces"
+                                                    [CurrencyThousandSeperator]="CurrencyThousandSeperator"
+                                                    [CurrencyDecimalSeperator]="CurrencyDecimalSeperator"
+                                                    [currentDate]="currentDate"
+                                                    [frmAddQuote_ExpiresOn]="frmAddQuote_ExpiresOn"
+                                                    [PaymentTerms]="PaymentTerms"
+                                                    [CreateByDetails]="createByDetails"
+                                                    [Ispdfview] ="false"
+                                                    [C3Id]="currentC3CustomerId"
+                                                    [selectedAddressId]="selectedAddressId" 
+                                                    [IsCurrentAddress]="IsCurrentAddress"
+                                                    [groupByBillingTerm]="groupByBillingTerm"
+                                                    [showPricesExcludeVAT]="showPricesExcludeVAT"
+                                                    [buyerAddressList]="buyerAddressList">
+                                                </app-quote-pdf-view>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--begin::Step 1-->
+                                    <!--end::Group-->
+                                </form>
+                                <!--end::Form-->
+                                <div class="flex-column" data-kt-stepper-element="content">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="card shadow wizard-form-height fixed-height-two ">
+                                                <div class="card-header">
+                                                    <div class="card-title w-100">
+                                                        <h4 class="fw-bold fs-2"> {{'TRANSLATE.QUOTE_BUYER_INFO' |translate}}</h4>
+                                                    </div>
+                                                    <div class="card-subtitle">
+                                                        <span class="text-muted mt-1 fw-semibold fs-7">{{'TRANSLATE.QUOTE_CHOOSE_BUYER_DETAILS' | translate}}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="card-body">
+                                                    <h5 class="mb-10 font-weight-bold mt-5"> {{'TRANSLATE.QUOTE_INCLUDE' | translate}}</h5>
+                                                    <form [formGroup]="frmWizardTwo">
+                                                        <div class="pb-5">
+                                                            <div class="border border-white background-white">
+                                                                <div class="">
+                                                                    <div class="card card-custom card-dashed card-stretch gutter-b background-white">
+                                                                        <div class="card-header pt-3">
+                                                                            <h1 class="card-title align-items-start mt-5">
+                                                                                <div class="form-check">
+                                                                                    <input type="checkbox" class="form-check-input me-1 text-primary" [hidden]="PageMode === 'View'"
+                                                                                        (change)="CheckAllContact()" formControlName="SelectAllColumn"/> 
+                                                                                    <label class="form-check-label" for="kt_check_indeterminate_1">
+                                                                                    </label>
+                                                                                </div>
+                                                                                <span class="align-top text-grey-700" translate="TRANSLATE.QUOTE_CONTACT"></span>
+                                                                                <a (click)="addExistingCustomer()">
+                                                                                    <i class="ki-outline ki-address-book text-primary fs-2x align-top">
+                                                                                    </i>
+                                                                                </a>
+                                                                            </h1>
+                                                                            <div class="card-toolbar mt-0">
+                                                                                <div id="past-dues-apexcharts-menu-wrapper" class="apexcharts-toolbar"
+                                                                                    style="position: relative;padding-right: 15px; padding-top:0">
+                                                                                    <a (click)="addNewCustomer()" [hidden]="PageMode === 'View'">
+                                                                                        <i class="ki-outline ki-plus-circle  fs-1 text-primary mt-0"></i>
+                                                                                    </a>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="border-bottom"></div>
+                                                                        <div class="card-body p-0 background-white">
+                                                                            <!-- <perfect-scrollbar class="scroller-custom" wheel-propagation="true" swipe-propagation="true" on-scroll="onScroll(scrollTop, scrollHeight)" always-visible="true" style="height: 270px!important" *ngIf="vm.QuoteContact && vm.QuoteContact.length > 0"> -->
+                                                                            <div class="pt-2" id="past-dues-card-png">
+                                                                                        @if(QuoteContact.length === 0){
+                                                                                                    <div class="text-muted text-center p-4">
+                                                                                                    <i class="ki-outline fs-2 text-primary me-1"></i>
+                                                                                                   {{'TRANSLATE.QUOTE_DETAILS_CONTACT_TOOLTIP_TEXT' | translate}}
+                                                                                                    </div>
+                                                                                                    }
+                                                                                @for(row of QuoteContact; track $index){
+                                                                                <div class="d-flex flex-wrap align-items-center mb-3" style=" padding: 2rem 2.25rem">
+                                                                                    <div class="symbol symbol-primary flex-shrink-0">
+                                                                                        <div class="form-check">
+                                                                                            <input type="checkbox" class="text-primary form-check-input me-2"  [(ngModel)]="row.IsChecked"
+                                                                                            [checked]="SelectAllColumn || row.IsChecked" [hidden]="PageMode === 'View'" formControlName="checkbox1" />
+                                                                                        </div>
+                                                                                        <!-- <input type="checkbox" class="text-primary form-check-input me-2"  [(ngModel)]="row.IsChecked"
+                                                                                            [checked]="SelectAllColumn || row.IsChecked" [hidden]="PageMode === 'View'" formControlName="checkbox1" /> -->
+                                                                                    </div>
+                                                                                    <div class="me-4">
+                                                                                        <div>
+                                                                                            <!--begin::Logo-->
+                                                                                            <a>
+                                                                                                <img src='../../../../assets/media/img/Logo Shapes 19.png' class="theme-light-show"
+                                                                                                    style="max-width: 50px; max-height: 50px;" alt="">
+                                                                                            </a>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="d-flex flex-column flex-grow-1 my-lg-0 my-2">
+                                                                                        <span class="text-primary fw-bold" *ngIf="row.IsEdit != true">
+                                                                                            {{row.FullName}}
+                                                                                            <i class="ki-outline ki-pencil text-primary" aria-hidden="true" style="margin-bottom:0 !important;padding-bottom:0 !important"
+                                                                                                (click)="editRow(row)" *ngIf="row.IsEdit != true" [hidden]="PageMode === 'View'"></i>
+                                                                                        </span>
+                                                                                        <span class="row" *ngIf="row.IsEdit === true">
+                                                                                            <span class="col-md-6">
+                                                                                                <input type="text" class="form-control"  formControlName="customerNameToUpdate"
+                                                                                                    placeholder="{{'TRANSLATE.PARTNER_CUSTOMER_FILTER_NAME' | translate}}"
+                                                                                                    ng-init="row.customerNameToUpdate = row.FullName">
+                                                                                            </span>
+                                                                                            <span class="btn-group col-md-3 p-0">
+                                                                                                <a class="btn btn-icon" (click)="UpdateCustomerName(row)" *ngIf="row.IsEdit === true">
+                                                                                                    <i class="ki-outline ki-check fs-1 text-success"></i>
+                                                                                                </a>
+                                                                                                <a class="btn btn-icon" (click)="row.IsEdit = false" *ngIf="row.IsEdit === true">
+                                                                                                    <i class="ki-outline ki-cross fs-1  text-danger"></i>
+                                                                                                </a>
+                                                                                            </span>
+                                                                                        </span>
+                                                                                        <span class="fs-lg fs-sm" style="word-wrap: break-word; max-width: 355px;">
+                                                                                            {{row.EmailId}}
+                                                                                        </span>
+                                                                                        <span class="font-size-lg font-size-sm">
+                                                                                            {{row.PhoneNumber}}
+                                                                                        </span>
+                                                                                    </div>
+                                                                                </div>
+                                                                                }
+                                                                            </div>
+                                                                            <!-- </perfect-scrollbar> -->
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                                <div class="border border-white mt-10 background-white" *ngIf="!isNewCustomerFlag">
+
+                                                                <div class="">
+                                                                    <div class="card card-custom card-dashed card-stretch gutter-b background-white">
+                                                                        <div class="card-header  pt-5">
+                                                                            <h3 class="card-title align-items-start flex-column">
+                                                                                <span class="card-label font-weight-bolder font-size-h3"><span
+                                                                                        class="align-top" translate="TRANSLATE.QUOTE_COMPANY"></span></span>
+                                                                            </h3>
+                                                                            <div class="card-toolbar">
+                                                                                <div id="past-dues-apexcharts-menu-wrapper" class="apexcharts-toolbar" style="position: relative;padding-right: 15px;">
+                                                                                    <div class="apexcharts-menu-icon" title="{{'TRANSLATE.MENU' | translate}}">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="border-bottom"></div>
+                                                                        <div class="card-body pt-0 background-white">
+                                                                            <div class="pt-2" id="past-dues-card-png">
+                                                                                @for(row of addressDetails; track $index){
+                                                                                <div class="d-flex flex-wrap align-items-center mb-5">
+                                                                                    <div class="symbol symbol-primary flex-shrink-0">
+                                                                                        <div class="form-check">
+                                                                                            <input type="checkbox" class="text-primary form-check-input me-2" [checked]="row.IsChecked" [(ngModel)]="row.IsChecked"
+                                                                                            [hidden]="PageMode === 'View'" [ngModelOptions]="{standalone: true}"
+                                                                                            (change)="selectAddress(row, 'existing')" />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="me-4">
+                                                                                        <div>
+                                                                                            <a>
+                                                                                                <img src='../../../../assets/media/img/Standard Collection 3.png'
+                                                                                                    class="theme-light-show"
+                                                                                                    style="max-width: 50px; max-height:50px;" alt="">
+                                                                                            </a>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="d-flex flex-column flex-grow-1 my-lg-0 my-2 pr-3">
+                                                                                        <span class="text-primary font-weight-bold pb-0 pl-1 mb-0">
+                                                                                            {{ branchId ? BranchEntityName : customerName }}
+                                                                                        </span>
+                                                                                        <span class="font-size-lg font-size-sm" style="max-width: 300px;"> 
+                                                                                            {{row.Line1}} {{row.Line2}}<br />
+                                                                                            {{row.City}} {{row.State}} {{row.Country}} {{row.Zip}}
+                                                                                        </span>
+                                                                                       
+                                                                                    </div>
+                                                                                </div>
+                                                                                }
+                                                                                <div class="d-flex align-items-center gap-2" *ngIf="!addressDetails || addressDetails.length === 0">
+                                                                                    <div>
+                                                                                         <i class="ki-duotone ki-information-2 fs-2 ms-1 mt-0" aria-hidden="true" ngbTooltip="{{'TRANSLATE.QUOTE_DETAILS_BRANCH_ADDRESS_IS_EMPTY_ERROR' | translate}}">
+                                                                                                <span class="path1"></span>
+                                                                                                <span class="path2"></span>
+                                                                                                <span class="path3"></span>
+                                                                                            </i> 
+                                                                                    </div>
+                                                                                    <div>
+                                                                                        <span class="font-size-lg font-size-sm mt-2">{{'TRANSLATE.QUOTE_DETAILS_BRANCH_ADDRESS_IS_EMPTY' | translate}}</span>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!--end::Company Card-->
+
+                                                        </div>
+                                                    </form>
+
+                                                    <!--begin::Address Card - For New Customer-->
+                                                        <div class="border border-white mt-10 background-white" *ngIf="isNewCustomerFlag">
+
+                                                        <div class="">
+                                                            <div class="card card-custom card-dashed card-stretch gutter-b background-white">
+                                                                <div class="card-header pt-5">
+                                                                    <h3 class="card-title align-items-start flex-column">
+                                                                        <span class="card-label fs-h3">
+                                                                            <span class="align-top">{{'TRANSLATE.QUOTE_DETAILS_ADDRESS_TEXT' | translate}}</span>
+                                                                        </span>
+                                                                    </h3>
+                                                                    <div class="card-toolbar">
+                                                                        <div class="apexcharts-toolbar" style="position: relative;padding-right: 15px; padding-top:0">
+                                                                            <a (click)="addNewAddress()" [hidden]="PageMode === 'View' ||  PageMode === 'Edit'|| (buyerAddressList && buyerAddressList.length > 0 )" aria-label="Add new address">
+                                                                                <i class="ki-outline ki-plus-circle fs-1 text-primary mt-0" aria-hidden="true"></i>
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="border-bottom"></div>
+                                                                <div class="card-body pt-0 background-white">
+                                                                    <div class="pt-2">
+                                                                        @for(row of buyerAddressList; track $index){
+                                                                        <div class="d-flex flex-wrap align-items-center mb-5">
+                                                                            <div class="symbol symbol-primary flex-shrink-0">
+                                                                                <div class="form-check">
+                                                                                    <input type="checkbox" class="text-primary form-check-input me-2"
+                                                                                        [checked]="row.IsChecked" [(ngModel)]="row.IsChecked"
+                                                                                        [hidden]="PageMode === 'View'"
+                                                                                        [ngModelOptions]="{standalone: true}" 
+                                                                                        (change)="selectAddress(row, 'new')" />
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="me-4">
+                                                                                <a>
+                                                                                    <img src='../../../../assets/media/img/Standard Collection 3.png'
+                                                                                        class="theme-light-show"
+                                                                                        style="max-width: 50px; max-height:50px;" alt="">
+                                                                                </a>
+                                                                            </div>
+                                                                            <div class="d-flex flex-column flex-grow-1 my-lg-0 my-2 pr-3">
+                                                                                <span class="text-primary font-weight-bold pb-0 pl-1 mb-0">
+                                                                                     {{frmWizardOne.getRawValue().newCustomerName}}
+
+                                                                                </span>
+                                                                                <span class="font-size-lg font-size-sm" style="max-width: 300px;">
+                                                                                    {{row.Line1}} {{row.Line2}}<br />
+                                                                                    {{row.City}} {{row.State}} {{row.Country}} {{row.Zip}}
+                                                                                </span>
+                                                                            </div>
+                                                                             <a *ngIf="PageMode !== 'View'" 
+                                                                                    (click)="addNewAddress(row)"
+                                                                                    class="cursor-pointer ms-auto" 
+                                                                                    aria-label="Edit address">
+                                                                                        <i class="ki-outline ki-pencil fs-3 text-primary"></i>
+                                                                                    </a>
+                                                                        </div>
+                                                                        }
+                                                                        @if(buyerAddressList.length < 1){
+                                                                              <div class="text-muted text-center p-4">
+                                                                                <i class="ki-outline fs-2 text-primary me-1"></i>
+                                                                                {{'TRANSLATE.QUOTE_DETAILS_Address_TOOLTIP_TEXT' | translate}}
+                                                                                </div>
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!--end::Address Card-->
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 card shadow rounded sc pl-7 container custom-container "
+                                         ng-show="vm.activeTab==='one'">
+                                        <div class="fixed-height-two"  id="sample-table-for-pdf" infiniteScroll 
+                                        [infiniteScrollDistance]="0.3"
+                                        [infiniteScrollThrottle]="50" 
+                                        [scrollWindow]="false"
+                                        style="overflow-y: auto;">
+                                            <app-quote-pdf-view [selectedCustomerDetails]="selectedCustomerDetails"
+                                            [DisplayCustomerName]="displayCustomerNameForPdf"
+                                            [frmAddQuote_QuoteName]="frmAddQuote_QuoteName"
+                                            [addressDetails]="addressDetails" 
+                                            [QuoteContact]="QuoteContact"
+                                            [users]="users" 
+                                            [quoteLineItemsData]="quoteLineItemsData"
+                                            [totalQuoteValue]="totalQuoteValue"
+                                            [DisplayTotalFinalSalePrice]="DisplayTotalFinalSalePrice"
+                                            [totalTaxAmount]="totalTaxAmount" 
+                                            [quoteLineItemsTotalPrice]="quoteLineItemsTotalPrice"
+                                            [totalDiscount]="totalDiscount"
+                                            [billingCycleSubtotals]="billingCycleSubtotals"
+                                            [CommentsToBuyer]="CommentsToBuyer"
+                                            [PurchaseTerms]="PurchaseTerms" 
+                                            [AdditionalCustomerDetails]="AdditionalCustomerDetails"
+                                            [IsShowCounterSign]="IsShowCounterSign"
+                                            [IsCounterSign]="IsCounterSign" 
+                                            [PDFlogobase64]="PDFlogobase64"
+                                            [CurrencySymbol]="CurrencySymbol"
+                                            [CurrencyDecimalPlaces]="CurrencyDecimalPlaces"
+                                            [CurrencyThousandSeperator]="CurrencyThousandSeperator"
+                                            [CurrencyDecimalSeperator]="CurrencyDecimalSeperator"
+                                            [currentDate]="currentDate"
+                                            [frmAddQuote_ExpiresOn]="frmAddQuote_ExpiresOn"
+                                            [PaymentTerms]="PaymentTerms"
+                                            [CreateByDetails]="createByDetails"
+                                            [Ispdfview] ="false"
+                                            [C3Id]="currentC3CustomerId"
+                                            [selectedAddressId]="selectedAddressId" [IsCurrentAddress]="IsCurrentAddress"
+                                            [groupByBillingTerm]="groupByBillingTerm"
+                                            [showPricesExcludeVAT]="showPricesExcludeVAT"
+                                            [buyerAddressList]="buyerAddressList"></app-quote-pdf-view>
+                                        </div>
+
+                                    </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex-column" data-kt-stepper-element="content">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="card shadow wizard-form-height fixed-height-three">
+                                                <div class="card-header">
+                                                    <div class="card-title w-100">
+                                                        <h4 class="fw-bold fs-2"> {{'TRANSLATE.QUOTE_SELLER_INFO_WIZARD_TITLE_SELLER_INFO' |translate}}</h4>
+                                                    </div>
+                                                    <div class="card-subtitle">
+                                                        <span class="text-muted mt-1 fw-semibold fs-7">{{'TRANSLATE.QUOTE_CHOOSE_SELLER_DETAILS' | translate}}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="card-body">
+                                                    <form class="form" [formGroup]="frmWizardThree" novalidate="novalidate"
+                                                    id="kt_stepper_example_basic_form">
+                                                    <div class="row">
+                                                        <div>
+                                                            <div class="pb-5" data-wizard-type="step-content">
+                                                                <h5 class="mb-10 font-weight-bold mt-5"> {{'TRANSLATE.QUOTE_INCLUDE' | translate}}</h5>
+                                                                <div class="card card-custom card-dashed card-stretch gutter-b background-white mb-10">
+                                                                    <div class="card-header w-100">
+                                                                        <h3 class="card-title align-items-start flex-column">
+                                                                            <span class="card-label fw-bolder fs-h3"><span class="align-top"
+                                                                                    translate="TRANSLATE.QUOTE_SENDER"></span></span>
+                                                                        </h3>
+                                                                        <div class="card-toolbar">
+                                                                            <div id="past-dues-apexcharts-menu-wrapper" class="apexcharts-toolbar"
+                                                                                style="position: relative;padding-right: 15px;">
+                                                                                <div class="apexcharts-menu-icon" title="{{'TRANSLATE.MENU' | translate}}">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="border-bottom w-100"></div>
+                                                                    <div class="card-body d-flex  background-white w-100">
+                                                                        <div *ngIf="!disableCondition" class="pt-2 w-100" id="past-dues-card-png">
+                                                                            @for (row of users; track $index) {
+                                                                                      @if (row.EmailAddress?.length > 0) {
+                                                                            <div class="d-flex align-items-center mb-5">
+                                                                                <div class="me-2 primary">
+                                                                                    <i class="ki-outline ki-user fs-3x text-primary"
+                                                                                        style="max-width: 65px !important"></i>
+                                                                                </div>
+                                                                                <div class="d-flex flex-column">
+                                                                                    <span class="text-primary fw-bold pb-0 mb-0 mx-9"
+                                                                                        *ngIf="row.IsEdit != true">
+                                                                                        {{row.Name}}
+                                                                                        <!--<i class="fas fa-pen text-primary" aria-hidden="true" style="margin-bottom:0 !important;padding-bottom:0 !important" (click)="row.IsEdit = true" *ngIf="row.IsEdit != true"></i>-->
+                                                                                    </span>
+                                                                                    <span class="row" *ngIf="row.IsEdit === true">
+                                                                                        <span class="col-md-9">
+                                                                                            <input type="text" formControlName="UserNameUpdate"
+                                                                                                class="form-control"
+                                                                                                placeholder="{{'TRANSLATE.PARTNER_CUSTOMER_FILTER_NAME' | translate}}"
+                                                                                                ng-init="row.userNameToUpdate = row.Name">
+                                                                                        </span>
+                                                                                        <span class="btn-group col-md-3 p-0">
+                                                                                            <a class="btn btn-icon" (click)="UpdateUserName(row)"
+                                                                                                *ngIf="row.IsEdit === true">
+                                                                                                <i class="ki-outline ki-check fs-1 text-success"></i>
+                                                                                            </a>
+                                                                                            <a class="btn btn-icon" (click)="row.IsEdit = false"
+                                                                                                *ngIf="row.IsEdit === true">
+                                                                                                <i class="ki-outline ki-cross fs-1 text-danger"></i>
+                                                                                            </a>
+                                                                                        </span>
+                                                                                    </span>
+
+                                                                                    <span class="fs-lg fs-sm">
+                                                                                        <input class="form-check-input" type="radio" name="emailSelection" id="createByEmail"
+                                                                                                   [value]="row.Type" (click)="onEmailOptionClick(row.Type)" formControlName="SelectedEmailType" [disabled]="[cloudHubConstants.QUOTE_LIST_STATUS_APPROVED, cloudHubConstants.QUOTE_LIST_STATUS_EXPIRED, cloudHubConstants.QUOTE_LIST_STATUS_DELETED, cloudHubConstants.QUOTE_LIST_STATUS_ORDER_PROCESSED].includes(QuoteStatus) || PageMode === 'View'">
+                                                                                            <label class="form-check-label mx-2 text-break custom-width-word-break" for="createByEmail">
+                                                                                                {{row.EmailAddress}}
+                                                                                            </label>
+                                                                                    </span>
+                                                                                   
+                                                                                </div>
+                                                                            </div>
+                                                                            }
+                                                                            }
+                                                                            <div class="d-flex align-items-center mb-5" *ngIf="permissions.HasGetAccountManagerDetails === 'Allowed'">
+                                                                                <div class="me-2 primary">
+                                                                                    <i class="ki-outline ki-user fs-3x text-primary"
+                                                                                        style="max-width: 65px !important"></i>
+                                                                                </div>
+                                                                                <div class="d-flex align-items-center gap-2 w-100">
+                                                                                    <input
+                                                                                        class="form-check-input"
+                                                                                        type="radio"
+                                                                                        name="emailSelection"
+                                                                                        id="createByEmail"
+                                                                                        value="selectedAccountManager"
+                                                                                        formControlName="SelectedEmailType"
+                                                                                        (click)="onEmailOptionClick('selectedAccountManager')"
+                                                                                        [disabled]="
+                                                                                            [cloudHubConstants.QUOTE_LIST_STATUS_APPROVED,
+                                                                                            cloudHubConstants.QUOTE_LIST_STATUS_EXPIRED,
+                                                                                            cloudHubConstants.QUOTE_LIST_STATUS_DELETED,
+                                                                                            cloudHubConstants.QUOTE_LIST_STATUS_ORDER_PROCESSED]
+                                                                                            .includes(QuoteStatus) || PageMode === 'View' || (accountManagersData.length == 0)
+                                                                                        ">
+                                                                                    <ng-select
+                                                                                        class="flex-lg-grow-1 w-100"
+                                                                                        [items]="accountManagersData"
+                                                                                        bindLabel="Email"
+                                                                                        bindValue="C3Id"
+                                                                                        name="Account_Manager_Id"
+                                                                                        formControlName="Account_Manager_Id"
+                                                                                        [clearable]="false"
+                                                                                        [searchable]="true"
+                                                                                        [disabled]="PageMode === 'View' || (accountManagersData.length == 0)"
+                                                                                        (change)="addAccountManagerDetails()">
+                                                                                        <ng-template ng-option-tmp let-item="item">
+                                                                                            <div>
+                                                                                                <div class="fw-semibold">
+                                                                                                    {{ 'TRANSLATE.QUOTE_SENDER_NAME_LABEL' | translate }}:
+                                                                                                    <span class="fw-bold text-black">
+                                                                                                        {{ item?.FirstName }} {{ item?.LastName }}
+                                                                                                    </span>
+                                                                                                </div>
+                                                                                                <div class="fw-semibold">
+                                                                                                    {{ 'TRANSLATE.QUOTE_SENDER_EMAIL_LABEL' | translate }}:
+                                                                                                    <span class="text-black-50">
+                                                                                                        {{ item?.Email }}
+                                                                                                    </span>
+                                                                                                </div>
+                                                                                                 <div class="fw-semibold">
+                                                                                                    {{ 'TRANSLATE.QUOTE_SENDER_ACCOUNT_MANAGER_ID_LABEL' | translate }}:
+                                                                                                    <span class="text-black-50">
+                                                                                                        {{ item?.AccountManagerId }}
+                                                                                                    </span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </ng-template>
+                                                                                        <!-- Selected Label -->
+                                                                                        <ng-template ng-label-tmp let-item="item">
+                                                                                            <span class="fw-bold text-gray-700">
+                                                                                                {{ item?.Email }}
+                                                                                            </span>
+                                                                                        </ng-template>
+                                                                                    </ng-select>
+                                                                                    <i
+                                                                                        class="ki-duotone ki-information-2 fs-5"
+                                                                                        aria-hidden="true"
+                                                                                        ngbTooltip="{{'TRANSLATE.QUOTE_ACCOUNT_MANAGER_TOOLTIP_TEXT' | translate}}">
+                                                                                        <span class="path1"></span>
+                                                                                        <span class="path2"></span>
+                                                                                        <span class="path3"></span>
+                                                                                    </i>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                         <div *ngIf="disableCondition" class="pt-2" id="past-dues-card-png">
+                                                                            <div class="d-flex align-items-center mb-5">
+                                                                                <div class="me-2 primary">
+                                                                                    <i class="ki-outline ki-user fs-3x text-primary"
+                                                                                        style="max-width: 65px !important"></i>
+                                                                                </div>
+                                                                                <div class="d-flex flex-column">
+                                                                                    <span class="text-primary fw-bold pb-0 mb-0 mx-9">
+                                                                                        {{createByDetails?.Name}}
+                                                                                        <!--<i class="fas fa-pen text-primary" aria-hidden="true" style="margin-bottom:0 !important;padding-bottom:0 !important" (click)="row.IsEdit = true" *ngIf="row.IsEdit != true"></i>-->
+                                                                                    </span>
+
+                                                                                    <span class="fs-lg fs-sm">
+                                                                                        <input class="form-check-input" type="radio" name="emailSelection" id="createByEmail"
+                                                                                                [value]="createByDetails?.Type"  formControlName="SelectedEmailType" [disabled]="[cloudHubConstants.QUOTE_LIST_STATUS_APPROVED, cloudHubConstants.QUOTE_LIST_STATUS_EXPIRED, cloudHubConstants.QUOTE_LIST_STATUS_DELETED, cloudHubConstants.QUOTE_LIST_STATUS_ORDER_PROCESSED].includes(QuoteStatus) || PageMode === 'View'">
+                                                                                            <label class="form-check-label mx-2 text-break custom-width-word-break" for="createByEmail">
+                                                                                                {{createByDetails?.EmailAddress}}
+                                                                                            </label>
+                                                                                    </span>
+                                                                                </div>
+                                                                            </div>
+                                                                             
+                                                                        </div>
+                                                                         <!--begin::Drop down-->
+                                                                    </div>
+                                                                </div>
+                                
+                                                                <div class="card card-custom card-dashed card-stretch gutter-b background-white">
+                                                                    <div class="card-header">
+                                                                        <h3 class="card-title align-items-start flex-column">
+                                                                            <span class="card-label fw-bolder fs-h3"><span class="align-top"
+                                                                                    translate="TRANSLATE.QUOTE_COMPANY"></span></span>
+                                                                        </h3>
+                                                                    </div>
+                                                                    <div class="border-bottom"></div>
+                                                                    <div class="card-body background-white">
+                                                                        <div class="d-flex align-items-center p-0">
+                                                                            <div class="me-4">
+                                                                                <div>
+                                                                                    <!--begin::Logo-->
+                                                                                    <a>
+                                                                                        <img [src]="PDFlogobase64" alt="logo" class="img-fluid"
+                                                                                            style="max-width: 65px !important" />
+                                                                                    </a>
+                                                                                </div>
+                                                                            </div>
+                                                                            <br />
+                                                                            <div class="d-flex flex-column">
+                                                                                <span class="text-primary fw-bold pb-0 mb-0">
+                                                                                    {{ContactCompanyName}}
+                                                                                </span>
+                                                                                <div class=""> 
+                                                                                    <span class="space-after" *ngIf="AddressLine1">{{AddressLine1}},</span>
+                                                                                    <span class="space-after" *ngIf="AddressLine2">{{AddressLine2}},</span>
+                                                                                    <span class="space-after" *ngIf="City">{{City}},</span>
+                                                                                    <span class="space-after" *ngIf="State">{{State}},</span>
+                                                                                    <span class="space-after" *ngIf="Country">{{Country}},</span>
+                                                                                    <span *ngIf="ZipCode">{{ZipCode}}</span>
+                                                                                    <button class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto" [ngClass]="toolbarButtonHeightClass" [disabled]="[cloudHubConstants.QUOTE_LIST_STATUS_APPROVED,cloudHubConstants.QUOTE_LIST_STATUS_EXPIRED, cloudHubConstants.QUOTE_LIST_STATUS_DELETED,cloudHubConstants.QUOTE_LIST_STATUS_ORDER_PROCESSED].includes(QuoteStatus) || PageMode === 'View'"
+                                                                                    (click)="editPartnerAddress()">
+                                                                                        <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+                                                                                            <i class="ki-outline ki-pencil text-primary" ngbTooltip="{{'TRANSLATE.QUOTE_CAPTION_EDIT_PARTNER_ADDRESS' | translate}}"></i>
+                                                                                        </span>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                
+                                        </div>
+                                        <div class="col-md-6 card shadow rounded sc pl-7 container custom-container" 
+                                            ng-show="vm.activeTab==='one'">
+                                            <div class="fixed-height-three" id="sample-table-for-pdf" infiniteScroll [infiniteScrollDistance]="0.3" [infiniteScrollThrottle]="50"
+                                                [scrollWindow]="false" style="overflow-y: auto;">
+                                                <app-quote-pdf-view [selectedCustomerDetails]="selectedCustomerDetails"
+                                                    [DisplayCustomerName]="displayCustomerNameForPdf"
+                                                    [frmAddQuote_QuoteName]="frmAddQuote_QuoteName" [addressDetails]="addressDetails"
+                                                    [QuoteContact]="QuoteContact" [users]="users" [quoteLineItemsData]="quoteLineItemsData"
+                                                    [totalQuoteValue]="totalQuoteValue" [DisplayTotalFinalSalePrice]="DisplayTotalFinalSalePrice"
+                                                    [totalTaxAmount]="totalTaxAmount"
+                                                    [quoteLineItemsTotalPrice]="quoteLineItemsTotalPrice"
+                                                    [totalDiscount]="totalDiscount"
+                                                    [billingCycleSubtotals]="billingCycleSubtotals"
+                                                    [CommentsToBuyer]="CommentsToBuyer"
+                                                    [PurchaseTerms]="PurchaseTerms" 
+                                                    [AdditionalCustomerDetails]="AdditionalCustomerDetails"
+                                                    [IsShowCounterSign]="IsShowCounterSign"
+                                                    [IsCounterSign]="IsCounterSign" [PDFlogobase64]="PDFlogobase64" [CurrencySymbol]="CurrencySymbol"
+                                                    [CurrencyDecimalPlaces]="CurrencyDecimalPlaces"
+                                                    [CurrencyThousandSeperator]="CurrencyThousandSeperator"
+                                                    [CurrencyDecimalSeperator]="CurrencyDecimalSeperator" [currentDate]="currentDate"
+                                                    [frmAddQuote_ExpiresOn]="frmAddQuote_ExpiresOn" [PaymentTerms]="PaymentTerms" [CreateByDetails]="createByDetails"
+                                                    [Ispdfview] ="false"
+                                                    [C3Id]="currentC3CustomerId"
+                                                    [selectedAddressId]="selectedAddressId" [IsCurrentAddress]="IsCurrentAddress"
+                                                    [groupByBillingTerm]="groupByBillingTerm"
+                                                    [showPricesExcludeVAT]="showPricesExcludeVAT"
+                                                    [buyerAddressList]="buyerAddressList"></app-quote-pdf-view>
+                                            </div>
+                                
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex-column" data-kt-stepper-element="content">
+                                    <form [formGroup]="frmWizardFour" role="form" novalidate>
+
+                                        <div *ngIf="activeTab === 'four'" class="pb-5">
+                                            <div class="card shadow ">
+                                                <div class="card-header">
+                                                    <div class="card-title w-100">
+                                                        <h4 class="fw-bold fs-2"> {{'TRANSLATE.QUOTE_LINE_ITEM_HEADER' |translate}}</h4>
+                                                    </div>
+                                                    <div class="card-subtitle">
+                                                        <span class="text-muted mt-1 fw-semibold fs-7">{{'TRANSLATE.QUOTE_LINE_ITEM_SUB_HEADER' | translate}}</span>
+                                                    </div>
+                                                    <div class="card-toolbar">
+                                                        <button type="button"
+                                                                class="btn btn-outline-primary btn-sm  btn-light-primary "
+                                                                (click)="CustomLineItem()" *ngIf="PageMode !== 'View'">
+                                                                {{ 'TRANSLATE.QUOTE_LINE_ITEM_BTN_ADD_CUSTOM_LINE_ITEM' |
+                                                                translate }}
+                                                        </button>
+                                                        &nbsp;&nbsp;
+                                                        <button type="button"
+                                                            class="btn btn-outline-primary btn-sm  btn-light-primary"
+                                                            (click)="getProductsForQuoteLineItemPoup()"
+                                                            *ngIf="PageMode !== 'View'">
+                                                            {{ 'TRANSLATE.QUOTE_LINE_ITEM_BTN_ADD_PLAN_PRODUCT' | translate
+                                                            }}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="card-body px-6">
+                                                    <div
+                                                        class="table-responsive-lg table-responsive-md table-responsive-xxl table-responsive-sm table-responsive-xl remove-pagination pb-4">
+                                                        <div class="d-flex flex-column flex-sm-row flex-stack gap-3 mb-6">
+                                                            <div>
+                                                                <div class="fw-semibold fs-6" translate="TRANSLATE.QUOTE_LINE_ITEM_DETAILS"></div>
+                                                                <div class="text-muted fs-7" translate="TRANSLATE.QUOTE_LINE_ITEM_DETAILS_HELP"></div>
+                                                            </div>
+                                                            <div class="d-flex align-items-center gap-3 flex-wrap">
+                                                                <div class="form-check form-switch">
+                                                                    <input class="form-check-input" type="checkbox" id="showPricesExcludeVAT"
+                                                                        [ngModel]="!showPricesExcludeVAT" [ngModelOptions]="{standalone: true}"
+                                                                        (ngModelChange)="showPricesExcludeVAT = !$event; CalculateQuoteLineItemTotal(quoteLineItemsData)" />
+                                                                    <label class="form-check-label" for="showPricesExcludeVAT">{{ showPricesExcludeVAT ? ('TRANSLATE.QUOTE_TABLE_PRICES_EXCL_VAT' | translate) : ('TRANSLATE.QUOTE_TABLE_PRICES_INCL_VAT' | translate) }}</label>
+                                                                </div>
+                                                                <div class="form-check form-switch">
+                                                                    <input class="form-check-input" type="checkbox" id="groupByBillingTerm"
+                                                                        [(ngModel)]="groupByBillingTerm" (change)="sortAndRebuildView()"
+                                                                        [ngModelOptions]="{standalone: true}" />
+                                                                    <label class="form-check-label" for="groupByBillingTerm" translate="TRANSLATE.QUOTE_LABEL_TEXT_GROUP_BY_BILLING_TERM"></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                
+                                                        <ng-template #quoteLineItemsTable let-items="items">
+                                                            <div class="table-responsive overflow-x-auto">
+                                                                <table class="table table-row-bordered table-row-dashed align-middle gs-0 gy-3 mb-0"
+                                                                    style="min-width: 1220px;">
+                                                                    <thead class="fw-semibold text-gray-600 fs-7 text-uppercase">
+                                                                        <tr class="bg-light border-bottom fs-7 fw-bold text-muted">
+                                                                            <th class="text-center pe-0"></th>
+                                                                            <th class="ps-4">{{ 'TRANSLATE.QUOTE_TABLE_PRODUCT_SERVICE' | translate }}</th>
+                                                                            <th class="text-end">{{ 'TRANSLATE.QUOTE_TABLE_QUANTITY' | translate }}</th>
+                                                                            <th class="text-end">{{ 'TRANSLATE.QUOTE_TABLE_UNIT_PRICE_USD' | translate }}</th>
+                                                                            <th class="text-end">{{ 'TRANSLATE.QUOTE_TABLE_DISCOUNT_AMOUNT' | translate }}</th>
+                                                                            <th class="text-end">{{ 'TRANSLATE.QUOTE_TABLE_TOTAL_PRICE_USD' | translate }}</th>
+                                                                            <th class="text-end" *ngIf="!showPricesExcludeVAT || shouldShowVatColumnsDueToCustomTaxable">{{ 'TRANSLATE.QUOTE_TABLE_VAT_PERCENTAGE' | translate:{taxPercentage: (selectedCustomerDetails?.TaxPercentage || 0)} }}</th>
+                                                                            <th class="text-end" *ngIf="!showPricesExcludeVAT || shouldShowVatColumnsDueToCustomTaxable">{{ 'TRANSLATE.QUOTE_TABLE_TOTAL_PRICE_USD_INCL_VAT' | translate }}</th>
+                                                                            <th class="text-end">{{ 'TRANSLATE.QUOTE_TABLE_SUBSCRIPTION_TERM' | translate }}</th>
+                                                                            <th class="text-end">{{ 'TRANSLATE.QUOTE_TABLE_BILLING_CYCLE' | translate }}</th>
+                                                                            <th class="text-end pe-4">{{ 'TRANSLATE.QUOTE_TABLE_ACTIONS' | translate }}</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr *ngFor="let row of items; let i = index" draggable="true"
+                                                                            (dragstart)="onDragStart($event, row)"
+                                                                            (dragover)="onDragOver($event)"
+                                                                            (drop)="onDrop($event, row)"
+                                                                            (dragend)="onDragEnd()">
+                                                                            <td class="text-center pe-0" style="width: 40px;"
+                                                                            (mousedown)="allowDrag = true"
+                                                                            (mouseup)="allowDrag = false"
+                                                                            (mouseleave)="allowDrag = false"
+                                                                            >
+                                                                                <span class="btn btn-icon btn-sm btn-active-light-primary" style="cursor: grab;">
+                                                                                    <i class="ki-outline ki-dots-vertical fs-3"></i>
+                                                                                </span>
+                                                                            </td>
+                                                                            <td (mousedown)="allowDrag = false" class="body-alignment-normal col-md-3">
+                                                                                <span>
+                                                                                    {{ row.Name }}
+                                                                                    <span *ngIf="row.IsAddon">
+                                                                                        <sup translate="TRANSLATE.CUSTOMER_SHOP_SUP_TEXT_ADD_ON" class="text-warning">
+                                                                                        </sup>
+                                                                                    </span>&nbsp;<span *ngIf="row.LinkedSubscriptionName">
+                                                                                        <i class="ki-duotone ki-paper-clip text-warning small"></i>&nbsp;&nbsp;<span
+                                                                                            class="h5">|</span>&nbsp;{{
+                                                                                        row.LinkedSubscriptionName }}
+                                                                                    </span>
+                                                                                </span>
+                                                                                <br />
+                                                                                <!-- <span *ngIf="row.Validity !== null && row.ValidityType == 'Month(s)'"
+                                                                                    class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2"
+                                                                                    aria-hidden="true"
+                                                                                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                                                    {{row.Validity}} {{(row.Validity == 1?
+                                                                                    (row.ValidityType ===
+                                                                                    'Month(s)'?
+                                                                                    'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                                                    'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                                                    'TRANSLATE.TERM_DURATION_DESC_YEARS') | translate }}
+                                                                                </span>
+                                                                                <span *ngIf="row.ValidityType === 'Year(s)' || row.ValidityType === 'Year'"
+                                                                                    [ngClass]="{'labelcolor':row.BillingCycleName == 'Monthly','TermLabelColor': row.BillingCycleName == 'Annual'}"
+                                                                                    class="label label-dark font-weight-bold label-inline text-white badge bg-warning ms-md-2"
+                                                                                    aria-hidden="true"
+                                                                                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                                                    {{row.Validity}} {{(row.Validity == 1?
+                                                                                    (row.ValidityType ===
+                                                                                    'Month(s)'?
+                                                                                    'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                                                    'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                                                    'TRANSLATE.TERM_DURATION_DESC_YEARS') | translate }}
+                                                                                </span>
+                                                
+                                                                                <span class="label font-weight-bold label-inline text-white badge ms-md-2" [ngClass]="{
+                                                                                                                                'bg-warning': row.BillingCycleName?.toLowerCase() === 'monthly',
+                                                                                                                                'bg-success': row.BillingCycleName?.toLowerCase() === 'annual',
+                                                                                                                                'bg-dark': row.BillingCycleName?.toLowerCase() === 'triennial',
+                                                                                                                                'bg-info': row.BillingCycleName?.toLowerCase() === 'onetime'
+                                                                                                                        }" aria-hidden="true"
+                                                                                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}"
+                                                                                    *ngIf="row.PlanProductId !== 0">
+                                                                                    {{ row.BillingCycleName }}
+                                                                                </span> -->
+                                                                                <span class="label label-light-info font-weight-bold label-inline badge ms-md-2"
+                                                                                    ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}"
+                                                                                    *ngIf="row.PlanProductId !== 0">
+                                                                                    {{ row.CategoryName === 'OnlineServicesNCE' ? 'NCE'
+                                                                                    : row.CategoryName }}
+                                                                                </span>
+                                                                                <span
+                                                                                    class="label label-success font-weight-bold label-inline text-white badge bg-success ms-md-2"
+                                                                                    *ngIf="row.PlanProductId !== 0"
+                                                                                    ngbTooltip="{{'TRANSLATE.CUSTOM_OFFER_TOOLTIP_TEXT_CONSUMTION_TYPE' | translate}}">
+                                                                                    {{ row.ConsumptionType }}
+                                                                                </span>
+                                                                            </td>
+                                                                            <td (mousedown)="allowDrag = false" class="text-end">
+                                                                                <ng-container *ngIf="!row.isEditing; else editQuantity">
+                                                                                    <span *ngIf="row.ConsumptionType?.toLowerCase() !== 'usagebased'">{{ row.Quantity
+                                                                                        }}</span>
+                                                                                    <span *ngIf="row.ConsumptionType?.toLowerCase() === 'usagebased'">-</span>
+                                                                                </ng-container>
+                                                                                <ng-template #editQuantity>
+                                                                                    <input type="number" formControlName="Quantity"
+                                                                                        placeholder="{{ 'TRANSLATE.QUOTE_LINE_ITEM_TABLE_PLACE_HOLDER' | translate }}"
+                                                                                        [(ngModel)]="row.Quantity" min="1" max="9999"
+                                                                                        class="editable-input form-control input-sm" required />
+                                                                                </ng-template>
+                                                                            </td>
+                                                                            <td (mousedown)="allowDrag = false" class="text-end">
+                                                                                <span *ngIf="row.BillingCycleName === 'Monthly'">
+                                                                                    {{ row.MonthlyUnitPrice | CurrencyFilter : row.CurrencySymbol :
+                                                                                    row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator :
+                                                                                    row.CurrencyDecimalSeperator }} ({{row.BillingCycleName}})
+                                                                                    <br/>
+                                                                                    <span *ngIf="row?.LinkedProduct"><i
+                                                                                            class="ki-outline ki-fasten text-warning small small"></i>&nbsp;{{row?.LinkedProduct.DisplayFinalSalePrice |
+                                                                                        CurrencyFilter : row?.CurrencySymbol : row?.CurrencyDecimalPlaces : row?.CurrencyThousandSeperator :
+                                                                                        row?.CurrencyDecimalSeperator}}</span>
+                                                                                </span>
+                                                                                <span *ngIf="row.BillingCycleName === 'Annual'">
+                                                                                    {{ row.AnnualUnitPrice | CurrencyFilter : row.CurrencySymbol :
+                                                                                    row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator :
+                                                                                    row.CurrencyDecimalSeperator }} ({{row.BillingCycleName}})
+                                                                                    <br/>
+                                                                                    <span *ngIf="row?.LinkedProduct"><i
+                                                                                            class="ki-outline ki-fasten text-warning small small"></i>&nbsp;{{row?.LinkedProduct.DisplayFinalSalePrice |
+                                                                                        CurrencyFilter : row?.CurrencySymbol : row?.CurrencyDecimalPlaces : row?.CurrencyThousandSeperator :
+                                                                                        row?.CurrencyDecimalSeperator}}</span>
+                                                                                </span>
+                                                                            </td>
+                                                                            <td (mousedown)="allowDrag = false" class="text-end">
+                                                                                {{ row.DiscountAmount | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces
+                                                                                : row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator }}
+                                                                            </td>
+                                                                            <td (mousedown)="allowDrag = false" class="text-end">
+                                                                                {{ row.TotalPrice | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces :
+                                                                                row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator }}
+                                                                            </td>
+                                                                            <td (mousedown)="allowDrag = false" class="text-end" *ngIf="!showPricesExcludeVAT || shouldShowVatColumnsDueToCustomTaxable">
+                                                                                <ng-container *ngIf="(row.PlanProductId === 0 || row.PlanProductId === '0'); else nonCustomVat">
+                                                                                    <ng-container *ngIf="row.IsTaxable; else vatDash">
+                                                                                        {{ (row.TotalPrice * (selectedCustomerDetails?.TaxPercentage || 0) / 100) | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator }}
+                                                                                    </ng-container>
+                                                                                    <ng-template #vatDash>-</ng-template>
+                                                                                </ng-container>
+                                                                                <ng-template #nonCustomVat>
+                                                                                    <ng-container *ngIf="!showPricesExcludeVAT; else nonCustomVatNA">
+                                                                                        <ng-container *ngIf="row.IsTaxable; else nonCustomVatNoTaxable">
+                                                                                            {{ (row.TotalPrice * (selectedCustomerDetails?.TaxPercentage || 0) / 100) | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator }}
+                                                                                        </ng-container>
+                                                                                        <ng-template #nonCustomVatNoTaxable>
+                                                                                            {{ 0 | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator }}
+                                                                                        </ng-template>
+                                                                                    </ng-container>
+                                                                                    <ng-template #nonCustomVatNA>N/a</ng-template>
+                                                                                </ng-template>
+                                                                            </td>
+                                                                            <td (mousedown)="allowDrag = false" class="text-end" *ngIf="!showPricesExcludeVAT || shouldShowVatColumnsDueToCustomTaxable">
+                                                                                <ng-container *ngIf="(row.PlanProductId === 0 || row.PlanProductId === '0'); else nonCustomTotal">
+                                                                                    <ng-container *ngIf="row.IsTaxable; else totalNoVat">
+                                                                                        {{ ((row.TotalPrice || 0) + (row.TotalPrice * (selectedCustomerDetails?.TaxPercentage || 0) / 100)) | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator }}
+                                                                                    </ng-container>
+                                                                                    <ng-template #totalNoVat>{{ (row.TotalPrice || 0) | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator }}</ng-template>
+                                                                                </ng-container>
+                                                                                <ng-template #nonCustomTotal>
+                                                                                    <ng-container *ngIf="!showPricesExcludeVAT; else nonCustomTotalNA">
+                                                                                        <ng-container *ngIf="row.IsTaxable; else nonCustomTotalNoVat">
+                                                                                            {{ ((row.TotalPrice || 0) + (row.TotalPrice * (selectedCustomerDetails?.TaxPercentage || 0) / 100)) | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator }}
+                                                                                        </ng-container>
+                                                                                        <ng-template #nonCustomTotalNoVat>
+                                                                                            {{ (row.TotalPrice || 0) | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator }}
+                                                                                        </ng-template>
+                                                                                    </ng-container>
+                                                                                    <ng-template #nonCustomTotalNA>N/a</ng-template>
+                                                                                </ng-template>
+                                                                            </td>
+                                                                            <td (mousedown)="allowDrag = false" class="text-end">{{ row.SubscriptionTermText }}</td>
+                                                                            <td (mousedown)="allowDrag = false" class="text-end">{{ row.BillingCycleName }}</td>
+                                                                            <td (mousedown)="allowDrag = false" class="text-end pe-4">
+                                                                                <div class="d-flex justify-content-end">
+                                                                                    <button type="button" class="btn btn-active-light-primary btn-xs me-1 px-4 py-2"
+                                                                                        ngbTooltip="{{'TRANSLATE.PROFILE_USER_BUTTON_TOOLTIP_TEXT_SAVE' | translate}}"
+                                                                                        (click)="saveQuoteLineItemChanges(row, quoteLineItemsList, i)"
+                                                                                        *ngIf="row.isEditing" [disabled]="PageMode === 'View'">
+                                                                                        <span class="ki-outline ki-file-added text-primary fs-xl"></span>
+                                                                                    </button>
+                                                                                    <button type="button" class="btn btn-active-light-primary btn-xs me-1 px-4 py-2"
+                                                                                        ngbTooltip="{{'TRANSLATE.PROFILE_USER_BUTTON_TOOLTIP_TEXT_EDIT' | translate}}"
+                                                                                        (click)="row.isEditing = true;"
+                                                                                        *ngIf="!row.isEditing && row.PlanProductId !== 0"
+                                                                                        [disabled]="PageMode === 'View'">
+                                                                                        <span class="ki-outline ki-pencil text-primary fs-xl"></span>
+                                                                                    </button>
+                                                                                    <a type="button" class="btn btn-active-light-primary btn-xs me-1 px-4 py-2"
+                                                                                        ngbTooltip="{{'TRANSLATE.PROFILE_USER_BUTTON_TOOLTIP_TEXT_EDIT' | translate}}"
+                                                                                        (click)="CustomLineItem(row, i)"
+                                                                                        *ngIf="!row.isEditing && row.PlanProductId === 0"
+                                                                                        [class.disabled]="PageMode === 'View'">
+                                                                                        <span class="ki-outline ki-pencil text-primary fs-xl"></span>
+                                                                                    </a>
+                                                                                    <a type="button" class="btn btn-active-light-primary btn-xs px-4 py-2"
+                                                                                        ngbTooltip="{{'TRANSLATE.PROFILE_USER_BUTTON_TOOLTIP_TEXT_DELETE' | translate}}"
+                                                                                        (click)="deleteQuoteLineItem(row, i)" *ngIf="!row.isEditing"
+                                                                                        [class.disabled]="PageMode === 'View'">
+                                                                                        <span class="ki-outline ki-trash text-primary fs-xl"></span>
+                                                                                    </a>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </ng-template>
+                                                
+                                                        <ng-container *ngIf="quoteLineItemsData.length > 0; else noLineItems">
+                                                            <ng-container *ngIf="groupByBillingTerm; else singleQuoteTable">
+                                                                <div *ngFor="let group of groupedQuoteLineItems" class="card card-flush shadow-sm mb-4">
+                                                                    <div class="card-header bg-light-primary bg-opacity-50 border-0 py-4 px-6">
+                                                                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 w-100">
+                                                                            <div class="d-flex align-items-center gap-3">
+                                                                                <span class="btn btn-icon btn-sm btn-active-light-primary" (click)="toggleGroupCollapse(group)" style="cursor: pointer;">
+                                                                                    <i class="ki-duotone" [ngClass]="group.isCollapsed ? 'ki-up' : 'ki-down'"></i>
+                                                                                </span>
+                                                                                <div>
+                                                                                    <div class="fw-semibold">{{ 'TRANSLATE.QUOTE_GROUP_SUBSCRIPTION_TERM' | translate }}: {{ group.billingCycleName || ('TRANSLATE.QUOTE_GROUP_ALL_LINE_ITEMS' | translate) }}
+                                                                                        <div class="text-muted fs-8">{{ group.items.length }} items</div>
+                                                                                    </div>
+                                                
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="fw-semibold">{{ 'TRANSLATE.QUOTE_GROUP_SUBTOTAL' | translate }}: {{ group.subTotal | CurrencyFilter : CurrencySymbol :
+                                                                                CurrencyDecimalPlaces : CurrencyThousandSeperator : CurrencyDecimalSeperator }}</div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="card-body p-0 px-6" *ngIf="!group.isCollapsed">
+                                                                        <ng-container
+                                                                            *ngTemplateOutlet="quoteLineItemsTable; context:{ items: group.items }"></ng-container>
+                                                                    </div>
+                                                                    <div class="card-footer bg-light py-3 px-6" *ngIf="!group.isCollapsed">
+                                                                        <div class="d-flex justify-content-between align-items-center">
+                                                                            <div class="fw-semibold">{{ 'TRANSLATE.QUOTE_GROUP_SUBTOTAL' | translate }}</div>
+                                                                            <div class="fw-semibold">{{ group.subTotal | CurrencyFilter : CurrencySymbol :
+                                                                                CurrencyDecimalPlaces : CurrencyThousandSeperator : CurrencyDecimalSeperator }}</div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </ng-container>
+                                                            <ng-template #singleQuoteTable>
+                                                                <div class="card card-flush shadow-sm mb-4 responsive-400">
+                                                                    <div class="card-body p-0">
+                                                                        <ng-container
+                                                                            *ngTemplateOutlet="quoteLineItemsTable; context:{ items: quoteLineItemsData }"></ng-container>
+                                                                    </div>
+                                                                </div>
+                                                            </ng-template>
+                                                        </ng-container>
+                                                        <ng-template #noLineItems>
+                                                            <div class="col-md-12">
+                                                                <app-common-no-record></app-common-no-record>
+                                                            </div>
+                                                        </ng-template>
+                                                
+                                                        <div class="row mt-4 gy-4">
+                                                            <div class="col-md-4">
+                                                                <div class="card card-flush shadow-sm h-100">
+                                                                    <div class="card-body py-8 px-6">
+                                                                        <div class="text-muted pb-3">{{ 'TRANSLATE.QUOTE_GRAND_TOTAL' | translate }} ({{ showPricesExcludeVAT ? ('TRANSLATE.QUOTE_EXCL_VAT' | translate) : ('TRANSLATE.QUOTE_INCL_VAT' | translate) }})</div>
+                                                                        <div class="fs-2x fw-bold mb-3">{{ quoteLineItemsTotalPrice | CurrencyFilter : CurrencySymbol :
+                                                                            CurrencyDecimalPlaces : CurrencyThousandSeperator : CurrencyDecimalSeperator }}</div>
+                                                                        <div class="text-muted small" *ngIf="showPricesExcludeVAT">{{ 'TRANSLATE.QUOTE_TABLE_PRICES_EXCL_VAT' | translate }}</div>
+                                                                        <div class="text-muted small" *ngIf="!showPricesExcludeVAT">{{ 'TRANSLATE.QUOTE_TABLE_PRICES_INCL_VAT' | translate }}</div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="card card-flush shadow-sm h-100">
+                                                                    <div class="card-body py-8 px-6">
+                                                                        <div class="fw-semibold mb-4">{{ 'TRANSLATE.QUOTE_SUMMARY_TITLE' | translate }}</div>
+                                                                        <div *ngFor="let subtotal of billingCycleSubtotals" class="d-flex justify-content-between mb-2">
+                                                                            <span>{{ 'TRANSLATE.QUOTE_SUMMARY_SUBTOTAL' | translate }} ({{ normalizeBillingCycleLabel(subtotal.billingCycleName) }})</span>
+                                                                            <span>{{ subtotal.subTotal | CurrencyFilter : CurrencySymbol : CurrencyDecimalPlaces :
+                                                                                CurrencyThousandSeperator : CurrencyDecimalSeperator }}</span>
+                                                                        </div>
+                                                                        <div class="d-flex justify-content-between mb-2">
+                                                                            <span>{{ 'TRANSLATE.QUOTE_SUMMARY_DISCOUNT' | translate }}</span>
+                                                                            <span>{{ totalDiscount | CurrencyFilter : CurrencySymbol : CurrencyDecimalPlaces :
+                                                                                CurrencyThousandSeperator : CurrencyDecimalSeperator }}</span>
+                                                                        </div>
+                                                                        <div class="d-flex justify-content-between mb-2" *ngIf="selectedCustomerDetails?.TaxName && !showPricesExcludeVAT">
+                                                                            <span>{{ 'TRANSLATE.QUOTE_SUMMARY_TAX' | translate }} ({{ selectedCustomerDetails.TaxPercentage }}%)</span>
+                                                                            <span>{{ totalTaxAmount | CurrencyFilter : CurrencySymbol : CurrencyDecimalPlaces :
+                                                                                CurrencyThousandSeperator : CurrencyDecimalSeperator }}</span>
+                                                                        </div>
+                                                                        <hr />
+                                                                        <div class="d-flex justify-content-between fw-semibold">
+                                                                            <span>{{ 'TRANSLATE.QUOTE_SUMMARY_GRAND_TOTAL' | translate }}</span>
+                                                                            <span>{{ quoteLineItemsTotalPrice | CurrencyFilter : CurrencySymbol :
+                                                                                CurrencyDecimalPlaces : CurrencyThousandSeperator : CurrencyDecimalSeperator }}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="card card-flush shadow-sm h-100">
+                                                                    <div class="card-body py-8 px-6">
+                                                                        <div class="fw-semibold mb-4">{{ 'TRANSLATE.QUOTE_SEQUENCING_TITLE' | translate }}</div>
+                                                                        <div class="small text-muted">{{ 'TRANSLATE.QUOTE_SEQUENCING_HELP' | translate }}</div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div class="flex-column" data-kt-stepper-element="content">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="card card-body shadow wizard-form-height fixed-height-four">
+                                                <div class="card-header">
+                                                    <div class="card-title">
+                                                        <h4 class="fw-bold fs-2"> {{'TRANSLATE.QUOTE_LABEL_TEXT_SIGNATURE_OPTIONS' |translate}}</h4>
+                                                    </div>
+                                                </div>
+                                                <div class="card-body">
+                                                    <form class="form" [formGroup]="frmWizardFive" novalidate="novalidate"
+                                                id="kt_stepper_example_basic_form">
+                                                <div class="row">
+                                                    <div class="col-md-10">
+                                                        <div class="pb-5" data-wizard-type="step-content">
+                                                            <!--begin::Section-->
+                                                            <div class="form-group row">
+                                                                    <div class="radio-list">
+                                                                        <label
+                                                                            class="radio radio-outline radio-outline-2x control-label mb-5">
+                                                                            <input type="radio" class="form-check-input"
+                                                                                formControlName="radios4" name="radios4"
+                                                                                [value]="noSignature"
+                                                                                (change)="IsShowCounterSign = false; IsSign = 'noSignature'"
+                                                                                [required]="true">
+                                                                            <span></span>
+                                                                            {{'TRANSLATE.QUOTE_LABEL_TEXT_NO_SIGNATURE' | translate}}
+                                                                        </label>
+                                                                        <br />
+                                                                        <label
+                                                                            class="radio radio-outline radio-outline-2x control-label mb-10">
+                                                                            <input type="radio" class="form-check-input"
+                                                                                formControlName="radios4" name="radios4"
+                                                                                [value]="includeSignature"
+                                                                                (change)="IsShowCounterSign = true; IsSign = 'includeSignature'"
+                                                                                [required]="true">
+                                                                            <span></span>
+                                                                            {{'TRANSLATE.QUOTE_LABEL_TEXT_INCLUDE_SPACE_FOR_SIGNATURE' | translate}}
+                                                                        </label>
+                                                                        <div *ngIf="IsShowCounterSign">
+                                                                            <h4 class="mb-5 fw-bold"> {{'TRANSLATE.QUOTE_LABEL_TEXT_COUNTER_SIGNATURE' | translate}}</h4>
+                                                                                <label class="checkbox form-check form-check-inline  checkbox-outline checkbox-outline-2x control-label">
+                                                                                    <input type="checkbox"
+                                                                                           class="form-check-input"
+                                                                                           formControlName="Checkboxes1"
+                                                                                           name="Checkboxes1"
+                                                                                           (change)="onFormChange()">
+                                                                                    <span></span>
+                                                                                    {{'TRANSLATE.QUOTE_LABEL_TEXT_INCLUDE_SPACE_FOR_SIGNATURE' | translate}}
+                                                                                </label>
+                                                                        </div>
+                                                                    </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                         <div class="col-md-6 card shadow rounded sc pl-7 container custom-container"
+                                                 ng-show="vm.activeTab==='one'">
+                                                <div class="fixed-height-four" id="sample-table-for-pdf" infiniteScroll 
+                                                [infiniteScrollDistance]="0.3"
+                                                [infiniteScrollThrottle]="50" 
+                                                [scrollWindow]="false"
+                                                style="overflow-y: auto;">
+                                                    <app-quote-pdf-view [selectedCustomerDetails]="selectedCustomerDetails"
+                                                    [DisplayCustomerName]="displayCustomerNameForPdf"
+                                                    [frmAddQuote_QuoteName]="frmAddQuote_QuoteName"
+                                                    [addressDetails]="addressDetails" 
+                                                    [QuoteContact]="QuoteContact"
+                                                    [users]="users" 
+                                                    [quoteLineItemsData]="quoteLineItemsData"
+                                                    [totalQuoteValue]="totalQuoteValue"
+                                                    [DisplayTotalFinalSalePrice]="DisplayTotalFinalSalePrice"
+                                                    [totalTaxAmount]="totalTaxAmount" 
+                                                    [quoteLineItemsTotalPrice]="quoteLineItemsTotalPrice"
+                                                    [totalDiscount]="totalDiscount"
+                                                    [billingCycleSubtotals]="billingCycleSubtotals"
+                                                    [CommentsToBuyer]="CommentsToBuyer"
+                                                    [PurchaseTerms]="PurchaseTerms" 
+                                                    [AdditionalCustomerDetails]="AdditionalCustomerDetails"
+                                                    [IsShowCounterSign]="IsShowCounterSign"
+                                                    [IsCounterSign]="IsCounterSign" 
+                                                    [PDFlogobase64]="PDFlogobase64"
+                                                    [CurrencySymbol]="CurrencySymbol"
+                                                    [CurrencyDecimalPlaces]="CurrencyDecimalPlaces"
+                                                    [CurrencyThousandSeperator]="CurrencyThousandSeperator"
+                                                    [CurrencyDecimalSeperator]="CurrencyDecimalSeperator"
+                                                    [currentDate]="currentDate"
+                                                    [frmAddQuote_ExpiresOn]="frmAddQuote_ExpiresOn"
+                                                    [PaymentTerms]="PaymentTerms"
+                                                    [CreateByDetails]="createByDetails"
+                                                    [Ispdfview] ="false"
+                                                    [C3Id]="currentC3CustomerId"
+                                                    [selectedAddressId]="selectedAddressId" [IsCurrentAddress]="IsCurrentAddress"
+                                                    [groupByBillingTerm]="groupByBillingTerm"
+                                                    [showPricesExcludeVAT]="showPricesExcludeVAT"
+                                                    [buyerAddressList]="buyerAddressList"></app-quote-pdf-view>
+                                                </div>
+
+                                            </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex-column" data-kt-stepper-element="content">
+                                    <div class="col-md-10 shadow card wizard-form-height p-8 mb-5 rounded sc pl-7 container custom-container"
+                                        ng-show="vm.activeTab==='one'">
+                                    
+                                        <div id="sample-table-for-pdf-final" >
+                                            <app-quote-pdf-view [selectedCustomerDetails]="selectedCustomerDetails"
+                                                [DisplayCustomerName]="displayCustomerNameForPdf"
+                                                [frmAddQuote_QuoteName]="frmAddQuote_QuoteName"
+                                                [addressDetails]="addressDetails" 
+                                                [QuoteContact]="QuoteContact"
+                                                [users]="users" 
+                                                [quoteLineItemsData]="quoteLineItemsData"
+                                                [totalQuoteValue]="totalQuoteValue"
+                                                [DisplayTotalFinalSalePrice]="DisplayTotalFinalSalePrice"
+                                                [totalTaxAmount]="totalTaxAmount" 
+                                                [quoteLineItemsTotalPrice]="quoteLineItemsTotalPrice"
+                                                [totalDiscount]="totalDiscount"
+                                                [billingCycleSubtotals]="billingCycleSubtotals"
+                                                [CommentsToBuyer]="CommentsToBuyer"
+                                                [PurchaseTerms]="PurchaseTerms" 
+                                                [AdditionalCustomerDetails]="AdditionalCustomerDetails"
+                                                [IsShowCounterSign]="IsShowCounterSign"
+                                                [IsCounterSign]="IsCounterSign" 
+                                                [PDFlogobase64]="PDFlogobase64"
+                                                [CurrencySymbol]="CurrencySymbol"
+                                                [CurrencyDecimalPlaces]="CurrencyDecimalPlaces"
+                                                [CurrencyThousandSeperator]="CurrencyThousandSeperator"
+                                                [CurrencyDecimalSeperator]="CurrencyDecimalSeperator"
+                                                [currentDate]="currentDate"
+                                                [frmAddQuote_ExpiresOn]="frmAddQuote_ExpiresOn"
+                                                [PaymentTerms]="PaymentTerms"
+                                                [CreateByDetails]="createByDetails"
+                                                [Ispdfview] ="true"
+                                                [C3Id]="currentC3CustomerId"
+                                                [selectedAddressId]="selectedAddressId" [IsCurrentAddress]="IsCurrentAddress" 
+                                                [groupByBillingTerm]="groupByBillingTerm"
+                                                [showPricesExcludeVAT]="showPricesExcludeVAT"
+                                                [buyerAddressList]="buyerAddressList"
+                                                ></app-quote-pdf-view>
+                                        </div>
+                                        <!-- <button (click)="onExportPDF()">Export PDF</button> -->
+                                    </div>
+                                </div>
+                            </div>
+                            <!--begin::Actions-->
+                            <div class="d-flex flex-stack pt-6 pe-8">
+                                <!--begin::Wrapper-->
+                                <div class="me-2">
+                                    
+                                </div>
+                                <!--end::Wrapper-->
+
+                                <!--begin::Wrapper-->
+                                <div>
+                                    <button class="btn btn-light-primary me-2" data-kt-stepper-action="previous"> {{'TRANSLATE.QUOTE_MOVE_BACK_TO_STATE' | translate}} </button>
+                                    <button type="button" class="btn btn-secondary me-2"
+                                        [disabled]="[cloudHubConstants.QUOTE_LIST_STATUS_APPROVED,cloudHubConstants.QUOTE_LIST_STATUS_EXPIRED, cloudHubConstants.QUOTE_LIST_STATUS_DELETED,cloudHubConstants.QUOTE_LIST_STATUS_ORDER_PROCESSED].includes(QuoteStatus)"
+                                        (click)="saveQuote(true)"
+                                        [hidden]="permissions.SaveQuote !== 'Allowed' || PageMode === 'View' || QuoteStatus === cloudHubConstants.QUOTE_LIST_STATUS_PUBLISHED">
+                                        <span class="indicator-label" appBusyLoader>
+                                            {{'TRANSLATE.BTN_QUOTE_SAVE_DRAFT' | translate}}
+                                        </span>
+                                    </button>
+                                    <button class="btn btn-light-primary me-2" data-kt-stepper-action="submit" 
+                                    *ngIf="QuoteStatus === cloudHubConstants.QUOTE_LIST_STATUS_PUBLISHED " (click)="copyToClipboard()">
+                                    <span class="indicator-label">
+                                        {{'TRANSLATE.BTN_QUOTE_COPY_URL' | translate}}
+                                    </span>
+                                </button>
+                                <!-- QuoteStatus: {{ QuoteStatus === cloudHubConstants.QUOTE_LIST_STATUS_PUBLISHED}} -->
+
+                                    <button  class="btn btn-light-primary me-2" data-kt-stepper-action="submit" (click)="saveQuote(false)"
+                                        [hidden]="permissions.SaveQuote !== 'Allowed'  || QuoteStatus === cloudHubConstants.QUOTE_LIST_STATUS_APPROVED || QuoteStatus === cloudHubConstants.QUOTE_LIST_STATUS_DELETED || QuoteStatus === cloudHubConstants.QUOTE_LIST_STATUS_EXPIRED">
+                                        <span class="indicator-label" >
+                                            {{( QuoteStatus === cloudHubConstants.QUOTE_LIST_STATUS_PUBLISHED ? 'TRANSLATE.BTN_QUOTE_REPUBLISH' : 'TRANSLATE.BTN_QUOTE_PUBLISH') | translate }}
+                                        </span>
+                                    </button>
+                                    <button class="btn btn-light-primary" data-kt-stepper-action="next"> {{'TRANSLATE.QUOTE_MOVE_TO_STATE' | translate}} </button>
+                                </div>
+                                <!--end::Wrapper-->
+                            </div>
+                            <!--end::Actions-->
+                        </div>
+                    </div>
+                </div>
+           
+        </div>
+    </div>
+</div>
+<!--end::Stepper-->
+

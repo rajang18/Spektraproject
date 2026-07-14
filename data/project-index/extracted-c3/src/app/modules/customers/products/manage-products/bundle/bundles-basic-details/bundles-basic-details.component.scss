@@ -1,0 +1,41 @@
+.symbol>img {
+    width: 100px;
+    height: 100px;
+}
+
+.description-color {
+    color: #78829D;
+}
+
+/*.notice-border {
+    border-left: 5px solid #eee;
+    border-color: #d0e3f0;
+}*/
+
+.symbol-label {
+    width: 96px;
+    height: 96px;
+    background-color: #ffffff;
+}
+
+.table td {
+    color: #252f4a;
+}
+
+a {
+  color: rgb(27 132 255);
+  text-decoration: none;
+}
+
+.checkbox-margin{
+    margin-left : 0.75rem;
+}
+::ng-deep{
+    app-bundles-basic-details{
+        .p-no-padding.p-no-margin{
+            p{
+                margin-bottom: 0 !important;
+            }
+        }
+    }
+}

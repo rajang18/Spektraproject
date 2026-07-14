@@ -1,0 +1,100 @@
+<ng-template #actionHeader>
+    <a class="btn btn-primary btn-sm fw-bold btn-light-primary" (click)="backToResellers()">
+        <i class="ki-outline ki-to-left fs-2"></i> {{ 'TRANSLATE.BULK_ONBOARDING_RESELLERS_BUTTON_TEXT_BACK_TO_RESELLERS' | translate }}
+    </a>
+</ng-template>
+<div class="d-flex flex-column-fluid">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                @if (pageMode?.toLowerCase() === PageModeEnum.Add.toLowerCase()) {
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form">
+                            <form [formGroup]="frmProviderDetails">
+                                <div class="form-group row">
+                                    <div class="col-md-2  text-start text-sm-start col-form-label">
+                                        <label class="control-label"> 
+                                            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_PROVIDER"></span>
+                                            <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_PROVIDER_TOOLTIP' | translate}}">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                            </i> 
+                                        </label>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <select class="form-control form-select-sm form-select" formControlName="providerId" name="onboardCustomerModel_ProviderId" (change)="onProviderChange()">
+                                            <option ngValue="">
+                                                {{'TRANSLATE.CUSTOMER_SEARCH_DEFAULT_OPTION'|translate}}
+                                            </option>
+                                            @for (provider of providers; track $index) {
+                                            <option [ngValue]="provider.ID">
+                                                {{provider.Name}}
+                                            </option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                            <!--The view Containing the form for Bulk Onboarding Microsoft Customers renders here-->
+                            <div class="row">
+                                <!-- <div ui-view ng-if="vm.providerId !== null" class="col-md-12"></div> -->
+                                @if (providerId !==null) {
+                                <router-outlet></router-outlet>
+                                }
+                            </div>
+                            <!--The Portlet that will show the onboarding customers status list-->
+                        </div>
+                    </div>
+                </div>
+                }
+                @if(pageMode?.toLowerCase() === PageModeEnum.Status.toLowerCase()){
+                <div>
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="ki-duotone ki-watch fs-2x">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                            </i>
+                            <span class="caption-subject font-dark sbold uppercase" translate="TRANSLATE.BULK_ONBOARDING_RESELLERS_STATUS_CAPTION_TEXT"></span>
+                        </div>
+                    </div>
+                    <div class="card-body pt-1">
+                        <form role="form">
+                            <div class="bs-callout bs-callout-info">
+                                <h4 class="block" translate="TRANSLATE.BULK_ONBOARD_RESELLERS_INFO_HEADER"></h4>
+                                <p [innerHTML]="'TRANSLATE.BULK_ONBOARD_RESELLERS_INFO_HELP_TEXT' | translate :{totalResellersInBatch: totalResellersSelected, resellersOnboarded: resellersSucceeded, resellersFailedToOnboard : resellersFailed}"></p>
+                            </div>
+                            @for (row of resellersOnboardStatus; track $index) {
+                            <div class="list-group">
+                                <div class="list-group-item">
+                                    <span>
+                                        <i class="fa" [ngClass]="{'fa-check fa-3x fa-fw icon-success': row.OnboardingStatus === 'Success','fa-spinner fa-spin fa-3x fa-fw text-success': row.OnboardingStatus === 'Queued' || row.OnboardingStatus === 'InProgress','fa-exclamation-triangle text-danger': row.OnboardingStatus != null && row.OnboardingStatus === 'Failed' }"></i>
+                                        &nbsp;
+                                        {{row.ProviderResellerName}} &nbsp;(<span translate="TRANSLATE.BULK_ONBOARD_RESELLERS_STATUS_MPN_ID"></span>{{row.ProviderBusinessId}})
+                                        @if(row.OnboardingStatus =='Failed'){
+                                        <div class="text-danger" translate="TRANSLATE.BULK_ONBOARD_RESELLERS_STATUS_ERRORS"></div>
+                                        }
+                                        <ul *ngFor="let error of (row.ErrorDetails | convertCommaSeparatedStringToList)">
+                                            <li class="text-danger"> <span translate="{{'TRANSLATE.'+error}}"></span></li>
+                                        </ul>
+                                    </span>
+                                </div>
+                            </div>
+                            }
+                        </form>
+                    </div>
+                    @if (readyToComplete) {
+                    <div class="d-flex justify-content-end" [appPermission]="'UPDATE_BULK_ONBOARD_PROVIDER_RESELLERS_STATUS'">
+                        <a class="btn btn-primary float-right" (click)="updateTheStatusAsComplete()">
+                            <span translate="TRANSLATE.BULK_UPLOAD_CUSTOMER_BUTTON_COMPLETE"></span>
+                        </a>
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

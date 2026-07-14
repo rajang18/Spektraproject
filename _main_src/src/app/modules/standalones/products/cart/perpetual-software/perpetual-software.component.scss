@@ -1,0 +1,9 @@
+select:disabled,
+select[disabled]
+{
+cursor:not-allowed !important;
+}
+
+.hand-cursor{
+    cursor:pointer ;
+}

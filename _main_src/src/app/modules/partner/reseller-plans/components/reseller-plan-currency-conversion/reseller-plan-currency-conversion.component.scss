@@ -1,0 +1,26 @@
+.label.label-light-danger {
+    color: #F64E60;
+    background-color: #FFE2E5;
+}
+
+.label.label-success {
+    color: #ffffff;
+    background-color: #1BC5BD;
+}
+
+.header-custom-title {
+    text-align: left;
+} 
+
+::ng-deep{
+    app-reseller-plan-currency-conversion{
+        table.dataTable > thead .dt-ordering-asc:after{
+            display: none !important;
+        }
+        .hide-paginaion{
+            .position-relative.top-70px{
+                display: none !important;
+            }
+        }
+    }
+}

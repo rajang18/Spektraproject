@@ -1,0 +1,235 @@
+<ng-template #actionHeader>
+    <div class="actions col-md-12 text-lg-end text-sm-left pt-6">
+        <a class="btn btn-secondary btn-sm btn-lg btn-md btn-xs mb-5 ms-md-2"
+            (click)="isFiltersExpanded = !isFiltersExpanded"
+            ngbTooltip="{{'TRANSLATE.BTN_TEXT_SHOW_FILTERS' | translate}}">
+            <i class="ki-outline ki-filter fs-2">
+            </i>&nbsp;<span translate="TRANSLATE.BTN_TEXT_FILTER"></span>
+        </a>
+        <a data-toggle="tooltip"
+            ngbTooltip="{{'TRANSLATE.PARTNER_PURCHASED_PRODUCT_MAPPING_BTN_TEXT_BACK_TO_SUBSCRIPTION_HISTORY' | translate}}"
+            class="btn btn-light-primary btn-sm btn-lg btn-md btn-xs mb-5 ms-md-2"
+            [routerLink]="['/partner/selectCustomersToValidate']">
+            <i class="ki-outline ki-to-left fs-2"></i>
+            {{'TRANSLATE.EXTERNAL_SERVICE_POST_LOG_BTN_TEXT_BACK_TO_LIST' | translate}}
+        </a>
+    </div>
+</ng-template>
+<div class="card">
+    <div class="card-body">
+        <div class="card-title d-flex">
+            <span class="card-icon me-2">
+                <em class="fa fa-history"></em>
+            </span>
+            <div class="card-label fw-bold">
+                {{'TRANSLATE.EXTERNAL_SERVICE_LOGS_STATUS_TITLE' | translate}}
+            </div>
+        </div>
+
+        @if (isFiltersExpanded && activeServiceDetail) {
+        <div class="mb-5">
+            <form class="form">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="">
+
+                            <div class="form-group row">
+
+                                <div class="col-6 col-sm-6 col-md-3  col-lg-3">
+                                    <label class="text-gray-800 fw-bold">
+                                        {{'TRANSLATE.SUBSCRIPTION_HISTORY_VIEW_LOGS_FILTERS_START_DATE'|translate}}
+                                    </label>
+                                    <div class="input-group">
+                                        <input class="form-control form-control-sm mb-3 mb-lg-0"
+                                            [placeholder]="EffectiveTo ? (EffectiveTo |date): 'TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_START_DATE' | translate"
+                                            name="StartDate" [readOnly]="true" [(ngModel)]="EffectiveFrom" ngbDatepicker
+                                            #sd="ngbDatepicker" placement="bottom-right"
+                                            (ngModelChange)="updateStartDate($event)" [markDisabled]="isDisabled" />
+                                        <button class="btn btn-light-primary btn-sm" (click)="sd.toggle()"
+                                            type="button"><i class="ki-outline ki-calendar fs-3 pe-0"></i></button>
+                                    </div>
+                                </div>
+
+                                <div class="col-6 col-sm-6 col-md-3 col-lg-3" [appPermission]="'GET_PLANS'">
+                                    <label class="text-gray-800 fw-bold">
+                                        {{'TRANSLATE.SUBSCRIPTION_HISTORY_VIEW_LOGS_FILTERS_END_DATE'|translate}}
+                                    </label>
+                                    <div class="input-group">
+                                        <input class="form-control form-control-sm mb-3 mb-lg-0"
+                                            [placeholder]="EffectiveTo ? (EffectiveTo |date): 'TRANSLATE.SUBSCRIPTION_HISTORY_FILTERS_END_DATE' | translate"
+                                            name="EndDate" [readOnly]="true" [(ngModel)]="EffectiveTo" ngbDatepicker
+                                            #ed="ngbDatepicker" placement="bottom-right"
+                                            (ngModelChange)="updateEndDate($event)" [markDisabled]="isDisabled" />
+                                        <button class="btn btn-light-primary btn-sm" (click)="ed.toggle()"
+                                            type="button"><i class="ki-outline ki-calendar fs-3 pe-0"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="card-footer py-3">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-12 col-xs-12 col-12 col-lg-12 text-lg-end">
+                                <button class="btn btn-light-primary btn-sm m-2" busy busy-when-url="api"
+                                    busy-add-classes="disabled" not-busy-remove-classes="disabled"
+                                    (click)="accordionFilter()">{{'TRANSLATE.SUBSCRIPTION_HISTORY_SEARCH_OPTION' |
+                                    translate}}
+                                </button>
+                                <button class="btn btn-light-primary btn-sm m-2"
+                                    (click)="ResetFilters()">{{'TRANSLATE.SUBSCRIPTION_HISTORY_SEARCH_RESET_OPTION' |
+                                    translate}}</button>
+                                <button class="btn btn-light-primary btn-sm m-2"
+                                    (click)="isFiltersExpanded = false;">{{'TRANSLATE.SUBSCRIPTION_HISTORY_SEARCH_CLOSE_OPTION'
+                                    | translate}}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        }
+
+
+
+        <div class="col-md-12">
+            @if(!isLoading){
+            <ng-container *ngIf="!!datatableConfig">
+                <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" [isNestedGrid]="true"
+                    (tableReady)="onTableReady($event)">
+                </app-c3-table>
+            </ng-container>
+            }
+        </div>
+        <div>
+            <div>
+                <div ngbAccordion [closeOthers]="true">
+                    <ng-template #accordion let-data="adtData" let-emitter="captureEvents">
+                        <div ngbAccordionItem [collapsed]="!data['expanded']">
+                            <div ngbAccordionHeader class="text-primary">
+                                <button ngbAccordionButton class="text-primary"
+                                    (click)="expandAccordion(data);$event.stopPropagation();$event.preventDefault();">
+                                    <div class="col-md-12 d-flex justify-content-between align-items-center">
+                                        <span class="col-md-6">
+                                            <em class="fa" [ngClass]="{
+                                        'fa-check-circle text-success': data.Status === 'Completed',
+                                        'fa-forward text-success': data.Status === 'Success',
+                                        'fas fa-exclamation-triangle text-danger': data.Status === 'Failed' || data.Status === 'ErrorIgnored' || data.Status === 'Error',
+                                        'fas fa-sync-alt fa-spin': data.Status === 'InProgress' || data.Status === 'Submitted' || data.Status === 'Processing' || data.Status === 'Queued'
+                                    }"></em>&nbsp;
+                                            <em class="fas fa-bars"></em><span> {{data.ServiceName}} | </span>
+                                            <em class="fa fa-user"></em><span> {{data.CreatedBy}} | </span>
+                                            <em class="fa fa-history"></em><span> {{ data.CreatedDate |
+                                                dateTimeUTCFilter}}</span>
+                                        </span>
+                                        <span class="ms-lg-20 ms-auto" *ngIf=" data['expanded']"><i
+                                                class="ki-outline ki-minus fs-2 text-primary"></i></span>
+                                        <span class="ms-lg-20 ms-auto" *ngIf="!data['expanded']"><i
+                                                class="ki-outline ki-plus fs-2 text-primary"></i></span>
+                                    </div>
+                                </button>
+
+                            </div>
+                            <div ngbAccordionCollapse>
+                                <div>
+                                    <div class="">
+                                        <div class="row mt-5">
+                                            <div class="col-md-3">
+                                                <div class="btn-group" role="group">
+                                                    <button type="button" class="btn"
+                                                        [ngClass]="{'btn-success': PageMode === 'Summary'}"
+                                                        (click)="PageView('Summary',$event);">
+                                                        <i class="fa fa-list"
+                                                            ngbTooltip="{{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_TABLE_PAGE_MODE_SUMMARY'|translate}}"></i>
+                                                    </button>
+                                                    <button type="button" class="btn"
+                                                        [ngClass]="{'btn-success': PageMode === 'Details'}"
+                                                        (click)="PageView('Details',$event)">
+                                                        <i class="fa fa-table"
+                                                            ngbTooltip="{{'TRANSLATE.EXTERNAL_ACCOUNTING_SERVICES_POST_LOGS_TABLE_PAGE_MODE_DETAIL'|translate}}"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <ng-select [multiple]="true" [(ngModel)]="selectedCustomer"
+                                                    placeholder="{{'TRANSLATE.PLACEHOLDER_UPLOAD_TO_PSA_SEARCH_BY_CUSTOMER' | translate}}">
+                                                    <ng-option *ngFor="let option of customers" [value]="option.C3Id">
+                                                        {{ option.Name }}
+                                                    </ng-option>
+                                                </ng-select>
+                                            </div>
+                                            <div class="col-md-3">
+
+                                                <ng-select [multiple]="true" [(ngModel)]="statusesSelected"
+                                                    placeholder="{{'TRANSLATE.PLACEHOLDER_UPLOAD_TO_PSA_SEARCH_BY_STATUS' | translate}}">
+                                                    <ng-option *ngFor="let option of statusInBatch"
+                                                        [value]="option.Name">
+                                                        {{'TRANSLATE.'+option.NameKey | translate}}
+                                                    </ng-option>
+                                                </ng-select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="">
+                                                    <a class="btn btn-light-primary btn-sm btn-lg btn-md btn-xs mb-5 ms-md-2"
+                                                        (click)="Filter(data.BatchId)">
+                                                        {{'TRANSLATE.BUTTON_TEXT_SEARCH' | translate}}
+                                                    </a>
+                                                    @if(uploadToExternalServicePermission.toLowerCase() ===
+                                                    cloudHubConstants.ACCESS_TYPE_ALLOWED
+                                                    && externalServicePostBatchStatus &&
+                                                    externalServicePostBatchStatus.IsExportAllowed
+                                                    && externalServicePostBatchStatus.IsValidationSuccess){
+                                                    <a href="javascrip:void(0);"
+                                                        class="btn btn-light-primary btn-sm btn-lg btn-md btn-xs mb-5 ms-md-2 pl-2"
+                                                        (click)="onUploadData(data)" appBusyLoader>
+                                                        <i class="fas fa-upload fs-2"></i>&nbsp;<span
+                                                            translate="TRANSLATE.BTN_TEXT_BEGIN_UPLOAD"></span>
+                                                    </a>
+                                                    }
+
+                                                    @if(activeServiceDetail.Name.toLowerCase() === 'autotask' &&
+                                                    deactivatePSALog.toLowerCase()
+                                                    ===cloudHubConstants.ACCESS_TYPE_ALLOWED &&
+                                                    (data.Status === 'Completed' || data.Status === 'Success') &&
+                                                    data.Status !== 'Deactivated'){
+                                                    <a href="javascrip:void(0);"
+                                                        class="btn btn-light-primary btn-sm btn-lg btn-md btn-xs mb-5 ms-md-2 pl-2"
+                                                        ngbTooltip="{{'TRANSLATE.TOOLTIP_TEXT_DELETE_PSA_LOG'|translate}}"
+                                                        (click)="deactivatePSALogByType('batchid', data.BatchId)"
+                                                        *ngIf="activeServiceDetail.Name.toLowerCase() === 'autotask' && deactivatePSALog.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED && (data.Status === 'Completed' || data.Status === 'Success') && data.Status !== 'Deactivated'">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            @if(PageMode=='Summary' && data['BatchId']==activeAccordianBatchId){
+                                                <app-psa-summary-detail [selectedCustomer]="selectedCustomer"
+                                                    [statusesSelected]="statusesSelected"
+                                                    [activeBatchId]="activeBatchId" [DefaultJoblogId]="DefaultJoblogId"
+                                                    [reloadEvent3]="reloadEvent3"
+                                                    [isApiExecutable]="Boolean(data['BatchId']==activeAccordianBatchId)"
+                                                ></app-psa-summary-detail>
+                                            }
+                                            @if(PageMode=='Details' && data['BatchId']==activeAccordianBatchId){
+                                                <app-psa-details-detail [selectedCustomer]="selectedCustomer"
+                                                    [statusesSelected]="statusesSelected"
+                                                    [activeBatchId]="activeBatchId" [DefaultJoblogId]="DefaultJoblogId"
+                                                    [reloadEvent2]="reloadEvent2"
+                                                    [activeServiceDetail]="activeServiceDetail"
+                                                    [isApiExecutable]="Boolean(data['BatchId']==activeAccordianBatchId)"></app-psa-details-detail>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

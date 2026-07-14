@@ -1,0 +1,27 @@
+// this is only for side bar colours
+
+.menu-link{
+    svg {
+        height: 23px;
+        width: 23px;
+        margin-left: -2px;
+        g {
+            [fill] {
+                -webkit-transition: fill 0.3s ease;
+                transition: fill 0.3s ease;
+                fill: #494b74; 
+            }
+        }
+    }
+    &:hover{
+        svg g [fill]{
+            fill: #3699FF; 
+        }
+    }
+    
+}
+
+ 
+    
+
+

@@ -1,0 +1,27 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h3 id="modal-title">
+            <span class="text-primary">Customer {{'TRANSLATE.MESSAGE_RECORDS_POP_UP' |translate}}</span>
+        </h3>
+        <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModal()" data-bs-dismiss="modal">
+            <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+        </div>
+    </div>
+    <div class="modal-body" id="modal-body">
+        <div class="d-flex align-items-center position-relative my-1">
+            <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5"><span class="custom-path1"></span><span
+                    class="custom-path2"></span></i> <input type="text" data-field="Name" data-action="filter"
+                class="header-input-field form-control form-control-solid w-200px ps-10" placeholder="Search...">
+        </div>
+        @if (!!datatableConfig) {
+        <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" [selection]="true"
+            (onSelection)="handleSelection($event)">
+        </app-c3-table>
+        }
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="onsubmit()">
+            {{ 'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate }}
+        </button>
+    </div>
+</div>

@@ -1,0 +1,99 @@
+<div class="card card-custom">
+  <!-- begin::Header -->
+  <div class="card-header card-header-stretch overflow-auto">
+    <ul
+      class="nav nav-stretch nav-line-tabs fw-bold border-transparent flex-nowrap"
+      role="tablist"
+    >
+      <li class="nav-item">
+        <a
+          routerLink="revenue"
+          class="nav-link cursor-pointer"
+          [ngClass]="{ active: activeTab === tabs.RevenueAndCostSummary }"
+          (click)="setActiveTab(tabs.RevenueAndCostSummary)"
+          role="tab">
+          Revenue and cost summary
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          routerLink="transaction"
+          class="nav-link cursor-pointer"
+          [ngClass]="{ active: activeTab === tabs.Transaction }"
+          (click)="setActiveTab(tabs.Transaction)"
+          role="tab"
+        >
+          Invoices and dues
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          routerLink="payments"
+          class="nav-link cursor-pointer"
+          [ngClass]="{ active: activeTab === tabs.Payments }"
+          (click)="setActiveTab(tabs.Payments)"
+          role="tab"
+        >
+          Payments
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          routerLink="suscriptionhistory"
+          class="nav-link cursor-pointer"
+          [ngClass]="{ active: activeTab === tabs.SubscriptionHistory }"
+          (click)="setActiveTab(tabs.SubscriptionHistory)"
+          role="tab"
+        >
+          Subscription history
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          routerLink="reseller-profit"
+          class="nav-link cursor-pointer"
+          [ngClass]="{ active: activeTab === tabs.ResellerProfit }"
+          (click)="setActiveTab(tabs.ResellerProfit)"
+          role="tab"
+        >
+          Reseller revenue and cost summary
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="card-body">
+    <div class="tab-content pt-3">
+      <div
+        class="tab-pane"
+        [ngClass]="{ active: activeTab === tabs.RevenueAndCostSummary }">
+        <app-revenue-cost-summary></app-revenue-cost-summary>
+      </div>
+
+      <div
+        class="tab-pane"
+        [ngClass]="{ active: activeTab === tabs.Transaction }"
+      >
+        <app-transactions></app-transactions>
+      </div>
+
+      <div class="tab-pane" [ngClass]="{ active: activeTab === tabs.Payments }">
+        <app-payments></app-payments>
+      </div>
+
+      <div
+        class="tab-pane"
+        [ngClass]="{ active: activeTab === tabs.SubscriptionHistory }"
+      >
+    
+      </div>
+
+      <div
+        class="tab-pane"
+        [ngClass]="{ active: activeTab === tabs.ResellerProfit }"
+      >
+        <app-reseller-profit></app-reseller-profit>
+      </div>
+    </div>
+  </div>
+</div>

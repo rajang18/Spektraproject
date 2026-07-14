@@ -1,0 +1,41 @@
+<div class="modal-dialog m-0 modal-dialog m-0-centered modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title text-primary"><span translate="TRANSLATE.ADD_METERED_BILLING_DATA_POPUP_HEADER_TEXT"></span></h3>
+            <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="cancel()" data-bs-dismiss="modal">
+                <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+            </div>
+        </div>
+        <div class="modal-body">
+            <div class="form" name="popupForm">
+                <div class="form-group">
+                    <label>
+                        <span>
+                            {{'TRANSLATE.ADD_SLAB_DATA_POPUP_HEADER_TEXT_SLAB_BREAKER' | translate}}
+                        </span>
+                        <span class="text-danger">*</span>
+                    </label>
+                    <div [ngClass]="{'has-error' : slabBreaker && !(slabBreaker > minSlabValue && ((slabBreaker < maxSlabValue) || maxSlabValue ===null) )}">
+                        <input class="form-control" type="number" min="minSlabValue" max="maxSlabValue" [(ngModel)]="slabBreaker" name="slabBreaker" required />
+                        @if(slabBreaker && !((slabBreaker > minSlabValue) && ((slabBreaker < maxSlabValue) || maxSlabValue === null) )){
+                            <span class="text-danger">
+                                <!-- {{'TRANSLATE.PLANS_MANAGE_CONTRACT_DETAILS_POPOVER_TEXT_FOR_PRICING_SLAB_MINVALUE_VALIDATION'|translate : {minValue: minSlabValue, maxValue: maxSlabValue} }} -->
+                                {{(!maxSlabValue) ? ('TRANSLATE.ADD_METERED_BILLING_DATA_POPUP_INSTRUCTION_PLEASE_ENTER_VALUE_GREATER_THAN' | translate) +" "+ minSlabValue : ('TRANSLATE.ADD_METERED_BILLING_DATA_POPUP_INSTRUCTION_PLEASE_ENTER_VALUE_BETWEEN' | translate) +" " +minSlabValue + " " + ('TRANSLATE.ADD_METERED_BILLING_DATA_POPUP_INSTRUCTION_AND' | translate) + " " + maxSlabValue}}                            </span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" (click)="cancel()"> <span translate="TRANSLATE.ADD_SLAB_DATA_POPUP_BUTTON_TEXT_CANCEL" ></span> </button>
+            <button form="popupForm" 
+                    [disabled]="!slabBreaker || !(slabBreaker > minSlabValue &&((slabBreaker < maxSlabValue) || maxSlabValue ===null))" 
+                    class="btn btn-primary" 
+                    type="button" 
+                    (click)="ok(slabBreaker)">
+                <span translate="TRANSLATE.ADD_SLAB_DATA_POPUP_HEADER_TEXT_SLAB_BREAKER" ></span>
+            </button>
+        </div>
+    </div>
+</div>
+

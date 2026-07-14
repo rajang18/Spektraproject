@@ -1,0 +1,121 @@
+<div class="modal-dialog m-0 modal-dialog m-0-centered W-100">
+    <form [formGroup]="consentForm" role="form" class="form">
+        <div  class="modal-content">
+            <div  class="modal-header">
+                <h2>
+                    <i class="icon-user font-dark"></i>
+                    <span [innerHTML]="'TRANSLATE.CUSTOMER_CONSENT_CAPTION_TEXT_CUSTOMER_CONSENT' | translate"></span>
+                </h2>
+                <div class="btn btn-sm btn-icon btn-active-color-primary" (click)="closeModalPopup()" data-bs-dismiss="modal">
+                    <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>                
+                </div>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <span class="caption-subject" role="button"> <span (click)="onLinkClick($event)" [innerHTML]="'TRANSLATE.CUSTOMER_CONSENT_HELP_TEXT' | translate" translate-compile> </span></span>
+                <div class="row mt-5">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label mb-1">
+                                <span translate="TRANSLATE.CUSTOMER_CONSENT_LABELS_FIRST_NAME"></span> <span class="text-danger ms-1">*</span>
+                            </label>
+                            <input type="text" formControlName="FirstName" class="form-control form-control-sm" ng-maxlength="50" name="FirstName" required />
+                            @if(consentForm.get('FirstName')?.errors?.required &&
+                            (consentForm.get('FirstName')?.touched && isSubmitClicked)){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> }
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label mb-1">
+                                <span translate="TRANSLATE.CUSTOMER_CONSENT_LABELS_LAST_NAME"></span> <span class="text-danger ms-1">*</span>
+                            </label>
+                            <div class="form-group">
+                                <input type="text" formControlName="LastName" class="form-control form-control-sm" ng-maxlength="50" name="LastName" required />
+                                @if(consentForm.get('LastName')?.errors?.required &&
+                                (consentForm.get('LastName')?.touched && isSubmitClicked)){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                             }
+                    </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label mb-1">
+                                <span translate="TRANSLATE.CUSTOMER_CONSENT_LABELS_EMAIL_ADDRESS"></span> <span class="text-danger ms-1">*</span>
+                            </label>
+                            <input type="email" formControlName="Email" class="form-control form-control-sm" name="Email" required />
+                            @if(consentForm.get('Email')?.errors?.required &&
+                                (consentForm.get('Email')?.touched && isSubmitClicked)){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                             }
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label mb-1" translate="TRANSLATE.CUSTOMER_CONSENT_LABELS_PHONE_NUMBER">
+                            </label>
+                            <div class="form-group">
+                                <input type="text" ng-pattern="phoneNumberRegex" formControlName="PhoneNumber" maxlength="25" class="form-control form-control-sm" name="PhoneNumber" />
+                                @if(consentForm.get('PhoneNumber')?.errors?.required &&
+                                (consentForm.get('PhoneNumber')?.touched && isSubmitClicked)){
+                                <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-5">
+                    <div class="col-md-6">
+                        <div ng-controller="DatePickerUiController as dpCtrl">
+                            <div class="form-group">
+                                <label class="control-label mb-1">
+                                    <span translate="TRANSLATE.REGISTER_CUSTOMER_CONSENT_AGREEMENT_DATE"></span><span class="text-danger ms-1">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <input
+                                        class="form-control form-control-sm mb-3 mb-lg-0"
+                                        [value]="formattedDate || '' "
+                                        [placeholder]="StartDate ? (StartDate | date): 'yyyy-mm-dd'"
+                                        formControlName="AgreementDate"
+                                        [readOnly]="true"
+                                        ngbDatepicker
+                                        #sd="ngbDatepicker"
+                                        (ngModelChange)="updateStartDate($event)"
+                                        [maxDate]="maxDate"
+                                    />
+                                    <button class="btn btn-light-primary btn-icon" (click)="sd.toggle()" type="button">
+                                        <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+                                            <i class="ki-outline ki-calendar"></i>
+                                        </span>
+                                        
+                                    </button>
+                                </div>
+                                @if(consentForm.get('AgreementDate')?.errors?.required &&
+                                (consentForm.get('AgreementDate')?.touched && isSubmitClicked)){
+                                <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> 
+                                
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-md-12">
+                    <div class="text-end">
+                        <a class="btn btn-sm btn-light btn-active-light-primary me-2" ng-if="true" busy busy-when-url="api/Customer/SaveCustomerConsent" busy-add-classes="disabled" not-busy-remove-classes="disabled" (click)="closeModalPopup()">
+                            <!-- <busy-message><i class="fa fa-refresh fa-spin"></i>{{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}</busy-message> -->
+                            {{'TRANSLATE.BUTTON_TEXT_CANCEL' | translate}}
+                        </a>
+                        <a class="btn btn-primary btn-sm" ng-if="true" busy busy-when-url="api/Customer/SaveCustomerConsent" busy-add-classes="disabled" not-busy-remove-classes="disabled" (click)="onSubmit()">
+                            <!-- <busy-message><i class="fa fa-refresh fa-spin"></i>{{'BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}</busy-message> -->
+                            {{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

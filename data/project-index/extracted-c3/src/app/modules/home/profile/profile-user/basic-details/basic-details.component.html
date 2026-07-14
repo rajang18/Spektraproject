@@ -1,0 +1,202 @@
+<div class="card card-custom  d-flex">
+    <div class="card-header h-min-50px">
+        <div class="card-title align-items-start flex-column dashboard-tile-title">
+            <span class="card-label fw-semibold"><span
+                    translate="TRANSLATE.CUSTOMER_PROFILE_PARTNR_HEADER_TEXT_BASIC_DETAILS"></span>
+            </span>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <div [formGroup]="basicDetailsForm" class="row">
+            <div class="fv-row mb-7 col-md-6" *ngIf="!isOrganizationalEntity&& entityName === 'Customer'">
+                <label class="required fw-semibold mb-2"
+                    translate="TRANSLATE.CUSTOMER_PROFILE_PARTNR_LABEL_TEXT_COMPANY_NAME"></label>
+                    <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                       [ngbTooltip]="'TRANSLATE.APPCONFIG_DESC_POWEREDBY_COMPANY_NAME' | translate">
+                       <span class="path1"></span>
+                       <span class="path2"></span>
+                       <span class="path3"></span>
+                    </i>
+                <input type="text" class="form-control form-control-sm "
+                    formControlName="companyName">
+                @if((basicDetailsForm.get('companyName')?.errors?.required || basicDetailsForm.get('companyName')?.errors?.pattern) &&
+                basicDetailsForm.get('companyName').touched){
+                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                }
+                @if((submitted || basicDetailsForm.get('companyName')?.touched) && basicDetailsForm.get('companyName')?.errors?.minlength){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_MIN_LENGTH_3"></span> }
+                @if((submitted || basicDetailsForm.get('companyName')?.touched) && basicDetailsForm.get('companyName')?.errors?.maxlength){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_MAX_LENGTH_510"></span> }
+            </div>
+            <div class="fv-row mb-7 col-md-6" *ngIf="!isOrganizationalEntity && (entityName === 'Partner' || entityName === 'Reseller')">
+                <label class="required fw-semibold mb-2"
+                    translate="TRANSLATE.CUSTOMER_PROFILE_PARTNR_LABEL_TEXT_COMPANY_NAME"></label>
+                    <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                       [ngbTooltip]="'TRANSLATE.APPCONFIG_DESC_POWEREDBY_COMPANY_NAME' | translate">
+                       <span class="path1"></span>
+                       <span class="path2"></span>
+                       <span class="path3"></span>
+                    </i>
+                <input type="text" class="form-control form-control-sm "
+                    formControlName="contactCompanyName">
+                @if((basicDetailsForm.get('contactCompanyName')?.errors?.required || basicDetailsForm.get('contactCompanyName')?.errors?.pattern) &&
+                basicDetailsForm.get('contactCompanyName').touched){
+                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                }
+            </div>
+            <div class="col-md-6" *ngIf="entityName === 'Customer'"></div>
+            <div class="fv-row mb-7 col-md-6" *ngIf="!isOrganizationalEntity && (entityName === 'Partner' || entityName === 'Reseller')">
+                <label class="required fw-semibold mb-2"
+                    translate="TRANSLATE.CUSTOMER_PROFILE_PARTNR_LABEL_TEXT_COMPANY_URL"></label>
+                    <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                       [ngbTooltip]="'TRANSLATE.APPCONFIG_DESC_POWEREDBY_COMPANY_URL' | translate">
+                       <span class="path1"></span>
+                       <span class="path2"></span>
+                       <span class="path3"></span>
+                    </i>
+                <input type="text" class="form-control form-control-sm " formControlName="companyUrl">
+                @if(basicDetailsForm.get('companyUrl')?.errors?.required && basicDetailsForm.get('companyUrl').touched){
+                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                }
+                @if (basicDetailsForm.get('companyUrl')?.errors?.invalidUrl) {
+                <span class="text-danger" translate="TRANSLATE.CUSTOMR_PROFILE_INVALID_URL_OR_EMAIL_VALIDATION_MESSAGE"></span>
+                }
+            </div>
+            <div class="fv-row mb-7 col-md-6" *ngIf="!isOrganizationalEntity">
+                <label class="required fw-semibold mb-2"
+                    translate="TRANSLATE.CUSTOMER_PROFILE_PARTNR_LABEL_TEXT_FIRST_NAME"></label>
+                    <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                       [ngbTooltip]="'TRANSLATE.CUSTOMER_PROFILE_PARTNR_LABEL_TEXT_FIRST_NAME' | translate">
+                       <span class="path1"></span>
+                       <span class="path2"></span>
+                       <span class="path3"></span>
+                    </i>
+                <input type="text" class="form-control form-control-sm " formControlName="firstName">
+                @if((basicDetailsForm.get('firstName')?.errors?.required || basicDetailsForm.get('firstName')?.errors?.pattern) && basicDetailsForm.get('firstName').touched){
+                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                }
+                @if((submitted || basicDetailsForm.get('firstName')?.touched) && basicDetailsForm.get('firstName')?.errors?.maxlength){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_MAX_LENGTH_225"></span> }
+            </div>
+            <div class="fv-row mb-7 col-md-6" *ngIf="!isOrganizationalEntity">
+                <label class="required fw-semibold mb-2"
+                    translate="TRANSLATE.CUSTOMER_PROFILE_PARTNR_LABEL_TEXT_LAST_NAME"></label>
+                    <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                       [ngbTooltip]="'TRANSLATE.CUSTOMER_PROFILE_PARTNR_LABEL_TEXT_LAST_NAME' | translate">
+                       <span class="path1"></span>
+                       <span class="path2"></span>
+                       <span class="path3"></span>
+                    </i>
+                <input type="text" class="form-control form-control-sm " formControlName="lastName">
+                @if((basicDetailsForm.get('lastName')?.errors?.required || basicDetailsForm.get('lastName')?.errors?.pattern ) && basicDetailsForm.get('lastName').touched){
+                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                }
+                @if((submitted || basicDetailsForm.get('lastName')?.touched) && basicDetailsForm.get('lastName')?.errors?.maxlength){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_MAX_LENGTH_225"></span> }
+            </div>
+            <div class="fv-row mb-7 col-md-6" *ngIf="!isOrganizationalEntity && (entityName === 'Partner' || entityName === 'Reseller')">
+                <label class="required fw-semibold mb-2"
+                    translate="TRANSLATE.CUSTOMER_PROFILE_PARTNR_LABEL_TEXT_CONTACT_EMAIL"></label>
+                    <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                       [ngbTooltip]="'TRANSLATE.APPCONFIG_DESC_CONTACT_EMAIL' | translate">
+                       <span class="path1"></span>
+                       <span class="path2"></span>
+                       <span class="path3"></span>
+                    </i>
+                <input type="text" class="form-control form-control-sm " formControlName="contactEmail">
+                @if(basicDetailsForm.get('contactEmail')?.errors?.required && basicDetailsForm.get('contactEmail').touched){
+                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                }
+                 @if(basicDetailsForm.get('contactEmail')?.errors?.invalidEmail &&
+                            basicDetailsForm.get('contactEmail')?.touched && 
+                            basicDetailsForm.get('contactEmail')?.value){
+                            <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_PLEASE_ENTER_A_VALID_EMAIL"></span>
+                        }
+            </div>
+            <div class="fv-row mb-7 col-md-6" *ngIf="!isOrganizationalEntity && (entityName === 'Partner' || entityName === 'Reseller')">
+                <label class="required fw-semibold mb-2"
+                    translate="TRANSLATE.CUSTOMER_PROFILE_PARTNR_LABEL_TEXT_CONTACT_COMPANY_NAME"></label>
+                    <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                       [ngbTooltip]="'TRANSLATE.APPCONFIG_DESC_APPLICATION_NAME' | translate">
+                       <span class="path1"></span>
+                       <span class="path2"></span>
+                       <span class="path3"></span>
+                    </i>
+                <input type="text" class="form-control form-control-sm " formControlName="companyName">
+                @if((basicDetailsForm.get('companyName')?.errors?.required || basicDetailsForm.get('companyName')?.errors?.pattern) && basicDetailsForm.get('companyName').touched){
+                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                }
+                @if((submitted || basicDetailsForm.get('companyName')?.touched) && basicDetailsForm.get('companyName')?.errors?.minlength){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_MIN_LENGTH_3"></span> }
+                @if((submitted || basicDetailsForm.get('companyName')?.touched) && basicDetailsForm.get('companyName')?.errors?.maxlength){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_MAX_LENGTH_510"></span> }
+            </div>
+            <div class="fv-row mb-7 col-md-6" *ngIf="!isOrganizationalEntity && (entityName === 'Partner' || entityName === 'Reseller')">
+                <label class="required fw-semibold mb-2"
+                    translate="TRANSLATE.CUSTOMER_PROFILE_PARTNR_LABEL_TEXT_COUNTRY_CODE"></label>
+                    <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                       [ngbTooltip]="'TRANSLATE.APPCONFIG_DESC_COUNTRY_CODE' | translate">
+                       <span class="path1"></span>
+                       <span class="path2"></span>
+                       <span class="path3"></span>
+                    </i>
+                <input type="text" class="form-control form-control-sm " formControlName="countryCode">
+                @if(basicDetailsForm.get('countryCode')?.errors?.required && basicDetailsForm.get('countryCode').touched){
+                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                }
+            </div>
+            <div class="fv-row mb-7 col-md-6" *ngIf="!isOrganizationalEntity && (entityName === 'Partner' || entityName === 'Reseller')">
+                <label class="required fw-semibold mb-2"
+                    translate="TRANSLATE.CUSTOMER_PROFILE_PARTNR_LABEL_TEXT_CURRENCY_CODE"></label>
+                    <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                       [ngbTooltip]="'TRANSLATE.APPCONFIG_DESC_CURRENCY_CODE' | translate">
+                       <span class="path1"></span>
+                       <span class="path2"></span>
+                       <span class="path3"></span>
+                    </i>
+                <input type="text" class="form-control form-control-sm " formControlName="currencyCode">
+                @if(basicDetailsForm.get('currencyCode')?.errors?.required && basicDetailsForm.get('currencyCode').touched){
+                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                }
+            </div>
+            <!-- Site & Department-->
+            <div class="col-md-12" *ngIf="isOrganizationalEntity">
+                <label class="required fw-semibold mb-2"
+                    translate="TRANSLATE.CUSTOMER_PROFILE_PARTNR_LABEL_TEXT_NAME"></label>
+                <input type="text" class="form-control form-control-sm " formControlName="companyName">
+                @if(basicDetailsForm.get('companyName')?.errors?.required && basicDetailsForm.get('companyName').touched){
+                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                }
+                @if((submitted || basicDetailsForm.get('companyName')?.touched) && basicDetailsForm.get('companyName')?.errors?.minlength){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_MIN_LENGTH_3"></span> }
+                @if((submitted || basicDetailsForm.get('companyName')?.touched) && basicDetailsForm.get('companyName')?.errors?.maxlength){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_MAX_LENGTH_510"></span> }
+            </div>
+            <div class="col-md-12" *ngIf="isOrganizationalEntity && this.entityName === 'SiteDepartment'">
+                <label class="fw-semibold mb-2 mt-2"
+                    translate="TRANSLATE.CUSTOMER_PROFILE_PARTNR_LABEL_TEXT_SITES"></label>
+                <input type="text" class="form-control form-control-sm " formControlName="site">
+                @if(basicDetailsForm.get('site')?.errors?.required && basicDetailsForm.get('site').touched){
+                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                }
+            </div>
+            <div class="col-md-12 mb-7" *ngIf="isOrganizationalEntity">
+                <label class="required fw-semibold mb-2 mt-2"
+                    translate="TRANSLATE.CUSTOMER_PROFILE_PARTNR_LABEL_TEXT_DESCRIPTION"></label>
+                <input type="text" class="form-control form-control-sm " formControlName="description">
+                @if(basicDetailsForm.get('description')?.errors?.required && basicDetailsForm.get('description').touched){
+                <span class="text-danger"><span translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span></span>
+                }
+                @if((submitted || basicDetailsForm.get('description')?.touched) && basicDetailsForm.get('description')?.errors?.minlength){
+                        <span class="text-danger" translate="TRANSLATE.VALIDATION_MESSAGE_MIN_LENGTH_5"></span> }
+            </div>
+        </div>
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-sm btn-light btn-active-light-primary me-3" translate="TRANSLATE.PROFILE_USER_BUTTON_TOOLTIP_TEXT_CANCEL" [appPermission]="'SAVE_BASIC_DETAILS'" (click)="cancelBasicDetails()">
+            </button>
+            <button class="btn  btn-sm btn-primary" (click)="submitDetails()" [appPermission]="'SAVE_BASIC_DETAILS'"
+                translate="TRANSLATE.PROFILE_USER_BUTTON_TOOLTIP_TEXT_SAVE" appBusyLoader></button>
+        </div>
+    </div>
+</div>

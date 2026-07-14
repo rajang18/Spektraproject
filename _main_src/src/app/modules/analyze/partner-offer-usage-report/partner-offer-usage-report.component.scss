@@ -1,0 +1,21 @@
+.table{
+    position: relative;
+    top: 20px;
+}
+
+.bg-secondary{
+    background-color:#e5eaee;
+}
+
+select.widthHeight::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+  }
+
+  select.style::-webkit-scrollbar-track {
+     border:rgb(128, 128, 128);
+  }
+  
+  select.style::-webkit-scrollbar-thumb {
+    // border: 1px solid rgb(193, 193, 193);
+  }

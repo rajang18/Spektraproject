@@ -1,0 +1,126 @@
+::ng-deep {
+  app-business-listing{
+    .header-input-field{
+      width: 200px !important;
+    }
+    .w-27-per{
+      width: 27%;
+    }
+    .w-15-per{
+        width: 15%;
+    }
+    .w-17-per{
+        width: 17%;
+    }
+    .w-12-per{
+        width: 12%;
+    }
+    table {
+      tr:last-child {
+      .dt-icon-control{
+          visibility: hidden;
+        }
+      }
+    }
+    .btn.btn-secondary.hide-dropdown-toggle.dropdown-toggle:after {
+      visibility: hidden;
+    }
+    .font-green-jungle {
+      color: #26c281 !important;
+    }
+    .font-red-sunglo {
+      color: #e26a6a !important;
+    }
+  
+    .position-absolute.right-43{
+      right: 43.4% !important;
+    }
+  
+    .lh-5{
+      line-height: 5;
+    }
+  
+    .select2-autocomplete{
+      select2{
+        padding: 0 !important;
+        .select2-selection.select2-selection--multiple{
+          padding: 0 !important;
+        }
+        .select2-results{
+          li{
+            padding: 0.5rem !important;
+          }
+        }
+      }
+    }
+  
+    .table-buisness {
+      table {
+        th {
+          // text-align: left !important;
+        }
+      }
+    }
+
+    @media (min-width: 1015px) {
+      .btn-content {
+        width: 300px !important;
+      }
+
+      .refresh-btn{
+        padding: 7px !important;
+      }
+    }
+    
+    
+
+    .custom-dropdown {
+      // position: absolute;
+      display: inline-block;
+      margin-top: 14px;
+      .btn-content {
+        color: rgb(54, 153, 255);
+        background-color: transparent;
+        border: 2px solid rgb(54, 153, 255) !important;
+        width: 310px;
+        text-align: left;
+      }
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: var(--bs-app-bg-color);
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        width: 350px;
+        padding: 10px;
+        height: 300px;
+        overflow: auto;
+      }
+
+      .dropdown-content label {
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        color: inherit; 
+      }
+      
+      .dropdown-content label:hover {
+        color: #007bff; 
+      }
+  
+      .dropdown-content.show {
+        display: block;
+      }
+    }
+    .child-table-container {
+      .w-90 {
+        width: 90%;
+      }
+    }
+    .clicked-icon {
+      color: #3699ff;
+      cursor: pointer;
+    }
+  }
+}

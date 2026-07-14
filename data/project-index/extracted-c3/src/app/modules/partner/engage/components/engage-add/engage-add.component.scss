@@ -1,0 +1,87 @@
+::ng-deep {
+    app-engage-add {
+        .note-editing-area {
+            height: 150px;
+            overflow-y: auto;
+        }
+
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+    }
+}
+
+button.note-btn.dropdown-toggle::after {
+    display: none;
+}
+
+
+// .note-modal-footer button.btn button.btn.btn-primary{
+//     all:initial;
+// }
+
+
+.note-modal-footer {
+
+    // footer button of summernote modal
+    .btn:not(.btn-outline):not(.btn-dashed):not(.btn-bordered):not(.border-hover):not(.border-active):not(.btn-flush):not(.btn-icon):not(.btn-hover-outline) {
+        border: 0;
+    }
+
+
+    .note-modal-footer .note-btn {
+        float: right;
+    }
+
+    .note-btn.disabled,
+    .note-btn[disabled],
+    fieldset[disabled] .note-btn {
+        box-shadow: none;
+        cursor: not-allowed;
+        -ms-filter: progid:DXImageTransform.Microsoft.Alpha(opacity=65);
+        filter: alpha(opacity=65);
+        -webkit-opacity: .65;
+        -khtml-opacity: .65;
+        -moz-opacity: .65;
+        opacity: .65;
+    }
+
+    .note-btn-primary {
+        background: #fa6362;
+        color: #fff;
+    }
+
+    .note-btn {
+        background-color: #fff;
+        background-image: none;
+        border: 1px solid #dae0e5;
+        border-radius: 3px;
+        color: #333;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.4;
+        margin-bottom: 0;
+        outline: 0;
+        padding: 5px 10px;
+        text-align: center;
+        touch-action: manipulation;
+        -webkit-user-select: none;
+        user-select: none;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    .note-btn-primary {
+        background: #fa6362;
+        color: #fff;
+    }
+
+
+
+}
+
+.hand-cursor-class:hover {
+    cursor: pointer;
+}

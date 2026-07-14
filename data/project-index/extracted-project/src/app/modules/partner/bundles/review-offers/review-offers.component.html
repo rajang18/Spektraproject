@@ -1,0 +1,120 @@
+<div class="col-md-12">
+    <div class="card card-custom">
+        <div class="card-header card-header-stretch overflow-auto">
+            
+            <ul class="nav nav-stretch nav-line-tabs fw-semibold border-transparent flex-nowrap" role="tablist">
+                    <li class="nav-item">
+                        <a 
+                        class="nav-link cursor-pointer"
+                        [ngClass]="{ 
+                            'text-primary': activeTab === 'Quantity',
+                            active: activeTab === 'Quantity' }"
+                            (click)="setActiveTab('Quantity')"
+                            role="tab">
+                            {{'TRANSLATE.PARTNER_ADD_PLAN_TAB_HEADER_TEXT_QUANTITY' | translate}}
+                        </a>
+                    </li>
+            </ul>
+            
+        </div>
+        <div class="d-flex flex-column-fluid">
+            <div class="card-body">
+                <div class="tab-content">
+                    <div class="tab-pane fade show active">
+                        <form name="frmSubmitCustomOffers" ng-show="true">
+                            <div class="form-group row">
+                                <div class="col-md-4">
+                                    <div class="form-group"
+                                        ng-if="vm.selectedConsumption.Name.toLowerCase() === 'quantity' || vm.selectedConsumption.Name.toLowerCase() === 'process'"
+                                        ng-class="{'has-error':( frmSubmitCustomOffers.$submitted || frmSubmitCustomOffers.addCustomOffer_CostPrice.$dirty) &amp;&amp; frmSubmitCustomOffers.addCustomOffer_CostPrice.$error.required || frmSubmitCustomOffers.addCustomOffer_CostPrice.$error.min}">
+                                        <label>
+                                            <span
+                                                translate="TRANSLATE.PARTNER_BUNDLES_LABEL_TEXT_COST_PRICE"></span><span
+                                                class="text-danger">*</span>
+                                                <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.PARTNER_BUNDLES_TOOLTIP_TEXT_COST_PRICE' | translate}}">
+                                                    <span class="path1"></span>
+                                                    <span class="path2"></span>
+                                                    <span class="path3"></span>
+                                                </i>
+                                        </label>
+                                        <div class="input-group mt-1">
+                                            <span class="input-group-text">{{partnerCurrency?.CurrencySymbol}}</span>
+                                            <input type="text" [(ngModel)]="bundlesDetails.PriceforPartner"
+                                                class="form-control" name="addCustomOffer_CostPrice" required min="0"
+                                                disabled>
+                                        </div>
+                                        
+                                        <!-- <span *ngIf="(!bundlesDetails.PriceforPartner)" class="text-danger"
+                                            translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></span> -->
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group"
+                                        ng-if="vm.selectedConsumption.Name.toLowerCase() === 'quantity' || vm.selectedConsumption.Name.toLowerCase() === 'process'"
+                                        ng-class="{'has-error':( frmSubmitCustomOffers.$submitted || frmSubmitCustomOffers.addCustomOffer_SalePrice.$dirty) &amp;&amp; frmSubmitCustomOffers.addCustomOffer_SalePrice.$error.required  || frmSubmitCustomOffers.addCustomOffer_SalePrice.$error.min}">
+                                        <label>
+                                            <span
+                                                translate="TRANSLATE.PARTNER_BUNDLES_LABEL_TEXT_SALE_PRICE"></span><span
+                                                class="text-danger">*</span>
+                                                <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.PARTNER_BUNDLES_TOOLTIP_TEXT_SALE_PRICE' | translate}}">
+                                                    <span class="path1"></span>
+                                                    <span class="path2"></span>
+                                                    <span class="path3"></span>
+                                                </i>
+                                        </label>
+                                        <div class="input-group mt-1">
+                                            <span class="input-group-text">{{partnerCurrency?.CurrencySymbol}}</span>
+                                            <input type="number" [(ngModel)]="bundlesDetails.ProviderSellingPrice"
+                                                class="form-control" name="addCustomOffer_SalePrice" min="0"
+                                                [disabled]="bundlesDetails.ProductId !== undefined && bundlesDetails.ProductId !== null && bundlesDetails.ProductId > 0"
+                                                required>
+                                        </div>
+                                        <!-- <p *ngIf="!bundlesDetails.ProviderSellingPrice" class="text-danger mb-0"
+                                            translate="TRANSLATE.VALIDATION_MESSAGE_REQUIRED"></p> -->
+                                        <span *ngIf="!(bundlesDetails.ProductId !== undefined && bundlesDetails.ProductId !== null && bundlesDetails.ProductId > 0)"><small>{{'TRANSLATE.PARTNER_BUNDLES_INFO_TEXT_SUGGESTED_PRICE'|translate}}{{bundlesDetails?.SugestedSellingPrice | CurrencyFilter:partnerCurrency?.CurrencySymbol}}</small></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4 class="mt-4 ml-2">
+                                        <i class="fas fa-play me-2"></i> <span
+                                            translate="TRANSLATE.BUNDLE_PRODUCTS_PLACEHOLDER"></span>
+                                    </h4>
+                                    <br />
+                                    <!-- <perfect-scrollbar id="productsOffersDiv" class="constrained scroller-custom" wheel-propagation="true" swipe-propagation="true" on-scroll="onScroll(scrollTop, scrollHeight)" always-visible="true" suppress-scroll-X="true" style="height:{{vm.frameHeight-470}}px;"> -->
+                                    <!-- <div ng-if="!vm.IsProductsDataLoading && vm.AllSelectedProductsInLocalStorage.length <= 0">
+                                            <div ng-include="'app/templates/no-data-message.html'"></div>
+                                        </div> -->
+                                    <!-- <div class="row listing-page-spinner" *ngIf="this.allSelectedProductsInLocalStorage.length === 0">
+                                            <h3>
+                                                <span class="text-muted"> <span class="col-md-12 spinner spinner-primary spinner-center config-padding-top"></span> {{'TRANSLATE.BUSY_MESSAGE_TEXT_PLEASE_WAIT' | translate}}</span>
+                                            </h3>
+                                        </div> -->
+                                        <!-- {{allSelectedProductsInLocalStorage|json}} -->
+                                    @for (item of allSelectedProductsInLocalStorage; track $index) {
+                                    <div class="col-md-12" appLazyLoad (lazyLoad)="onLazyLoad(item)">
+                                        <div class="p-2">
+                                            <!-- <app-bundles-manage-plan-list [product]="item"></app-bundles-manage-plan-list> -->
+                                            <app-product-item [productItemDetails]="productItemDetails"
+                                                [productItem]="item"
+                                                (onActionData)="onAddplanAction($event)"></app-product-item>
+                                        </div>
+                                    </div>
+                                    }
+                                    @if(allSelectedProductsInLocalStorage.length==0 && !isProductsDataLoading && (delay(4000) | async)){
+                                        <div class="col-md-12">
+                                            <app-common-no-record></app-common-no-record>
+                                        </div>
+                                        }
+                                    <!-- </perfect-scrollbar> -->
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,9 @@
+.disabled-link {
+    pointer-events: none;   
+    color: gray;   
+  }
+
+.disabled-link:hover{
+  cursor: not-allowed;  
+  pointer-events: auto;
+}  

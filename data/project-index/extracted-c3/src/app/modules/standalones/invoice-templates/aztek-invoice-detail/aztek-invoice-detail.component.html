@@ -1,0 +1,458 @@
+<!--Aztek Invoice Line Items Template-->
+<div class="col-md-12">
+    <h4><span class="p-0 m-0"
+            translate="TRANSLATE.INVOICE_INVOICE_INVOICE_LINE_ITEMS_HEADER_TEXT_INVOICE_DETAILS"></span></h4>
+    <hr class="row" />
+    <div class="row">
+        <div class="col-md-12 table-responsive-md">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <td class="text-start v-align"
+                            [ngClass]="{'col-md-1': invoiceDetails.HasCurrencyConversionEnabled, 'col-md-2' : !invoiceDetails.HasCurrencyConversionEnabled}">
+                            <b translate="TRANSLATE.INVOICE_INVOICE_INVOICE_LINE_ITEMS_TABLE_HEADER_PRODUCT_NAME"></b>
+                        </td>
+                        <td class="text-start v-align"
+                            [ngClass]="{'col-md-2': invoiceDetails.HasCurrencyConversionEnabled && (invoiceDetails.CanManageInvoice && permissions.HasAddAdjustment === 'Allowed' && (invoiceDetails.InvoiceStatusName === 'Generated' || invoiceDetails.InvoiceStatusName === 'Published' || invoiceDetails.InvoiceStatusName === 'Approved')), 'col-md-3' : !invoiceDetails.HasCurrencyConversionEnabled && !(invoiceDetails.CanManageInvoice && permissions.HasAddAdjustment === 'Allowed' && (invoiceDetails.InvoiceStatusName === 'Generated' || invoiceDetails.InvoiceStatusName === 'Published' || invoiceDetails.InvoiceStatusName === 'Approved'))}">
+                            <b translate="TRANSLATE.INVOICE_INVOICE_INVOICE_LINE_ITEMS_TABLE_HEADER_PARTICULARS"></b>
+                        </td>
+                        <td class="col-md-1 text-end v-align">
+                            <b
+                                translate="TRANSLATE.INVOICE_INVOICE_INVOICE_LINE_ITEMS_TABLE_HEADER_EFFECTIVE_QUANTITY"></b>
+                        </td>
+                        <td class="col-md-1 text-end v-align"
+                            *ngIf="invoiceDetails.HasCurrencyConversionEnabled && (!invoiceDetails.HideCurrencyConversionRate)">
+                            <b translate="TRANSLATE.INVOICE_LINE_ITEMS_TABLE_HEADER_CONVERSION_RATE"></b>
+                        </td>
+                        <td class="col-md-1 text-end v-align">
+                            <b
+                                translate="TRANSLATE.INVOICE_INVOICE_INVOICE_LINE_ITEMS_TABLE_HEADER_EFFECTIVE_PRICE"></b>
+                        </td>
+                        <td class="col-md-1 text-end v-align">
+                            <b
+                                translate="TRANSLATE.INVOICE_INVOICE_INVOICE_LINE_ITEMS_TABLE_HEADER_INVOICE_LINE_AMOUNT"></b>
+                        </td>
+                        <td class="col-md-1 text-end v-align">
+                            <b
+                                translate="TRANSLATE.INVOICE_INVOICE_INVOICE_LINE_ITEMS_TABLE_HEADER_DISCOUNT_AMOUNT"></b>
+                        </td>
+                        <td class="col-md-1 text-end v-align">
+                            <b translate="TRANSLATE.INVOICE_INVOICE_INVOICE_LINE_ITEMS_TABLE_HEADER_PRE_TAX_AMOUNT"></b>
+                        </td>
+                        <td class="col-md-1 text-end v-align">
+                            <b translate="TRANSLATE.INVOICE_INVOICE_INVOICE_LINE_ITEMS_TABLE_HEADER_TAX_AMOUNT"></b>
+                        </td>
+                        <td class="col-md-1 text-end v-align">
+                            <b
+                                translate="TRANSLATE.INVOICE_INVOICE_INVOICE_LINE_ITEMS_TABLE_HEADER_POST_TAX_AMOUNT"></b>
+                        </td>
+                        <td class="col-md-1 text-center v-align"
+                            *ngIf="invoiceDetails.CanManageInvoice && permissions.HasAddAdjustment === 'Allowed' && (invoiceDetails.InvoiceStatusName === 'Generated' || invoiceDetails.InvoiceStatusName === 'Published' || invoiceDetails.InvoiceStatusName === 'Approved')">
+                            <b translate="TRANSLATE.INVOICE_INVOICE_INVOICE_LINE_ITEMS_TABLE_HEADER_ACTIONS"></b>
+                        </td>
+                    </tr>
+                </thead>
+                @for (itemType of lineItemTypes |orderBy; track $index) {
+                <tbody>
+                    <tr>
+                        <td colspan="11">
+                            <b>{{itemType}}</b>
+                        </td>
+                    </tr>
+                    @for (row of lineItemDetails; track $index) {
+                    <tr *ngIf="row.ComboOfProviderAndCategory === itemType">
+
+                        <td
+                            [ngClass]="{'col-md-1': invoiceDetails.HasCurrencyConversionEnabled, 'col-md-2' : !invoiceDetails.HasCurrencyConversionEnabled}">
+                            <div>
+                                <div class="mb-1 fw-semibold">{{row.ProductName}}</div>
+                                <span
+                                    *ngIf="(row.PONumber !== null && row.PONumber!=='')||(permissions.HasUpdateSubscriptionPONumber === 'Allowed' && invoiceDetails.CanManageInvoice)">
+                                    <span>{{'PO_NUMBER' | translate}} : {{row.PONumber}}</span>
+                                    <a *ngIf="(row.PONumber !== null && row.PONumber!=='') && (permissions.HasUpdateSubscriptionPONumber === 'Allowed' && invoiceDetails.CanManageInvoice)"
+                                        class=""
+                                        (click)="editInvoiceProperty('PONumberLineItem',row.PONumber,row.ID,row)">
+                                        <i class="fas fa-pen text-primary"></i>
+                                    </a>
+                                    <a *ngIf="(row.PONumber === null || row.PONumber==='')&&(permissions.HasUpdateSubscriptionPONumber === 'Allowed' && invoiceDetails.CanManageInvoice)"
+                                        class="btn btn-light-primary btn-sm"
+                                        (click)="editInvoiceProperty('PONumberLineItem',row.PONumber,row.ID,row)">
+                                        <i class="fa fa-plus"></i><span translate="TRANSLATE.ADD_PO_NUMBER"></span>
+                                    </a>
+                                    <br />
+                                </span>
+                                <div [ngClass]="{'d-flex justify-content-start flex-wrap':true, 'me-2': canManagePO,'me-1':!canManagePO}"
+                                    style="column-gap:0.4rem;row-gap:0.4rem">
+                                    <span *ngIf="row.Validity!==null && row.Validity!==''  && row.Validity!==undefined"
+                                        class="label label-warning font-weight-bold label-inline badge badge-warning"
+                                        [ngClass]="{'label-warning':row.BillingCycleKey === 'BILL_CYCLE_DESC_MONTHLY' && row.ValidityType === 'Month(s)','labelcolor': row.BillingCycleKey === 'BILL_CYCLE_DESC_MONTHLY' && row.ValidityType === 'Year(s)', 'TermLabelColor' : row.BillingCycleKey === 'BILL_CYCLE_DESC_ANNUAL'}"
+                                        aria-hidden="true"
+                                        ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                        {{row.Validity}}
+                                        {{row.Validity>1?row.ValidityType.replace('(','').replace(')',''):row.ValidityType.replace('(s)','')}}
+                                    </span>
+                                    <span
+                                        *ngIf="row.BillingCycleKey!==null && row.BillingCycleKey!==''  && row.BillingCycleKey!==undefined"
+                                        class="label label-dark font-weight-bold label-inline badge badge-dark"
+                                        aria-hidden="true"
+                                        ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}">
+                                        {{'TRANSLATE.'+row.BillingCycleKey | translate}} </span>
+                                    <span
+                                        *ngIf="isMultipleMarketSupport && row.CountryCode!==null && row.CountryCode!==''  && row.CountryCode!==undefined"
+                                        class="label label-info font-weight-bold label-inline badge badge-info"
+                                        ngbTooltip="{{row.CountryName || 'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_COUNTRYCODE' | translate}}">{{row.CountryCode}}</span>
+                                </div>
+                                <span
+                                    *ngIf="row.ServiceProviderCustomerName !== null && row.ServiceProviderCustomerName !== '' && invoiceDetails.HasMultipleServiceProviderCustomers"
+                                    style="font-size:xx-small;text-align:left">
+                                    <span
+                                        [innerHTML]="'TRANSLATE.INVOICE_LINE_ITEMS_LBL_PROVIDER_TENANT_NAME' | translate:{providerName: row.ProviderName, providerTenantName:row.ServiceProviderCustomerName}"></span>
+                                    <br>
+                                </span>
+                                <span style="font-size:xx-small;text-align:left">
+                                    <b class="deep-bold"
+                                        [innerHTML]="'TRANSLATE.INVOICE_LINE_ITEMS_LBL_OWNED_BY' | translate: { ownedBy:row.CombinedRecordName }"></b>
+                                </span>
+                            </div>
+                        </td>
+                        <td
+                            [ngClass]="{'col-md-2': invoiceDetails.HasCurrencyConversionEnabled && (invoiceDetails.CanManageInvoice && permissions.HasAddAdjustment === 'Allowed' && (invoiceDetails.InvoiceStatusName === 'Generated' || invoiceDetails.InvoiceStatusName === 'Published' || invoiceDetails.InvoiceStatusName === 'Approved')), 'col-md-3' : !invoiceDetails.HasCurrencyConversionEnabled && !(invoiceDetails.CanManageInvoice && permissions.HasAddAdjustment === 'Allowed' && (invoiceDetails.InvoiceStatusName === 'Generated' || invoiceDetails.InvoiceStatusName === 'Published' || invoiceDetails.InvoiceStatusName === 'Approved'))}">
+                            <div>
+                                {{row.InvoiceLineDetail}}
+                                <br>
+                                {{row.ChargeStartDate | c3Date}} - {{row.ChargeEndDate | c3Date}}
+                            </div>
+                        </td>
+                        <td class="col-md-1 text-end">
+                            <div>{{row.Quantity}} </div>
+                        </td>
+                        <td class="col-md-1 text-end"
+                            *ngIf="invoiceDetails.HasCurrencyConversionEnabled && (!invoiceDetails.HideCurrencyConversionRate)">
+                            <div
+                                *ngIf="row.ConversionRate !== null && row.ConversionRate !== '' && invoiceDetails.HasCurrencyConversionEnabled">
+                                {{row.ConversionRate| CurrencyFilter : invoiceDetails.CurrencySymbol :
+                                invoiceDetails.CurrencyDecimalPlaces : invoiceDetails.CurrencyThousandSeperator :
+                                invoiceDetails.CurrencyDecimalSeperator}} </div>
+                            <div
+                                *ngIf="(row.ConversionRate === null || row.ConversionRate === '') && invoiceDetails.HasCurrencyConversionEnabled">
+                                -- </div>
+                        </td>
+                        <td class="col-md-1 text-end">
+                            <div>
+                                <span *ngIf="row.ConsumptionType === 'Usage'">
+                                    {{row.UnitPrice | CurrencyFilter : invoiceDetails.CurrencySymbol :
+                                    invoiceDetails.CurrencyDecimalPlaces : invoiceDetails.CurrencyThousandSeperator :
+                                    invoiceDetails.CurrencyDecimalSeperator}}
+                                </span>
+                                <span *ngIf="row.ConsumptionType !== 'Usage'">
+                                    {{row.EffectivePrice | CurrencyFilter : invoiceDetails.CurrencySymbol :
+                                    invoiceDetails.CurrencyDecimalPlaces : invoiceDetails.CurrencyThousandSeperator :
+                                    invoiceDetails.CurrencyDecimalSeperator}}
+                                </span>
+                            </div>
+                        </td>
+                        <td class="col-md-1 text-end">
+                            <div>
+                                {{row.InvoiceLineAmount | CurrencyFilter : invoiceDetails.CurrencySymbol :
+                                invoiceDetails.CurrencyDecimalPlaces : invoiceDetails.CurrencyThousandSeperator :
+                                invoiceDetails.CurrencyDecimalSeperator}}
+                            </div>
+                        </td>
+                        <td class="col-md-1 text-end">
+                            <div>
+                                {{row.DiscountAmount | CurrencyFilter : invoiceDetails.CurrencySymbol :
+                                invoiceDetails.CurrencyDecimalPlaces : invoiceDetails.CurrencyThousandSeperator :
+                                invoiceDetails.CurrencyDecimalSeperator}}
+                                <br />
+                                <p *ngIf="row.DiscountAmount>0 && row.Discount > 0">
+                                    <span class="text-danger" style="font-size:xx-small; color:green">
+                                        <span *ngIf="row.IsCouponPercentage">
+                                            {{row.Discount}}%
+                                        </span>
+                                        <span *ngIf="!row.IsCouponPercentage">
+                                            {{row.Discount | CurrencyFilter : row.CurrencySymbol :
+                                            row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator :
+                                            row.CurrencyDecimalSeperator }}
+                                        </span>
+                                        <span translate="TRANSLATE.LBL_DISCOUNT_TEXT"></span>
+                                    </span>
+                                    <br />
+                                    <span class="text-muted tooltips"
+                                        style="font-size:xx-small; color:green; text-align:left">
+                                        <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true"
+                                            ngbTooltip="{{'TRANSLATE.TOOLTIP_COUPON_CODE_TEXT' | translate}}">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                            <span class="path3"></span>
+                                        </i>
+                                        {{row.CouponCode}}
+                                    </span>
+                                </p>
+                                <p *ngIf="row.PromotionalId !== null && row.DiscountAmount > 0">
+                                    <span
+                                        *ngIf="(row.PromotionDiscountType !== undefined && row.PromotionDiscountType !== null && row.PromotionDiscountType !== '' && row.PromotionDiscountType === 'PercentDiscount')">
+                                        <span style="font-size:xx-small; color:green; text-align:left"
+                                            translate="TRANSLATE.INVOICE_LINEITEMS_LABEL_PROMOTION_DISCOUNT"></span>:
+                                        {{row.PromotionDiscount}}%
+                                    </span>
+                                    <span
+                                        *ngIf="(row.PromotionDiscountType !== undefined && row.PromotionDiscountType !== null && row.PromotionDiscountType !== '' && row.PromotionDiscountType !== 'PercentDiscount')">
+                                        <span style="font-size:xx-small; color:green; text-align:left"
+                                            translate="TRANSLATE.INVOICE_LINEITEMS_LABEL_PROMOTION_DISCOUNT"></span>:
+                                        {{row.PromotionDiscount | CurrencyFilter : row.CurrencySymbol :
+                                        row.CurrencyDecimalPlaces : row.CurrencyThousandSeperator :
+                                        row.CurrencyDecimalSeperator }}
+                                    </span>
+                                </p>
+                            </div>
+                        </td>
+                        <td class="col-md-1 text-end">
+                            <div>
+                                {{row.PreTaxAmount | CurrencyFilter : invoiceDetails.CurrencySymbol :
+                                invoiceDetails.CurrencyDecimalPlaces : invoiceDetails.CurrencyThousandSeperator :
+                                invoiceDetails.CurrencyDecimalSeperator}}
+                            </div>
+                        </td>
+                        <td class="col-md-1 text-end">
+                            <div>
+                                <span *ngIf="row.TaxName!== null && row.TaxName!==''"><small>{{row.TaxName}}
+                                        ({{row.TaxPercentage}}%): </small><b>{{row.TaxAmount | CurrencyFilter :
+                                        invoiceDetails.CurrencySymbol : invoiceDetails.CurrencyDecimalPlaces
+                                        : invoiceDetails.CurrencyThousandSeperator :
+                                        invoiceDetails.CurrencyDecimalSeperator}}</b></span>
+                                <span *ngIf="row.TaxName === null || row.TaxName===''">{{row.TaxAmount | CurrencyFilter
+                                    : invoiceDetails.CurrencySymbol : invoiceDetails.CurrencyDecimalPlaces :
+                                    invoiceDetails.CurrencyThousandSeperator :
+                                    invoiceDetails.CurrencyDecimalSeperator}}</span>
+                                <div
+                                    *ngIf="invoiceLineItemTaxBreakUps !== null && invoiceLineItemTaxBreakUps.length > 0">
+                                    @for (item of invoiceLineItemTaxBreakUps | filter:{InvoiceLineItemId: row.ID}; track
+                                    $index) {
+                                    <span
+                                        ng-repeat="item in invoiceLineItemTaxBreakUps| filter: {InvoiceLineItemId: row.ID}">
+                                        <small>{{item.TaxName}}({{item.TaxPercentage}}%): {{item.TaxAmount|
+                                            CurrencyFilter : invoiceDetails.CurrencySymbol :
+                                            invoiceDetails.CurrencyDecimalPlaces :
+                                            invoiceDetails.CurrencyThousandSeperator :
+                                            invoiceDetails.CurrencyDecimalSeperator}}</small>
+                                    </span><br />
+                                    }
+
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-md-1 text-end">
+                            <div>
+                                {{row.PostTaxAmount | CurrencyFilter : invoiceDetails.CurrencySymbol :
+                                invoiceDetails.CurrencyDecimalPlaces : invoiceDetails.CurrencyThousandSeperator :
+                                invoiceDetails.CurrencyDecimalSeperator}}
+                            </div>
+                        </td>
+                        <td class="col-md-1 text-center"
+                            *ngIf="invoiceDetails.CanManageInvoice && permissions.HasAddAdjustment === 'Allowed' && (invoiceDetails.InvoiceStatusName === 'Generated' || invoiceDetails.InvoiceStatusName === 'Published' || invoiceDetails.InvoiceStatusName === 'Approved')">
+                            <div>
+                                <button class="btn btn-light-primary btn-sm btn-icon tooltips"
+                                    *ngIf="row.InvoiceLineItemTypeName === 'Adjustments'"
+                                    (click)="addOrEditAdjustment(row.ID, 'edit')"
+                                    ngbTooltip="{{'TRANSLATE.CUSTOMERS_INVOICELINEITEMS_BUTTON_1_EDIT' | translate}}"><i
+                                        class="fas fa-edit"></i></button>
+                                <button class="btn btn-light-danger btn-sm btn-icon tooltips"
+                                    *ngIf="row.InvoiceLineItemTypeName === 'Adjustments'"
+                                    (click)="deleteAdjustment(row.ID, 'delete')"
+                                    ngbTooltip="{{'TRANSLATE.CUSTOMERS_INVOICELINEITEMS_BUTTON_2_DELETE' | translate}}"><i
+                                        class="fas fa-times"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+
+                    <tr>
+                        <td colspan="11"
+                            *ngIf="invoiceDetails.CanManageInvoice && permissions.HasAddAdjustment === 'Allowed' && (invoiceDetails.InvoiceStatusName === 'Generated' || invoiceDetails.InvoiceStatusName === 'Published' || invoiceDetails.InvoiceStatusName === 'Approved')">
+                            <div class="form-group row">
+                                <label class="text-end col-md-11 bold">
+                                    <strong><span
+                                            translate="TRANSLATE.CUSTOMERS_INVOICEPAYMENTS_TABLE_COLUMN_SUB_TOTAL"></span></strong>
+                                </label>
+                                <div class="col-md-1 bold text-end">
+                                    <strong> {{getSubTotalOfCategory(itemType) | CurrencyFilter :
+                                        invoiceDetails.CurrencySymbol : invoiceDetails.CurrencyDecimalPlaces :
+                                        invoiceDetails.CurrencyThousandSeperator :
+                                        invoiceDetails.CurrencyDecimalSeperator}}</strong>
+                                </div>
+                            </div>
+                        </td>
+                        <td colspan="10"
+                            *ngIf="!(invoiceDetails.CanManageInvoice && permissions.HasAddAdjustment === 'Allowed' && (invoiceDetails.InvoiceStatusName === 'Generated' || invoiceDetails.InvoiceStatusName === 'Published' || invoiceDetails.InvoiceStatusName === 'Approved'))">
+                            <div class="form-group row">
+                                <div class="col-md-11 text-end">
+                                    <strong><span
+                                            translate="TRANSLATE.CUSTOMERS_INVOICEPAYMENTS_TABLE_COLUMN_SUB_TOTAL"></span></strong>
+                                </div>
+                                <div class="col-md-1 text-end">
+                                    <strong> {{getSubTotalOfCategory(itemType) | CurrencyFilter :
+                                        invoiceDetails.CurrencySymbol : invoiceDetails.CurrencyDecimalPlaces :
+                                        invoiceDetails.CurrencyThousandSeperator :
+                                        invoiceDetails.CurrencyDecimalSeperator}}</strong>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+                }
+
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div *ngIf="invoiceDetails.InvoiceFooterLine !== '' && invoiceDetails.InvoiceFooterLine !== null">
+            <div class="col-md-12">
+                <span [innerHTML]="invoiceDetails.InvoiceFooterLine"> </span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="well">
+            <div class="row static-info align-reverse mb-4">
+                <div class="text-end"
+                    [ngClass]="{'col-md-6 col-sm-6 col-6 name': showInvoiceSummaryInEntityCurrency, 'col-md-8 col-sm-6 col-6 name' : !showInvoiceSummaryInEntityCurrency}">
+                    <span class="text-nowrap fw-semibold"><strong> <span
+                                translate="TRANSLATE.LABLE_SUBSCRIPTIONS_TOTAL"></span> : </strong></span>
+                </div>
+                <div class="text-end"
+                    [ngClass]="{'col-md-3 col-sm-6 col-6 value': showInvoiceSummaryInEntityCurrency, 'col-md-4 col-sm-6 col-6 value' : !showInvoiceSummaryInEntityCurrency}">
+                    <strong class="fw-semibold">{{getSubTotals(false) | CurrencyFilter :
+                        invoiceDetails.CurrencySymbol : invoiceDetails.CurrencyDecimalPlaces :
+                        invoiceDetails.CurrencyThousandSeperator : invoiceDetails.CurrencyDecimalSeperator}}</strong>
+                </div>
+                <div class="col-md-3 value text-end" *ngIf="showInvoiceSummaryInEntityCurrency"> <strong
+                        class="fw-semibold">{{getSubTotalsInEntityCurrency(false) | CurrencyFilter :
+                        invoiceDetails.EntityCurrencySymbol : invoiceDetails.EntityCurrencyDecimalPlaces :
+                        invoiceDetails.EntityCurrencyThousandSeperator :
+                        invoiceDetails.EntityCurrencyDecimalSeperator}}</strong></div>
+            </div>
+            <div class="row static-info align-reverse text-end mb-4">
+                <div
+                    [ngClass]="{'col-md-6 col-sm-6 col-6 name': showInvoiceSummaryInEntityCurrency, 'col-md-8 col-sm-6 col-6 name' : !showInvoiceSummaryInEntityCurrency}">
+                    <strong><span class="text-nowrap fw-semibold"><span
+                                translate="TRANSLATE.LABLE_ADDITIONAL_CHARGES_TOTAL"></span>: </span></strong>
+                </div>
+                <div
+                    [ngClass]="{'col-md-3 col-sm-6 col-6 value': showInvoiceSummaryInEntityCurrency, 'col-md-4 col-sm-6 col-6 value' : !showInvoiceSummaryInEntityCurrency}">
+                    <strong class="fw-semibold">{{getDiscountOrAdditionalChargeAmounts(false) | CurrencyFilter :
+                        invoiceDetails.CurrencySymbol : invoiceDetails.CurrencyDecimalPlaces :
+                        invoiceDetails.CurrencyThousandSeperator : invoiceDetails.CurrencyDecimalSeperator}}</strong>
+                </div>
+                <div class="col-md-3 value" *ngIf="showInvoiceSummaryInEntityCurrency"> <strong
+                        class="fw-semibold">{{getDiscountOrAdditionalChargeAmountsInEntityCurrency(false) |
+                        CurrencyFilter : invoiceDetails.EntityCurrencySymbol :
+                        invoiceDetails.EntityCurrencyDecimalPlaces : invoiceDetails.EntityCurrencyThousandSeperator :
+                        invoiceDetails.EntityCurrencyDecimalSeperator}}</strong></div>
+            </div>
+            <div class="row static-info align-reverse text-end mb-4">
+                <div
+                    [ngClass]="{'col-md-6 col-sm-6 col-6 name': showInvoiceSummaryInEntityCurrency, 'col-md-8 col-sm-6 col-6 name' : !showInvoiceSummaryInEntityCurrency}">
+                    <strong> <span class="fw-semibold" translate="TRANSLATE.LABLE_WAIVER"></span>:</strong>
+                </div>
+                <div
+                    [ngClass]="{'col-md-3 col-sm-6 col-6 value': showInvoiceSummaryInEntityCurrency, 'col-md-4 col-sm-6 col-6 value' : !showInvoiceSummaryInEntityCurrency}">
+                    <strong class="fw-semibold">{{getDiscountOrAdditionalChargeAmounts(true) | CurrencyFilter :
+                        invoiceDetails.CurrencySymbol : invoiceDetails.CurrencyDecimalPlaces :
+                        invoiceDetails.CurrencyThousandSeperator : invoiceDetails.CurrencyDecimalSeperator}}</strong>
+                </div>
+                <div class="col-md-3 value" *ngIf="showInvoiceSummaryInEntityCurrency"><strong
+                        class="fw-semibold">{{getDiscountOrAdditionalChargeAmountsInEntityCurrency(true) |
+                        CurrencyFilter : invoiceDetails.EntityCurrencySymbol :
+                        invoiceDetails.EntityCurrencyDecimalPlaces : invoiceDetails.EntityCurrencyThousandSeperator :
+                        invoiceDetails.EntityCurrencyDecimalSeperator}}</strong></div>
+            </div>
+            <div class="row static-info align-reverse text-end mb-4">
+                <div
+                    [ngClass]="{'col-md-6 col-sm-6 col-6 name': showInvoiceSummaryInEntityCurrency, 'col-md-8 col-sm-6 col-6 name' : !showInvoiceSummaryInEntityCurrency}">
+                    <strong> <span class="fw-semibold" translate="TRANSLATE.LABLE_DISCOUNTS_TOTAL"></span>:</strong>
+                </div>
+                <div
+                    [ngClass]="{'col-md-3 col-sm-6 col-6 value': showInvoiceSummaryInEntityCurrency, 'col-md-4 col-sm-6 col-6 value' : !showInvoiceSummaryInEntityCurrency}">
+                    <strong class="fw-semibold">{{totalDiscountAmount | CurrencyFilter :
+                        invoiceDetails.CurrencySymbol : invoiceDetails.CurrencyDecimalPlaces :
+                        invoiceDetails.CurrencyThousandSeperator : invoiceDetails.CurrencyDecimalSeperator}}</strong>
+                </div>
+                <div class="col-md-3 value" *ngIf="showInvoiceSummaryInEntityCurrency"><strong
+                        class="fw-semibold">{{totalDiscountAmountInEntityCurrency | CurrencyFilter :
+                        invoiceDetails.EntityCurrencySymbol : invoiceDetails.EntityCurrencyDecimalPlaces :
+                        invoiceDetails.EntityCurrencyThousandSeperator :
+                        invoiceDetails.EntityCurrencyDecimalSeperator}}</strong></div>
+            </div>
+            <div class="row static-info align-reverse text-end mb-4">
+                <div
+                    [ngClass]="{'col-md-6 col-sm-6 col-6 name': showInvoiceSummaryInEntityCurrency, 'col-md-8 col-sm-6 col-6 name' : !showInvoiceSummaryInEntityCurrency}">
+                    <span *ngIf="invoiceDetails.TaxName !==null && invoiceDetails.TaxName !==''">
+                        <strong
+                            class="fw-semibold">{{invoiceDetails.TaxName}}({{invoiceDetails.TaxPercentage}}%):</strong>
+                    </span>
+                    <strong class="fw-semibold"
+                        *ngIf="invoiceDetails.TaxName === null || invoiceDetails.TaxName === ''"><span
+                            class="fw-semibold" translate="TRANSLATE.LABLE_TAXES_TOTAL"></span>:</strong>
+                </div>
+                <div
+                    [ngClass]="{'col-md-3 col-sm-6 col-6 value': showInvoiceSummaryInEntityCurrency, 'col-md-4 col-sm-6 col-6 value' : !showInvoiceSummaryInEntityCurrency}">
+                    <strong class="fw-semibold">{{getSubTotals(true) | CurrencyFilter :
+                        invoiceDetails.CurrencySymbol : invoiceDetails.CurrencyDecimalPlaces :
+                        invoiceDetails.CurrencyThousandSeperator : invoiceDetails.CurrencyDecimalSeperator}}</strong>
+                </div>
+                <div class="col-md-3 value" *ngIf="showInvoiceSummaryInEntityCurrency"><strong
+                        class="fw-semibold">{{getSubTotalsInEntityCurrency(true) | CurrencyFilter :
+                        invoiceDetails.EntityCurrencySymbol : invoiceDetails.EntityCurrencyDecimalPlaces :
+                        invoiceDetails.EntityCurrencyThousandSeperator :
+                        invoiceDetails.EntityCurrencyDecimalSeperator}}</strong></div>
+            </div>
+            <div *ngIf="invoiceSubTaxes !== [] && invoiceSubTaxes !== null && invoiceSubTaxes.length > 0"
+                class="row static-info align-reverse text-end">
+                @for (item of invoiceSubTaxes; track $index) {
+                <div class="col-md-12">
+                    <div class="row mb-4">
+                        <div
+                            [ngClass]="{'col-md-6 col-sm-6 col-6 name': showInvoiceSummaryInEntityCurrency, 'col-md-8 col-sm-6 col-6 name' : !showInvoiceSummaryInEntityCurrency}">
+                            <small>{{item.TaxName}}({{item.TaxPercentage}}%):</small>
+                        </div>
+                        <div
+                            [ngClass]="{'col-md-3 value': showInvoiceSummaryInEntityCurrency, 'col-md-4 value' : !showInvoiceSummaryInEntityCurrency}">
+                            <small>{{getSubTaxesAmount(item.TaxName) | CurrencyFilter : invoiceDetails.CurrencySymbol :
+                                invoiceDetails.CurrencyDecimalPlaces : invoiceDetails.CurrencyThousandSeperator :
+                                invoiceDetails.CurrencyDecimalSeperator}}</small>
+                        </div>
+                        <div class="col-md-3 value" *ngIf="showInvoiceSummaryInEntityCurrency">
+                            <small>{{getSubTaxesAmountInEntityCurrency(item.TaxName) | CurrencyFilter :
+                                invoiceDetails.EntityCurrencySymbol : invoiceDetails.EntityCurrencyDecimalPlaces :
+                                invoiceDetails.EntityCurrencyThousandSeperator :
+                                invoiceDetails.EntityCurrencyDecimalSeperator}}</small>
+                        </div>
+                    </div>
+                </div>
+                }
+
+            </div>
+            <div class="row static-info align-reverse text-end mb-4">
+                <div
+                    [ngClass]="{'col-md-6 col-sm-6 col-6 name': showInvoiceSummaryInEntityCurrency, 'col-md-8 col-sm-6 col-6 name' : !showInvoiceSummaryInEntityCurrency}">
+                    <strong class="fw-semibold"><span class="fw-semibold"
+                            translate="TRANSLATE.CUSTOMERS_INVOICEPAYMENTS_TABLE_COLUMN_GRAND_TOTAL"></span>:</strong>
+                </div>
+                <div
+                    [ngClass]="{'col-md-3 col-sm-6 col-6 value': showInvoiceSummaryInEntityCurrency, 'col-md-4 col-sm-6 col-6 value' : !showInvoiceSummaryInEntityCurrency}">
+                    <strong class="fw-semibold">{{totalPostTaxAmount | CurrencyFilter :
+                        invoiceDetails.CurrencySymbol : invoiceDetails.CurrencyDecimalPlaces :
+                        invoiceDetails.CurrencyThousandSeperator : invoiceDetails.CurrencyDecimalSeperator}}</strong>
+                </div>
+                <div class="col-md-3 value" *ngIf="showInvoiceSummaryInEntityCurrency"><strong
+                        class="fw-semibold">{{totalPostTaxAmountInEntityCurrency | CurrencyFilter :
+                        invoiceDetails.EntityCurrencySymbol : invoiceDetails.EntityCurrencyDecimalPlaces :
+                        invoiceDetails.EntityCurrencyThousandSeperator :
+                        invoiceDetails.EntityCurrencyDecimalSeperator}}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

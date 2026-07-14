@@ -1,0 +1,282 @@
+<div class="card mr-5" style="margin-bottom: 0px;padding-left: 10px;padding-right: 10px;" *ngIf="!product.IsDelete">
+    <div class="card-body pt-0 pb-0">
+        <div class="">
+            <div class="row">
+                <div class="col-md-11">
+                    <div class="table-responsive-md table-responsive-sm table-responsive-xl table-responsive-lg">
+                        <table class="table table-responsive-md table-condensed">
+                            <thead>
+                                <tr>
+                                    <td class="border-0"
+                                        [ngClass]="{'col-md-4': !product.IsResellerPlanView, 'col-md-5' : product.IsResellerPlanView}">
+                                        <span translate="TRANSLATE.LABLE_TEXT_OFFER_NAME"></span>
+                                    </td>
+                                    <td class="border-0"
+                                        [ngClass]="{'col-md-3': !product.IsResellerPlanView, 'col-md-4' : product.IsResellerPlanView}">
+                                        <span translate="TRANSLATE.LABLE_TEXT_FRIENDLY_NAME"></span>
+                                    </td>
+                                    <td class="col-md-1 header-price-alignment border-0">
+                                        <span translate="TRANSLATE.LABLE_TEXT_COST_TO_PARTNER"></span>
+                                    </td>
+                                    <td class="col-md-1 header-price-alignment border-0">
+                                        <span translate="TRANSLATE.LABEL_TEXT_RETAIL_PRICE"></span>
+                                    </td>
+                                    <td class="custom-col header-price-alignment border-0">
+                                        <span translate="TRANSLATE.LABLE_TEXT_SALE_PRICE"></span>
+                                    </td>
+                                    <td class="col-md-1 border-0 text-center" *ngIf="!isResellerPlanView">
+                                        <span translate="TRANSLATE.LABLE_TEXT_IS_AVAILABLE_TO_CUSTOMER"></span>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr
+                                    [ngClass]="{'highlight': productItemDetails?.searchKeyword && productItemDetails?.searchKeyword !== ''  && (product?.Name?.toLowerCase().indexOf(productItemDetails?.searchKeyword?.toLowerCase()) !== -1 || product?.ProviderProductName?.toLowerCase().indexOf(productItemDetails?.searchKeyword?.toLowerCase()) !== -1),  'addPlanBorderColorforGreaterprice' : productItemDetails?.filter &&  productItemDetails?.filter !== '' && productItemDetails?.filter === 'greaterThanERP' && product.SalePrice > product.ProviderSellingPrice, 'addPlanBorderColorforlessPrice' : productItemDetails?.filter &&  productItemDetails?.filter !== '' && productItemDetails?.filter === 'lessThanListPrice' && product.SalePrice <  product.PriceforPartner, 'addBorderColorToEditAndNewOfferForShowPurchasedOffer':productItemDetails?.filter && productItemDetails?.filter !=='' && productItemDetails?.filter === 'offerWithPurchasedSubscription' && (product.IsUpdate || !product.PlanProductId) }">
+                                    <td class="border-0 pe-4"
+                                        [ngClass]="{'col-md-4': !product.IsResellerPlanView, 'col-md-5' : product.IsResellerPlanView}">
+                                        <div>
+                                            <strong
+                                                [ngClass]="{'not-available-for-purchase':product.ProviderSettings.IsAvailableForPurchase && product.ProviderSettings.IsAvailableForPurchase.toLowerCase()=='false'}">
+                                                {{ product.ProviderProductName }}
+                                                <i *ngIf="product.ProviderSettings.IsAvailableForPurchase && product.ProviderSettings.IsAvailableForPurchase.toLowerCase()=='false'"
+                                                    class="ki-outline ki-minus-circle not-available-for-purchase"
+                                                    ngbTooltip="{{'TRANSLATE.MANAGE_PLAN_NOT_AVAILABLE_FOR_PURCHASE' | translate}}">
+                                                </i>
+                                            </strong>
+                                            <sup>
+                                                <span class="text-primary"
+                                                    *ngIf="product.PlanProductId === null || product.PlanProductId === undefined || product.PlanProductId === 0">
+                                                    {{'TRANSLATE.LABEL_TO_INDICATE_A_NEW_OFFER' | translate}}
+                                                </span>
+                                            </sup>
+                                            <br />
+                                            <span
+                                                *ngIf="product.Validity !== null && product.ValidityType == 'Month(s)'"
+                                                class="label label-warning font-weight-bold label-inline text-white badge bg-warning ms-md-2"
+                                                aria-hidden="true"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                {{product.Validity}} {{(product.Validity == 1? (product.ValidityType ===
+                                                'Month(s)'?
+                                                'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEARS') | translate }} </span>
+                                            <span
+                                                *ngIf="product.ValidityType === 'Year(s)' || product.ValidityType === 'Year'"
+                                                [ngClass]="{'labelcolor':product.BillingCycleName == 'Monthly','TermLabelColor': product.BillingCycleName == 'Annual'}"
+                                                class="label label-dark font-weight-bold label-inline text-white badge bg-warning ms-md-2"
+                                                aria-hidden="true"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                {{product.Validity}} {{(product.Validity == 1? (product.ValidityType ===
+                                                'Month(s)'?
+                                                'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                'TRANSLATE.TERM_DURATION_DESC_YEARS') | translate }} </span>
+                                            <span
+                                                class="label fw-bold label-inline text-white badge ms-md-2" [ngClass]="{
+                                                        'bg-warning': product.BillingCycleName?.toLowerCase() === 'monthly',
+                                                        'bg-success': product.BillingCycleName?.toLowerCase() === 'annual',
+                                                        'bg-dark': product.BillingCycleName?.toLowerCase() === 'triennial',
+                                                        'bg-info': product.BillingCycleName?.toLowerCase() === 'onetime'
+                                                      }"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}">
+                                                {{'TRANSLATE.'+product.BillingCycleDescriptionKey | translate}}
+                                            </span>
+                                            <span class="label label-light-info font-weight-bold badge ms-md-2"
+                                                *ngIf="product.CategoryName"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}">
+                                                {{product.CategoryDescriptionKey | translate}}
+                                            </span>
+                                            <span class="label label-light-primary font-weight-bold badge ms-md-2"
+                                                *ngIf="product.ProviderSettings && product.ProviderSettings.ProviderCategory"
+                                                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_SERVICE_TYPE' | translate}}">
+                                                {{product.ProviderSettings.ProviderCategory | translate}}
+                                            </span>
+                                            <span class="badge badge-info ms-md-2" *ngIf="product.MarketCode"
+                                                ngbTooltip="{{product.MarketRegion}}">
+                                                {{product.MarketCode}}
+                                            </span>
+                                            <span
+                                                *ngIf="product.ProviderSettings && product.ProviderSettings.EnforceAttestation == 'TRUE'"
+                                                ngbTooltip="{{'TRANSLATE.MICROSOFT_ATTESTATION_TYPE_TOOLTIP' | translate}}{{'TRANSLATE.'+product.ProviderSettings.AttestationType | translate}}"
+                                                class="font-weight-normal  separator-primary text-primary cursor-pointer"><span><i
+                                                        class="ki-outline ki-verify text-primary"></i></span></span>
+                                            <span *ngIf="product.PlanProductMacroName != null"
+                                                class="label label-light-warning font-weight-bold badge "
+                                                ngbTooltip="{{'TRANSLATE.PLAN_MACRO_DETAILS_LABEL_TEXT' | translate}}">
+                                                {{'TRANSLATE.'+product.PlanProductMacroName | translate}}<span
+                                                    *ngIf="product.PlanProductMacroValue != null && product.PlanProductMacroValue != 0 ">({{product.PlanProductMacroValue
+                                                    | translate}})</span>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="border-0 pe-4"
+                                        [ngClass]="{'col-md-3': !product.IsResellerPlanView, 'col-md-4' : product.IsResellerPlanView}">
+                                        <div>
+                                            <strong>
+                                                @if(!showEditName){
+                                                <a href="javascript:void(0)" [appPermission]="'SAVE_PLAN'"
+                                                    editable-text="product.Name" buttons="no" data-toggle="tooltip"
+                                                    data-placement="top" class="editable editable-click"
+                                                    ngbTooltip="{{'TRANSLATE.TOOLTIP_TEXT_EDIT_NAME' | translate}}"
+                                                    (click)="onShowEditName()" e-maxlength="100" e-minlength="1">
+                                                    {{ product.Name ||
+                                                    'MANAGE_PLAN_FRIENDLY_NAME_TYPE_IN_NAME_PLACEHOLDER' |translate }}
+                                                </a>
+                                                }
+                                                @if(showEditName){
+                                                <span [appPermission]="'SAVE_PLAN'">
+                                                    <input #fieldName type="text" [(ngModel)]="product.Name"
+                                                        (blur)="onShoweditButtonBlur()"
+                                                        (ngModelChange)="callOnAction(product, 'edit')" /></span>
+                                                }
+                                                @if (this.hasSavePlan && this.hasSavePlan.toLowerCase() !==
+                                                cloudHubConstants.ACCESS_TYPE_ALLOWED) {
+                                                {{ product.Name ||
+                                                'TRANSLATE.MANAGE_PLAN_FRIENDLY_NAME_TYPE_IN_NAME_PLACEHOLDER'
+                                                |translate }}
+                                                }
+                                            </strong>
+                                        </div>
+                                    </td>
+                                    <td class="col-md-1 body-price-alignment border-0">
+                                        <div>
+                                            <strong>
+                                                {{product.PriceforPartner | CurrencyFilter : product.CurrencySymbol :
+                                                product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                                                product.CurrencyDecimalSeperator}}
+                                            </strong>
+                                        </div>
+                                    </td>
+                                    <td class="col-md-1 body-price-alignment border-0">
+                                        <div>
+                                            <strong>
+                                                {{product.ProviderSellingPrice | CurrencyFilter : product.CurrencySymbol
+                                                : product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                                                product.CurrencyDecimalSeperator}}
+                                            </strong>
+                                        </div>
+                                    </td>
+                                    <td class="custom-col body-price-alignment border-0" *ngIf="!product.PlanProductId">
+                                        <div>
+                                            <strong>
+                                                <input type="number" min="0" step="0.01"
+                                                    class="form-control salePriceValue" [(ngModel)]="product.SalePrice"
+                                                    (blur)="Onblur(product)"
+                                                    (ngModelChange)="preProcessPriceChange(product, 'edit')"
+                                                    *ngIf="product.edit">
+                                                <a class="ng-binding editable editable-click cursor-pointer"
+                                                    href="javascript:void(0)" editable-number="product.SalePrice"
+                                                    buttons="no" e-style="width: 50px" e-min="0" e-step="0.01"
+                                                    data-toggle="tooltip" data-placement="top"
+                                                    ngbTooltip="{{'TRANSLATE.SALE_PRICE_EDIT_TOOLTIP_TEXT' | translate}}"
+                                                    *ngIf="product.edit == undefined || product.edit == false"
+                                                    (click)="preProcessPriceChange(product, 'edit');">
+                                                    {{ product.SalePrice || 0 | CurrencyFilter : product.CurrencySymbol
+                                                    : product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator
+                                                    : product.CurrencyDecimalSeperator}}
+                                                </a>
+                                                <i class="ki-outline ki-information-3 tooltips text-danger ps-1"
+                                                    ngbTooltip="{{'TRANSLATE.SALE_PRICE_GREATER_THAN_ERP_PRICE' | translate}}"
+                                                    *ngIf="productItemDetails?.filter !== '' && productItemDetails?.filter === 'greaterThanERP' && product?.SalePrice > product?.ProviderSellingPrice">
+                                                </i>
+                                                <i class="ki-outline ki-information-3 tooltips text-danger ps-1"
+                                                    ngbTooltip="{{'TRANSLATE.SALE_PRICE_LESS_THAN_LIST_PRICE' | translate}}"
+                                                    *ngIf="productItemDetails?.filter !== '' && productItemDetails?.filter === 'lessThanListPrice' && product?.SalePrice <  product?.PriceforPartner"></i>
+                                            </strong>
+                                        </div>
+                                    </td>
+                                    <td class="col-md-1 body-price-alignment border-0" *ngIf="product.PlanProductId">
+                                        <div *ngIf="hasSavePlan == 'Allowed'">
+                                            <a (click)="preProcessPriceChange(product, 'priceChange')"
+                                                ngbTooltip="{{'TRANSLATE.SALE_PRICE_EDIT_TOOLTIP_TEXT' | translate}}"
+                                                class="ng-binding editable editable-click cursor-pointer">
+                                                <strong style="margin-left:13px;">
+                                                    <span>{{product.SalePrice | CurrencyFilter : product.CurrencySymbol
+                                                        : product.CurrencyDecimalPlaces :
+                                                        product.CurrencyThousandSeperator :
+                                                        product.CurrencyDecimalSeperator}}</span>
+                                                </strong>
+                                            </a>
+                                            <i class="ki-outline ki-information-3 tooltips text-danger ps-1"
+                                                ngbTooltip="{{'TRANSLATE.SALE_PRICE_GREATER_THAN_ERP_PRICE' | translate}}"
+                                                *ngIf="productItemDetails?.filter !== '' && productItemDetails?.filter === 'greaterThanERP' && product?.SalePrice > product?.ProviderSellingPrice">
+                                            </i>
+                                            <i class="ki-outline ki-information-3 tooltips text-danger ps-1"
+                                                ngbTooltip="{{'TRANSLATE.SALE_PRICE_LESS_THAN_LIST_PRICE' | translate}}"
+                                                *ngIf="productItemDetails?.filter !== '' && productItemDetails?.filter === 'lessThanListPrice' && product?.SalePrice <  product?.PriceforPartner"></i>
+                                        </div>
+                                        <div *ngIf="hasSavePlan != 'Allowed'">
+                                            <span>{{product.SalePrice | CurrencyFilter : product.CurrencySymbol :
+                                                product.CurrencyDecimalPlaces : product.CurrencyThousandSeperator :
+                                                product.CurrencyDecimalSeperator}}</span>
+                                            <i class="ki-outline ki-information-3 tooltips text-danger ps-1"
+                                                ngbTooltip="{{'TRANSLATE.SALE_PRICE_GREATER_THAN_ERP_PRICE' | translate}}"
+                                                *ngIf="productItemDetails?.filter !== '' && productItemDetails?.filter === 'greaterThanERP' && product?.SalePrice > product?.ProviderSellingPrice">
+                                            </i>
+                                            <i class="ki-outline ki-information-3 tooltips text-danger ps-1"
+                                                ngbTooltip="{{'TRANSLATE.SALE_PRICE_LESS_THAN_LIST_PRICE' | translate}}"
+                                                *ngIf="productItemDetails?.filter !== '' && productItemDetails?.filter === 'lessThanListPrice' && product?.SalePrice <  product?.PriceforPartner"></i>
+                                        </div>
+                                    </td>
+                                    <td class="col-md-1 border-0" *ngIf="!isResellerPlanView">
+                                        <div class="d-flex justify-content-center">
+                                            <label class="form-check form-check-inline me-5">
+                                                <input type="checkbox" [(ngModel)]="product.IsAvailableToCustomer"
+                                                    [disabled]="this.hasSavePlan!='Allowed'"
+                                                    [checked]="product.IsAvailableToCustomer"
+                                                    (click)="callOnAction(product, 'edit')" class="form-check-input">
+                                            </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-1" *ngIf="!product.PlanProductId">
+                    <div class="mb-2 mt-8">
+                        <b><span translate="TRANSLATE.CUSTOMER_PRODUCTS_TABLE_HEADER_TEXT_ACTION"></span></b>
+                    </div>
+                    <div class="actions mt-8 ms-5">
+                        <div ngbDropdown class="d-inline-block">
+                            <div ngbDropdownToggle class="toggle-wrapper" [appPermission]="'SAVE_PLAN'">
+                                <i class="ki-outline ki-dots-square fs-1"></i>
+                            </div>
+                            <div ngbDropdownMenu>
+                                <a ngbDropdownItem href="javascript:void(0)" [appPermission]="'SAVE_PLAN'"
+                                    (click)="callOnAction(product, 'delete')">
+                                    <span translate="TRANSLATE.DELETE_PRODUCT_BUTTON_TOOLTIP_TEXT"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1" *ngIf="product.PlanProductId">
+                    <div class="mb-2 mt-8">
+                        <b><span translate="TRANSLATE.CUSTOMER_PRODUCTS_TABLE_HEADER_TEXT_ACTION"></span></b>
+                    </div>
+                    <div class="actions mt-8 ms-5">
+                        <div ngbDropdown class="d-inline-block">
+                            @if (this.hasSavePlan && this.hasSavePlan.toLowerCase() ===
+                            cloudHubConstants.ACCESS_TYPE_ALLOWED){
+                            <div ngbDropdownToggle class="toggle-wrapper">
+                                <i class="ki-outline ki-dots-square fs-1"></i>
+                            </div>
+                            }
+                            <div ngbDropdownMenu>
+                                <a ngbDropdownItem href="javascript:void(0)" [appPermission]="'SAVE_PLAN'"
+                                    *ngIf="product.IsActive" (click)="preProcessEnableDisableProduct(product, false)">
+                                    <span translate="TRANSLATE.TOOLTIP_TEXT_DISABLE_PRODUCT"></span>
+                                </a>
+                                <a ngbDropdownItem href="javascript:void(0)" [appPermission]="'SAVE_PLAN'"
+                                    *ngIf="!product.IsActive" (click)="preProcessEnableDisableProduct(product, true)">
+                                    <span translate="TRANSLATE.TOOLTIP_TEXT_ENABLE_PRODUCT"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

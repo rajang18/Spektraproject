@@ -1,0 +1,42 @@
+<div class="">
+    <div class="card-body overflow-auto">
+      <div>
+        <div class="header-actions d-flex align-items-center gap-2 gap-lg-3 justify-content-end">
+            <button type="button" class="btn btn-sm fw-semibold btn-light-primary" (click)="backToList()">
+                <i class="ki-outline ki-to-left fs-2"></i> <span translate="TRANSLATE.PARTNERS_ADD_OR_EDIT_BUTTON_TEXT_BACK_TO_PARTNER_USERS"></span>
+            </button>
+            <button type="button" class="btn btn-sm fw-bold btn-primary" (click)="addUserTag()" [appPermission]="'ADD_OR_UPDATE_TAGS'">
+              <i class="fa fa-step"></i> <span translate="TRANSLATE.BUTTONS_TEXT_ADD_PARTNER_USER_TAG"></span>
+          </button>
+        </div>
+            <i class="fa fa-tags">&nbsp;&nbsp;
+            </i>
+            <span class="fw-bold" translate="TRANSLATE.TAGS_CAPTION_TEXT_TAGS_FOR"></span>
+            <span>{{this.userName}}</span>
+        </div>
+        <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+            <div class="d-flex">
+             <div class="d-flex align-items-center">
+              <div ngbTooltip="{{'TRANSLATE.CUSTOMER_TAGS_TABLE_BUTTON_TOOLTIP_EDIT' | translate}}" class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto" [ngClass]="toolbarButtonHeightClass" (click)="editUserTag(data)"  [appPermission]="'ADD_OR_UPDATE_TAGS'">                
+                <span class="btn btn-sm btn-icon me-2 tooltips ng-scope ng-isolate-scope">
+                  <i class="ki-outline ki-pencil fs-3 text-primary"> </i>
+                </span>
+              </div>
+            </div>
+            <div class="d-flex align-items-center">
+              <div ngbTooltip="{{'TRANSLATE.CUSTOMER_TAGS_TABLE_BUTTON_TOOLTIP_DELETE' | translate}}" class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto"
+              [ngClass]="toolbarButtonHeightClass" (click)="deletePartnerUserTag(data)"  [appPermission]="'DELETE_TAGS'">
+                <span class="btn btn-sm btn-icon me-2 tooltips ng-scope ng-isolate-scope">
+                  <i class="ki-outline ki-cross text-primary fs-1"> </i>
+                </span>
+              </div>
+            </div>
+          </div>
+          </ng-template>
+
+        @if (!!datatableConfig) {
+            <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" [searchFilter]="false">
+            </app-c3-table>
+            }
+    </div>
+</div>

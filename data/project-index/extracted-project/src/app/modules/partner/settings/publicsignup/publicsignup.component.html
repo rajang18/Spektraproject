@@ -1,0 +1,16 @@
+<div class="row">
+    <div class="col-12">
+        <form [formGroup]="publicSignupSettingsForm">
+            @for(data of publicSignupSettings; track $index){
+                <tenantconfig [data]="data" [form]="publicSignupSettingsForm" [frmControlName]="data.Name" [controlType]="data.ControlType"></tenantconfig>
+            }
+        </form>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-sm btn-primary" (click)="savePublicSignupSettings()" appBusyLoader>{{'TRANSLATE.BUTTON_TEXT_SAVE' | translate}}</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,534 @@
+<ng-template #actionHeader>
+    <div class="d-flex justify-content-end align-items-center gap-2 gap-lg-3 mt-3 mb-5" *ngIf="entityName.toLowerCase() === cloudHubConstants.ENTITY_PARTNER.toLowerCase() || entityName.toLowerCase() === cloudHubConstants.ENTITY_RESELLER.toLowerCase() ">
+      <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="showHelpText = !showHelpText">
+        <span translate="TRANSLATE.CHANGE_PLAN_HELP"></span>&nbsp;
+        <i class="fa fa-question-circle"></i>
+      </button>
+      <button type="button" class="btn btn-sm fw-semibold btn-light-primary" (click)="backToList()">
+        <i class="ki-outline ki-to-left fs-2"></i> <span
+          translate="TRANSLATE.PARTNER_REPORTS_BTN_TEXT_BACK_TO_CUSTOMERS"></span>
+      </button>  
+    </div>
+  </ng-template>
+  <!-- BEGIN :: Reconciliation Note-->
+  <div class="ps-0 pe-0" *ngIf="showHelpText">
+    <div class="row mt-2 notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6 m-0 ms-3 me-3">
+      <ul class="ms-12 col-12">
+        <li>
+          <span [innerHTML]="('TRANSLATE.RECONCILIATION_NOTES_MISMATCH')|translate"></span>
+        </li>
+        <li>
+          <span [innerHTML]="('TRANSLATE.RECONCILIATION_NOTES_SUSPENDED')|translate"></span>
+        </li>
+        <li>
+          <span [innerHTML]="('TRANSLATE.RECONCILIATION_NOTES_PROMOTION_MISMATCH')|translate"></span>
+        </li>
+        <li>
+          <span translate="TRANSLATE.RECONCILIATION_NOTES_RI_INVOICE"></span>
+        </li>
+      </ul>
+    </div>
+  </div>
+<!--END :: Reconciliation Note -->
+<form class="form">
+    <div class="flex-between-center mb-2">
+        <div class="col-md-6">
+            <div class="d-inline-flex flex-column">
+                <h5 class="text-dark text-gray-900 font-weight-bold mt-2 mb-2 mr-5">
+                    <!--begin :: Svg Icon-->
+                    <span class="svg-icon svg-icon svg-icon-2x">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <rect x="0" y="0" width="24" height="24" />
+                                <rect fill="#000000" x="2" y="5" width="19" height="4" rx="1" />
+                                <rect fill="#000000" opacity="0.3" x="2" y="11" width="19" height="10" rx="1" />
+                            </g>
+                        </svg>
+                    </span>
+                    <!--end::Svg Icon-->
+                    <span [innerHTML]="('TRANSLATE.CUSTOMER_SUBSCRIPTIONS_CAPTION_TEXT_RECONCILIATION_REPORT_FOR'|translate)"></span>&nbsp;<span class="text-primary">{{customerName}}</span>&nbsp;
+                    <a (click)="reloadReconreport()" class="bg-primary radius-padding-pointer">
+                        <i class="ki-outline text-white ki-arrows-circle fs-3" aria-hidden="true">
+                        </i>
+                    </a>
+                </h5>
+                <div>
+                    <p>
+                        <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_HEADER_TEXT_LAST_REFRESHED_ON"></span>:<strong>
+                            {{lastRefreshedOn | minutesToTimepassed}}</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="flex-column-right-center gap-4 col-md-6">
+            <div class="flex-right-center col-md-12 gap-4">
+           <div class="col-md-8">
+                <div class="d-flex align-items-center position-relative my-1">
+                <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-4">
+                    <span class="custom-path1"></span>
+                    <span class="custom-path2"></span>
+                </i>
+                <input
+                    class="form-control ps-11"
+                    placeholder="{{'TRANSLATE.RECON_REPORT_SEARCH_FIELD_PLACEHOLDER' | translate}}"
+                    name="searchText"
+                    [(ngModel)]="searchModel.searchText"
+                    (keyup)="showReports()"
+                />
+                </div>
+            
+            </div>
+            <div class="flex-center-center">
+                <a class="btn btn-sm fw-bold btn-custom" [ngClass]="{'btn-custom-highlight':ProviderSelection.length > 0 || CategorySelection.length > 0 || StatusSelection.length > 0}" (click)="displayFilter()" ngbTooltip="{{'TRANSLATE.BTN_TEXT_SHOW_FILTERS' | translate}}">
+                <i class="ki-outline ki-filter fs-2" [ngClass]="{'text-white':ProviderSelection.length > 0 || CategorySelection.length > 0 || StatusSelection.length > 0}"></i>
+                <span translate="TRANSLATE.BTN_TEXT_FILTER"></span>
+                </a>
+            </div>
+            </div>
+            <div class="flex-right-center col-md-12">
+                <div class="advance-filter">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" name="showMisMatch" [(ngModel)]="searchModel.shouldShowOnlyMismatch" (change)="showReports()">
+                        <label for="flexCheckDefault">
+                            <span translate="TRANSLATE.RECON_REPORT_SHOW_MISMATCH" class="fw-bold ps-1"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    <div class="row mb-2"  [hidden]="!shouldShowFilter">
+        <div class="col-12 col-md-12 col-sm-12 col-lg-12 col-xl-12">
+            <div>
+                <form class="form">
+                    <div class="card">
+                        <div class="card-body flex">
+                            <div class="flex-left-center col-md-4">
+                                <div
+                                    class="col-md-11 col-form-label text-left text-sm-left text-md-right text-lg-right text-start padding-zero">
+                                    <label class="fw-semibold fs-6 mb-2"
+                                        translate="TRANSLATE.PARTNER_PLAN_DETAILS_LABEL_TEXT_PROVIDERS"></label>
+                                </div>
+                                <div class="col-md-11 parent-relative">
+                                    <select2 
+                                    #providersSelect
+                                        [data]="Providers" 
+                                        (update)="toggleProviderSelection($event)" 
+                                        [templates]="providersTemp" 
+                                        multiple
+                                        [displaySearchStatus]="'hidden'"
+                                        [value]="ProviderSelectionInit"
+                                        [placeholder]="providerPlaceholder"
+                                        (open)="providerToggle = true"
+                                        (close)="providerToggle = false"
+                                    >
+                                        <ng-template #providersTemp let-data="data">
+                                            <span class="multiple-select-choice">{{ 'TRANSLATE.' + data?.Description | translate}}</span>
+                                        </ng-template>
+                                    </select2>
+                                    <i class="ki-outline ki-down fs-1 icon-absolute" [hidden]="providerToggle" (click)="toggleProviderDropdown(providersSelect)"></i>
+                                    <i class="ki-outline ki-up fs-1 icon-absolute" [hidden]="!providerToggle" (click)="toggleProviderDropdown(providersSelect)"></i>
+
+                                </div>
+                            </div>
+
+                            <div class="flex-left-center col-md-4">
+                                <div
+                                    class="col-md-11 col-form-label text-left text-sm-left text-md-right text-lg-right text-start padding-zero">
+                                    <label class="fw-semibold fs-6 mb-2"
+                                        translate="TRANSLATE.PARTNER_PLAN_DETAILS_LABEL_TEXT_CATEGORIES"></label>
+                                </div>
+                                <div class="col-md-11 parent-relative">
+                                    <select2 
+                                    #categoriesSelect
+                                        [data]="FilteredCategories" 
+                                        (update)="toggleCategorySelection($event)" 
+                                        [templates]="FilteredCategoriesTemp" 
+                                        multiple
+                                        [displaySearchStatus]="'hidden'"
+                                        [disabled]="ProviderSelection.length == 0"
+                                        [value]="CategorySelectionInit"
+                                        [placeholder]="categoryPlaceholder"
+                                        (open)="categoryToggle = true"
+                                        (close)="categoryToggle = false"
+
+                                    >
+                                    
+                                        <ng-template #FilteredCategoriesTemp let-data="data">
+                                            <span class="multiple-select-choice">{{ 'TRANSLATE.' + data?.Description | translate}}</span>
+                                        </ng-template>
+                                    </select2>
+                                    <i class="ki-outline ki-down fs-1 icon-absolute" [hidden]="categoryToggle"  (click)="toggleCategoriesDropdown(categoriesSelect)"></i>
+                                    <i class="ki-outline ki-up fs-1 icon-absolute" [hidden]="!categoryToggle"  (click)="toggleCategoriesDropdown(categoriesSelect)"></i>
+                                </div>
+                            </div>
+
+                            <div class="flex-left-center col-md-4">
+                                <div
+                                    class="col-md-11 col-form-label text-left text-sm-left text-md-right text-lg-right text-start padding-zero">
+                                    <label class="fw-semibold fs-6 mb-2"
+                                        translate="TRANSLATE.STATUS"></label>
+                                </div>
+                                <div class="col-md-11 parent-relative">
+                                    <select2 
+                                    #statuesSelect
+                                        [data]="SubscriptionStatues" 
+                                        (update)="toggleStatusSelection($event)"
+                                        [templates]="SubscriptionStatuesTemp" 
+                                        multiple
+                                        [displaySearchStatus]="'hidden'"
+                                        [value]="StatusSelectionInit"
+                                        [placeholder]="statusPlaceholder"
+                                        (open)="statusToggle = true"
+                                        (close)="statusToggle = false"
+                                    >
+                                        <ng-template #SubscriptionStatuesTemp let-data="data">
+                                            <span class="multiple-select-choice">{{ 'TRANSLATE.' + data?.Description | translate}}</span>
+                                        </ng-template>
+                                    </select2>
+                                    <i class="ki-outline ki-down fs-1 icon-absolute" [hidden]="statusToggle"  (click)="toggleStatusDropdown(statuesSelect)"></i>
+                                    <i class="ki-outline ki-up fs-1 icon-absolute" [hidden]="!statusToggle"  (click)="toggleStatusDropdown(statuesSelect)"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer row">
+                            <div class="col-sm-12 col-md-12 col-xs-12 col-12 col-lg-12 text-lg-end">
+                            <button class="btn btn-light-primary btn-sm  me-md-2 me-lg-2 me-sm-2 me-xl-2 me-xxl-2"
+                                (click)="searchRecon()" appBusyLoader>
+                                {{'TRANSLATE.PARTNER_BUNDLE_BUTTON_TEXT_SEARCH' | translate}}
+                            </button>
+                            <button class="btn btn-light-primary btn-sm  me-md-2 me-lg-2 me-sm-2 me-xl-2 me-xxl-2"
+                                (click)="resetSearchCriteria()" appBusyLoader>{{'TRANSLATE.PARTNER_BUNDLE_BUTTON_TEXT_RESET' | translate}}</button>
+                            <button class="btn btn-light-primary btn-sm me-md-2 me-lg-2 me-sm-2 me-xl-2 me-xxl-2"
+                                (click)="closeFilter()" appBusyLoader>{{'TRANSLATE.CUSTOMER_SEARCH_CLOSE_OPTION' | translate}}</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="flex-right-center mb-2">
+            <button
+              class="btn text-primary font-weight-bolder"
+              (click)="setExpandAll(!shouldExpandAll)"
+              [hidden]="!groupModelList?.length"
+              >
+              {{ shouldExpandAll ? ('TRANSLATE.RECON_REPORT_COLLAPSE_ALL' | translate)
+                                  : ('TRANSLATE.RECON_REPORT_EXPAND_ALL' | translate) }}
+            </button>
+
+
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-12 col-sm-12 col-lg-12 col-xl-12">
+            <div class="table-responsive-md table-responsive-sm table-responsive-lg table-responsive-sm table-responsive-xl table-responsive-xxl">
+                @for(model of groupModelList; track $index){
+                <div ngbAccordion>
+                    <div ngbAccordionItem [collapsed]="!model.IsExpanded" class="mb-5">
+                        <div ngbAccordionHeader class=" text-primary">
+                            <button ngbAccordionButton class="text-primary bg-light">
+                                {{model.ServiceProviderCustomer}}&nbsp;<span *ngIf="model.Provider!== 'Partner' && model.Provider">
+                                    ({{model.Provider}}) </span>&nbsp;&nbsp;
+                                <span class="symbol symbol-circle symbol-25px ml-3" tooltip-append-to-body="true" *ngIf="model.MisMatchCount!==undefined && model.MisMatchCount!==null && model.MisMatchCount>0" ngbTooltip="{{'TRANSLATE.RECON_REPORT_MISMATCH_COUNT_BADGE' | translate}}" >
+                                    <span class="symbol-label font-size-sm" style="background-color: #f8285a !important; color: white; ">{{ model.MisMatchCount }}</span>
+                                </span>
+                            </button>
+                        </div>
+                        <div ngbAccordionCollapse class="p-3">
+                            <table class="table table-checkable order-column">
+                                <thead class="table">
+                                    <tr>
+                                        <th colspan=2>
+                                            <span class="font-blue bold fw-bold" translate="TRANSLATE.RECONCILIATION_PROVIDER"></span>
+                                        </th>
+                                        <th colspan=2>
+                                            @if(reconliationReportLogo){
+                                            <img src="{{reconliationReportLogo}}" class="logo-default" height="50px;" />
+                                            }
+                                            @else{
+                                            <img src="../../../../../../assets/media/img/c3_loggedin.png" class="logo-default" height="50px;">
+                                            }
+                                        </th>
+                                        <th style="text-align:end;" *ngIf="mismatchCount>0" [appPermission]="'BTN_FIX_SUBSCRIPTION_QUANTITY_BY_MANUAL_SYNC' || 'BTN_ONBOARD_SUBSCRIPTION_BY_MANUAL_SYNC' || 'BTN_FIX_SUBSCRIPTION_STATUS_BY_MANUAL_SYNC'">
+                                            <h3 style="text-align:end">
+                                                <i class="ki-outline text-primary ki-security-user fs-1">
+                                                </i>
+                                            </h3>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th style="text-align:left;" class="col-md-3 text-gray-900 fw-bold pl-2"><span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_HEADER_TEXT_OFFER_NAME"></span></th>
+                                        <th style="text-align:right;" class="col-md-1 text-gray-900 fw-bold"><span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_HEADER_TEXT_QUANTITY"></span></th>
+                                        <th style="text-align:left;" class="col-md-3 text-gray-900 fw-bold"><span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_HEADER_TEXT_FRIENDLY_NAME"></span></th>
+                                        <th style="text-align:right;" class="col-md-1 text-gray-900 fw-bold"><span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_HEADER_TEXT_QUANTITY"></span></th>
+                                        <th style="text-align:end;" class="col-md-1 text-gray-900 fw-bold"><span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_HEADER_TEXT_ACTIONS" *ngIf="mismatchCount>0" [appPermission]="'BTN_FIX_SUBSCRIPTION_QUANTITY_BY_MANUAL_SYNC' || 'BTN_ONBOARD_SUBSCRIPTION_BY_MANUAL_SYNC' || 'BTN_FIX_SUBSCRIPTION_STATUS_BY_MANUAL_SYNC'"></span> </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="datatable-body" header-class="'datatable-head'">
+                                    @for(row of model.CustomerSubscriptions;track $index){
+                                    <tr *ngIf="model.CustomerSubscriptions!==null && model.CustomerSubscriptions.length === 0" class="datatable-row">
+                                        <td colspan="8"><span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_MESSAGE_NO_SUBSCRIPTIONS_ADDED_YET"></span>
+                                        </td>
+                                    </tr>
+                                    <tr class="datatable-row ">
+                                        <td class="blue col-md-4 ps-3 pl-2" [ngClass]="{'strike-through' : row.IsActiveinCSP === false, 'text-danger' : (row.IsMatch === false && row.IsOnlyPromotionMismatch === false),'text-mediumvioletred' : (row.IsMatch === false && row.IsOnlyPromotionMismatch === true)}">
+                                            <span *ngIf="row.IsAddOn && row.CSPOfferName!==null">
+                                                @if(row.SubscriptionBillingQualifiedOfferId?.length > 40){
+                                                <span *ngFor="let i of getTimes(row.SubscriptionBillingQualifiedOfferId?.length / 36) track $index ">
+                                                    &nbsp;&nbsp;
+                                                </span>
+                                                }
+                                            </span>
+                                            <span class="fw-semibold" [hidden]="(row.ProviderBillingCycleId!==row.CMPRecon[0].ProductBillingCycleId) && (row.CMPRecon[0].LocalStoreSubscriptionStatus && row.CMPRecon[0].LocalStoreSubscriptionStatus.toLowerCase()!=='Active'.toLowerCase() && row.CMPRecon[0].LocalStoreSubscriptionStatus.toLowerCase()!=='Succeeded'.toLowerCase())">
+                                                {{row.CSPOfferName}}
+                                            </span>
+                                            <br />
+                                            <div [hidden]="(row.SubscriptionId==='') || row.Provider== 'Partner'" class="small90">
+                                                <span class="small90"><span translate="TRANSLATE.RECON_TABLE_TEXT_SUBSCRIPTION_ID"></span>{{row.SubscriptionId}}</span>
+                                            </div>
+                                            <div [hidden]="row.Category!=='ReservedInstances'" class="small90">
+                                                <span class="small90"><span translate="TRANSLATE.RECON_TABLE_TEXT_RESERVATION_ORDER_ID"></span>{{row.ReservationOrderID}}</span>
+                                            </div>
+                                            <div [hidden]="row.Category!=='ReservedInstances'" class="small90">
+                                                <span class="small90"><span translate="TRANSLATE.RECON_TABLE_TEXT_REGION"></span>{{row.CSPLocation}}</span>
+                                            </div>
+                                            <span style="text-decoration:none !important" class="d-inline-block">
+                                                <span *ngIf="row.CSPValidity!==null && row.CSPValidity!==''  && row.CSPValidity!==undefined && row.CSPValidityType!==null && row.CSPValidityType!==''  && row.CSPValidityType!==undefined &&  row.CSPValidityType==='Month(s)'" class="label label-warning font-weight-bold label-inline text-white badge bg-warning " aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                    {{row.CSPValidity}}
+                                                    {{(row.CSPValidity == 1? (row.CSPValidityType ===
+                                                        'Month(s)'?
+                                                        'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                        'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                        'TRANSLATE.TERM_DURATION_DESC_YEARS') | translate }}
+                                                </span>
+
+                                                <span *ngIf="row.CSPValidityType === 'Year(s)' || row.CSPValidityType === 'Year'" [ngClass]="{'labelcolor': row.ProviderBillingCycleName==='Monthly','TermLabelColor': row.ProviderBillingCycleName==='Annual'}" class="label label-warning font-weight-bold label-inline text-white badge bg-warning " aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                    {{row.CSPValidity}}
+                                                    {{(row.CSPValidity == 1? (row.CSPValidityType ===
+                                                    'Month(s)'?
+                                                    'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                    'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                    'TRANSLATE.TERM_DURATION_DESC_YEARS') | translate }}
+                                                </span>
+                                                <span *ngIf="row.ProviderBillingCycleName!==null&& row.ProviderBillingCycleName!=='' && row.ProviderBillingCycleName!==undefined" class="label font-weight-bold label-inline text-white badge "
+                                                [ngClass]="{
+                                                    'bg-warning': row.ProviderBillingCycleName?.toLowerCase() === 'monthly',
+                                                    'bg-success': row.ProviderBillingCycleName?.toLowerCase() === 'annual',
+                                                    'bg-dark': row.ProviderBillingCycleName?.toLowerCase() === 'triennial',
+                                                    'bg-info': row.ProviderBillingCycleName?.toLowerCase() === 'onetime'
+                                                }" aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}">
+                                                    {{ 'TRANSLATE.'+ row.ProviderBillingCycleDescriptionKey | translate}}
+                                                </span>
+                                                <span [hidden]="row.Category===null ||(row.CSPOfferName===null)" class="label label-light-info font-weight-bold label-inline badge" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}">{{ 'TRANSLATE.'+ row.CategoryDescriptionKey | translate}}</span>
+                                                <span *ngIf="row.SubscriptionStatus!==null && row.SubscriptionStatus!==''  && row.SubscriptionStatus!==undefined" class="label label-light-primary font-weight-bold label-inline badge" aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_STATUS' | translate}}">
+                                                    {{row.SubscriptionStatusUpper}} </span>
+                                                <span *ngIf="row.CSPCountryCode!==null && row.CSPCountryCode!==''  && row.CSPCountryCode!==undefined" class="badge badge-info mt-1" ngbTooltip="{{row.CSPCountryName ||  'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_COUNTRYCODE' | translate}}">{{row.CSPCountryCode}}</span>
+                                                <span *ngIf="row.ProviderIsEST"class="badge EST-Pill-styling text-white" ngbTooltip="{{'TRANSLATE.CATEGORY_PILL_EST_TOOLTIP' | translate }}" >{{ 'TRANSLATE.CATEGORY_PILL_NAME_EST' | translate}}</span>
+                                                <span *ngIf="row.CSPPromotionID!=='' && row.CSPPromotionID!==null && (entityName==='Partner' || (entityName==='Reseller' && row.CMPRecon[0].IsPromotionAvailableForCustomer))" ngbTooltip="{{'TRANSLATE.NCE_PROMOTIONS_AVAILABLE_TEXT' | translate}}" class="font-weight-normal  separator-primary text-primary"><span><i class="ki-outline ki-discount text-primary"></i></span></span>
+                                                <span [hidden]="(row.ProviderBillingCycleId!==row.CMPRecon[0].ProductBillingCycleId) && (row.CMPRecon[0].LocalStoreSubscriptionStatus && row.CMPRecon[0].LocalStoreSubscriptionStatus.toLowerCase()!=='Active'.toLowerCase() && row.CMPRecon[0].LocalStoreSubscriptionStatus.toLowerCase()!=='Succeeded'.toLowerCase())||( row.IsAddOn==false || row.CSPOfferName===null)" class="label label-light-primary font-weight-bold label-inline badge" aria-hidden="true" ngbTooltip="{{'TRANSLATE.PLAN_MANAGE_ADD_FORM_TABLE_1_HEADER_TEXT_OFFER_ADD_ON' | translate}}">
+                                                    {{'TRANSLATE.PLAN_MANAGE_ADD_FORM_TABLE_1_HEADER_TEXT_OFFER_ADD_ON' | translate}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td class="col-md-1 pe-7" style="text-align:right;" [ngClass]="{'strike-through' : row.IsActiveinCSP === false,'text-danger' : (row.IsMatch===false && row.IsOnlyPromotionMismatch===false),'text-mediumvioletred' : (row.IsMatch===false && row.IsOnlyPromotionMismatch===true)}">
+                                            <span [hidden]="(row.ProviderBillingCycleId!==row.CMPRecon[0].ProductBillingCycleId) && (row.CMPRecon[0].LocalStoreSubscriptionStatus && row.CMPRecon[0].LocalStoreSubscriptionStatus!=='Active' && row.CMPRecon[0].LocalStoreSubscriptionStatus!=='Succeeded')" class="font-weight-bolder">
+                                                {{row.CSPQuantity}}
+                                            </span>
+                                        </td>
+                                        <td class="col-md-3 pt-0 ps-6">
+                                            <table style="width:100%" class="datatable-table table-borderless">
+                                                <div *ngFor="let support of row.CMPRecon">
+                                                    <tr class="datatable-row" *ngIf="support.LocalStoreSubscriptionName">
+                                                        <td [ngClass]="{
+                                                            'strike-through': support.LocalStoreSubscriptionStatus.toLowerCase() === 'suspended' ||
+                                                                              support.LocalStoreSubscriptionStatus.toLowerCase() === 'deleted' ||
+                                                                              support.LocalStoreSubscriptionStatus.toLowerCase() === 'expired' ||
+                                                                              support.LocalStoreSubscriptionStatus.toLowerCase() === 'disabled' ||
+                                                                              support.LocalStoreSubscriptionStatus.toLowerCase() === 'cancelled',
+                                                            'text-danger': !row.IsMatch && !row.IsOnlyPromotionMismatch,
+                                                            'text-mediumvioletred': !row.IsMatch && row.IsOnlyPromotionMismatch
+                                                          }">
+                                                            <span *ngIf="row.IsAddOn && row.Provider !== 'Custom' && support.LocalStoreSubscriptionName !== null">
+                                                                <span *ngFor="let i of getTimes(row.AddOnLevel) track $index ">
+                                                                    &nbsp;&nbsp;
+                                                                </span>
+                                                            </span>
+                                                            {{ support.LocalStoreSubscriptionName }}
+                                                            <i *ngIf="support.LocalStoreSubscriptionStatus === 'InProvision' && !row.OnHold" style="color: orange !important" class="fas fa-sync fa-spin tooltips" data-container="body" ngbTooltip="{{'TRANSLATE.RECON_PRODUCT_INPROVISION_TOOLTIP' | translate}}"></i>
+                                                            <i *ngIf="row.OnHold" style="color: orange !important" class="yellow-casablanca fa fa-exclamation-triangle tooltips" data-container="body" ngbTooltip="{{'TRANSLATE.RECON_PRODUCT_ONHOLD_TOOLTIP' | translate}}" [routerLink]="'partner.pendingpurchaserequest'"></i>
+                                                            <div class="small90">
+                                                                <span class="small90"><span translate="TRANSLATE.PLAN_MANAGE_ADD_FORM_TABLE_1_TEXT_PLAN_NAME"></span>{{support.PlanName }}</span>
+                                                            </div>
+                                                            <div class="small90">
+                                                                <span class="small90">{{'TRANSLATE.'+ support.BillingType | translate }}
+                                                                    : <span *ngIf="support.BillingType === 'Price'">{{
+                                                                        support.CurrencySymbol }}</span>{{
+                                                                    support.ProductPrice }}</span>
+                                                            </div>
+                                                            <div style="text-decoration: none !important;" class="d-inline-block">
+                                                                <span *ngIf="row.CMPRecon[0].Validity !== null && row.CMPRecon[0].Validity !== '' && row.CMPRecon[0].Validity !== undefined && row.CMPRecon[0].ValidityType === 'Month(s)'" class="label label-warning font-weight-bold label-inline text-white badge bg-warning " aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">{{
+                                                                    row.CMPRecon[0].Validity }}
+                                                                    {{(row.CMPRecon[0].Validity == 1? (row.CMPRecon[0].ValidityType ===
+                                                                        'Month(s)'?
+                                                                        'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                                        'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                                        'TRANSLATE.TERM_DURATION_DESC_YEARS') | translate }}
+                                                                </span>
+                                                                <span *ngIf="row.CMPRecon[0].ValidityType === 'Year(s)' || row.CMPRecon[0].ValidityType === 'Year'" [ngClass]="{'labelcolor': support.ProductBillingCycleName === 'Monthly','TermLabelColor': support.ProductBillingCycleName === 'Annual'}" class="label label-warning font-weight-bold label-inline text-white badge bg-warning " aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}">
+                                                                    {{
+                                                                    row.CMPRecon[0].Validity }} {{(row.CMPRecon[0].Validity == 1? (row.CMPRecon[0].ValidityType ===
+                                                                        'Month(s)'?
+                                                                        'TRANSLATE.TERM_DURATION_DESC_MONTH' :
+                                                                        'TRANSLATE.TERM_DURATION_DESC_YEAR') :
+                                                                        'TRANSLATE.TERM_DURATION_DESC_YEARS') | translate }}</span>
+                                                                <span *ngIf="support.ProductBillingCycleName !== null && support.ProductBillingCycleName !== '' && support.ProductBillingCycleName !== undefined" class="label font-weight-bold label-inline text-white badge" 
+                                                                [ngClass]="{
+                                                                    'bg-warning': support.ProductBillingCycleName?.toLowerCase() === 'monthly',
+                                                                    'bg-success': support.ProductBillingCycleName?.toLowerCase() === 'annual',
+                                                                    'bg-dark': support.ProductBillingCycleName?.toLowerCase() === 'triennial',
+                                                                    'bg-info': support.ProductBillingCycleName?.toLowerCase() === 'onetime'
+                                                                }"aria-hidden="true"
+                                                                aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}">
+                                                                    {{'TRANSLATE.'+ support.ProductBillingCycleDescriptionKey | translate }}</span>
+                                                                <span *ngIf="row.Category === 'DistributorOffers'" class="label label-light-info font-weight-bold label-inline badge" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_CATEGORY' | translate}}">{{'TRANSLATE.DISTRIBUTOR_OFFERS_CAPTION_TEXT_CUSTOM_OFFERS'
+                                                                    | translate }}</span>
+                                                                <span *ngIf="support.LocalStoreSubscriptionStatus !== null && support.LocalStoreSubscriptionStatus !== '' && support.LocalStoreSubscriptionStatus !== undefined" class="label label-light-primary font-weight-bold label-inline badge" aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_STATUS' | translate}}">{{
+                                                                    support.LocalStoreSubscriptionStatus }}</span>
+                                                                <span *ngIf="support.C3CountryCode !== null && support.C3CountryCode !== '' && support.C3CountryCode !== undefined" class="badge badge-info" ngbTooltip="{{row.CMPRecon[0].C3CountryName || 'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_COUNTRYCODE' | translate}}">{{
+                                                                    support.C3CountryCode }}</span>
+                                                                <span *ngIf="row.LocalIsEST"class="badge EST-Pill-styling text-white" ngbTooltip="{{'TRANSLATE.CATEGORY_PILL_EST_TOOLTIP' | translate }}" >{{ 'TRANSLATE.CATEGORY_PILL_NAME_EST' | translate}}</span>    
+                                                                <span *ngIf="(row.CSPPromotionID === '' || row.CSPPromotionID === null) && row.CMPRecon[0].C3PromotionID !== null && (entityName === 'Partner' || (entityName === 'Reseller' && row.CMPRecon[0].IsPromotionAvailableForCustomer))" ngbTooltip="{{'TRANSLATE.NCE_PROMOTIONS_AVAILABLE_TEXT' | translate}}" class="font-weight-normal separator-primary text-primary cursor-pointer"><span><i class="ki-outline ki-discount text-primary"></i></span></span>
+                                                                <sup *ngIf="row.Provider === 'Custom' && support.LocalStoreSubscriptionName !== null" class="text-danger">
+                                                                    <span translate="{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_TD_TEXT_CUSTOM'| translate}}"></span>
+                                                                </sup>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </div>
+                                            </table>
+                                        </td>
+                                        <td class="col-md-1 pe-7">
+                                            <table style="width:100%" class="table-borderless">
+                                                <tr *ngFor="let support of row.CMPRecon " [ngClass]="{'strike-through': (support.LocalStoreSubscriptionStatus === 'Suspended' || support.LocalStoreSubscriptionStatus === 'Deleted' || support.LocalStoreSubscriptionStatus === 'Expired' || support.LocalStoreSubscriptionStatus === 'Disabled'),'text-danger': (row.IsMatch === false && row.IsOnlyPromotionMismatch === false),'text-mediumvioletred': (row.IsMatch === false && row.IsOnlyPromotionMismatch === true)}">
+                                                    <td style="text-align:right;" class="font-weight-normal">
+                                                        {{ support.LocalStoreQuantity }}
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td class="col-md-2 pe-1" *ngIf="mismatchCount>0" [appPermission]="'BTN_FIX_SUBSCRIPTION_QUANTITY_BY_MANUAL_SYNC' || 'BTN_ONBOARD_SUBSCRIPTION_BY_MANUAL_SYNC' || 'BTN_FIX_SUBSCRIPTION_STATUS_BY_MANUAL_SYNC'">
+                                            <table style="width:100%" class="table-borderless">
+                                                <tr *ngFor="let support of row.CMPRecon">
+                                                    <td style="text-align:end;">
+                                                        <div class="actions d-inline-flex justify-content-center flex-wrap flex-lg-nowrap" style="column-gap:0.4rem;row-gap:0.4rem">
+                                                            <button data-container="body" [appPermission]="'BTN_FIX_SUBSCRIPTION_QUANTITY_BY_MANUAL_SYNC'" class="btn btn-icon btn-active-light-primary" ngbTooltip="{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_TD_BUTTON_TOOLTIP_TEXT_FIX_QUANTITY_MISMATCH'|translate}}" *ngIf="row.IsMatch==false && (row.ProviderBillingCycleId==support.ProductBillingCycleId)&& ((row.CustomCSPOfferId.toLowerCase()==support.CustomLocalStoreOfferId.toLowerCase() && row.CSPValidityType==support.ValidityType && row.CSPValidity==support.Validity && row.Category=='OnlineServicesNCE') || row.Category!='OnlineServicesNCE') && (((row.CSPQuantity!=support.LocalStoreQuantity) && (!(row.CMPRecon.length>1) &&(support.LocalStoreSubscriptionName!=null || support.LocalStoreQuantity!=null)))) &&(row.IsActiveinCSP==true && (support.LocalStoreSubscriptionStatus=='Active' || support.LocalStoreSubscriptionStatus=='Succeeded'))&& row.IsCompositeOffer==false && support.IsLinkedSubscription==false && !row.OnHold" (click)="fixQuantityMismatch(row)" appBusyLoader [isIconOnly]="true">
+                                                                <span class="svg-icon svg-icon-primary m-0">
+                                                                    <i class="ki-outline text-primary ki-wrench ">
+                                                                    </i>
+                                                                </span>
+                                                            </button>
+                                                            <button data-container="body" [appPermission]="'BTN_ONBOARD_SUBSCRIPTION_BY_MANUAL_SYNC'" class="btn btn-icon btn-active-light-primary" ngbTooltip="{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_TD_BUTTON_TOOLTIP_TEXT_FIX_OFFER_NOT_FOUND_ISSUE'|translate}}" *ngIf="row.IsUsage==false && row.IsMatch==false && support.ProductBillingCycleId ==null && row.IsCompositeOffer==false && support.IsLinkedSubscription==false && (!(row.CMPRecon.length>1)) && (support.LocalStoreSubscriptionName==null || support.LocalStoreQuantity==null) && !row.OnHold" (click)="fixMissingOffer(row)" appBusyLoader [isIconOnly]="true">
+                                                                <span class="svg-icon svg-icon-primary m-0">
+                                                                    <i class="ki-outline text-primary ki-wrench ">
+
+                                                                    </i>
+                                                                </span>
+                                                            </button>
+                                                            <button data-container="body" [appPermission]="'BTN_ONBOARD_SUBSCRIPTION_BY_MANUAL_SYNC'" class="btn btn-icon btn-active-light-primary" ngbTooltip="{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_TD_BUTTON_TOOLTIP_TEXT_FIX_OFFER_NOT_FOUND_ISSUE'|translate}}" *ngIf="row.IsUsage==true &&((row.IsEntitlement==true && support.ProductBillingCycleId ==null && IsAzurePlanOnboarded===true)||row.IsEntitlement==false)&& row.IsMatch==false && row.IsCompositeOffer==false && support.IsLinkedSubscription==false && (!(row.CMPRecon.length>1)) && (support.LocalStoreSubscriptionName==null || support.LocalStoreQuantity==null) && !row.OnHold" (click)="fixMissingOffer(row)" appBusyLoader [isIconOnly]="true">
+                                                                <span class="svg-icon svg-icon-primary m-0">
+                                                                    <i class="ki-outline text-primary ki-wrench ">
+                                                                    </i>
+                                                                </span>
+                                                            </button>
+                                                            <button data-container="body" [appPermission]="'BTN_FIX_SUBSCRIPTION_STATUS_BY_MANUAL_SYNC'" class="btn btn-icon btn-active-light-primary" ngbTooltip="{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_TD_BUTTON_TOOLTIP_TEXT_FIX_OFFER_ACTIVATION_STATE'|translate}}" *ngIf="row.IsMatch==false && row.IsCompositeOffer==false && support.IsLinkedSubscription==false && ( (row.SubscriptionStatus==null && (support.LocalStoreSubscriptionStatus=='Active' ||  support.LocalStoreSubscriptionStatus=='Succeeded' || support.LocalStoreSubscriptionStatus=='Suspended') ) ||(row.ProviderBillingCycleId==support.ProductBillingCycleId) && ((row.IsActiveinCSP==false && (support.LocalStoreSubscriptionStatus=='Active' || support.LocalStoreSubscriptionStatus=='Succeeded')) ||(row.SubscriptionStatus.toLowerCase()!= support.LocalStoreSubscriptionStatus.toLowerCase()) || (row.IsActiveinCSP==true && (support.LocalStoreSubscriptionStatus=='Suspended' || support.LocalStoreSubscriptionStatus=='Expired'|| support.LocalStoreSubscriptionStatus=='Deleted') ))) && !row.OnHold && (row.Category != 'PerpetualSoftware')" (click)="fixOfferStatus(row)" appBusyLoader [isIconOnly]="true">
+                                                                <span class="svg-icon svg-icon-primary m-0">
+                                                                    <i class="ki-outline text-primary ki-wrench ">
+                                                                    </i>
+                                                                </span>
+                                                            </button>
+                                                            <button data-container="body" [appPermission]="'UPDATE_BILLING_CYCLE'" class="btn btn-icon btn-active-light-primary" ngbTooltip="{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_TD_BUTTON_TOOLTIP_TEXT_BILLINGCYCLE_CHANGES'|translate}}" *ngIf="row.IsMatch==false && row.Category!='PerpetualSoftware' && row.IsCompositeOffer==false && support.IsLinkedSubscription==false && ((support.ProductBillingCycleId!=null) && row.CSPValidityType==support.ValidityType && row.CSPValidity==support.Validity && row.CustomCSPOfferId?.toLowerCase()==support.CustomLocalStoreOfferId?.toLowerCase() && row.ProviderBillingCycleId!=support.ProductBillingCycleId) && !row.OnHold" (click)="changeBillingCycle(row)" appBusyLoader [isIconOnly]="true">
+                                                                <span class="svg-icon svg-icon-primary m-0">
+                                                                    <i class="ki-outline text-primary ki-wrench ">
+                                                                    </i>
+                                                                </span>
+                                                            </button>
+                                                            <button data-container="body" ngbTooltip="{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_TD_BUTTON_TOOLTIP_TEXT_PERPETUAL_STATUS_FIX'|translate}}" class="btn btn-icon btn-active-light-primary" *ngIf="row.IsMatch==false &&row.Category=='PerpetualSoftware' && (support.LocalStoreSubscriptionStatus =='Active')" (click)="fixPerpetualSoftwareStatus(row)" appBusyLoader [isIconOnly]="true">
+                                                                <span class="svg-icon svg-icon-primary m-0">
+                                                                    <i class="ki-outline text-primary ki-wrench ">
+                                                                    </i>
+                                                                </span>
+                                                            </button>
+                                                            <button data-container="body" [appPermission]="'BTN_FIX_SUBSCRIPTION_STATUS_BY_MANUAL_SYNC'" class="btn btn-icon btn-active-light-primary" ngbTooltip="{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_TD_BUTTON_TOOLTIP_TEXT_FIX_OFFER_AUTO_RENEW_STATE'|translate}}" *ngIf="row.IsMatch==false && row.IsCompositeOffer==false && support.IsLinkedSubscription==false && (row.ProviderBillingCycleId==support.ProductBillingCycleId) && (row.CSPQuantity==support.LocalStoreQuantity) && (row.CustomCSPOfferId?.toLowerCase()==support.CustomLocalStoreOfferId?.toLowerCase()) && ((row.IsActiveinCSP==true && (support.LocalStoreSubscriptionStatus?.toLowerCase()=='Active'.toLowerCase() ||  support.LocalStoreSubscriptionStatus?.toLowerCase()=='Succeeded'.toLowerCase() ))) && (!row.isAutoRenewStatusMatch)  && !row.OnHold" (click)="fixAutoRenewStatus(row)" appBusyLoader [isIconOnly]="true">
+                                                                <span class="svg-icon svg-icon-primary m-0">
+                                                                    <i class="ki-outline text-primary ki-wrench ">
+                                                                    </i>
+                                                                </span>
+                                                            </button>
+                                                            <button data-container="body" [appPermission]="'UPDATE_TERM_DURATION'" ngbTooltip="{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_TD_BUTTON_TOOLTIP_TEXT_TERM_CHANGES'|translate}}" class="btn btn-icon btn-active-light-primary" *ngIf="row.IsMatch==false && (row.Category=='OnlineServicesNCE' || row.Category=='ReservedInstances') && support.LocalStoreSubscriptionName!=null && row.IsCompositeOffer==false && support.IsLinkedSubscription==false && row.CustomCSPOfferId!==null && row.CustomCSPOfferId.toLowerCase()==support.CustomLocalStoreOfferId.toLowerCase() && (row.CSPValidityType!=support.ValidityType || row.CSPValidity!=support.Validity) && !row.OnHold" (click)="changeTermDuration(row)" appBusyLoader [isIconOnly]="true">
+                                                                <span class="svg-icon svg-icon-primary m-0">
+                                                                    <i class="ki-outline text-primary ki-wrench ">
+                                                                    </i>
+                                                                </span>
+                                                            </button>
+                                                            <button data-container="body" [appPermission]="'UPDATE_OFFER'" ngbTooltip="{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_TD_BUTTON_TOOLTIP_TEXT_OFFER_CHANGES'|translate}}" class="btn btn-icon btn-active-light-primary" *ngIf="row.IsMatch==false && row.Category=='OnlineServicesNCE' && support.LocalStoreSubscriptionName!=null && row.IsCompositeOffer==false && support.IsLinkedSubscription==false && (support.LocalStoreOfferId && row.CustomCSPOfferId!==null && row.CustomCSPOfferId.toLowerCase()!=support.CustomLocalStoreOfferId.toLowerCase()) && row.CSPOfferName!=null && !row.OnHold" (click)="fixOfferChange(row)" appBusyLoader [isIconOnly]="true">
+                                                                <span class="svg-icon svg-icon-primary m-0">
+                                                                    <i class="ki-outline text-primary ki-wrench ">
+                                                                    </i>
+                                                                </span>
+                                                            </button>
+                                                            <button data-container="body" [appPermission]="'UPDATE_OFFER'" ngbTooltip="{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_TD_BUTTON_TOOLTIP_TEXT_PROMOTION_FIX'|translate}}" class="btn btn-icon btn-active-light-primary" *ngIf="row.IsMatch==false && row.Category=='OnlineServicesNCE' && support.LocalStoreSubscriptionName!=null && row.IsCompositeOffer==false && support.IsLinkedSubscription==false && (row.ProviderBillingCycleId==support.ProductBillingCycleId) && (row.CSPValidityType==support.ValidityType && row.CSPValidity==support.Validity) && row.CSPQuantity==support.LocalStoreQuantity && (support.LocalStoreOfferId && row.CustomCSPOfferId==support.CustomLocalStoreOfferId) && !row.OnHold && (support.LocalStoreOfferId && row.CSPPromotionID!=support.C3PromotionID)" (click)="fixPromotion(row)" appBusyLoader [isIconOnly]="true">
+                                                                <span class="svg-icon svg-icon-primary m-0">
+                                                                    <i class="ki-outline text-primary ki-wrench ">
+                                                                    </i>
+                                                                </span>
+                                                            </button>
+                                                            <button data-container="body" [appPermission]="'UPDATE_OFFER'" ngbTooltip="{{'TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_TD_BUTTON_TOOLTIP_TEXT_SCOPE_FIX'|translate}}" class="btn btn-icon btn-active-light-primary" *ngIf="row.IsMatch==false && row.Category=='ReservedInstances' && support.LocalStoreSubscriptionName!=null && row.IsCompositeOffer==false && support.IsLinkedSubscription==false && (row.ProviderBillingCycleId==support.ProductBillingCycleId) && (row.CSPValidityType==support.ValidityType && row.CSPValidity==support.Validity) && row.CSPQuantity==support.LocalStoreQuantity && (support.LocalStoreOfferId ) && !row.OnHold && (support.LocalStoreOfferId && row.CSPScope.toLowerCase()!=support.Scope.toLowerCase())" href="javascript:;" (click)="fixchangeScope(row)" appBusyLoader [isIconOnly]="true">
+                                                                <span class="svg-icon svg-icon-primary m-0">
+                                                                    <i class="ki-outline text-primary ki-wrench ">
+                                                                    </i>
+                                                                </span>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr [hidden]="row.CumulativeLocalstoreQuantity===null" class="datatable-table">
+                                                    <td colspan="2" class="indigo" style="text-align:right;" [ngClass]="{'strike-through' : row.IsActiveinCSP === false, 'red' : (row.IsMatch===false)}">
+                                                        <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_TD_TEXT_TOTAL"></span>
+                                                    </td>
+                                                    <td class="indigo" style="text-align:right;" header-class="'text-right'" [ngClass]="{'strike-through' : row.IsActiveinCSP === false, 'red' : (row.IsMatch===false)}">
+                                                        {{row.CSPQuantity}}
+                                                    </td>
+                                                    <td class="indigo" style="text-align:right;" [ngClass]="{'red' : (row.IsMatch === false)}">
+                                                        <span translate="TRANSLATE.CUSTOMER_SUBSCRIPTIONS_TABLE_TD_TEXT_TOTAL"></span>
+                                                    </td>
+                                                    <td class="indigo" style="text-align:right;" header-class="'text-right'" [ngClass]="{'red' : (row.IsMatch === false)}">
+                                                        {{row.CumulativeLocalstoreQuantity}}
+                                                    </td>
+                                                    <td *ngIf="mismatchCount>0"></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+            <div *ngIf="loadingReport!=null && loadingReport!=undefined && loadingReport === false && groupModelList.length===0">
+                <div class="position-relative top-70px">
+                    <div class="row">
+                        <div class="col-md-12 centered">
+                            <app-common-no-record></app-common-no-record>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

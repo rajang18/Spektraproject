@@ -1,0 +1,131 @@
+<div class="d-flex flex-column-fluid">
+    <div class="container-fluid">
+        <div class="card card-custom" block-ui="block">
+            <div class="card-body">
+                @if (isPartnerLevel) {
+                <div class="row">
+                    <div class="col-lg-2  text-start text-sm-start text-md-start text-lg-end">
+                        <label class="col-form-label">
+                            <i class="fa fa-info-circle tooltips text-default" aria-hidden="true"></i>
+                            <span translate="TRANSLATE.AZURE_REPPORT_CUSTOMERS"></span> <span class="text-danger">
+                                *</span>
+                        </label>
+                    </div>
+                    <div class="col-lg-10 col-12 col-md-10 col-sm-10 pt-1">
+                        <ng-select [(ngModel)]="currentC3CustomerId" (change)="onCustomerChange()">
+                            @for (item of allCustomers; track $index) {
+                            <ng-option [value]="item.C3Id">{{item.Name}}</ng-option>
+                            }
+                        </ng-select>
+                    </div>
+                </div>
+                }
+
+                <div class="row pt-3">
+                    <div class="col-lg-2  text-start text-sm-start text-md-start text-lg-end">
+                        <label class="col-form-label ">
+                            <i class="fa fa-info-circle tooltips text-default" aria-hidden="true"></i>
+                            <span translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_TENANTS"></span><span
+                                class="text-danger"> *</span>
+                        </label>
+                    </div>
+                    <div class="col-lg-10 col-12 col-md-10 col-sm-10 pt-1">
+                        <ng-select [disabled]="disableUserSearchFilters || tenants.length <2"
+                            [(ngModel)]="selectedServiceProviderCustomer" (change)="reloadUsersList()">
+                            @for (item of tenants; track $index) {
+                            <ng-option [value]="item">{{item.CustomerName}}
+                                ({{item.CustomerRefId}})</ng-option>
+                            }
+
+                        </ng-select>
+                    </div>
+                </div>
+                <div class="row pt-5">
+                    <div class="col-lg-2 col-form-label">
+
+                    </div>
+                    <div class="col-form-label col-lg-10 col-12 col-md-10 col-sm-10">
+                        <input type="text" ng-disabled="vm.disableUserSearchFilters" [(ngModel)]="filterString"
+                            class="form-control" name="filterString"
+                            (keydown)="($event.key === 'Enter')? filterData(): ''"
+                            placeholder="{{'TRANSLATE.USER_LISTING_FILTER_PLACEHOLDER_TEXT'|translate}}" />
+                    </div>
+                </div>
+                <div class="row pt-3">
+                    <div class="col-lg-12 text-end">
+                        <button class="btn  btn-sm btn-primary me-2 btn-sm" ng-disabled="vm.disableUserSearchFilters"
+                            (click)="filterData()">
+                            <span>
+                                <i class="fa fa-search"></i></span><span
+                                translate="TRANSLATE.USER_LISTING_SEARCH_BUTTON"></span></button>
+                    </div>
+                </div>
+            </div>
+            <!-- </c3-form-body> -->
+            <div class="card card-custom">
+                <div class="card-body">
+                    <div class="table-responsive-md">
+                        <ng-template #actions let-data="adtData">
+                            <div class="d-flex justify-content-between" >
+                                @if(!isPartnerLevel){
+                                <a class="btn btn-light-primary btn-icon btn-sm tooltips ng-scope">
+                                    <i class="fas fa-gavel" aria-hidden="true"></i>
+                                </a>
+                                }
+                                @if (!isPartnerLevel) {
+                                <a class="btn btn-light-primary btn-icon btn-sm tooltips ng-scope">
+                                    <i class="fas fa-key"></i>
+                                </a>
+                                }
+
+                                @if (!isPartnerLevel) {
+                                <a class="btn btn-light-primary btn-icon btn-sm tooltips ng-scope">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                }
+
+                                @if (data.ButtonAccess&&(data.RoleName === "User")) {
+                                <a class="btn btn-light-primary btn-icon btn-sm tooltips ng-scope">
+                                    <i class="fas fa-user-plus"></i>
+                                </a>
+                                }
+
+                                @if (!isPartnerLevel && !data.DisableAccessButton) {
+                                <a class="btn btn-light-primary btn-icon btn-sm tooltips ng-scope">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                                }
+
+                                @if ((data.RoleName === 'CustomerAdmin' || data.RoleName === 'CustomerReader'||
+                                data.RoleName === 'CustomerAdminLite')) {
+                                <a class="btn btn-light-primary btn-icon btn-sm tooltips ng-scope">
+                                    <i class="fas fa-user-plus"></i>
+                                </a>
+                                }
+
+                            </div>
+                        </ng-template>
+
+                        <ng-template #status let-data="adtData">
+                            <div>
+                                <span *ngIf="data.Status ==='active'"><i
+                                        class="fas fa-check font-green-jungle"></i></span>
+                                <span *ngIf="data.Status !== 'active'"><i class="ki-outline ki-cross fs-1 text-danger"></i></span>
+                            </div>
+                        </ng-template>
+
+
+                        <ng-container *ngIf="datatableConfig">
+                            @if(shouldShow){
+                            <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig"
+                                [searchFilter]="false">
+                            </app-c3-table>
+                            }
+
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

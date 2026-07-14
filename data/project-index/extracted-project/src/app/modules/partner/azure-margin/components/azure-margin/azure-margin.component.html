@@ -1,0 +1,141 @@
+<div class="add-customer-container">
+    <div class="card custom-card">
+        <div class="card-body">
+            <form [formGroup]="azureForm">
+                <div class="form-group row mt-2">
+                    <div class="form-group row">
+                      <div class="col-md-2 col-form-label text-right text-sm-left text-md-left text-lg-right">
+                        <span class="fw-semibold" translate="TRANSLATE.AZURE_REPPORT_CUSTOMERS"></span>
+                        <span class="text-danger">*</span>
+                        <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.AZURE_REPPORT_CUSTOMERS_TOOLTIP'|translate}}">
+                          <span class="path1"></span>
+                          <span class="path2"></span>
+                          <span class="path3"></span>
+                      </i>
+                    </div>
+                    <div class="col-md-5 mt-2">
+                        <ng-select 
+                           formControlName="selectedCustomer" (change)="getTenants()"> 
+                           @for(c of this.customers; track $index){
+                           <ng-option [value]="c.C3Id">{{c.Name}}</ng-option>
+                           }    
+                          </ng-select>
+                    </div>
+                    </div>
+                    <div class="form-group row">
+                      <div class="col-md-2 col-form-label text-left text-sm-left text-md-left text-lg-right">
+                        <span class="fw-semibold" translate="TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_TENANTS"></span>
+                        <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.CUSTOMER_ONBOARDING_LABEL_TEXT_MICROSOFT_TENANT_SELECTOR' | translate}}">
+                          <span class="path1"></span>
+                          <span class="path2"></span>
+                          <span class="path3"></span>
+                      </i>
+                    </div>
+                    <div class="col-md-5 mt-2">
+                      <ng-select
+                           formControlName="selectedTenent" (change)="getAzureSubscriptions()"> 
+                           @for(tenants of this.Tenants; track $index){
+                           <ng-option [value]="tenants.CustomerRefId">{{tenants.CustomerName}} {{tenants.CustomerRefId}}</ng-option>
+                           }    
+                      </ng-select>
+                    </div>
+                    </div>
+
+                    <div class="form-group row">
+                      <div class="col-md-2 col-form-label text-left text-sm-left text-md-left text-lg-right">
+                        <span class="fw-semibold" translate="TRANSLATE.AZURE_REPORTS_LABEL_TEXT_SUBSCRIPTION"></span>
+                    </div>
+                    <div class="col-md-5 mt-2">
+                      <ng-select
+                           formControlName="selectedSub"> 
+                           @for(tenants of this.subscriptionDataSource; track $index){
+                           <ng-option [value]="tenants.C3Id">{{tenants.AzureEntitlementName}} {{tenants.ProviderProductId}}</ng-option>
+                           }    
+                      </ng-select>
+                    </div>
+                    </div>
+                    
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="add-customer-container">
+  <div class="card custom-card">
+      <div class="card-body">
+          <form [formGroup]="updateAzureForm">
+              <div class="form-group row mt-7">
+                  <div class="form-group row">
+                    <div class="required col-md-2 col-form-label text-right text-sm-left text-md-left text-lg-right">
+                      <span class="fw-semibold" translate="TRANSLATE.START_BILLING_PERIOD"></span>
+                  </div>
+                  <div class="col-md-5 mt-2">
+                    <ng-select  formControlName="startPeriod"
+                    placeholder="{{'TRANSLATE.BILLING_PERIOD_SEARCH_DEFAULT_OPTION' |translate}}">
+                    @for (option of billingPeriods; track $index) {
+                    <ng-option [value]="option">
+                        <div>{{option.BillingStartDate | c3Date}} - {{option.BillingEndDate | c3Date}}
+                            ({{option.BillingId}})</div>
+                    </ng-option>
+                    }
+                </ng-select>
+                  </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="required col-md-2 col-form-label text-right text-sm-left text-md-left text-lg-right">
+                      <span class="fw-semibold" translate="TRANSLATE.END_BILLING_PERIOD"></span>
+                  </div>
+                  <div class="col-md-5 mt-2">
+                    <ng-select  formControlName="endPeriod"
+                    placeholder="{{'TRANSLATE.BILLING_PERIOD_SEARCH_DEFAULT_OPTION' |translate}}">
+                    @for (option of billingPeriods; track $index) {
+                    <ng-option [value]="option">
+                        <div>{{option.BillingStartDate | c3Date}} - {{option.BillingEndDate | c3Date}}
+                            ({{option.BillingId}})</div>
+                    </ng-option>
+                    }
+                </ng-select>
+                  </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="required col-md-2 col-form-label text-left text-sm-left text-md-left text-lg-right">
+                      <span class="fw-semibold" translate="TRANSLATE.AZURE_NEW_MARKUP"></span>
+                  </div>
+                  <div class="col-md-5 mt-2">
+                    <input type="number" class="form-control form-control-sm" formControlName="markup" />
+                </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-md-2 col-form-label text-left text-sm-left text-md-left text-lg-right">
+                      <span class="fw-semibold" translate="TRANSLATE.REASON_FOR_UPDATE"></span>
+                  </div>
+                  <div class="col-md-5 mt-2">
+                    <textarea type="text" class="form-control" formControlName="reason" ></textarea>
+                </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="col-md-2 col-form-label text-left text-sm-left text-md-left text-lg-right">
+                      <span class="fw-semibold" translate="TRANSLATE.AZURE_BILLING"></span>
+                  </div>
+                  <div class="form-check col-md-9 mt-2 ms-3">
+                    <input type="checkbox" class="form-check-input" formControlName="azureBilling" />
+                  </div>
+                  </div>
+                  <div class="form-group row">
+                    <div class="required col-md-2 col-form-label text-left text-sm-left text-md-left text-lg-right">
+                      <span class="fw-semibold" translate="TRANSLATE.AZURE_ESTIMATE"></span>
+                  </div>
+                  <div class="form-check col-md-9 ms-3">
+                    <input type="checkbox" class="form-check-input" formControlName="azureEstimate" />
+                  </div>
+                  </div>
+              </div>
+          </form>
+      </div>
+      <div class="card-footer d-flex justify-content-end py-6 px-9 gap-3">
+          <button type="button" class="btn btn-primary btn-sm" (click)="updateMargin()" appBusyLoader>
+              {{ 'TRANSLATE.BUTTON_TEXT_UPDATE' | translate }}
+          </button>
+      </div>
+  </div>
+</div>

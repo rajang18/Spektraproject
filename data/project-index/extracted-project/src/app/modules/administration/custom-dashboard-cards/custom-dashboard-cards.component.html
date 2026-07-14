@@ -1,0 +1,24 @@
+<div class="card card-custom">
+    <!-- begin::Header -->
+    <div class="card-header card-header-stretch overflow-auto">
+        <ul class="nav nav-stretch nav-line-tabs fw-bold border-transparent flex-nowrap" role="tablist">
+            <li class="nav-item">
+                <a routerLink="list" routerLinkActive="active" class="nav-link cursor-pointer" role="tab"
+                    [ngClass]="{'text-primary': activeTab === 'list'}"
+                    (click)="setActiveTab('list')">
+                    {{"TRANSLATE.CUSTOM_DASHBOARD_CARD_TAB_TEXT_LIST" | translate}}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a routerLink="assignment" routerLinkActive="active" class="nav-link cursor-pointer"
+                    role="tab" [ngClass]="{'text-primary': activeTab === 'assignment'}"
+                    (click)="setActiveTab('assignment')">
+                    {{"TRANSLATE.CUSTOM_DASHBOARD_CARD_TAB_TEXT_CARD_ASSIGNMENTS" | translate}}
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body pt-2 ps-0">
+        <router-outlet></router-outlet>
+    </div>
+</div>

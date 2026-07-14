@@ -1,0 +1,394 @@
+<ng-template #actionHeader>
+  <div class="header-actions d-flex align-items-center gap-1 gap-lg-1">
+    <a class="btn btn-sm btn-lg btn-md btn-xs text-nowrap fw-bold btn-secondary"
+      ngbTooltip="{{'TRANSLATE.BTN_TEXT_SHOW_FILTERS' | translate}}" (click)="displayFilter()">
+      <i class="ki-outline ki-filter fs-2"></i>&nbsp;<span translate="TRANSLATE.BTN_TEXT_FILTER"></span>
+    </a>
+    <a class="btn btn-sm fw-bold btn-light-primary"
+      ngbTooltip="{{'TRANSLATE.BUTTON_TEXT_DOWNLOAD_PARTNER_OFFERS' | translate}}" (click)="downloadGridReport()">
+      <i class="ki-outline ki-exit-down fs-2 p-0"></i>
+    </a>
+    <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="editPartnerDetails(null,'add')"  *ngIf="Permissions.HasBulkUploadForPartnerOffer.toLowerCase() !== cloudHubConstants.ACCESS_TYPE_ALLOWED"
+      appBusyLoader [appPermission]="'BTN_ADD_PARTNER_OFFER'">
+      <i class="ki-outline ki-plus fs-2"></i>{{'TRANSLATE.CUSTOM_OFFERS_BUTTON_TEXT_ADD_CUSTOM_OFFER' | translate}}
+    </button>
+    <div ngbDropdown class="d-flex align-items-center" *ngIf="Permissions.HasBulkUploadForPartnerOffer.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED">
+      <button class="btn btn-sm fw-bold btn-light-primary" id="dropdownBasic1" ngbDropdownToggle appBusyLoader>
+        {{'TRANSLATE.CUSTOM_OFFERS_BUTTON_TEXT_ADD_CUSTOM_OFFER' | translate}}
+      </button>
+      <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+        class="dorpdown-menu menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base">
+        <div class='menu-item my-0' ngbDropdownItem>
+          <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="editPartnerDetails(null,'add')">
+            <span class="ml-2 ng-scope text-wrap" translate="TRANSLATE.BULK_UPLOAD_OF_PARTNER_OFFER_SINGLE"></span>
+          </a>
+        </div>
+        <div class='menu-item my-0' ngbDropdownItem>
+          <a class="menu-link px-3 py-2 d-flex align-items-center gap-2" (click)="bulkUploadForPartnerOffer()">
+            <span class="ml-2 ng-scope" translate="TRANSLATE.BULK_UPLOAD_OF_PARTNER_OFFER_MULIPLE"></span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="btn btn-sm fw-bold btn-light-primary" (click)="editcontractOfferDetails(null,'add')"
+      [appPermission]="'BTN_ADD_CONTRACT_OFFER'" appBusyLoader>
+      <i class="ki-outline ki-plus fs-2"></i>{{'TRANSLATE.CUSTOM_OFFERS_BUTTON_TEXT_ADD_CONTRACT_OFFER' | translate}}
+    </button>
+  </div>
+</ng-template>
+<div class="card border-0">
+  <div class="card-body px-0 pt-0 overflow-auto">
+    @if (shouldShowFilter) {
+    <div class="mb-5">
+      <form class="form">
+        <div class="card">
+          <div class="card-body">
+            <div class="">
+              <div class="form-group row mb-5">
+                <div class="col-md-3">
+                  <label class="mb-1">{{'TRANSLATE.PARTNER_BUNDLE_LABEL_TEXT_COST_PRICE_FROM' | translate}}</label>
+                  <input type="number" name="minCostPrice" [(ngModel)]="minCostPrice"
+                    class="form-control form-control-sm input-sm"
+                    placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_MIN_COST_PRICE' | translate}}" min="0">
+                  @if(minCostPrice < 0){ <span class="font-red">
+                    {{'TRANSLATE.PARTNER_OFFER_FILTERS_WARNING_TEXT_ENTER_POSITIVE_VALUE' | translate}}
+                    </span>
+                    }
+                </div>
+                <div class="col-md-3">
+                  <label class="mb-1">{{'TRANSLATE.PARTNER_BUNDLE_LABEL_TEXT_COST_PRICE_TO' | translate}}</label>
+                  <input type="number" name="maxCostPrice" [(ngModel)]="maxCostPrice"
+                    class="form-control form-control-sm"
+                    placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_MAX_COST_PRICE' | translate}}" min="0">
+                  @if(maxCostPrice < 0){ <span class="font-red">
+                    {{'TRANSLATE.PARTNER_OFFER_FILTERS_WARNING_TEXT_ENTER_POSITIVE_VALUE' | translate}}
+                    </span>
+                    }
+                </div>
+                <div class="col-md-3">
+                  <label class="mb-1">{{'TRANSLATE.PARTNER_BUNDLE_LABEL_TEXT_SALE_PRICE_FROM' | translate}}</label>
+                  <input type="number" name="minSalePrice" [(ngModel)]="minSalePrice"
+                    class="form-control form-control-sm"
+                    placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_MIN_SALE_PRICE' | translate}}" min="0">
+                  @if(minSalePrice < 0){ <span class="font-red">
+                    {{'TRANSLATE.PARTNER_OFFER_FILTERS_WARNING_TEXT_ENTER_POSITIVE_VALUE' | translate}}
+                    </span>
+                    }
+                </div>
+                <div class="col-md-3">
+                  <label class="mb-1">{{'TRANSLATE.PARTNER_BUNDLE_LABEL_TEXT_SALE_PRICE_TO' | translate}}</label>
+                  <input type="number" name="maxSalePrice" [(ngModel)]="maxSalePrice"
+                    class="form-control form-control-sm"
+                    placeholder="{{'TRANSLATE.PLACEHOLDER_TEXT_FOR_MAX_SALE_PRICE' | translate}}" min="0">
+                  @if(maxSalePrice < 0){ <span class="font-red">
+                    {{'TRANSLATE.PARTNER_OFFER_FILTERS_WARNING_TEXT_ENTER_POSITIVE_VALUE' | translate}}
+                    </span>
+                    }
+                </div>
+              </div>
+              <!-- Billing filters -->
+              <div class="form-group row mb-5">
+                <div class="col-md-3">
+                  <label class="mb-1">{{'TRANSLATE.PARTNER_BUNDLE_LABEL_TEXT_BILLING_CYCLES' | translate}}</label>
+                  <ng-select [(ngModel)]="selectedBillingCycles" name="selectedBillingCycles" [multiple]="true"
+                    #selectElement placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_BILLING_CYCLE_DROPDOWN' |translate}}">
+                    @for (item of (billingCycles | uniqueList: 'BillingCycleId'); track $index) {
+                    <ng-option [value]="item.BillingCycleId">{{formattedPills(item.BillingCycleName)}}</ng-option>
+                    }
+
+                  </ng-select>
+                </div>
+                <div class="col-md-3">
+                  <label class="mb-1">{{'TRANSLATE.PARTNER_BUNDLE_LABEL_TEXT_BILLING_TYPES' | translate}}</label>
+                  <ng-select [(ngModel)]="selectedBillingTypes" name="selectedBillingTypes" [multiple]="true"
+                    #selectElement1 placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_BILLING_TYPE_DROPDOWN' |translate}}">
+                    @for (item of (billingtypes | uniqueList: 'BillingTypeId'); track $index) {
+                    <ng-option [value]="item.BillingTypeId">{{formattedPills(item.BillingTypeDescription | translate )}}</ng-option>
+                    }
+
+                  </ng-select>
+                </div>
+                <div class="col-md-3">
+                  <label class="mb-1">{{'TRANSLATE.PARTNER_BUNDLE_LABEL_TEXT_CONSUMPTION_TYPES' | translate}}</label>
+                  <ng-select [(ngModel)]="selectedConsumptionTypes" name="selectedConsumptionTypes" [multiple]="true"
+                    #selectElement2 placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_CONSUMPTION_TYPE_DROPDOWN' |translate}}">
+                    @for (item of consumptionTypes; track $index) {
+                    <ng-option [value]="item.ID">{{('TRANSLATE.'+ item.Description)|translate}}</ng-option>
+                    }
+
+                  </ng-select>
+                </div>
+                <div class="col-md-3">
+                  <label class="mb-1">{{'TRANSLATE.CUSTOM_OFFERS_LABEL_TOOLTIP_TEXT_CATEGORY' | translate}}</label>
+                  <ng-select [(ngModel)]="selectedCategoryTypes" name="selectedCategoryTypes" [multiple]="true"
+                    #selectElement3 placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_CATEGORY_TYPE_DROPDOWN' |translate}}">
+                    @for (item of categories; track $index) {
+                    <ng-option [value]="item.Name">{{('TRANSLATE.'+ item.CategoryDescriptionKey)|translate}}</ng-option>
+                    }
+                  </ng-select>
+                </div>
+              </div>
+              <div class="form-group row mb-5">
+                <div class="col-md-3" [appPermission]="'GET_SUBCATEGORIES_FILTER'">
+                  <label class="mb-1">
+                    {{'TRANSLATE.CUSTOM_OFFERS_LABEL_TEXT_SUBCATEGORY' | translate}}
+                  </label>
+                  <ng-select [(ngModel)]="SelectedSubcategoryTypes" name="SelectedSubcategoryTypes" [multiple]="true" #selectElement4
+                    placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_SUBCATEGORY_DROPDOWN' | translate}}">
+                    @for (item of subCategories; track $index) {
+                    <ng-option [value]="item.Id">{{(item.Name)|translate}}</ng-option>
+                    }
+                  </ng-select>
+                </div>
+                <div class="col-md-3">
+                  <label class="mb-1">
+                    {{'TRANSLATE.PARTNER_BUNDLE_CREATION_LABEL_TEXT_TERM_DURATION' | translate}}
+                  </label>
+                  <ng-select [(ngModel)]="selectedValidityTypes" name="termDuration" [multiple]="true" #selectElement4
+                    placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_TERM_DURATION_DROPDOWN' | translate}}">
+                    @for (item of productTermDurations; track $index) {
+                    <ng-option [value]="item">{{item.Validity}} {{item.Validity == 1? (item.ValidityType === 'Month(s)'?
+                      ('TRANSLATE.TERM_DURATION_DESC_MONTH' | translate) : ('TRANSLATE.TERM_DURATION_DESC_YEAR' |
+                      translate)) :
+                      ('TRANSLATE.TERM_DURATION_DESC_YEARS' | translate) }}</ng-option>
+                    }
+                  </ng-select>
+                </div>
+                <div class="col-md-3">
+                  <label class="mb-1">
+                    {{'TRANSLATE.CUSTOM_OFFERS_FILTER_LABEL_TRIAL_DURATION' | translate}}
+                  </label>
+                  <ng-select appendTo="body" [(ngModel)]="SelectedTrialDuration" name="trialDuration" [multiple]="true"
+                    #selectElement5 placeholder="{{'TRANSLATE.PLACEHOLDER_FOR_TRIAL_DURATION_DROPDOWN' | translate}}">
+                    @for (item of trialPeriodDays; track $index) {
+                    <ng-option [value]="item.Days">{{item.Days}} {{'TRANSLATE.' + item.TrialPeriodKey |
+                      translate}}</ng-option>
+                    }
+                  </ng-select>
+                </div>
+                <div class="col-6 col-sm-6 col-md-3 col-lg-3 mt-9">
+                  <div class="form-group form-check">
+                    <div>
+                      <label>
+                        {{'TRANSLATE.CUSTOM_OFFERS_SEARCH_CONSIDER_DELETED_CUSTOM_OFFERS'|translate}}
+                        <br />
+                      </label>
+                      <input class="form-check-input" type="checkbox" [(ngModel)]="considerDeleted"
+                        name="considerDeleted" />
+                      <span></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="col-sm-12 col-md-12 col-xs-12 col-12 col-lg-12 text-lg-end">
+              <button class="btn btn-light-primary btn-sm  me-md-2 me-lg-2 me-sm-2 me-xl-2 me-xxl-2"
+                (click)="searchCustomers()" appBusyLoader>
+                {{'TRANSLATE.CUSTOMER_SEARCH_SEARCH_OPTION' | translate}}
+              </button>
+              <button class="btn btn-light-primary btn-sm  me-md-2 me-lg-2 me-sm-2 me-xl-2 me-xxl-2"
+                (click)="resetSearchCriteria()" appBusyLoader>{{'TRANSLATE.CUSTOMER_SEARCH_RESET_OPTION' |
+                translate}}</button>
+              <button class="btn btn-light-primary btn-sm" (click)="shouldShowFilter = false;"
+                appBusyLoader>{{'TRANSLATE.CUSTOMER_SEARCH_CLOSE_OPTION' | translate}}</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    }
+    <!-- enable name field -->
+    <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+      <div class="d-flex justify-content-end">
+        <div class="d-flex align-items-center">
+          <div ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_TABLE_TD_BUTTON_TOOLTIP_TEXT_EDIT' | translate}}"
+            class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto" [appPermission]="'EDIT_PARTNER_OFFER'"
+            [ngClass]="toolbarButtonHeightClass"
+            *ngIf="data.IsActive && data.ConsumptionType !== 'Contract' && Permissions.HasEditPartnerOffer.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED && Permissions.HasSaveOrUpdatePartnerOffer.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED"
+            (click)="editPartnerDetails(data,'edit')">
+            <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg me-md-2 h-20px w-20px">
+              <i class="ki-outline ki-pencil text-primary"></i>
+            </span>
+          </div>
+          <div ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_TABLE_TD_BUTTON_TOOLTIP_TEXT_EDIT' | translate}}"
+               class="btn btn-sm btn-icon btn-active-light-primary  me-1 w-auto" [ngClass]="toolbarButtonHeightClass"
+               *ngIf="data.IsActive && data.ConsumptionType === 'Contract' && Permissions.HasEditContractOffer.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED && Permissions.HasAddContractOffer.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED"
+               (click)="editcontractOfferDetails(data,'edit')">
+            <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg me-md-2 h-20px w-20px">
+              <i class="ki-outline ki-pencil text-primary"></i>
+            </span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center">
+          <div class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+            ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_TABLE_TD_BUTTON_TOOLTIP_TEXT_DELETE'|translate}}"
+            [ngClass]="toolbarButtonHeightClass"
+            *ngIf="data.IsActive && Permissions.HasDeletePartnerOffer.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED"
+            (click)="deleteCustomOffer(data)" [appPermission]="'BTN_DELETE_PARTNER_OFFER'">
+            <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg me-md-2 h-20px w-20px">
+              <i class="ki-outline ki-trash text-primary"></i>
+            </span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center">
+          <div class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+               ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_TABLE_TD_BUTTON_TOOLTIP_TEXT_VIEW'|translate}}"
+               [ngClass]="toolbarButtonHeightClass"
+               *ngIf="data.IsActive && data.ConsumptionType !== 'Contract' && this.Permissions.HasEditPartnerOffer.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED && !(this.Permissions.HasSaveOrUpdatePartnerOffer.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED)"
+               (click)="editPartnerDetails(data,'edit')">
+            <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg me-md-2 h-20px w-20px">
+              <i class="ki-outline ki-eye text-primary"></i>
+            </span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center">
+          <div class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+               ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_TABLE_TD_BUTTON_TOOLTIP_TEXT_VIEW'|translate}}"
+               [ngClass]="toolbarButtonHeightClass"
+               *ngIf="data.IsActive && data.ConsumptionType === 'Contract' && this.Permissions.HasEditContractOffer.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED && !(this.Permissions.HasAddContractOffer.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED)"
+               (click)="editcontractOfferDetails(data,'edit')">
+            <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg me-md-2 h-20px w-20px">
+              <i class="ki-outline ki-eye text-primary"></i>
+            </span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center">
+          <div class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+               ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_TABLE_TD_BUTTON_TOOLTIP_TEXT_VIEW'|translate}}"
+               [ngClass]="toolbarButtonHeightClass"
+               *ngIf="!data.IsActive && data.ConsumptionType !== 'Contract' && this.Permissions.HasEditPartnerOffer.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED"
+               (click)="editcontractOfferDetails(data,'edit')">
+            <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg me-md-2 h-20px w-20px">
+              <i class="ki-outline ki-eye text-primary"></i>
+            </span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center">
+          <div class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+               ngbTooltip="{{'TRANSLATE.CUSTOM_OFFERS_TABLE_TD_BUTTON_TOOLTIP_TEXT_VIEW'|translate}}"
+               [ngClass]="toolbarButtonHeightClass"
+               *ngIf="!data.IsActive && data.ConsumptionType === 'Contract' && this.Permissions.HasEditContractOffer.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED"
+               (click)="editcontractOfferDetails(data,'edit')">
+            <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg me-md-2 h-20px w-20px">
+              <i class="ki-outline ki-eye text-primary"></i>
+            </span>
+          </div>
+        </div>
+
+        <!-- </div>-->
+      </div>
+    </ng-template>
+
+    <ng-template #description let-data="adtData">
+      <div>
+        <span *ngIf="!data.IsShowFullDescription">{{ data.Description | limitLength:200 }}</span>
+        <span *ngIf="data.IsShowFullDescription">{{ data.Description }}</span>
+        <span class="text-primary d-block" *ngIf="data.Description.length > 200"
+              (click)="toggleShowFullDescription(data)">
+          {{ data.IsShowFullDescription ? 'Read less' : '... Read more' }}
+        </span>
+      </div>
+    </ng-template>
+
+
+    <ng-template #nameTemplate let-data="adtData" let-row="userData">
+      <app-edit-column [data]="data" [field]="row?.field" (enableEdit)="enableEditField($event)"></app-edit-column>
+    </ng-template>
+
+    <ng-template #propertiespills let-data="adtData" let-emitter="captureEvents">
+      <span class="d-flex">
+        <span class="label label-light-info fw-semibold label-inline badge"
+          ngbTooltip="{{'TRANSLATE.CUSTOM_OFFER_TOOLTIP_TEXT_CATEGORY' | translate}}">
+          {{formattedPills(data.CategoryName)}} 
+        </span>
+          @if(data.Subcategory != null && data.Subcategory != undefined) {
+          <div [appPermission]="'GET_SUBCATEGORIES_PILLS'">
+            <span class="badge badge-danger fw-semibold label-inline badge"
+              ngbTooltip="{{'TRANSLATE.CUSTOM_OFFER_TOOLTIP_TEXT_SUBCATEGORY' | translate}}">
+              {{ data.Subcategory | translate}}
+            </span>
+          </div>
+          }
+        <span class="label label-light-danger fw-semibold label-inline badge"
+          ngbTooltip="{{'TRANSLATE.CUSTOM_OFFER_TOOLTIP_TEXT_BILLING_TYPE' | translate}}">
+          {{formattedPills(data.BillingTypeDescription | translate )}} </span>
+        <span *ngIf="data.ProductForTrial == null || data.ProductForTrial == undefined">
+          <span class="label label-warning fw-semibold label-inline text-white badge bg-warning"
+                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}"
+                *ngIf="data.ValidityType!=null && data.ValidityType == 'Month(s)'">
+            {{data.Validity}} 
+            <!-- {{data.Validity > 1?data.ValidityType:data.ValidityType.replace('(s)','')}} -->
+
+            @if(data.Validity > 1){
+              {{'TRANSLATE.TERM_DURATION_DESC_MONTH(S)' | translate}}
+            }
+            @else{
+              {{'TRANSLATE.TERM_DURATION_DESC_MONTH' | translate}}
+            }
+
+          </span>
+        </span>
+        <span *ngIf="data.ProductForTrial == null || data.ProductForTrial == undefined">
+          <span class="label label-warning fw-semibold label-inline text-white bg-warning badge"
+                ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TERM_DURATION' | translate}}" aria-hidden="true"
+                *ngIf="data.ValidityType === 'Year(s)' || data.ValidityType === 'Year'"
+                [ngClass]="{'labelcolor':data.BillingCycleName == 'Monthly','TermLabelColor': data.BillingCycleName == 'Annual'}">
+            {{data.Validity}} 
+            <!-- {{data.Validity > 1? data.ValidityType:data.ValidityType.replace('(s)','') }} -->
+
+            @if(data.Validity > 1){
+              {{(data.ValidityType === 'Year(s)' ? 'TRANSLATE.VALIDITY_TYPE_DESC_YEARS' : 'TERM_DURATION_DESC_YEAR') | translate}}
+            }
+            @else{
+              {{'TRANSLATE.TERM_DURATION_DESC_YEAR' | translate}}
+            }
+          </span>
+        </span>
+        <span *ngIf="data.ProductForTrial != null && data.ProductForTrial != undefined">
+          <span class="label label-warning fw-semibold label-inline text-white badge bg-warning"
+            ngbTooltip="{{'TRANSLATE.CUSTOMER_PRODUCT_TOOLTIP_TEXT_TRIAL_PERIOD' | translate}}" aria-hidden="true">
+            {{data.NoOfDaysForFreeCancelation}} {{'TRANSLATE.TRIAL_PERIOD_DAYS_TEXT'| translate }}</span>
+        </span>
+        <span class="label label-dark fw-semibold label-inline text-white badge bg-dark" [ngClass]="{
+            'bg-warning': data.BillingCycleName?.toLowerCase() === 'monthly',
+            'bg-success': data.BillingCycleName?.toLowerCase() === 'annual',
+            'bg-dark': data.BillingCycleName?.toLowerCase() === 'triennial',
+            'bg-info': data.BillingCycleName?.toLowerCase() === 'onetime'
+          }" aria-hidden="true"
+          ngbTooltip="{{'TRANSLATE.CUSTOM_OFFER_TOOLTIP_TEXT_BILLING_CYCLE' | translate}}"
+          *ngIf="data.ProductForTrial == null || data.ProductForTrial == undefined">
+          {{formattedPills(data.BillingCycleName)}}</span>
+        <span class="label label-success fw-semibold label-inline badge"
+          ngbTooltip="{{'TRANSLATE.CUSTOM_OFFER_TOOLTIP_TEXT_CONSUMTION_TYPE' | translate}}">
+          {{formattedPills(data.ConsumptionType)}}</span>
+      </span>
+    </ng-template>
+
+    <ng-template #priceForPartner let-data="adtData">
+      {{
+        data.PriceforPartner | CurrencyFilter
+        : data?.CurrencySymbol
+        : data?.CurrencyDecimalPlaces
+        : data?.CurrencyThousandSeperator
+        : data?.CurrencyDecimalSeperator
+      }}
+    </ng-template>
+
+    <ng-template #providerSellingPrice let-data="adtData">
+      {{
+        data.ProviderSellingPrice | CurrencyFilter
+        : data?.CurrencySymbol
+        : data?.CurrencyDecimalPlaces
+        : data?.CurrencyThousandSeperator
+        : data?.CurrencyDecimalSeperator
+      }}
+    </ng-template>
+
+    @if (!!datatableConfig) {
+    <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+    </app-c3-table>
+    }
+  </div>
+</div>

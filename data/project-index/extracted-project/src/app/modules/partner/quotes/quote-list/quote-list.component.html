@@ -1,0 +1,201 @@
+<ng-template #actionHeader>   
+    <div class="header-actions d-flex align-items-center gap-2 gap-lg-3">
+        <a class="btn btn-sm btn-lg btn-md btn-xs fw-semibold btn-light-primary text-nowrap" (click)="downloadGridReport()"
+            [appPermission]="'BTN_QUOTE_GRID_DOWNLOADABLE_REPORTS'"
+            ngbTooltip="{{'TRANSLATE.BTN_DOWNLOAD_QUOTES' | translate}}">
+            <i class="ki-outline ki-exit-down fs-2"></i>
+        </a>
+        <div ngbDropdown class="d-flex align-items-center" *ngIf="PageMode === 'list'" autoClose="outside">
+            <button class="btn btn-outline-primary btn-sm mr-5 btn-light-primary" type="button" id="providerCategoryDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
+                <span translate="TRANSLATE.QUOTE_FILTER_BUTTON_SEGMENT_TEXT"></span>
+            </button>
+            <div ngbDropdownMenu aria-labelledby="providerCategoryDropdownButton">
+                <div class="row">
+                    <div class="col ml-5">
+                        <label role="button" ngbDropdownItem class="form-check form-check-inline ms-10 no-hover">
+                            <input type="checkbox" class="form-check-input me-1" [(ngModel)]="ProviderCategory" (click)="toggleAllCategorySelection()">
+                            <span></span><strong> <span translate="TRANSLATE.QUOTE_ALL_SELECTION"></span></strong>
+                        </label> 
+                        @for (categories of categoryFilter; track $index) {
+                        <label role="button" ngbDropdownItem class="form-check form-check-inline ms-10 no-hover"
+                            ng-init="categories.selected = vm.allSelected" >
+                            <input type="checkbox" class="form-check-input" value="{{categories.ProviderCategoryName}}" (change)="toggleCategorySelection(categories)" [(ngModel)]="categories.selected" [disabled]="false">
+                            <span></span> {{categories.ProviderCategoryName | translate}}
+                        </label>
+                        }
+                        <label class="checkbox" style="display: none"></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ngbDropdown class="d-flex align-items-center" *ngIf="PageMode === 'list'" autoClose="outside">
+            <button class="btn btn-outline-primary btn-sm mr-5 btn-light-primary" type="button" id="statusDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
+                <span translate="TRANSLATE.QUOTE_STATUS"></span>
+            </button>
+            <div ngbDropdownMenu aria-labelledby="statusDropdownButton">
+                <div class="row">
+                    <div class="col ml-5">
+                        <label role="button" ngbDropdownItem class="form-check form-check-inline ms-10 no-hover">
+                            <input type="checkbox" class="form-check-input me-1" [(ngModel)]="allSelected" (click)="toggleAllSelection()">
+                            <span></span><strong> <span translate="TRANSLATE.QUOTE_ALL_SELECTION"></span></strong>
+                        </label> 
+                        @for (status of statusFilter; track $index) {
+                        <label role="button" ngbDropdownItem class="form-check form-check-inline ms-10 no-hover"
+                            ng-init="status.selected = vm.allSelected" >
+                            <input type="checkbox" class="form-check-input" value="{{status.Name}}" (click)="toggleStatusSelection(status)" [(ngModel)]="status.selected" [disabled]="false">
+                            <span></span> {{'TRANSLATE.'+ status.Description | translate}}
+                        </label>
+                        }
+                        <label class="checkbox" style="display: none"></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ngbDropdown class="d-flex align-items-center" *ngIf="PageMode === 'list'" autoClose="outside">
+            <button class="btn btn-sm mr-1 btn-light-primary" type="button" id="ownerDropdownButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
+                <span translate="TRANSLATE.QUOTE_OWNER"></span>
+            </button>
+            <div ngbDropdownMenu aria-labelledby="ownerDropdownButton">
+                <div class="row">
+                    <div class="col ml-5 custom-scroll">
+                        <label role="button" ngbDropdownItem class="form-check form-check-inline ms-10 no-hover">
+                            <input type="checkbox" class="form-check-input me-1" [(ngModel)]="allOwnerSelected" (click)="ToggleAllOwnerSelection()">
+                            <span></span><strong> <span translate="TRANSLATE.QUOTE_ALL_SELECTION"></span></strong>
+                        </label> 
+                        @for (owner of owners; track $index) {
+                        <label role="button" ngbDropdownItem class="form-check form-check-inline ms-10 no-hover" ng-init="owner.selected = vm.allOwnerSelected" >
+                            <input type="checkbox" class="form-check-input" value="{{owner.Email}}" (click)="ToggleQuoteOwnerSelection(owner)" [(ngModel)]="owner.selected" [disabled]="false">
+                            <span></span>
+                            {{owner.Email}}
+                        </label>
+                        }
+                        <label class="checkbox" style="display: none"></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex align-items-center">
+            <!--begin::Button::QUOTE_BUTTON_TEXT_ADD_QUOTE-->
+            <button *ngIf="(PageMode === 'list' && permissions.SaveQuote === 'Allowed')" class="btn btn-sm mr-2 btn-primary" (click)="addQuote()" appBusyLoader>
+                <span translate="TRANSLATE.ADD_NEW_QUOTE"></span>
+            </button>
+        </div>
+        <!--end::Button::QUOTE_BUTTON_TEXT_ADD_QUOTE-->
+    </div>
+  </ng-template>
+<div class="card">
+    <div class="card-body pt-0 overflow-auto">
+        <ng-template #nameTemplate let-row="adtData">
+            <div> 
+                <span class="fw-semibold" ngbTooltip="{{row.QuotationName}}" [ngClass]="{'deletedQuote': row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_DELETED, 'red': row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_DELETED}">{{row.QuotationName | limitLength:100}}</span>
+                <span *ngIf="row.QuotationName !=null && row.QuotationName.length > 100" [ngClass]="{'deletedQuote': row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_DELETED}">...</span>
+            </div>
+        </ng-template>
+
+        <ng-template #QuoteStatus let-row="adtData">
+            <div>
+                <span class="label font-weight-bold label-inline badge"
+                    [ngClass]="{'quoteStatusPublished':row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_PUBLISHED,'quoteStatusDeleted': row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_DELETED,'quoteStatusDraft':row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_DRAFT,'quoteStatusExpired': row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_EXPIRED,'quoteStatusApproved':row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_APPROVED,'quoteStatusOrderProcessed':row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_ORDER_PROCESSED}">
+                    {{'TRANSLATE.'+row.QuoteDescription | translate}}
+                </span>
+            </div>
+        </ng-template>
+
+        <ng-template #amount let-row="adtData">
+            <div>
+                <span> {{row.Amount | CurrencyFilter : row.CurrencySymbol : row.CurrencyDecimalPlaces :
+                    row.CurrencyThousandSeperator : row.CurrencyDecimalSeperator }}</span>
+            </div>
+        </ng-template>
+
+        <ng-template #actions let-row="adtData">
+            <div>
+                <div class="d-flex justify-content-end">
+                    <div class="d-flex align-items-center"*ngIf="(permissions.ApproveQuote === 'Allowed' && (row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_PUBLISHED))">
+                        <button class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto" 
+                            busy
+                            busy-when-url="api/quotes"
+                            busy-add-classes="disabled"
+                            not-busy-remove-classes="disabled" 
+                            [ngClass]="toolbarButtonHeightClass"  (click)="QuoteApproval(row.QuotationId, row.QuoteVersionId, row.IsQuoteLineItemsDirectPurchaseAllowed, row.CurrencyCode, row.CustomerIdInt, row.IsNewCustomerChecked)"
+ >
+                            <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+                            <i class="ki-outline  ki-check-square text-primary" ngbTooltip="{{'TRANSLATE.QUOTE_OVERRIDE_CAPTION_APPROVE_QUOTE' | translate}}">
+                            </i>
+                            </span>
+                        </button>
+                    </div>
+                
+                    @if((permissions.SaveQuote === 'Allowed' && (row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_PUBLISHED || row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_DRAFT))){
+                    <div class="d-flex align-items-center">
+                        <div class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+                          [ngClass]="toolbarButtonHeightClass" (click)="editQuote(row.QuoteVersionId, row.QuoteStatus)">
+                          <span class="svg-icon svg-icon-primary svg-icon-sm  h-20px w-20px">
+                            <i class="ki-outline ki-pencil text-primary" ngbTooltip="{{'TRANSLATE.QUOTE_OVERRIDE_CAPTION_EDIT_QUOTE' | translate}}">
+                            </i>
+                          </span>
+                        </div>
+                      </div>
+                    }
+                    @if((permissions.DeleteQuote === 'Allowed' && (row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_DRAFT || row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_PUBLISHED))){
+                   
+                    <div class="d-flex align-items-center">
+                        <div class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto"
+                          [ngClass]="toolbarButtonHeightClass"  (click)="deleteQuote(row.QuotationId)">
+                          <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg h-20px w-20px">
+                            <i class="ki-outline ki-trash text-primary" ngbTooltip="{{'TRANSLATE.QUOTE_OVERRIDE_CAPTION_DELETE_QUOTE' | translate}}">
+                            </i>
+                          </span>
+                        </div>
+                      </div>
+                    }
+                    @if(row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_EXPIRED || row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_DELETED || row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_APPROVED){
+                    
+                    <div class="d-flex align-items-center">
+                        <div class="btn btn-icon btn-active-light-primary btn-lg me-1 w-auto"
+                          [ngClass]="toolbarButtonHeightClass"   (click)="viewQuote(row.QuoteVersionId)">
+                          <span class="svg-icon svg-icon-primary svg-icon-xl svg-icon-sm svg-icon-lg h-20px w-20px">
+                            <i class="ki-outline ki-eye text-primary" ngbTooltip="{{'TRANSLATE.QUOTE_OVERRIDE_CAPTION_VIEW_QUOTE' | translate}}" placement="top">
+                            </i>
+                          </span>
+                        </div>
+                      </div>
+                    }
+                    @if (row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_PUBLISHED || row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_APPROVED) {
+                        <div class="d-flex align-items-center">
+                            <div class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+                                [ngClass]="toolbarButtonHeightClass"
+                                (click)="copyToClipboard(row.QuoteVersionId)">
+                                <span class="svg-icon svg-icon-primary svg-icon-sm h-20px w-20px">
+                                    <i class="ki-outline ki-copy text-primary" 
+                                        ngbTooltip="{{ 'TRANSLATE.BTN_QUOTE_COPY_URL' | translate }}">
+                                    </i>
+                                </span>
+                            </div>
+                        </div>
+                    }
+                     @if (row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_PUBLISHED || row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_ORDER_PROCESSED || row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_APPROVED || row.QuoteStatus == cloudHubConstants.QUOTE_LIST_STATUS_DRAFT ) {
+                        <div class="d-flex align-items-center">
+                            <div class="btn btn-icon btn-active-light-primary btn-sm me-1 w-auto"
+                                [ngClass]="toolbarButtonHeightClass"
+                                (click)="cloneQuote(row)">
+                                <span class="svg-icon svg-icon-primary svg-icon-sm h-20px w-20px">
+                                    <i class="ki-outline ki-note-2 text-primary" 
+                                        ngbTooltip="{{ 'TRANSLATE.BTN_QUOTE_DUPLICATE_QUOTE' | translate }}">
+                                    </i>
+                                </span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-container *ngIf="datatableConfig">
+            <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+            </app-c3-table>
+        </ng-container>
+    </div>
+</div>
+
+ 

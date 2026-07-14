@@ -1,0 +1,128 @@
+<div class="card-body pt-0 overflow-auto">
+    <div class="form-group row mb-2">
+        <div class="form-group row mt-5">
+            <div class="col-md-2 col-form-label text-left text-sm-left text-md-right text-lg-right text-start">
+                <label class="fw-semibold fs-6 mb-2 required" translate="TRANSLATE.ENTITY_DESC_CUSTOMER"></label>
+                <i class="ki-duotone ki-information-2 text-gray-500 fs-6 ms-1"
+                    [ngbTooltip]="'TRANSLATE.CUSTOM_DASHBOARD_CARD_CUSTOMER_TOOLTIP' | translate">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                </i>
+            </div>
+            <div class="col-md-10">
+                <ng-select [(ngModel)]="selectedCustomer" style="width:100%" theme="bootstrap"
+                    reset-search-input="true" (change)="reloadTable()" title="{{'TRANSLATE.REPORT_ALL_CUSTOMERS_PLACEHOLDER' | translate}}">
+                    <ng-option [value]="customer" *ngFor=" let customer of customers">
+                        {{customer.Name}}
+                    </ng-option>
+                </ng-select>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #cardTemplate let-row="adtData">
+        <div>
+            <div class="card card-custom card-stretch gutter-b"
+                [ngStyle]="{'background-color': row.Color || 'black'}">
+                <div class="ribbon ribbon-top ribbon-color-info" *ngIf="row.SelfCustomCard == true">
+                    <div class="ribbon-target" style="right: 0.5rem;">
+                        <span class="Schedulelabelbackgroundcolor ribbon-inner text-white rounded-bottom"></span><span
+                            class="font-weight-normal"
+                            translate="TRANSLATE.CUSTOM_DASHBOARD_CARD_SELF_CARD_BADGE"></span>
+                    </div>
+                </div>
+                <a ng-disabled="true" href="{{row.Link}}" target="_blank">
+                    <div class="card-body customCardsSize">
+                        <div class="d-flex align-items-center justify-content-between flex-grow-1">
+                            <span class="svg-icon svg-icon-4x svg-icon-white" style="width: 48px; height: 48px;">
+                                <img *ngIf="row.ImageUrl" [src]="row.ImageUrl" alt="image" width="48" height="48">
+                            </span>
+                            <div class="d-flex flex-column text-right">
+                                <span
+                                    class="ms-4 card-title fs-4 text-white mb-4 text-hover-state-dark d-block"
+                                    ngbTooltip="{{row.Title.length > 15 ? row.Title : ''}}">
+                                    <span [innerHtml]="row.Title | limitLength:15"></span> <span
+                                        *ngIf="row.Title !=null && row.Title.length > 15">...</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="ms-3">
+                            <a href="{{row.Link}}" target="_blank" class="btn btn-link btn-link-white text-white pt-2">
+                                <span>{{row.LinkText}}</span>
+                                <i class="ki-outline ki-black-right fs-3 text-white"></i>
+                            </a>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #description let-row="adtData">
+        <div>
+            <span>
+                <span *ngIf="row.Description.length <= 350 || showFullDescription">{{row.Description}}</span>
+                <span *ngIf="row.Description.length > 350 && !showFullDescription">{{row.Description | limitLength:350}}...</span>
+                <a href="javascript:void(0)" *ngIf="row.Description.length > 350"
+                    (click)="showFullDescription = !showFullDescription"
+                    [innerHtml]="showFullDescription ? ('TRANSLATE.PRODUCT_DETAILS_READ_LESS_LINK_TEXT' | translate) : ('TRANSLATE.PRODUCT_DETAILS_READ_MORE_LINK_TEXT' | translate)"></a>
+            </span>
+        </div>
+    </ng-template>
+
+    <ng-template #sequenceData let-row="adtData">
+        <div>
+            <strong class="pe-0">
+                @if (!row.isEditing) {
+                <a href="javascript:void(0)" *ngIf="row.AssignedIsActive === true" editable-number="row.Sequence"
+                    buttons="no" class="editable editable-click" (click)="editSequence(row)">
+                    {{ row.Sequence || 0 }}
+                </a>
+                }
+                @if (row.isEditing) {
+                <span class="d-flex align-items-center icon-align">
+                    <input #fieldName class="form-control" 
+                    [(ngModel)]="row.Sequence"
+                    type="number" min="0" step="1" (input)="validatePositiveNumber($event, row)"
+                    [disabled]="permissions.HasSaveCustomCards !== 'Allowed'">
+    
+                    <i class="ki-outline ki-check fs-1 text-success cursor-pointer ms-3" *ngIf="permissions.HasSaveCustomCards === 'Allowed'" (click)="updateSequence(row)"></i>
+    
+                    <i class="ki-outline ki-cross fs-1 text-danger cursor-pointer ms-2" (click)="cancelEdit(row)"></i>
+                </span>
+                }
+    
+                <span *ngIf="row.AssignedIsActive != true">
+                    {{ row.Sequence || 0 }}
+                </span>
+            </strong>
+        </div>
+    </ng-template>
+    
+
+        <ng-template #actions let-row="adtData">
+            <div>
+                <div class="d-flex justify-content-end">
+                    <button  type="button" class="btn btn-light-success btn-sm" [appPermission]="'SAVE_OR_UPDATE_CUSTOM_CARDS'" *ngIf="row.AssignedIsActive != true" (click)="AssignCustomCard(row, 'assign')">
+                        <span translate="TRANSLATE.PARTNER_ASSIGNED_CARD_CUSTOMER_BUTTON_TEXT_ASSIGN"></span>
+                    </button>
+                    <button  type="button" class="btn btn-light-warning btn-sm" [appPermission]="'SAVE_OR_UPDATE_CUSTOM_CARDS'" *ngIf="row.AssignedIsActive === true" (click)="AssignCustomCard(row, 'unassign')">
+                        <span translate="TRANSLATE.PARTNER_ASSIGNED_CARD_CUSTOMER_BUTTON_TEXT_UNASSIGN"></span>
+                    </button>
+                </div>
+            </div>
+        </ng-template>
+
+    <ng-container *ngIf="datatableConfig">
+        <div *ngIf="!!havingCustomer">
+            <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig">
+            </app-c3-table>
+        </div>
+        <div *ngIf="!havingCustomer">
+            <app-common-no-record></app-common-no-record>
+        </div>
+    </ng-container>
+
+
+</div>

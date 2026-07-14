@@ -1,0 +1,365 @@
+<div class="row">
+    <!--Below view is shown if there is no license assignment in progress-->
+    <div class="col-md-12" *ngIf="pageMode === 'edit'">
+        <div class="card ">
+            <div class="card-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <select class="form-select" [(ngModel)]="selectedCustomerProduct"
+                                         style="width:100%" title="Choose a product"
+                                        theme="bootstrap" reset-search-input="true"
+                                        ngbTooltip="{{'TRANSLATE.ONLINCE_SERVICES_USER_LICENSE_TRACKING_PLACEHOLDER_SELECT_A_PRODUCT' | translate}}">
+                                        <option [ngValue]="product" *ngFor=" let product of productWithAddons"
+                                            (change)="OnChangeOfProduct(product)">
+                                            {{product.ProductSubscriptionName}}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-md-12 mt-3" *ngIf="activeProductWithAddons && activeProductWithAddons.length > 1">
+                                    <label class="form-check form-check-inline"> 
+                                        <input type="checkbox" class="form-check-input" [(ngModel)]="selectedCustomerProduct.ApplyToAddons">
+                                        <span></span>{{'TRANSLATE.USER_LICENSE_TRACKING_LABEL_APPLY_TO_ADDONS' | translate}}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        @if(selectedCustomerProduct?.Quantity - AssignedUsers.length > 0 &&
+                        selectedCustomerProduct?.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_ACTIVE &&
+                        Permissions.HasReleaseUnusedSeats.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED){
+                        <div class="col-md-3" *ngIf="!(IsCustomerAllowedToReduceSeats === false && IsInheritedPartnerRole === false)">
+                            <button class="btn btn-warning btn" (click)="releaseUnusedSeats(selectedCustomerProduct)" appBusyLoader>
+                                <span>{{'TRANSLATE.USER_LICENSE_TRACKING_BUTTON_TEXT_RELEASE_UNUSED_SEATS' | translate}}</span>
+                            </button>
+                        </div>
+                        }
+                        <div class="col-md-3 margin-top-15 col-form-label">
+                            {{'TRANSLATE.USER_LICENSE_TRACKING_TEXT_TOTAL_SEATS' | translate}}:
+                            {{selectedCustomerProduct?.Quantity}}, {{'TRANSLATE.USER_LICENSE_TRACKING_TEXT_ASSIGNED' | translate}}:
+                            {{AssignedUsers.length}}
+                        </div>
+                    </div>
+                    <!-- Check if datatableConfig is defined and then render the table -->
+                
+                    <div class="row mt-5">
+                        <div class="col-md-12">
+                            <div class="mt-element-list">
+                                <div class="mt-list-head list-simple font-white bg-blue">
+                                    <div class="list-head-title-container">
+                                        <h5 class="list-title"><span
+                                                translate="TRANSLATE.SUBSCRIPTION_MANAGE_MANAGE_FORM_HEADER_LICENSES_ASSIGNED"></span>
+                                        </h5>
+                                    </div>
+                                </div>
+                               
+                                <ng-container *ngIf="!!datatableConfig">
+                                    <app-c3-table [datatableConfig]="datatableConfig" [reload]="reloadEvent">
+                                    </app-c3-table>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        </div>
+        <div class="card mt-2">
+            <div class="card-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <ul class="nav nav-tabs nav-stretch nav-line-tabs border-transparent flex-nowrap" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                    href="javascript:void(0)" (click)="CheckCurrentTabIsAssignLicense(true)" 
+                                    data-target="#tab_Bulk_Asign_Licenses" role="tab"
+                                    id="tab_header_Bulk_Asign_Licenses"
+                                    [ngClass]="{ 
+                                        'text-primary': activeTab === tabs.Assign,
+                                        active: activeTab === tabs.Assign }"
+                                        (click)="setActiveTab(tabs.Assign)"
+                                    > 
+                                    <span translate="TRANSLATE.SUBSCRIPTION_MANAGE_MANAGE_FORM_BUTTON_TEXT_ASSIGN_LICENSES"></span> 
+                                </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="javascript:void(0)" 
+                                    (click)="CheckCurrentTabIsAssignLicense(false)" 
+                                    *ngIf="ExistingAssignedUsers.length > 0" role="tab" 
+                                    [ngClass]="{ 
+                                        'text-primary': activeTab === tabs.Remove,
+                                        active: activeTab === tabs.Remove }"
+                                        (click)="setActiveTab(tabs.Remove)"
+                                    >
+                                    <span translate="TRANSLATE.SUBSCRIPTION_MANAGE_MANAGE_FORM_BUTTON_TEXT_REMOVE_LICENSES"></span> </a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane active ml-2 mt-5" id="" *ngIf="IsAssignLicenseTab">
+                                    <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+                                        <h3><span translate="TRANSLATE.SUBSCRIPTION_MANAGE_MANAGE_FORM_HEADER_INSTUCTIONS_1"></span></h3>
+                                        <ul>
+                                            <li><span translate="TRANSLATE.SUBSCRIPTION_MANAGE_MANAGE_FORM_INSTRUCTION_1_PART_2"></span></li>
+                                            <li><span translate="TRANSLATE.SUBSCRIPTION_MANAGE_MANAGE_FORM_INSTRUCTION_1_PART_3"></span></li>
+                                            <li><span translate="TRANSLATE.SUBSCRIPTION_MANAGE_MANAGE_FORM_INSTRUCTION_1_PART_4"></span></li>
+                                            <li><span translate="TRANSLATE.SUBSCRIPTION_MANAGE_MANAGE_FORM_INSTRUCTION_1_PART_5"></span></li>
+                                        </ul>
+                                        <b><span translate="TRANSLATE.SUBSCRIPTION_MANAGE_MANAGE_FORM_LICENSE_ASSIGNMENT_LABEL_ENTER_MULTIPLE_USER"></span></b>
+                                        <ul>
+                                            <li><span translate="TRANSLATE.SUBSCRIPTION_MANAGE_MANAGE_FORM_INSTRUCTION_1_PART_1"></span></li>
+                                        </ul>
+                                        <b><span translate="TRANSLATE.SUBSCRIPTION_MANAGE_MANAGE_FORM_LICENSE_LABEL_UPLOAD_FILE"></span></b>
+                                        <ul>
+                                            <li>
+                                                <span translate="TRANSLATE.SUBSCRIPTION_MANAGE_MULTIPLE_USER_UPLOAD_HELP_TEXT_WITH_EXAMPLE"></span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row mt-5">
+                                            <div class="col-md-4">
+                                                <div class="md-radio">
+                                                    <input type="radio"
+                                                           (click)="CheckLicenseAssignmentViaFileIsSelected(false)"
+                                                           class="form-check-input me-2"
+                                                           [value]="false"  
+                                                           [(ngModel)]="IsLicenseAssignmentViaFile" id="notIsLicenseAssignmentViaFile" name="isLicenseAssignmentViaFile"
+                                                           [disabled]="selectedCustomerProduct?.Status.toLowerCase() !== cloudHubConstants.SUBSCRIPTION_STATUS_ACTIVE">
+                                                    <label for="notIsLicenseAssignmentViaFile">
+                                                        <span class="inc"></span>
+                                                        <span class="check"></span>
+                                                        <span class="box"></span>
+                                                        <span>{{'TRANSLATE.SUBSCRIPTION_MANAGE_MANAGE_FORM_LICENSE_ASSIGNMENT_LABEL_ENTER_MULTIPLE_USER' | translate}}</span>
+                                                    </label>
+                                                    <span *ngIf="!IsLicenseAssignmentViaFile" class="text-danger">*</span>
+                                                    <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.SUBSCRIPTION_MANAGE_MULTIPLE_USER_HELP_TEXT' | translate}}">
+                                                        <span class="path1"></span>
+                                                        <span class="path2"></span>
+                                                        <span class="path3"></span>
+                                                    </i>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <textarea class="form-control input-large"
+                                                          [(ngModel)]="BulkUserEmails"
+                                                          required="true" 
+                                                          name="Bulk_UserAdd"
+                                                          [disabled]="selectedCustomerProduct?.Status.toLowerCase() !== cloudHubConstants.SUBSCRIPTION_STATUS_ACTIVE"></textarea>
+                                                <!--<textarea class="form-control input-large"
+                                                          [(ngModel)]="vm.BulkUserEmails"
+                                                          ng-required="true"
+                                                          name="Bulk_UserAdd"
+                                                          id="Bulk_UserAdd"
+                                                          ng-disabled="vm.selectedCustomerProduct.Status.toLowerCase() !== cloudHubConstants.SUBSCRIPTION_STATUS_ACTIVE"></textarea>-->
+                                            </div>
+                                        </div>
+                                        <div class="row" style="padding-top:30px">
+                                            <div class="col-md-4">
+                                                <div class="md-radio">
+                                                    <input type="radio"
+                                                           (click)="CheckLicenseAssignmentViaFileIsSelected(true)"
+                                                           class="form-check-input me-2"
+                                                           [value]="true"
+                                                           [(ngModel)]="IsLicenseAssignmentViaFile" id="isLicenseAssignmentViaFile"  name="isLicenseAssignmentViaFile"
+                                                           [disabled]="selectedCustomerProduct?.Status.toLowerCase() !== cloudHubConstants.SUBSCRIPTION_STATUS_ACTIVE">
+                                                    <label for="isLicenseAssignmentViaFile">
+                                                        <span class="inc"></span>
+                                                        <span class="check"></span>
+                                                        <span class="box"></span>
+                                                        {{'TRANSLATE.SUBSCRIPTION_MANAGE_MANAGE_FORM_LICENSE_LABEL_UPLOAD_FILE' | translate}}
+                                                    </label>
+                                                    <span *ngIf="IsLicenseAssignmentViaFile" class="text-danger"> *</span>
+                                                    <i class="ki-duotone ki-information-2 fs-5 ms-1" aria-hidden="true" ngbTooltip="{{'TRANSLATE.SUBSCRIPTION_MANAGE_MULTIPLE_USER_UPLOAD_HELP_TEXT' | translate}}">
+                                                        <span class="path1"></span>
+                                                        <span class="path2"></span>
+                                                        <span class="path3"></span>
+                                                    </i>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <input  #fileInput filestyle="" type="file" accept=".txt" name="fileItem"
+                                                data-button-text="&nbsp;&nbsp;Select" data-class-button="btn btn-default" required
+                                                (change)="onFileChange($event)" required
+                                                data-class-input="form-control inline" nv-file-select="" uploader="uploader"
+                                                filters="size, type" class="form-control" style="width:100%" 
+                                                [disabled]="selectedCustomerProduct?.Status.toLowerCase() !== cloudHubConstants.SUBSCRIPTION_STATUS_ACTIVE">
+                                            </div>
+                                            <div class="padding-top-10">
+                                                <span class="input-group-btn" *ngIf="formData !== null">
+                                                    <button type="button" (click)="removeFile(fileInput)" class="btn btn-light-danger">
+                                                        <span class="icon-trash mr"></span><span translate="TRANSLATE.SUBSCRIPTION_MANAGE_MANAGE_FORM_LICENSE_BUTTON_REMOVE"></span>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                           
+                                        </div>
+                                    </div>
+                                    <!-- <div class="alert alert-danger" *ngIf="errorDetaiils == null">
+                                        <strong> <span translate="TRANSLATE.SUBSCRIPTION_MANAGE_MANAGE_FORM_HEADER_VALIDATION_ERRORS"> </span> </strong>
+                                        @for (error of errorDetaiils; track $index) {
+                                        <div>
+                                            <strong>{{error.Email}}</strong>
+                                            {{error.Error}}
+                                        </div>
+                                        }
+                                    </div> -->
+
+                                    <div class="form-actions d-flex justify-content-end py-6 gap-3" *ngIf="selectedCustomerProduct?.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_ACTIVE && Permissions.HasManageUserLicenses.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED">
+                                        <button type="button" class="btn btn-sm btn-light btn-active-light-primary" (click)="cancelUpdateSubscription()"><span translate="TRANSLATE.BUTTON_TEXT_CANCEL"></span></button>
+                                        <a class="btn btn-sm btn-primary"
+                                          *ngIf="true"
+                                           (click)="AddUsers()">
+                                            {{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-5" id="" *ngIf="!IsAssignLicenseTab">
+                                    <div class="notice bg-light-primary rounded border-primary border border-dashed min-w-lg-600px flex-shrink-0 p-6">
+                                        <h3><span translate="TRANSLATE.SUBSCRIPTION_MANAGE_MANAGE_FORM_HEADER_INSTUCTIONS_2"></span></h3>
+                                        <ul>
+                                            <li><span [innerHTML]="('TRANSLATE.SUBSCRIPTION_MANAGE_MANAGE_FORM_INSTRUCTION_2_PART_1')| translate"></span> </li>
+                                            <li><span translate="TRANSLATE.SUBSCRIPTION_MANAGE_MANAGE_FORM_INSTRUCTION_2_PART_2"></span></li>
+                                            <li><span translate="TRANSLATE.SUBSCRIPTION_MANAGE_MANAGE_FORM_INSTRUCTION_2_PART_3"></span></li>
+                                        </ul>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6" style="width:100%">
+                                            <div>
+                                                <h6 class="list-title mt-3"><span translate="TRANSLATE.SUBSCRIPTION_MANAGE_MANAGE_FORM_HEADER_LICENSES_TO_TO_BE_REMOVED"></span></h6>
+                                                <div class="list-simple">
+                                                    
+                                                    <ul>
+                                                        @for (item of UsersToRevokeLicenses; track $index) {
+                                                        <li class="mt-list-item">
+                                                            <div class="list-item-content" style="word-wrap:break-word;">
+                                                                {{item.UserName}}
+                                                                <!-- <button *ngIf="selectedCustomerProduct?.Status.toLowerCase() !== cloudHubConstants.SUBSCRIPTION_STATUS_ACTIVE"
+                                                                    (click)="undoRevokeLicense(item)"> <i class="la la-close text-danger"></i>
+                                                                </button> -->
+                                                                <button class="btn btn-sm btn-icon btn-color-danger"
+                                                                    (click)="undoRevokeLicense(item)">
+                                                                    <i class="ki-outline ki-cross fs-1"></i>
+                                                                </button>
+                                                            </div>
+                                                        </li>
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-actions d-flex justify-content-end py-6 gap-3" *ngIf="selectedCustomerProduct?.Status.toLowerCase() === cloudHubConstants.SUBSCRIPTION_STATUS_ACTIVE && Permissions.HasManageUserLicenses.toLowerCase() === cloudHubConstants.ACCESS_TYPE_ALLOWED">
+                                        <button type="button" class="btn btn-sm btn-light btn-active-light-primary" (click)="cancelUpdateSubscription()" appBusyLoader><span translate="TRANSLATE.BUTTON_TEXT_CANCEL" ></span></button>
+                                        <a class="btn btn-sm btn-primary"
+                                          *ngIf="true"
+                                           (click)="revemoveUsers()" appBusyLoader>
+                                            {{'TRANSLATE.BUTTON_TEXT_SUBMIT' | translate}}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Displaying the status of the license assignment that is in progress.-->
+    <div class="col-md-12"> 
+        <div class="card card-custom gutter-b" *ngIf="pageMode === 'status'">
+            <div class="card-header">
+                <div class="card-title">
+                    <h3 class="card-label">
+                        <span *ngIf="ChangeType === 'Add'" translate="TRANSLATE.USER_LICENSE_ASSIGNMENT_PENDING_STATUS_VIEW_CAPTION"></span>
+                        <span *ngIf="ChangeType === 'Delete'" translate="TRANSLATE.USER_LICENSE_REMOVAL_PENDING_STATUS_VIEW_CAPTION"></span>
+                    </h3>
+                </div>
+            </div>
+            <div class="card-body form">
+                <form role="form">
+                    <div class="list-group">
+                        @for (productName of distinctProducts; track $index) {
+                        <ul class="">
+                            {{ productName }}
+                    
+                            @for (row of userLicenseAssignmentStatus; track $index) {
+                            <li *ngIf="row.ProductName == productName" class="list-group-item m-2 border-0 border-top">
+                                <span>
+                                    @if(row.Status === 'Success') {
+                                    <i class='ki-duotone ki-check text-success'></i>
+                                    }
+                                    @else {
+                                    <i class="fa"
+                                        [ngClass]="{'fa-spin fa-spinner text-info' : (row.Status === 'New' || row.Status === 'InProgress'), 'fa-exclamation-circle text-danger' : (row.Status !=null && row.Status ==='Error'),  'fa-exclamation-circle text-warning' : (row.Status !=null && row.Status ==='Warning') }"></i>
+                                    }
+                                    &nbsp;
+                                    {{row.EmailAddress}}
+                                    &nbsp;
+                                    <br />
+                                    <span *ngIf="row.Status ==='Error'" class="text-danger">
+                                      {{row.Status}} :
+                                      @if(!row.IsJsonError){
+                                      <span>{{'TRANSLATE.'+row.Status | translate}} : <span>{{row.ErrorDetails | translate}}</span></span>
+                                      }
+                                      @else{
+                                      <ul *ngIf="row.ErrorDetails.FailedProducts" class="m-0" style="padding-left:1rem">
+                                        @for (error of row.ErrorDetails.FailedProducts | keyvalue ;track error.key){
+                                        <li>
+                                          <span translate="{{error.key}}"></span>
+                                          <ul>
+                                            @for(item of error?.value || [];track $index){
+                                            <li>
+                                              {{item}}
+                                            </li>
+                                            }
+                                          </ul>
+                                        </li>
+                                        }
+                                        @if(row.ErrorDetails.SucceededProducts && row.ErrorDetails.SucceededProducts.length> 0){
+                                         <li  class="text-success">
+                                            <span translate="ERROR_FAILED_TO_REVERT_OPERATION_ON_SUBSCRIPTION"></span>
+                                            <ul>
+                                            @for(item of row.ErrorDetails.SucceededProducts;track $index){
+                                               <li>{{item}}</li>
+                                            }
+                                          </ul>
+                                        </li>
+                                          }
+                                          
+                                      </ul>
+                                      }
+                                    </span>
+                                    <span *ngIf="row.Status ==='Warning'" class="text-warning">{{row.Status}} : <span
+                                            translate="{{row.ErrorDetails}}"></span></span>
+                                </span>
+                            </li>
+                            }
+                        </ul>
+                        }
+                    </div>
+                    <div class="form-actions d-flex justify-content-end py-6 gap-3" *ngIf="readyToComplete">
+                        <a class="btn btn-sm btn-primary" *ngIf="Permissions.HasUpdateUserLicenseAssignmentBatchStatus.toLowerCase() == cloudHubConstants.ACCESS_TYPE_ALLOWED && IsMessageSkipable === true"  (click)="updateTheStatusAsComplete()">
+                            <span translate="TRANSLATE.USER_LICENSE_ASSIGNMENT_BUTTON_COMPLETE"></span>
+                        </a>
+                        @if(IsMessageSkipable !== true) {
+                        <span translate="TRANSLATE.USER_LICENSE_ASSIGNMENT_SUPPORT_TEXT_CONTACT_SUPPORT"></span>
+                        }
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #actions let-row="adtData" let-emitter="captureEvents">
+    <div>
+        {{row.UserName}}
+        <button class="btn btn-sm btn-icon btn-color-danger"
+            [disabled]="selectedCustomerProduct?.Status.toLowerCase() !== cloudHubConstants.SUBSCRIPTION_STATUS_ACTIVE"
+            (click)="revokeLicenseForUser(row)" *ngIf="!IsAssignLicenseTab" appBusyLoader>
+            <i class="ki-outline ki-cross fs-1"></i>
+        </button>
+    </div>
+</ng-template>

@@ -1,0 +1,9 @@
+.fixed-height-one {
+    height: 370px; /* Fixed height for Tab 1 */
+    overflow-y: auto; /* Scroll if content exceeds height */
+  }
+
+  .fixed-height-card {
+    height: 400px; 
+    overflow-y: auto; 
+  }

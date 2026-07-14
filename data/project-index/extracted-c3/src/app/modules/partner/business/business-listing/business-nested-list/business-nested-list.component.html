@@ -1,0 +1,80 @@
+<ng-container>
+    <ng-template #nameTemplate let-data="adtData" let-row="userData">
+        <span class="fw-semibold">{{ data?.Name }} <span class="fw-semibold" *ngIf="data.Entity !== 'Customer'">({{
+            data?.Entity }})</span></span>
+      </ng-template>
+      <ng-template #actions let-data="adtData" let-emitter="captureEvents">
+        <div class="d-flex align-items-end justify-content-end" *ngIf="!data?.isTotal">
+          <button (click)="viewInvoices(data)" ngbTooltip="View Invoices" *ngIf="Permissions.HasGetInvoices === 'Allowed' && (isDefaultView || data.isShowInvoice)"
+            class="btn btn-icon btn-active-light-primary btn-sm w-auto" [ngClass]="toolbarButtonHeightClass">
+            <span class="svg-icon svg-icon-primary svg-icon-sm">
+              <i class="ki-outline ki-bill text-primary fs-1"></i>
+            </span>
+          </button>
+          @if(Permissions.HasGetSubscriptionChangeHistory === 'Allowed' && data.Entity === 'Customer' && (isDefaultView ||
+          data.isShowInvoice)){
+          <button class="btn btn-icon btn-active-light-primary btn-sm w-auto" [ngClass]="toolbarButtonHeightClass"
+            (click)="GoToSubscriptionChangeHistory(data)"
+            ngbTooltip="{{'TRANSLATE.REVENUE_BUTTON_TOOLTIP_TEXT_VIEW_SUBSCRIPTION_HISTORY' | translate}}">
+            <span class="svg-icon svg-icon-primary svg-icon-sm">
+              <i class="ki-outline ki-time text-primary fs-3"></i>
+            </span>
+          </button>
+          }
+          @if(Permissions.HasGenerateInvoices === 'Allowed' && (selectedBillingPeriodId?.length == 1 || allSelected ==
+          false) && (isDefaultView || data.isShowInvoice)){
+          <button class="btn btn-icon btn-active-light-primary btn-sm w-auto" [ngClass]="toolbarButtonHeightClass"
+            (click)="GenerateCustomerInvoice(data)"
+            ngbTooltip="{{'TRANSLATE.REVENUE_BUTTON_TOOLTIP_TEXT_REGENERATE_INVOICE'|translate}}"
+            *ngIf="!(selectedBillingPeriodId?.length > 1 || allSelected == true || selectedBillingPeriodId?.length == 0)">
+            <span class="svg-icon svg-icon-primary svg-icon-sm">
+              <i class="ki-outline ki-arrows-loop text-primary fs-3"></i>
+            </span>
+          </button>
+          }
+  
+        </div>
+        <div *ngIf="data?.isTotal">
+        </div>
+      </ng-template>
+      <ng-template #costonPartner let-data="adtData" let-emitter="captureEvents">
+        <span>
+          {{
+          data.CostOnPartner
+          | CurrencyFilter
+          : data.CurrencySymbol
+          : data.CurrencyDecimalPlaces
+          : data.CurrencyThousandSeperator
+          : data.CurrencyDecimalSeperator
+          }}</span>
+      </ng-template>
+      <ng-template #billedAmount let-data="adtData" let-emitter="captureEvents">
+        {{
+        data.BilledAmount
+        | CurrencyFilter
+        : data.CurrencySymbol
+        : data.CurrencyDecimalPlaces
+        : data.CurrencyThousandSeperator
+        : data.CurrencyDecimalSeperator
+        }}
+      </ng-template>
+      <ng-template #profit let-data="adtData" let-emitter="captureEvents">
+        {{
+        data.ProfitAmount
+        | CurrencyFilter
+        : data.CurrencySymbol
+        : data.CurrencyDecimalPlaces
+        : data.CurrencyThousandSeperator
+        : data.CurrencyDecimalSeperator
+        }}
+      </ng-template>
+      <!-- //table -->
+      @if (!!datatableConfig) {
+      <div class="table-buisness">
+        <app-c3-table [reload]="reloadEvent" [datatableConfig]="datatableConfig" (tableReady)="onTableReady($event)"
+          (pageSizeChange)="onPageSizeChange($event)" [isNestedGrid]="true" [searchFilter]="false" [isPaginationHide]="true"
+          [isPaginationRowHide]="true" >
+        </app-c3-table>
+      </div>
+      }
+</ng-container>
