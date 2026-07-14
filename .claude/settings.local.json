@@ -1,7 +1,18 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mkdir -p \"C:\\\\Users\\\\AbhinavTyagi\\(CEL\\)\\\\.claude\\\\projects\\\\c--Users-AbhinavTyagi-CEL--Downloads-Spektra-Copliot-dev--1--Spektra-Copliot-dev\\\\memory\")"
+      "Bash(mkdir -p \"C:\\\\Users\\\\AbhinavTyagi\\(CEL\\)\\\\.claude\\\\projects\\\\c--Users-AbhinavTyagi-CEL--Downloads-Spektra-Copliot-dev--1--Spektra-Copliot-dev\\\\memory\")",
+      "Bash(mkdir -p /tmp/zip-verify)",
+      "Read(//tmp/**)",
+      "Bash(unzip -oq \"/c/Users/RajanKS/Downloads/Spektra_copliot/Spektra_copliot/src_zip.zip\" -d extracted)",
+      "Bash(grep -rn \"UpdateTheme\\(\" \"/tmp/zip-verify/extracted/src_zip/src\" 2>/dev/null | grep -v \"theme.service.ts\")",
+      "Read(//tmp/zip-verify/extracted/src_zip/**)",
+      "Bash(sed -n '120,155p' \"/tmp/zip-verify/extracted/src_zip/src/app/core/layouts/header/header.component.ts\")",
+      "Read(//tmp/zip-verify/extracted/src_zip/src/app/core/layouts/header/**)",
+      "Bash(node dist/server.js)",
+      "Bash(echo \"started pid $!\")",
+      "Bash(curl -s http://localhost:5000/health --max-time 5 -w \"\\\\nHTTP:%{http_code}\\\\n\")",
+      "Bash(taskkill //PID 30984 //F)"
     ],
     "additionalDirectories": [
       "C:\\Users\\AbhinavTyagi(CEL)\\.claude\\projects\\c--Users-AbhinavTyagi-CEL--Downloads-Spektra-Copliot-dev--1--Spektra-Copliot-dev\\memory"

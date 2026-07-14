@@ -1,4 +1,4 @@
-export type SearchMode = 'semantic' | 'keyword' | 'hybrid';
+export type SearchMode = 'semantic' | 'keyword' | 'hybrid' | 'exhaustive';
 
 export interface ProjectFileMetadata {
   fileName: string;

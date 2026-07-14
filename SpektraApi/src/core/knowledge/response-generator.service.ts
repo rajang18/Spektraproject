@@ -14,12 +14,21 @@ export class ResponseGenerator {
     conversationSummary: string;
     confidence: number;
   }): Promise<ChatAnswer> {
+    const isExhaustive = input.searchResult.mode === 'exhaustive';
+
     const answerText = await openAiService.generateText({
-      systemPrompt:
-        'You are a senior project engineering copilot for the currently indexed codebase. Answer strictly from provided project context. If context is limited, say so clearly but still provide best effort analysis from retrieved files. Always mention concrete file paths and methods in the explanation.',
+      systemPrompt: [
+        'You are a senior project engineering copilot for the currently indexed codebase. Answer strictly from provided project context. Always mention concrete file paths and methods in the explanation.',
+        'CRITICAL: the "PROJECT RETRIEVAL CONTEXT" you are given is a SAMPLE of chunks selected from a much larger codebase index, not the whole codebase, unless it explicitly says the search was exhaustive.',
+        'Never state that something "does not exist", "is never called", or "only" happens one way anywhere in the codebase based on a sample. If the retrieved chunks do not show something, say exactly that ("the retrieved context does not show this") and recommend a targeted or exhaustive search instead of asserting a project-wide negative.',
+        isExhaustive
+          ? 'This particular context WAS produced by an exhaustive scan of every indexed chunk for the relevant terms (see "Total chunks scanned" below) — you may treat an absence of matches here as strong (not absolute) evidence, since it covers the whole index rather than a top-ranked sample.'
+          : 'This context is a top-ranked sample, not an exhaustive scan — do not treat missing evidence here as proof of absence.'
+      ].join(' '),
       userPrompt: [
         `Project: ${input.projectName}`,
         `Question: ${input.question}`,
+        `Retrieval mode: ${input.searchResult.mode}${isExhaustive ? ' (exhaustive scan of all indexed chunks)' : ' (top-ranked sample)'}`,
         `Intent confidence: ${input.confidence}`,
         `Conversation context:\n${input.conversationSummary}`,
         input.context,

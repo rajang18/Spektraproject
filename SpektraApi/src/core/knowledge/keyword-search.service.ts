@@ -22,7 +22,7 @@ const STOP_WORDS = new Set([
   'module'
 ]);
 
-function extractTerms(text: string): string[] {
+export function extractTerms(text: string): string[] {
   return [...new Set((text.toLowerCase().match(/[a-z0-9_/-]{3,}/g) ?? []).filter((token) => !STOP_WORDS.has(token)))];
 }
 

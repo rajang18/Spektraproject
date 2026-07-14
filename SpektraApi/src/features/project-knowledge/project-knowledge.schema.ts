@@ -12,7 +12,7 @@ export const chatRequestSchema = z.object({
 export const projectSearchRequestSchema = z.object({
   body: z.object({
     query: z.string().trim().min(2).max(8000),
-    mode: z.enum(['semantic', 'keyword', 'hybrid']).optional().default('hybrid'),
+    mode: z.enum(['semantic', 'keyword', 'hybrid', 'exhaustive']).optional().default('hybrid'),
     limit: z.number().int().min(1).max(50).optional().default(12)
   }),
   params: z.object({}).optional(),

@@ -4,12 +4,16 @@ import { logger } from '../../config/logger.js';
 import { AppError } from '../errors/app-error.js';
 import { contextBuilder } from './context-builder.service.js';
 import { conversationMemory } from './conversation-memory.service.js';
+import { existenceQueryDetector } from './existence-query-detector.service.js';
+import { exhaustiveSearch } from './exhaustive-search.service.js';
 import { intentDetector } from './intent-detector.service.js';
 import { ProjectIndexer, projectIndexer } from './project-indexer.service.js';
-import { ChatAnswer, ConversationHistory, ConversationSummary, ProjectSearchResult, ProjectStatus, SearchMode } from './project-knowledge.types.js';
+import { ChatAnswer, ConversationHistory, ConversationSummary, ProjectChunk, ProjectSearchResult, ProjectStatus, SearchMode } from './project-knowledge.types.js';
 import { projectRetriever } from './project-retriever.service.js';
 import { responseGenerator } from './response-generator.service.js';
 import { zipManager } from './zip-manager.service.js';
+
+const EXHAUSTIVE_SEARCH_LIMIT = 40;
 
 export class ProjectKnowledgeService {
   constructor(private readonly indexer: ProjectIndexer = projectIndexer) {}
@@ -74,7 +78,7 @@ export class ProjectKnowledgeService {
       }
     }
 
-    const search = projectRetriever.retrieve(question, index.chunks, 'hybrid', 10);
+    const search = this.retrieveForQuestion(question, index.chunks, 10);
     const context = contextBuilder.build(search);
     const conversationSummary = conversationMemory.summarizeForPrompt(conversationId);
 
@@ -111,12 +115,22 @@ export class ProjectKnowledgeService {
 
   search(query: string, mode: SearchMode = 'hybrid', limit = 12): ProjectSearchResult {
     const index = this.indexer.ensureIndexed();
+
+    if (mode === 'exhaustive') {
+      return {
+        query,
+        mode: 'exhaustive',
+        hits: exhaustiveSearch.search(query, index.chunks, limit),
+        totalChunksScanned: index.chunks.length
+      };
+    }
+
     return projectRetriever.retrieve(query, index.chunks, mode, limit);
   }
 
   async explain(query: string, conversationId: string): Promise<ChatAnswer> {
     const index = this.indexer.ensureIndexed();
-    const search = projectRetriever.retrieve(query, index.chunks, 'hybrid', 12);
+    const search = this.retrieveForQuestion(query, index.chunks, 12);
     const context = contextBuilder.build(search);
     const conversationSummary = conversationMemory.summarizeForPrompt(conversationId);
 
@@ -204,6 +218,23 @@ export class ProjectKnowledgeService {
 
   getConversationHistory(conversationId: string): ConversationHistory {
     return conversationMemory.getConversation(conversationId);
+  }
+
+  // Existence/negation questions ("is there any API call anywhere", "do we
+  // ever...") can't be trusted to a top-10 hybrid ranking: a single precise
+  // match can be outscored by several loosely-related chunks. For those,
+  // scan every indexed chunk instead of relying on the top-K sample.
+  private retrieveForQuestion(question: string, chunks: ProjectChunk[], defaultLimit: number): ProjectSearchResult {
+    if (existenceQueryDetector.isExistenceQuery(question)) {
+      return {
+        query: question,
+        mode: 'exhaustive',
+        hits: exhaustiveSearch.search(question, chunks, EXHAUSTIVE_SEARCH_LIMIT),
+        totalChunksScanned: chunks.length
+      };
+    }
+
+    return projectRetriever.retrieve(question, chunks, 'hybrid', defaultLimit);
   }
 
   private extractRequestedFilePath(question: string): string | null {
