@@ -18,10 +18,6 @@ const environmentSchema = z.object({
   OPENAI_RETRY_MAX_DELAY_MS: z.coerce.number().int().positive().default(5000),
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(900000),
   RATE_LIMIT_MAX_REQUESTS: z.coerce.number().int().positive().default(120),
-  ENABLE_PROJECT_KNOWLEDGE_INDEXING: z
-    .string()
-    .default('true')
-    .transform((value) => value.trim().toLowerCase() !== 'false'),
   apiBase: z.string().optional().default(''),
   apiVersion: z.string().optional().default('2024-12-01-preview')
 });
