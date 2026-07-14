@@ -12,7 +12,11 @@
       "Bash(node dist/server.js)",
       "Bash(echo \"started pid $!\")",
       "Bash(curl -s http://localhost:5000/health --max-time 5 -w \"\\\\nHTTP:%{http_code}\\\\n\")",
-      "Bash(taskkill //PID 30984 //F)"
+      "Bash(taskkill //PID 30984 //F)",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "Bash(netstat -ano)",
+      "Bash(curl -s http://localhost:5050/health --max-time 5 -w \"\\\\nHTTP:%{http_code}\\\\n\")"
     ],
     "additionalDirectories": [
       "C:\\Users\\AbhinavTyagi(CEL)\\.claude\\projects\\c--Users-AbhinavTyagi-CEL--Downloads-Spektra-Copliot-dev--1--Spektra-Copliot-dev\\memory"

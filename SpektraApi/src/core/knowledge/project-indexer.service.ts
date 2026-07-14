@@ -17,10 +17,19 @@ const INCLUDED_EXTENSIONS = new Set([
   '.yml'
 ]);
 
-const EXCLUDED_DIRS = new Set(['node_modules', 'dist', 'coverage', '.git']);
+const EXCLUDED_DIRS = new Set(['node_modules', 'dist', 'coverage', '.git', 'plugins', 'vendors']);
+const GENERATED_FILE_PATTERN = /\.(min|bundle)\.(css|js)$/i;
 
 const CHUNK_SIZE = 80;
 const CHUNK_OVERLAP = 12;
+
+// Vendor assets (icon-font manifests, minified bundles, etc.) are sometimes a
+// single multi-megabyte line. Chunking is line-based, so one such file would
+// otherwise become one unbounded chunk and can blow past the LLM's context
+// limit on its own. This caps any single chunk regardless of source file.
+// 99%+ of naturally-chunked code sits under ~5.3KB; this only clips the rare
+// pathological outlier (a single line that spans tens of KB to multiple MB).
+const MAX_CHUNK_CONTENT_LENGTH = 8000;
 
 function uniq(items: string[]): string[] {
   return [...new Set(items.filter(Boolean))];
@@ -81,7 +90,11 @@ export class ProjectIndexer {
           continue;
         }
 
-        const chunkContent = chunkLines.join('\n');
+        const rawChunkContent = chunkLines.join('\n');
+        const chunkContent =
+          rawChunkContent.length > MAX_CHUNK_CONTENT_LENGTH
+            ? `${rawChunkContent.slice(0, MAX_CHUNK_CONTENT_LENGTH)}\n... [truncated: chunk exceeded ${MAX_CHUNK_CONTENT_LENGTH} characters, likely a minified/generated file]`
+            : rawChunkContent;
         const tokenHints = (chunkContent.toLowerCase().match(/[a-z0-9_/-]{3,}/g) ?? []).slice(0, 25);
         chunks.push({
           id: `${relativePath}#${chunkIndex}`,
@@ -165,6 +178,10 @@ export class ProjectIndexer {
         }
 
         if (!entry.isFile()) {
+          continue;
+        }
+
+        if (GENERATED_FILE_PATTERN.test(entry.name)) {
           continue;
         }
 
