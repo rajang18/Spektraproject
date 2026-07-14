@@ -1,6 +1,8 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { basename, dirname, extname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { env } from '../../config/environment.js';
+import { AppError } from '../errors/app-error.js';
 import { embeddingService } from './embedding.service.js';
 import { ProjectChunk, ProjectFileMetadata, ProjectIndexData } from './project-knowledge.types.js';
 import { zipManager } from './zip-manager.service.js';
@@ -45,6 +47,7 @@ export class ProjectIndexer {
   }
 
   ensureIndexed(): ProjectIndexData {
+    this.ensureIndexingEnabled();
     const extraction = zipManager.ensureExtracted(false);
 
     if (!existsSync(this.indexPath) || extraction.changed) {
@@ -60,6 +63,7 @@ export class ProjectIndexer {
   }
 
   reindex(forceZipRefresh: boolean): ProjectIndexData {
+    this.ensureIndexingEnabled();
     const extraction = zipManager.ensureExtracted(forceZipRefresh);
     const sourceRoot = this.resolveSourceRoot(zipManager.getExtractedRoot());
     const files = this.collectFiles(sourceRoot);
@@ -114,6 +118,16 @@ export class ProjectIndexer {
     writeFileSync(this.indexPath, JSON.stringify(index));
 
     return index;
+  }
+
+  private ensureIndexingEnabled(): void {
+    if (!env.ENABLE_PROJECT_KNOWLEDGE_INDEXING) {
+      throw new AppError(
+        'Project knowledge indexing is disabled in this environment. Set ENABLE_PROJECT_KNOWLEDGE_INDEXING=true to enable it.',
+        503,
+        'PROJECT_INDEXING_DISABLED'
+      );
+    }
   }
 
   readIndex(): ProjectIndexData | null {
