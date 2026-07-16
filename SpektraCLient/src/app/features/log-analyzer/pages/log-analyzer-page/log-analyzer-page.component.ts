@@ -260,7 +260,7 @@ const MAX_CHARS     = 20_000;
                 </div>
                 <div class="flow-chain">
                   <ng-container *ngFor="let step of result()!.executionFlow; let last = last">
-                    <div class="flow-box">{{ step }}</div>
+                    <div class="flow-box" [innerHTML]="formatText(step)"></div>
                     <div class="flow-arrow" *ngIf="!last">
                       <mat-icon>arrow_downward</mat-icon>
                     </div>
