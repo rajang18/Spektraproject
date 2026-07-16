@@ -37,11 +37,48 @@ export const requirementArtifactsJsonSchema = {
 export const logAnalysisJsonSchema = {
   type: 'object',
   additionalProperties: false,
-  required: ['summary', 'severity', 'probableRootCause', 'recommendations', 'signals'],
+  required: ['summary', 'severity', 'logBreakdown', 'executionFlow', 'thingsToCheck', 'rootCause', 'recommendations', 'signals'],
   properties: {
     summary: { type: 'string' },
     severity: { type: 'string', enum: ['low', 'medium', 'high', 'critical'] },
-    probableRootCause: { type: 'string' },
+    logBreakdown: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['logLine', 'meaning', 'likelyCause'],
+        properties: {
+          logLine: { type: 'string' },
+          meaning: { type: 'string' },
+          likelyCause: { type: 'string' }
+        }
+      }
+    },
+    executionFlow: { type: 'array', items: { type: 'string' } },
+    thingsToCheck: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['title', 'steps', 'codeSnippet', 'codeLanguage'],
+        properties: {
+          title: { type: 'string' },
+          steps: { type: 'array', items: { type: 'string' } },
+          codeSnippet: { type: 'string' },
+          codeLanguage: { type: 'string' }
+        }
+      }
+    },
+    rootCause: {
+      type: 'object',
+      additionalProperties: false,
+      required: ['evidence', 'explanation', 'consequences'],
+      properties: {
+        evidence: { type: 'string' },
+        explanation: { type: 'string' },
+        consequences: { type: 'array', items: { type: 'string' } }
+      }
+    },
     recommendations: { type: 'array', items: { type: 'string' } },
     signals: {
       type: 'array',

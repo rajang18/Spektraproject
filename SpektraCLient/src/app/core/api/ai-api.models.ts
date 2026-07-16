@@ -35,7 +35,10 @@ export interface LogAnalysisRequest {
 export interface LogAnalysisResponse {
   summary: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
-  probableRootCause: string;
+  logBreakdown: Array<{ logLine: string; meaning: string; likelyCause: string }>;
+  executionFlow: string[];
+  thingsToCheck: Array<{ title: string; steps: string[]; codeSnippet: string; codeLanguage: string }>;
+  rootCause: { evidence: string; explanation: string; consequences: string[] };
   recommendations: string[];
   signals: Array<{ pattern: string; evidence: string }>;
 }

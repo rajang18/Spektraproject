@@ -211,8 +211,8 @@ const MAX_CHARS     = 20_000;
               <div class="summary-row">
                 <span class="s-dot sd-red"></span>
                 <div>
-                  <strong>Probable Root Cause</strong>
-                  <p [innerHTML]="formatText(result()!.probableRootCause)"></p>
+                  <strong>Root Cause</strong>
+                  <p [innerHTML]="formatText(result()!.rootCause.evidence)"></p>
                 </div>
               </div>
 
@@ -222,8 +222,98 @@ const MAX_CHARS     = 20_000;
               </div>
             </aside>
 
-            <!-- RIGHT — recommendations + signals -->
+            <!-- RIGHT — rich analysis -->
             <section class="result-main">
+
+              <!-- Log breakdown table -->
+              <div class="result-section" *ngIf="result()!.logBreakdown?.length">
+                <div class="result-section-header">
+                  <mat-icon>table_rows</mat-icon>
+                  <h3>Log Breakdown</h3>
+                  <span class="count-badge">{{ result()!.logBreakdown.length }}</span>
+                </div>
+                <div class="signals-table-wrap">
+                  <table class="data-table log-breakdown-table">
+                    <thead>
+                      <tr>
+                        <th style="width:30%">Log</th>
+                        <th style="width:35%">Meaning</th>
+                        <th>Likely Cause</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let row of result()!.logBreakdown">
+                        <td><code class="log-line-chip">{{ row.logLine }}</code></td>
+                        <td class="signal-evidence">{{ row.meaning }}</td>
+                        <td class="signal-evidence">{{ row.likelyCause }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Flow of the failure -->
+              <div class="result-section" *ngIf="result()!.executionFlow?.length">
+                <div class="result-section-header">
+                  <mat-icon>alt_route</mat-icon>
+                  <h3>Flow of the Failure</h3>
+                </div>
+                <div class="flow-chain">
+                  <ng-container *ngFor="let step of result()!.executionFlow; let last = last">
+                    <div class="flow-box">{{ step }}</div>
+                    <div class="flow-arrow" *ngIf="!last">
+                      <mat-icon>arrow_downward</mat-icon>
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+
+              <!-- Things to check -->
+              <div class="result-section" *ngIf="result()!.thingsToCheck?.length">
+                <div class="result-section-header">
+                  <mat-icon>fact_check</mat-icon>
+                  <h3>Things to Check</h3>
+                  <span class="count-badge">{{ result()!.thingsToCheck.length }}</span>
+                </div>
+                <ol class="check-list">
+                  <li *ngFor="let item of result()!.thingsToCheck; let i = index">
+                    <div class="check-header">
+                      <span class="rec-num">{{ i + 1 }}</span>
+                      <h4 [innerHTML]="formatText(item.title)"></h4>
+                    </div>
+                    <ul class="check-steps" *ngIf="item.steps?.length">
+                      <li *ngFor="let s of item.steps" [innerHTML]="formatText(s)"></li>
+                    </ul>
+                    <div class="code-block-wrap" *ngIf="item.codeSnippet">
+                      <div class="code-block-header">
+                        <span>{{ item.codeLanguage || 'code' }}</span>
+                        <button class="code-copy-btn" type="button" (click)="copySnippet(item.codeSnippet)">
+                          <mat-icon>{{ copiedSnippet() === item.codeSnippet ? 'check' : 'content_copy' }}</mat-icon>
+                        </button>
+                      </div>
+                      <pre class="code-block"><code>{{ item.codeSnippet }}</code></pre>
+                    </div>
+                  </li>
+                </ol>
+              </div>
+
+              <!-- Root cause detail -->
+              <div class="result-section">
+                <div class="result-section-header">
+                  <mat-icon>bug_report</mat-icon>
+                  <h3>Root Cause</h3>
+                </div>
+                <div class="root-cause-callout">
+                  <blockquote class="rc-evidence">{{ result()!.rootCause.evidence }}</blockquote>
+                  <p class="rc-explanation" [innerHTML]="formatText(result()!.rootCause.explanation)"></p>
+                  <ng-container *ngIf="result()!.rootCause.consequences?.length">
+                    <p class="rc-consequences-label">Everything else follows from this:</p>
+                    <ul class="rc-consequences">
+                      <li *ngFor="let c of result()!.rootCause.consequences" [innerHTML]="formatText(c)"></li>
+                    </ul>
+                  </ng-container>
+                </div>
+              </div>
 
               <div class="result-section">
                 <div class="result-section-header">
@@ -547,11 +637,7 @@ const MAX_CHARS     = 20_000;
       line-height: 1.7;
     }
 
-    :host ::ng-deep .rec-list p strong {
-      color: #253044;
-      font-weight: 800;
-    }
-
+    :host ::ng-deep .result-main strong,
     :host ::ng-deep .summary-row p strong {
       color: #253044;
       font-weight: 800;
@@ -568,6 +654,133 @@ const MAX_CHARS     = 20_000;
     }
 
     .signal-evidence { font-size: 0.83rem; color: #334052; line-height: 1.5; word-break: break-word; }
+
+    /* ── Log breakdown table ─────────────────────────────────── */
+    .log-line-chip {
+      display: inline-block;
+      font-family: Consolas, monospace; font-size: 0.76rem;
+      background: #0d1117; color: #ff8a8a;
+      border-radius: 4px; padding: 3px 7px;
+      word-break: break-word; line-height: 1.5;
+    }
+
+    /* ── Flow of the failure ─────────────────────────────────── */
+    .flow-chain {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 0; padding: 8px 0;
+    }
+
+    .flow-box {
+      width: 100%; max-width: 420px;
+      padding: 12px 18px;
+      background: #f8f9ff; border: 1.5px solid var(--purple);
+      border-radius: 10px;
+      font-size: 0.85rem; font-weight: 600; color: #253044;
+      text-align: center;
+      box-shadow: 0 1px 2px rgba(108, 92, 231, 0.08);
+    }
+
+    .flow-arrow {
+      color: var(--purple); display: flex; justify-content: center;
+      margin: 2px 0;
+    }
+    .flow-arrow mat-icon { font-size: 20px; }
+
+    /* ── Things to check ─────────────────────────────────────── */
+    .check-list {
+      list-style: none; margin: 0; padding: 0;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+
+    .check-list > li {
+      padding: 14px 16px;
+      background: #f8f9ff; border-radius: 10px;
+      border-left: 3px solid var(--purple);
+      min-width: 0;
+    }
+
+    .check-header {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .check-header h4 { margin: 0; font-size: 0.88rem; font-weight: 800; color: #253044; }
+
+    .check-steps {
+      margin: 10px 0 0; padding-left: 0;
+      list-style: none;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .check-steps li {
+      position: relative; padding-left: 18px;
+      font-size: 0.83rem; color: #334052; line-height: 1.6;
+    }
+    .check-steps li::before {
+      content: ''; position: absolute; left: 4px; top: 9px;
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--purple);
+    }
+
+    /* ── Code block (things-to-check snippets) ───────────────── */
+    .code-block-wrap {
+      margin-top: 12px;
+      border-radius: 8px; overflow: hidden;
+      border: 1px solid #26262f;
+    }
+
+    .code-block-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 12px;
+      background: #1e1e2e; color: #9098b0;
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+    }
+
+    .code-copy-btn {
+      display: flex; align-items: center; justify-content: center;
+      background: none; border: none; color: #9098b0; cursor: pointer;
+      padding: 2px; border-radius: 4px;
+      transition: color .15s, background .15s;
+    }
+    .code-copy-btn:hover { color: #fff; background: rgba(255,255,255,.08); }
+    .code-copy-btn mat-icon { font-size: 16px; width: 16px; height: 16px; }
+
+    .code-block {
+      margin: 0; padding: 12px 14px;
+      background: #0d1117; color: #d4d4e0;
+      font-family: Consolas, 'Courier New', monospace; font-size: 0.78rem; line-height: 1.6;
+      overflow-x: auto; white-space: pre;
+    }
+
+    /* ── Root cause callout ──────────────────────────────────── */
+    .root-cause-callout {
+      background: #fff5f5; border: 1px solid #ffd6d6; border-radius: 10px;
+      padding: 16px 18px;
+    }
+
+    .rc-evidence {
+      margin: 0 0 10px; padding: 0 0 0 14px;
+      border-left: 3px solid #e53e3e;
+      font-family: Consolas, monospace; font-size: 0.83rem; color: #9b2c2c;
+      font-style: normal; line-height: 1.6; word-break: break-word;
+    }
+
+    .rc-explanation { margin: 0; font-size: 0.85rem; color: #253044; line-height: 1.65; }
+
+    .rc-consequences-label {
+      margin: 14px 0 6px; font-size: 0.8rem; font-weight: 700; color: #687085;
+    }
+
+    .rc-consequences {
+      margin: 0; padding-left: 0; list-style: none;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .rc-consequences li {
+      position: relative; padding-left: 18px;
+      font-size: 0.83rem; color: #334052; line-height: 1.6;
+    }
+    .rc-consequences li::before {
+      content: ''; position: absolute; left: 4px; top: 9px;
+      width: 5px; height: 5px; border-radius: 50%;
+      background: #e53e3e;
+    }
 
     /* ── Responsive ──────────────────────────────────────────── */
 
@@ -654,6 +867,7 @@ export class LogAnalyzerPageComponent {
   readonly _apiError   = signal<string | null>(null);
   readonly _result          = signal<LogAnalysisResponse | null>(null);
   readonly _copied          = signal(false);
+  readonly _copiedSnippet   = signal<string | null>(null);
   readonly _isRetrying      = signal(false);
 
   // kept so Retry can re-submit without re-reading the file
@@ -680,6 +894,7 @@ export class LogAnalyzerPageComponent {
   readonly apiError  = computed(() => this._apiError());
   readonly result    = computed(() => this._result());
   readonly copied    = computed(() => this._copied());
+  readonly copiedSnippet = computed(() => this._copiedSnippet());
 
   readonly fileSizeLabel = computed(() => {
     const bytes = this._fileSize();
@@ -826,9 +1041,21 @@ export class LogAnalyzerPageComponent {
     const text = [
       `SEVERITY: ${r.severity.toUpperCase()}`,
       `SUMMARY: ${r.summary}`,
+      ...(r.logBreakdown?.length
+        ? ['', 'LOG BREAKDOWN:', ...r.logBreakdown.map(row => `- ${row.logLine}\n  Meaning: ${row.meaning}\n  Likely cause: ${row.likelyCause}`)]
+        : []),
+      ...(r.executionFlow?.length
+        ? ['', 'FLOW OF THE FAILURE:', ...r.executionFlow.map((step, i) => `${i + 1}. ${step}`)]
+        : []),
+      ...(r.thingsToCheck?.length
+        ? ['', 'THINGS TO CHECK:', ...r.thingsToCheck.map((item, i) =>
+            [`${i + 1}. ${item.title}`, ...item.steps.map(s => `   - ${s}`), ...(item.codeSnippet ? [item.codeSnippet] : [])].join('\n'))]
+        : []),
       '',
-      `PROBABLE ROOT CAUSE:`,
-      r.probableRootCause,
+      'ROOT CAUSE:',
+      r.rootCause.evidence,
+      r.rootCause.explanation,
+      ...(r.rootCause.consequences?.length ? r.rootCause.consequences.map(c => `- ${c}`) : []),
       '',
       `AI RECOMMENDATIONS:`,
       ...r.recommendations.map((rec, i) => `${i + 1}. ${rec}`),
@@ -841,6 +1068,17 @@ export class LogAnalyzerPageComponent {
       await navigator.clipboard.writeText(text);
       this._copied.set(true);
       setTimeout(() => this._copied.set(false), 2500);
+    } catch {
+      // clipboard not available — silently ignore
+    }
+  }
+
+  // ── Copy a single code snippet from "Things to Check" ────────
+  async copySnippet(snippet: string): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(snippet);
+      this._copiedSnippet.set(snippet);
+      setTimeout(() => this._copiedSnippet.set(null), 2000);
     } catch {
       // clipboard not available — silently ignore
     }

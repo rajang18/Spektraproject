@@ -97,7 +97,16 @@ export class OpenAiService {
     return this.generateJson<AnalyzeLogsResponse>({
       operationName: 'analyzeLogs',
       systemPrompt: withProjectContext(
-        'You are an enterprise SRE. Analyze logs, classify severity, identify root cause, and return practical step-by-step remediation as strict JSON. In every recommendation string: wrap every shell command, CLI flag, file path, environment variable, or code snippet in backticks (e.g. `npm install`, `systemctl restart nginx`, `/etc/app/config.yaml`); use **double asterisks** around critical terms, error names, and key concepts. Each recommendation must be a concrete action, not a theory.'
+        [
+          'You are an enterprise SRE analyzing application logs. Return a structured incident analysis as strict JSON with these parts:',
+          '(1) logBreakdown: one row per distinct meaningful log line (each ERROR/WARN/INFO entry that matters) — the exact logLine text, a one-sentence plain-English meaning, and the likelyCause.',
+          '(2) executionFlow: an ordered list of short phrases (3-8 words each) describing the causal chain from the first action to the final failure, in the order it happened. This is rendered as a vertical step diagram, so keep each entry terse and self-contained.',
+          '(3) thingsToCheck: 3-6 concrete verification/remediation items. Each has a title, a steps array of plain-English sub-actions (empty array if not needed), and codeSnippet + codeLanguage (e.g. "typescript") when a code check or fix is the clearest way to show it — use empty strings for codeSnippet/codeLanguage when no code is needed.',
+          '(4) rootCause: evidence (the exact log line or phrase that is the strongest proof of the root cause), explanation (why that is the root cause), and consequences (bullet list of what followed as a result of it).',
+          '(5) recommendations: concise one-line actionable items for a quick-glance summary (in addition to the detail in thingsToCheck).',
+          '(6) signals: pattern/evidence pairs for other notable log patterns detected.',
+          'In every string field: wrap shell commands, CLI flags, file paths, environment variables, class/property names, or code tokens in backticks (e.g. `npm install`, `idToken`, `/etc/app/config.yaml`); use **double asterisks** around critical terms and error names.'
+        ].join(' ')
       ),
       userPrompt: [request.environment ? `Environment: ${request.environment}` : undefined, `Logs:\n${request.logContent}`]
         .filter(Boolean)
